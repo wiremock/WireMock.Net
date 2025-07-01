@@ -62,7 +62,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public int Port => Ports?.FirstOrDefault() ?? default;
+    public int Port => Ports.FirstOrDefault();
 
     /// <inheritdoc />
     [PublicAPI]
@@ -70,7 +70,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public string? Url => Urls?.FirstOrDefault();
+    public string? Url => Urls.FirstOrDefault();
 
     /// <inheritdoc />
     [PublicAPI]
@@ -120,6 +120,32 @@ public partial class WireMockServer : IWireMockServer
     #endregion
 
     #region HttpClient
+#if NET5_0_OR_GREATER
+    private readonly Lazy<IHttpClientFactory> _lazyHttpClientFactory;
+
+    /// <summary>
+    /// Create a <see cref="IHttpClientFactory"/> which can be used to generate a HttpClient to call this instance.
+    /// <param name="handlers">
+    /// An ordered list of System.Net.Http.DelegatingHandler instances to be invoked
+    /// as an System.Net.Http.HttpRequestMessage travels from the System.Net.Http.HttpClient
+    /// to the network and an System.Net.Http.HttpResponseMessage travels from the network
+    /// back to System.Net.Http.HttpClient. The handlers are invoked in a top-down fashion.
+    /// That is, the first entry is invoked first for an outbound request message but
+    /// last for an inbound response message.
+    /// </param>
+    /// </summary>
+    [PublicAPI]
+    public IHttpClientFactory CreateHttpClientFactory(params DelegatingHandler[] handlers)
+    {
+        if (!IsStarted)
+        {
+            throw new InvalidOperationException("Unable to create IHttpClientFactory because the service is not started.");
+        }
+
+        return handlers.Length > 0 ? new WireMockHttpClientFactory(this, handlers) : _lazyHttpClientFactory.Value;
+    }
+#endif
+
     /// <summary>
     /// Create a <see cref="HttpClient"/> which can be used to call this instance.
     /// <param name="handlers">
@@ -427,6 +453,10 @@ public partial class WireMockServer : IWireMockServer
         }
 
         InitSettings(settings);
+
+#if NET5_0_OR_GREATER
+        _lazyHttpClientFactory = new Lazy<IHttpClientFactory>(() => new WireMockHttpClientFactory(this));
+#endif
     }
 
     /// <inheritdoc cref="IWireMockServer.Stop" />

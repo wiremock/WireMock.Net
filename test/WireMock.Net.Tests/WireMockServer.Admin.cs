@@ -560,6 +560,30 @@ public class WireMockServerAdminTests
         Check.That(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
     }
 
+#if NET5_0_OR_GREATER
+    [Fact]
+    public async Task WireMockServer_CreateHttpClientFactory_And_CallEndpoint()
+    {
+        // Arrange
+        var server = WireMockServer.Start();
+        var factory = server.CreateHttpClientFactory();
+        var client = factory.CreateClient("any name");
+
+        // Act
+        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+
+        // Assert
+        Check.That(server.LogEntries).HasSize(1);
+        var requestLogged = server.LogEntries.First();
+        Check.That(requestLogged.RequestMessage.Method).IsEqualTo("GET");
+        Check.That(requestLogged.RequestMessage.BodyData).IsNull();
+
+        // Cleanup
+        server.Stop();
+        server.Dispose();
+    }
+#endif
+
     [Fact]
     public async Task WireMockServer_CreateClient_And_CallEndpoint()
     {
