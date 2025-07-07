@@ -9,6 +9,7 @@ using System.Text;
 using MimeKit;
 using Stef.Validation;
 using WireMock.Http;
+using WireMock.Models;
 using WireMock.Types;
 
 namespace WireMock.Util;
@@ -16,13 +17,13 @@ namespace WireMock.Util;
 internal class MimeKitUtils : IMimeKitUtils
 {
     /// <inheritdoc />
-    public object LoadFromStream(Stream stream)
+    public IMimeMessageData LoadFromStream(Stream stream)
     {
-        return MimeMessage.Load(Guard.NotNull(stream));
+        return new MimeMessageDataWrapper(MimeMessage.Load(Guard.NotNull(stream)));
     }
 
     /// <inheritdoc />
-    public bool TryGetMimeMessage(IRequestMessage requestMessage, [NotNullWhen(true)] out object? mimeMessage)
+    public bool TryGetMimeMessage(IRequestMessage requestMessage, [NotNullWhen(true)] out IMimeMessageData? mimeMessageData)
     {
         Guard.NotNull(requestMessage);
 
@@ -44,23 +45,23 @@ internal class MimeKitUtils : IMimeKitUtils
 
             var fixedBytes = FixBytes(bytes, contentTypeHeader[0]);
 
-            mimeMessage = LoadFromStream(new MemoryStream(fixedBytes));
+            mimeMessageData = LoadFromStream(new MemoryStream(fixedBytes));
             return true;
         }
 
-        mimeMessage = null;
+        mimeMessageData = null;
         return false;
     }
 
     /// <inheritdoc />
-    public IReadOnlyList<object> GetBodyParts(object mimeMessage)
+    public IReadOnlyList<object> GetBodyParts(IMimeMessageData mimeMessageData)
     {
-        if (mimeMessage is not MimeMessage mm)
+        if (mimeMessageData is not MimeMessageDataWrapper wrapper)
         {
-            throw new ArgumentException($"The mimeMessage must be of type {nameof(MimeMessage)}", nameof(mimeMessage));
+            throw new ArgumentException($"The mimeMessage must be of type {nameof(MimeMessageDataWrapper)}", nameof(mimeMessageData));
         }
 
-        return mm.BodyParts
+        return wrapper.Message.BodyParts
             .OfType<MimePart>()
             .ToArray();
     }
