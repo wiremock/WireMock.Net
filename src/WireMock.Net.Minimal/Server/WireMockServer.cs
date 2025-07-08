@@ -62,7 +62,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public int Port => Ports.FirstOrDefault();
+    public int Port => Ports?.FirstOrDefault() ?? default;
 
     /// <inheritdoc />
     [PublicAPI]
@@ -70,7 +70,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public string? Url => Urls.FirstOrDefault();
+    public string? Url => Urls?.FirstOrDefault();
 
     /// <inheritdoc />
     [PublicAPI]
