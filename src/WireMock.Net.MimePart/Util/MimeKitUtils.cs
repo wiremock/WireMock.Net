@@ -58,7 +58,7 @@ internal class MimeKitUtils : IMimeKitUtils
     {
         if (mimeMessageData is not MimeMessageDataWrapper wrapper)
         {
-            throw new ArgumentException($"The mimeMessage must be of type {nameof(MimeMessageDataWrapper)}", nameof(mimeMessageData));
+            throw new ArgumentException($"The mimeMessageData must be of type {nameof(MimeMessageDataWrapper)}", nameof(mimeMessageData));
         }
 
         return wrapper.Message.BodyParts
