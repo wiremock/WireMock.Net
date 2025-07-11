@@ -85,7 +85,7 @@ public class RequestMessage : IRequestMessage
 #if MIMEKIT
     /// <inheritdoc />
     [Newtonsoft.Json.JsonIgnore] // Issue 1001
-    public object? BodyAsMimeMessage { get; }
+    public Models.Mime.IMimeMessageData? BodyAsMimeMessage { get; }
 #endif
 
     /// <inheritdoc />

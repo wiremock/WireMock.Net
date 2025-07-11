@@ -123,7 +123,7 @@ public interface IRequestMessage
     /// The original body as MimeMessage.
     /// Convenience getter for Handlebars and WireMockAssertions.
     /// </summary>
-    object? BodyAsMimeMessage { get; }
+    Models.Mime.IMimeMessageData? BodyAsMimeMessage { get; }
 #endif
 
     /// <summary>
