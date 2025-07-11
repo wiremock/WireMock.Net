@@ -22,16 +22,15 @@ public class MimeEntityDataWrapper : IMimeEntityData
     /// Initializes a new instance of the <see cref="MimeEntityDataWrapper"/> class.
     /// </summary>
     /// <param name="entity">The MIME entity to wrap.</param>
-    /// <exception cref="System.ArgumentNullException">
-    /// <paramref name="entity"/> is <see langword="null"/>.
-    /// </exception>
     public MimeEntityDataWrapper(IMimeEntity entity)
     {
         _entity = Guard.NotNull(entity);
+
+        Headers = _entity.Headers.Select(h => h.ToString()).ToList();
     }
 
     /// <inheritdoc/>
-    public IEnumerable<string> Headers => _entity.Headers.Select(h => h.ToString());
+    public IList<string> Headers { get; private set; }
 
     /// <inheritdoc/>
     public string ContentDisposition => _entity.ContentDisposition.ToString();

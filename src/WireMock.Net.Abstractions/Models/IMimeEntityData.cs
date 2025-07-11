@@ -14,7 +14,7 @@ public interface IMimeEntityData
     /// Get the list of headers.
     /// </summary>
     /// <value>The list of headers.</value>
-    IEnumerable<string> Headers { get; }
+    IList<string> Headers { get; }
 
     /// <summary>
     /// Get the content disposition.

@@ -48,7 +48,7 @@ public class MimePartMatcherTests
     {
         // Arrange
         var message = MimeKitUtils.LoadFromStream(StreamUtils.CreateStream(TestMultiPart));
-        var part = MimeKitUtils.GetBodyParts(message)[0];
+        var part = message.BodyParts[0];
 
         // Act
         var contentTypeMatcher = new ContentTypeMatcher("text/plain");
@@ -67,7 +67,7 @@ public class MimePartMatcherTests
     {
         // Arrange
         var message = MimeKitUtils.LoadFromStream(StreamUtils.CreateStream(TestMultiPart));
-        var part = MimeKitUtils.GetBodyParts(message)[1];
+        var part = message.BodyParts[1];
 
         // Act
         var contentTypeMatcher = new ContentTypeMatcher("text/json");
@@ -85,7 +85,7 @@ public class MimePartMatcherTests
     {
         // Arrange
         var message = MimeKitUtils.LoadFromStream(StreamUtils.CreateStream(TestMultiPart));
-        var part = MimeKitUtils.GetBodyParts(message)[2];
+        var part = message.BodyParts[2];
 
         // Act
         var contentTypeMatcher = new ContentTypeMatcher("image/png");

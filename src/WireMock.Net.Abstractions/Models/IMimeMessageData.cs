@@ -14,7 +14,7 @@ public interface IMimeMessageData
     /// Get the list of headers.
     /// </summary>
     /// <value>The list of headers.</value>
-    IEnumerable<string> Headers { get; }
+    IList<string> Headers { get; }
 
     /// <summary>
     /// Get the value of the Importance header.
@@ -50,61 +50,61 @@ public interface IMimeMessageData
     /// Get the list of addresses in the From header.
     /// </summary>
     /// <value>The list of addresses in the From header.</value>
-    IEnumerable<string> From { get; }
+    IList<string> From { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-From header.
     /// </summary>
     /// <value>The list of addresses in the Resent-From header.</value>
-    IEnumerable<string> ResentFrom { get; }
+    IList<string> ResentFrom { get; }
 
     /// <summary>
     /// Get the list of addresses in the Reply-To header.
     /// </summary>
     /// <value>The list of addresses in the Reply-To header.</value>
-    IEnumerable<string> ReplyTo { get; }
+    IList<string> ReplyTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Reply-To header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Reply-To header.</value>
-    IEnumerable<string> ResentReplyTo { get; }
+    IList<string> ResentReplyTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the To header.
     /// </summary>
     /// <value>The list of addresses in the To header.</value>
-    IEnumerable<string> To { get; }
+    IList<string> To { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-To header.
     /// </summary>
     /// <value>The list of addresses in the Resent-To header.</value>
-    IEnumerable<string> ResentTo { get; }
+    IList<string> ResentTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the Cc header.
     /// </summary>
     /// <value>The list of addresses in the Cc header.</value>
-    IEnumerable<string> Cc { get; }
+    IList<string> Cc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Cc header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Cc header.</value>
-    IEnumerable<string> ResentCc { get; }
+    IList<string> ResentCc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Bcc header.
     /// </summary>
     /// <value>The list of addresses in the Bcc header.</value>
-    IEnumerable<string> Bcc { get; }
+    IList<string> Bcc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Bcc header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Bcc header.</value>
-    IEnumerable<string> ResentBcc { get; }
+    IList<string> ResentBcc { get; }
         
     /// <summary>
     /// Get the subject of the message.
@@ -128,7 +128,7 @@ public interface IMimeMessageData
     /// Get the list of references to other messages.
     /// </summary>
     /// <value>The references.</value>
-    IEnumerable<string> References { get; }
+    IList<string> References { get; }
 
     /// <summary>
     /// Get the Message-Id that this message is replying to.
@@ -176,11 +176,11 @@ public interface IMimeMessageData
     /// Get the body parts of the message.
     /// </summary>
     /// <value>The body parts.</value>
-    IEnumerable<IMimePartData> BodyParts { get; }
+    IList<IMimePartData> BodyParts { get; }
 
     /// <summary>
     /// Get the attachments.
     /// </summary>
     /// <value>The attachments.</value>
-    IEnumerable<IMimeEntityData> Attachments { get; }
+    IList<IMimeEntityData> Attachments { get; }
 }
