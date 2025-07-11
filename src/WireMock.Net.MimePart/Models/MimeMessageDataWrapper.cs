@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MimeKit;
 using Stef.Validation;
 
@@ -21,16 +22,13 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     /// Initializes a new instance of the <see cref="MimeMessageDataWrapper"/> class.
     /// </summary>
     /// <param name="message">The MIME message to wrap.</param>
-    /// <exception cref="System.ArgumentNullException">
-    /// <paramref name="message"/> is <see langword="null"/>.
-    /// </exception>
     public MimeMessageDataWrapper(IMimeMessage message)
     {
         Message = Guard.NotNull(message);
     }
 
     /// <inheritdoc/>
-    public IEnumerable<object> Headers => Message.Headers;
+    public IEnumerable<string> Headers => Message.Headers.Select(h => h.ToString());
 
     /// <inheritdoc/>
     public int Importance => (int)Message.Importance;
@@ -42,40 +40,40 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     public int XPriority => (int)Message.XPriority;
 
     /// <inheritdoc/>
-    public object Sender => Message.Sender;
+    public string Sender => Message.Sender.Address;
 
     /// <inheritdoc/>
-    public object ResentSender => Message.ResentSender;
+    public string ResentSender => Message.ResentSender.ToString();
 
     /// <inheritdoc/>
-    public object From => Message.From;
+    public IEnumerable<string> From => Message.From.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ResentFrom => Message.ResentFrom;
+    public IEnumerable<string> ResentFrom => Message.ResentFrom.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ReplyTo => Message.ReplyTo;
+    public IEnumerable<string> ReplyTo => Message.ReplyTo.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ResentReplyTo => Message.ResentReplyTo;
+    public IEnumerable<string> ResentReplyTo => Message.ResentReplyTo.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object To => Message.To;
+    public IEnumerable<string> To => Message.To.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ResentTo => Message.ResentTo;
+    public IEnumerable<string> ResentTo => Message.ResentTo.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object Cc => Message.Cc;
+    public IEnumerable<string> Cc => Message.Cc.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ResentCc => Message.ResentCc;
+    public IEnumerable<string> ResentCc => Message.ResentCc.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object Bcc => Message.Bcc;
+    public IEnumerable<string> Bcc => Message.Bcc.Select(h => h.ToString());
 
     /// <inheritdoc/>
-    public object ResentBcc => Message.ResentBcc;
+    public IEnumerable<string> ResentBcc => Message.ResentBcc.Select(h => h.ToString());
 
     /// <inheritdoc/>
     public string Subject => Message.Subject;
@@ -102,7 +100,7 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     public Version MimeVersion => Message.MimeVersion;
 
     /// <inheritdoc/>
-    public object Body => Message.Body;
+    public IMimeEntityData Body => new MimeEntityDataWrapper(Message.Body);
 
     /// <inheritdoc/>
     public string TextBody => Message.TextBody;
@@ -111,8 +109,8 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     public string HtmlBody => Message.HtmlBody;
 
     /// <inheritdoc/>
-    public IEnumerable<object> BodyParts => Message.BodyParts;
+    public IEnumerable<IMimePartData> BodyParts => Message.BodyParts.OfType<MimePart>().Select(mp => new MimePartDataWrapper(mp));
 
     /// <inheritdoc/>
-    public IEnumerable<object> Attachments => Message.Attachments;
+    public IEnumerable<IMimeEntityData> Attachments => Message.Attachments.Select(me => new MimeEntityDataWrapper(me));
 }

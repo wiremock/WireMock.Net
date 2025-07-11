@@ -14,7 +14,7 @@ public interface IMimeMessageData
     /// Get the list of headers.
     /// </summary>
     /// <value>The list of headers.</value>
-    IEnumerable<object> Headers { get; }
+    IEnumerable<string> Headers { get; }
 
     /// <summary>
     /// Get the value of the Importance header.
@@ -38,73 +38,73 @@ public interface IMimeMessageData
     /// Get the address in the Sender header.
     /// </summary>
     /// <value>The address in the Sender header.</value>
-    object Sender { get; }
+    string Sender { get; }
 
     /// <summary>
     /// Get the address in the Resent-Sender header.
     /// </summary>
     /// <value>The address in the Resent-Sender header.</value>
-    object ResentSender { get; }
+    string ResentSender { get; }
 
     /// <summary>
     /// Get the list of addresses in the From header.
     /// </summary>
     /// <value>The list of addresses in the From header.</value>
-    object From { get; }
+    IEnumerable<string> From { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-From header.
     /// </summary>
     /// <value>The list of addresses in the Resent-From header.</value>
-    object ResentFrom { get; }
+    IEnumerable<string> ResentFrom { get; }
 
     /// <summary>
     /// Get the list of addresses in the Reply-To header.
     /// </summary>
     /// <value>The list of addresses in the Reply-To header.</value>
-    object ReplyTo { get; }
+    IEnumerable<string> ReplyTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Reply-To header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Reply-To header.</value>
-    object ResentReplyTo { get; }
+    IEnumerable<string> ResentReplyTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the To header.
     /// </summary>
     /// <value>The list of addresses in the To header.</value>
-    object To { get; }
+    IEnumerable<string> To { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-To header.
     /// </summary>
     /// <value>The list of addresses in the Resent-To header.</value>
-    object ResentTo { get; }
+    IEnumerable<string> ResentTo { get; }
 
     /// <summary>
     /// Get the list of addresses in the Cc header.
     /// </summary>
     /// <value>The list of addresses in the Cc header.</value>
-    object Cc { get; }
+    IEnumerable<string> Cc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Cc header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Cc header.</value>
-    object ResentCc { get; }
+    IEnumerable<string> ResentCc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Bcc header.
     /// </summary>
     /// <value>The list of addresses in the Bcc header.</value>
-    object Bcc { get; }
+    IEnumerable<string> Bcc { get; }
 
     /// <summary>
     /// Get the list of addresses in the Resent-Bcc header.
     /// </summary>
     /// <value>The list of addresses in the Resent-Bcc header.</value>
-    object ResentBcc { get; }
+    IEnumerable<string> ResentBcc { get; }
 
     /// <summary>
     /// Get the subject of the message.
@@ -158,7 +158,7 @@ public interface IMimeMessageData
     /// Get the body of the message.
     /// </summary>
     /// <value>The body of the message.</value>
-    object Body { get; }
+    IMimeEntityData Body { get; }
 
     /// <summary>
     /// Get the text body of the message if it exists.
@@ -176,11 +176,11 @@ public interface IMimeMessageData
     /// Get the body parts of the message.
     /// </summary>
     /// <value>The body parts.</value>
-    IEnumerable<object> BodyParts { get; }
+    IEnumerable<IMimePartData> BodyParts { get; }
 
     /// <summary>
     /// Get the attachments.
     /// </summary>
     /// <value>The attachments.</value>
-    IEnumerable<object> Attachments { get; }
+    IEnumerable<IMimeEntityData> Attachments { get; }
 }
