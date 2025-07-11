@@ -10,6 +10,7 @@ using MimeKit;
 using Stef.Validation;
 using WireMock.Http;
 using WireMock.Models;
+using WireMock.Models.Mime;
 using WireMock.Types;
 
 namespace WireMock.Util;

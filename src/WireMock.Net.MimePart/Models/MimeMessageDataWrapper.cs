@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MimeKit;
 using Stef.Validation;
+using WireMock.Models.Mime;
 
 namespace WireMock.Models;
 
@@ -130,4 +131,10 @@ internal class MimeMessageDataWrapper : IMimeMessageData
 
     /// <inheritdoc/>
     public IList<IMimeEntityData> Attachments { get; private set; }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return _message.ToString();
+    }
 }

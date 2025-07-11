@@ -3,7 +3,7 @@
 using System;
 using MimeKit;
 using WireMock.Matchers.Helpers;
-using WireMock.Models;
+using WireMock.Models.Mime;
 using WireMock.Util;
 
 namespace WireMock.Matchers;
@@ -52,9 +52,9 @@ public class MimePartMatcher : IMimePartMatcher
 
         _funcs =
         [
-            mp => ContentTypeMatcher?.IsMatch(GetContentTypeValue(mp.ContentType)) ?? MatchScores.Perfect,
-            mp => ContentDispositionMatcher?.IsMatch(mp.ContentDisposition.ToString().Replace("Content-Disposition: ", string.Empty)) ?? MatchScores.Perfect,
-            mp => ContentTransferEncodingMatcher?.IsMatch(mp.ContentTransferEncoding.ToString().ToLowerInvariant()) ?? MatchScores.Perfect,
+            mp => ContentTypeMatcher?.IsMatch(GetContentTypeAsString(mp.ContentType)) ?? MatchScores.Perfect,
+            mp => ContentDispositionMatcher?.IsMatch(mp.ContentDisposition?.ToString()?.Replace("Content-Disposition: ", string.Empty)) ?? MatchScores.Perfect,
+            mp => ContentTransferEncodingMatcher?.IsMatch(mp.ContentTransferEncoding.ToLowerInvariant()) ?? MatchScores.Perfect,
             MatchOnContent
         ];
     }
@@ -96,7 +96,7 @@ public class MimePartMatcher : IMimePartMatcher
         var bodyParserSettings = new BodyParserSettings
         {
             Stream = mimePart.Open(),
-            ContentType = GetContentTypeValue(mimePart.ContentType),
+            ContentType = GetContentTypeAsString(mimePart.ContentType),
             DeserializeJson = true,
             ContentEncoding = null, // mimePart.ContentType.CharsetEncoding.ToString(),
             DecompressGZipAndDeflate = true
@@ -106,8 +106,8 @@ public class MimePartMatcher : IMimePartMatcher
         return BodyDataMatchScoreCalculator.CalculateMatchScore(bodyData, ContentMatcher);
     }
 
-    private static string? GetContentTypeValue(string? contentType)
+    private static string? GetContentTypeAsString(IContentTypeData? contentType)
     {
-        return contentType?.ToString().Replace("Content-Type: ", string.Empty);
+        return contentType?.ToString()?.Replace("Content-Type: ", string.Empty);
     }
 }

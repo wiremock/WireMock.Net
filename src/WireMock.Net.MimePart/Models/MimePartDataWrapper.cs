@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using MimeKit;
 using Stef.Validation;
+using WireMock.Models.Mime;
 
 namespace WireMock.Models;
 
@@ -39,7 +40,7 @@ public class MimePartDataWrapper : MimeEntityDataWrapper, IMimePartData
     public string ContentMd5 => _part.ContentMd5;
 
     /// <inheritdoc/>
-    public int ContentTransferEncoding => (int)_part.ContentTransferEncoding;
+    public string ContentTransferEncoding => _part.ContentTransferEncoding.ToString();
 
     /// <inheritdoc/>
     public string FileName => _part.FileName;
@@ -54,4 +55,10 @@ public class MimePartDataWrapper : MimeEntityDataWrapper, IMimePartData
 
     /// <inheritdoc/>
     public Stream Open() => _part.Content.Open();
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return _part.ToString()!;
+    }
 }

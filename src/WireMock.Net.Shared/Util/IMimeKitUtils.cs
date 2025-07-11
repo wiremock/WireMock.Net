@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using WireMock.Models;
+using WireMock.Models.Mime;
 
 namespace WireMock.Util;
 

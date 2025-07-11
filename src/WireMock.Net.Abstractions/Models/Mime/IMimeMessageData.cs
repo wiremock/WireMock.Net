@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WireMock.Models;
+namespace WireMock.Models.Mime;
 
 /// <summary>
 /// A simplified interface exposing the public, readable properties of a MIME message.

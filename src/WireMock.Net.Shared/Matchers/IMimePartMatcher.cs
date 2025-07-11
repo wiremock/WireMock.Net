@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using WireMock.Models;
+using WireMock.Models.Mime;
 
 namespace WireMock.Matchers;
 

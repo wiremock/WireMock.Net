@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MimeKit;
 using Stef.Validation;
+using WireMock.Models.Mime;
 
 namespace WireMock.Models;
 
@@ -26,6 +27,8 @@ public class MimeEntityDataWrapper : IMimeEntityData
     {
         _entity = Guard.NotNull(entity);
 
+        ContentDisposition = _entity.ContentDisposition != null ? new ContentDispositionDataWrapper(_entity.ContentDisposition) : null;
+        ContentType = _entity.ContentType != null ? new ContentTypeDataWrapper(_entity.ContentType) : null;
         Headers = _entity.Headers.Select(h => h.ToString()).ToList();
     }
 
@@ -33,10 +36,10 @@ public class MimeEntityDataWrapper : IMimeEntityData
     public IList<string> Headers { get; private set; }
 
     /// <inheritdoc/>
-    public string ContentDisposition => _entity.ContentDisposition.ToString();
+    public IContentDispositionData? ContentDisposition { get; private set; }
 
     /// <inheritdoc/>
-    public string ContentType => _entity.ContentType.ToString();
+    public IContentTypeData? ContentType { get; private set; }
 
     /// <inheritdoc/>
     public Uri ContentBase => _entity.ContentBase;
@@ -49,4 +52,10 @@ public class MimeEntityDataWrapper : IMimeEntityData
 
     /// <inheritdoc/>
     public bool IsAttachment => _entity.IsAttachment;
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return _entity.ToString()!;
+    }
 }

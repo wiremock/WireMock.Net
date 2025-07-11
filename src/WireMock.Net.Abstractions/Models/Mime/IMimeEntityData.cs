@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace WireMock.Models;
+namespace WireMock.Models.Mime;
 
 /// <summary>
 /// A simplified interface exposing the public, readable properties of MimeEntity.
@@ -20,13 +20,13 @@ public interface IMimeEntityData
     /// Get the content disposition.
     /// </summary>
     /// <value>The content disposition.</value>
-    string ContentDisposition { get; }
+    IContentDispositionData? ContentDisposition { get; }
 
     /// <summary>
     /// Get the type of the content.
     /// </summary>
     /// <value>The type of the content.</value>
-    string ContentType { get; }
+    IContentTypeData? ContentType { get; }
 
     /// <summary>
     /// Get the base content URI.

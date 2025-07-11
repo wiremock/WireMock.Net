@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace WireMock.Models;
+namespace WireMock.Models.Mime;
 
 /// <summary>
 /// A simplified interface exposing the public, readable properties of MimePart.
@@ -31,8 +31,8 @@ public interface IMimePartData : IMimeEntityData
     /// <summary>
     /// Get the content transfer encoding.
     /// </summary>
-    /// <value>The content transfer encoding as an integer.</value>
-    int ContentTransferEncoding { get; }
+    /// <value>The content transfer encoding as a string.</value>
+    string ContentTransferEncoding { get; }
 
     /// <summary>
     /// Get the name of the file.
