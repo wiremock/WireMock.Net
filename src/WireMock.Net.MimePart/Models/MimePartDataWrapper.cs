@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Collections.Generic;
 using System.IO;
 using MimeKit;
 using Stef.Validation;
@@ -44,7 +45,12 @@ public class MimePartDataWrapper : MimeEntityDataWrapper, IMimePartData
     public string FileName => _part.FileName;
 
     /// <inheritdoc/>
-    public object Content => _part.Content;
+    public IDictionary<string, object?> Content => new Dictionary<string, object?>()
+    {
+        { nameof(MimePart.Content.Encoding),  _part.Content.Encoding },
+        { nameof(MimePart.Content.NewLineFormat),  _part.Content.NewLineFormat },
+        { nameof(MimePart.Content.Stream),  _part.Content.Stream }
+    };
 
     /// <inheritdoc/>
     public Stream Open() => _part.Content.Open();

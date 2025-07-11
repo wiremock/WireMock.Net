@@ -72,7 +72,9 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
             foreach (var mimePartMatcher in Matchers.OfType<IMimePartMatcher>().ToArray())
             {
                 score = MatchScores.Mismatch;
-                foreach (var mimeBodyPart in MimeKitUtils.GetBodyParts(message))
+
+                //foreach (var mimeBodyPart in MimeKitUtils.GetBodyParts(message))
+                foreach (var mimeBodyPart in message.BodyParts)
                 {
                     var matchResult = mimePartMatcher.IsMatch(mimeBodyPart);
                     if (matchResult.IsPerfect())

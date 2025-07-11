@@ -53,18 +53,18 @@ internal class MimeKitUtils : IMimeKitUtils
         return false;
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<object> GetBodyParts(IMimeMessageData mimeMessageData)
-    {
-        if (mimeMessageData is not MimeMessageDataWrapper wrapper)
-        {
-            throw new ArgumentException($"The mimeMessageData must be of type {nameof(MimeMessageDataWrapper)}", nameof(mimeMessageData));
-        }
+    ///// <inheritdoc />
+    //public IReadOnlyList<IMimePartData> GetBodyParts(IMimeMessageData mimeMessageData)
+    //{
+    //    if (mimeMessageData is not MimeMessageDataWrapper wrapper)
+    //    {
+    //        throw new ArgumentException($"The mimeMessageData must be of type {nameof(MimeMessageDataWrapper)}", nameof(mimeMessageData));
+    //    }
 
-        return wrapper.Message.BodyParts
-            .OfType<MimePart>()
-            .ToArray();
-    }
+    //    return wrapper.Message.BodyParts
+    //        .OfType<MimePart>()
+    //        .ToArray();
+    //}
 
     private static bool StartsWithMultiPart(WireMockList<string> contentTypeHeader)
     {

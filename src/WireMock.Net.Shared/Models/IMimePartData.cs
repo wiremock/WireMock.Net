@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Collections.Generic;
 using System.IO;
 
 namespace WireMock.Models;
@@ -43,7 +44,7 @@ public interface IMimePartData : IMimeEntityData
     /// Get the MIME content.
     /// </summary>
     /// <value>The MIME content.</value>
-    object Content { get; }
+    IDictionary<string, object?> Content { get; }
 
     /// <summary>
     /// Open the decoded content stream.

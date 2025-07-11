@@ -1,5 +1,7 @@
 // Copyright © WireMock.Net
 
+using WireMock.Models;
+
 namespace WireMock.Matchers;
 
 /// <summary>
@@ -33,5 +35,5 @@ public interface IMimePartMatcher : IMatcher
     /// </summary>
     /// <param name="value">The MimePart.</param>
     /// <returns>A value between 0.0 - 1.0 of the similarity.</returns>
-    public MatchResult IsMatch(object value);
+    public MatchResult IsMatch(IMimePartData value);
 }

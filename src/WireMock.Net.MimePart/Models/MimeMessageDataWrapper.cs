@@ -85,7 +85,7 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     public DateTimeOffset ResentDate => Message.ResentDate;
 
     /// <inheritdoc/>
-    public IList<string> References => Message.References;
+    public IEnumerable<string> References => Message.References;
 
     /// <inheritdoc/>
     public string InReplyTo => Message.InReplyTo;

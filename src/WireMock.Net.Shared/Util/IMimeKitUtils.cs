@@ -27,10 +27,10 @@ public interface IMimeKitUtils
     /// <returns><c>true</c> when parsed correctly, else <c>false</c></returns>
     bool TryGetMimeMessage(IRequestMessage requestMessage, [NotNullWhen(true)] out IMimeMessageData? mimeMessageData);
 
-    /// <summary>
-    /// Gets the body parts from the MimeKit.MimeMessage.
-    /// </summary>
-    /// <param name="mimeMessageData">The MimeKit.MimeMessage.</param>
-    /// <returns>A list of MimeParts.</returns>
-    IReadOnlyList<object> GetBodyParts(IMimeMessageData mimeMessageData);
+    ///// <summary>
+    ///// Gets the body parts from the MimeKit.MimeMessage.
+    ///// </summary>
+    ///// <param name="mimeMessageData">The MimeKit.MimeMessage.</param>
+    ///// <returns>A list of MimeParts.</returns>
+    //IReadOnlyList<IMimePartData> GetBodyParts(IMimeMessageData mimeMessageData);
 }

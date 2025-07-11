@@ -105,7 +105,7 @@ public interface IMimeMessageData
     /// </summary>
     /// <value>The list of addresses in the Resent-Bcc header.</value>
     IEnumerable<string> ResentBcc { get; }
-
+        
     /// <summary>
     /// Get the subject of the message.
     /// </summary>
@@ -128,7 +128,7 @@ public interface IMimeMessageData
     /// Get the list of references to other messages.
     /// </summary>
     /// <value>The references.</value>
-    IList<string> References { get; }
+    IEnumerable<string> References { get; }
 
     /// <summary>
     /// Get the Message-Id that this message is replying to.
