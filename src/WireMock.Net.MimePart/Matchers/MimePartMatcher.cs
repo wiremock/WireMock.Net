@@ -67,7 +67,7 @@ public class MimePartMatcher : IMimePartMatcher
 
         try
         {
-            if (value is IMimePartData mimePart && Array.TrueForAll(_funcs, func => func(mimePart).IsPerfect()))
+            if (Array.TrueForAll(_funcs, func => func(value).IsPerfect()))
             {
                 score = MatchScores.Perfect;
             }
