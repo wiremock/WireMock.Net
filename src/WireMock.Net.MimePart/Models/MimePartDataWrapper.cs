@@ -9,7 +9,7 @@ using WireMock.Models.Mime;
 namespace WireMock.Models;
 
 /// <summary>
-/// A wrapper class that implements the <see cref="IMimePartData"/>> interface by wrapping an <see cref="IMimePart"/> interface.
+/// A wrapper class that implements the <see cref="IMimePartData" /> interface by wrapping an <see cref="IMimePart"/> interface.
 /// </summary>
 /// <remarks>
 /// This class provides a simplified, read-only view of an <see cref="IMimePart"/>.
