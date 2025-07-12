@@ -120,21 +120,21 @@ public class ResponseWithTransformerTests
         var request = new RequestMessage(urlDetails, "POST", ClientIp);
 
         var responseBuilder = Response.Create()
-            .WithBody("{{request.PathSegments.[0]}} {{request.AbsolutePathSegments.[0]}}")
+            .WithBody("{{request.PathSegments.[0]}} {{request.PathSegments.[1]}} {{request.AbsolutePathSegments.[0]}}")
             .WithTransformer();
 
         // Act
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
 
         // Assert
-        Check.That(response.Message.BodyData!.BodyAsString).Equals("a wiremock");
+        Check.That(response.Message.BodyData!.BodyAsString).Equals("a b wiremock");
     }
 
     [Theory]
-    [InlineData("{{request.PathSegments.[0]}}", "a")]
-    [InlineData("prefix_{{request.PathSegments.[0]}}", "prefix_a")]
-    [InlineData("{{request.PathSegments.[0]}}_postfix", "a_postfix")]
-    [InlineData("prefix_{{request.PathSegments.[0]}}_postfix", "prefix_a_postfix")]
+    [InlineData("{{request.PathSegments.[0]}} {{request.PathSegments.[1]}}", "a b")]
+    [InlineData("prefix_{{request.PathSegments.[0]}} {{request.PathSegments.[1]}}", "prefix_a b")]
+    [InlineData("{{request.PathSegments.[0]}} {{request.PathSegments.[1]}}_postfix", "a b_postfix")]
+    [InlineData("prefix_{{request.PathSegments.[0]}} {{request.PathSegments.[1]}}_postfix", "prefix_a b_postfix")]
     public async Task Response_ProvideResponse_Handlebars_BodyAsJson_PathSegments(string field, string expected)
     {
         // Assign
