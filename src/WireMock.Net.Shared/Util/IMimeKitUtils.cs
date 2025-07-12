@@ -27,5 +27,4 @@ public interface IMimeKitUtils
     /// <returns><c>true</c> when parsed correctly, else <c>false</c></returns>
     bool TryGetMimeMessage(IRequestMessage requestMessage, [NotNullWhen(true)] out IMimeMessageData? mimeMessageData);
 
-// Removed commented-out method signature and XML documentation for GetBodyParts.
 }
