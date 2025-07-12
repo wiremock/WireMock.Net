@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System;
-using MimeKit;
 using WireMock.Matchers.Helpers;
 using WireMock.Models.Mime;
 using WireMock.Util;
@@ -98,7 +97,7 @@ public class MimePartMatcher : IMimePartMatcher
             Stream = mimePart.Open(),
             ContentType = GetContentTypeAsString(mimePart.ContentType),
             DeserializeJson = true,
-            ContentEncoding = null, // mimePart.ContentType.CharsetEncoding.ToString(),
+            ContentEncoding = null, // mimePart.ContentType?.CharsetEncoding.ToString(),
             DecompressGZipAndDeflate = true
         };
 

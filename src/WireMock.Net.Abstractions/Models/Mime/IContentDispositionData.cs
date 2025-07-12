@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
+using System.Collections.Generic;
 
 namespace WireMock.Models.Mime;
 
@@ -25,7 +26,7 @@ public interface IContentDispositionData
     /// Get the list of parameters on the ContentDisposition.
     /// </summary>
     /// <value>The parameters.</value>
-    object Parameters { get; }
+    public IList<string> Parameters { get; }
 
     /// <summary>
     /// Get the name of the file.

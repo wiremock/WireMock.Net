@@ -1,6 +1,8 @@
 // Copyright © WireMock.Net
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MimeKit;
 using Stef.Validation;
 using WireMock.Models.Mime;
@@ -25,6 +27,8 @@ public class ContentDispositionDataWrapper : IContentDispositionData
     public ContentDispositionDataWrapper(ContentDisposition contentDisposition)
     {
         _contentDisposition = Guard.NotNull(contentDisposition);
+
+        Parameters = _contentDisposition.Parameters.Select(p => p.ToString()).ToList();
     }
 
     /// <inheritdoc/>
@@ -34,7 +38,7 @@ public class ContentDispositionDataWrapper : IContentDispositionData
     public bool IsAttachment => _contentDisposition.IsAttachment;
 
     /// <inheritdoc/>
-    public object Parameters => _contentDisposition.Parameters;
+    public IList<string> Parameters { get; private set; }
 
     /// <inheritdoc/>
     public string FileName => _contentDisposition.FileName;
