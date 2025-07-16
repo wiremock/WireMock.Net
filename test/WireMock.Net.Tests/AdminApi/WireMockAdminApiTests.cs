@@ -24,7 +24,6 @@ using WireMock.Client.Extensions;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Models;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -185,7 +184,7 @@ public partial class WireMockAdminApiTests
         server.Stop();
     }
 
-    
+
 
     [Fact]
     public async Task IWireMockAdminApi_FindRequestsAsync()

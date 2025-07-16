@@ -1,0 +1,20 @@
+﻿{
+  "consumer": {
+    "name": "Default Consumer"
+  },
+  "interactions": [
+    {
+      "description": "A POST request to change something",
+      "request": {
+        "method": "POST",
+        "path": "/tester"
+      },
+      "response": {
+        "status": 200
+      }
+    }
+  ],
+  "provider": {
+    "name": "Default Provider"
+  }
+}
