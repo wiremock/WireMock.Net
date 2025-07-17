@@ -42,7 +42,7 @@ internal static class PactMapper
 
             var interaction = new Interaction
             {
-                Description = !string.IsNullOrEmpty(mapping.Description) ? mapping.Description : mapping.Title ?? string.Empty,
+                Description = !string.IsNullOrWhiteSpace(mapping.Description) ? mapping.Description : mapping.Title ?? string.Empty,
                 Request = MapRequest(mapping.Request, path),
                 Response = MapResponse(mapping.Response)
             };
