@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -24,7 +23,7 @@ namespace WireMock.Matchers;
 /// GrapQLMatcher Schema Matcher
 /// </summary>
 /// <inheritdoc cref="IStringMatcher"/>
-public class GraphQLMatcher : IStringMatcher
+public class GraphQLMatcher : IGraphQLMatcher
 {
     private sealed class GraphQLRequest
     {
@@ -201,7 +200,7 @@ public class GraphQLMatcher : IStringMatcher
                     throw new WireMockException($"The GraphQL Scalar type '{scalarTypeDefinitionName}' is not defined in the CustomScalars dictionary.");
                 }
 
-                // Create a this custom Scalar GraphType (extending the WireMockCustomScalarGraphType<{clrType}> class)
+                // Create a custom Scalar GraphType (extending the WireMockCustomScalarGraphType<{clrType}> class)
                 var customScalarGraphType = ReflectionUtils.CreateGenericType(customScalarGraphTypeName, typeof(WireMockCustomScalarGraphType<>), clrType);
                 schema.RegisterType(customScalarGraphType);
             }
@@ -210,4 +209,3 @@ public class GraphQLMatcher : IStringMatcher
         return schema;
     }
 }
-#endif

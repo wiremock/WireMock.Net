@@ -8,7 +8,7 @@ namespace WireMock.RequestBuilders;
 /// <summary>
 /// The ProtoBufRequestBuilder interface.
 /// </summary>
-public interface IProtoBufRequestBuilder : IGraphQLRequestBuilder
+public interface IProtoBufRequestBuilder : IMultiPartRequestBuilder
 {
     /// <summary>
     /// WithBodyAsProtoBuf

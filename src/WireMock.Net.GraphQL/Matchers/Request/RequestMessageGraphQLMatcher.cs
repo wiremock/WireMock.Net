@@ -34,7 +34,6 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     {
     }
 
-#if GRAPHQL
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestMessageGraphQLMatcher"/> class.
     /// </summary>
@@ -45,7 +44,6 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
         this(CreateMatcherArray(matchBehaviour, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern, GraphQL.Types.ISchema>(schema), customScalars))
     {
     }
-#endif
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestMessageGraphQLMatcher"/> class.
@@ -92,7 +90,6 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
         return Matchers == null ? new[] { new MatchResult() } : Matchers.Select(matcher => CalculateMatchResult(requestMessage, matcher)).ToArray();
     }
 
-#if GRAPHQL
     private static IMatcher[] CreateMatcherArray(
         MatchBehaviour matchBehaviour,
         AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern, GraphQL.Types.ISchema> schema,
@@ -101,10 +98,4 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     {
         return new[] { new GraphQLMatcher(schema, customScalars, matchBehaviour) }.Cast<IMatcher>().ToArray();
     }
-#else
-    private static IMatcher[] CreateMatcherArray(MatchBehaviour matchBehaviour, object schema, IDictionary<string, Type>? customScalars)
-    {
-        throw new System.NotSupportedException("The GrapQLMatcher can not be used for .NETStandard1.3 or .NET Framework 4.6.1 or lower.");
-    }
-#endif
 }

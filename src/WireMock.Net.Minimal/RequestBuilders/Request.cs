@@ -73,6 +73,17 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
         return _requestMatchers.OfType<T>().FirstOrDefault(func);
     }
 
+    public IRequestBuilder Add<T>(T requestMatcher) where T : IRequestMatcher
+    {
+        foreach (var existing in _requestMatchers.OfType<T>().ToArray())
+        {
+            _requestMatchers.Remove(existing);
+        }
+
+        _requestMatchers.Add(requestMatcher);
+        return this;
+    }
+
     internal bool TryGetProtoBufMatcher([NotNullWhen(true)] out IProtoBufMatcher? protoBufMatcher)
     {
         protoBufMatcher = GetRequestMessageMatcher<RequestMessageProtoBufMatcher>()?.Matcher;
@@ -84,16 +95,5 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
         var bodyMatcher = GetRequestMessageMatcher<RequestMessageBodyMatcher>();
         protoBufMatcher = bodyMatcher?.Matchers?.OfType<IProtoBufMatcher>().FirstOrDefault();
         return protoBufMatcher != null;
-    }
-
-    private IRequestBuilder Add<T>(T requestMatcher) where T : IRequestMatcher
-    {
-        foreach (var existing in _requestMatchers.OfType<T>().ToArray())
-        {
-            _requestMatchers.Remove(existing);
-        }
-
-        _requestMatchers.Add(requestMatcher);
-        return this;
     }
 }
