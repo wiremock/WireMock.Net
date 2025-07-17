@@ -60,7 +60,7 @@ public class PactTests
     }
 
     [Fact]
-    public async Task SavePact_Get_Request_WithDescription()
+    public async Task SavePact_Post_Request_WithDescription()
     {
         var server = WireMockServer.Start();
         server
