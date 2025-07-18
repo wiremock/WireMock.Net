@@ -167,7 +167,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' ">
-        <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.4.6" />
+        <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.5.2" />
     </ItemGroup>
 
     <!--<ItemGroup>
