@@ -13,7 +13,7 @@ namespace WireMock.Extensions;
 public static class AnyOfExtensions
 {
     /// <summary>
-    /// Gets the pattern as sring value.
+    /// Gets the pattern as string value.
     /// </summary>
     /// <param name="value">AnyOf type</param>
     /// <returns>The string value</returns>
