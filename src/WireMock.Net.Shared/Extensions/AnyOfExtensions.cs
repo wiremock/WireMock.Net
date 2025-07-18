@@ -13,10 +13,10 @@ namespace WireMock.Extensions;
 public static class AnyOfExtensions
 {
     /// <summary>
-    /// Gets the pattern.
+    /// Gets the pattern as sring value.
     /// </summary>
     /// <param name="value">AnyOf type</param>
-    /// <returns>string value</returns>
+    /// <returns>The string value</returns>
     public static string GetPattern(this AnyOf<string, StringPattern> value)
     {
         return value.IsFirst ? value.First : value.Second.Pattern;

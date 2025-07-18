@@ -10,6 +10,7 @@ using WireMock.Admin.Mappings;
 using WireMock.Extensions;
 using WireMock.Matchers;
 using WireMock.Models;
+using WireMock.Models.GraphQL;
 using WireMock.Settings;
 using WireMock.Util;
 
@@ -70,11 +71,11 @@ internal class MatcherMapper
 
             case nameof(ExactObjectMatcher):
                 return CreateExactObjectMatcher(matchBehaviour, stringPatterns[0]);
-#if GRAPHQL
+
             case "GraphQLMatcher":
-                //return new GraphQLMatcher(stringPatterns[0].GetPattern(), matcherModel.CustomScalars, matchBehaviour, matchOperator);
-                return TypeLoader.LoadNewInstance<IGraphQLMatcher>(stringPatterns[0].GetPattern(), matcherModel.CustomScalars, matchBehaviour, matchOperator);
-#endif
+                var patternAsString = stringPatterns[0].GetPattern();
+                var schema = new AnyOf<string, StringPattern, ISchemaData>(patternAsString);
+                return TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, matcherModel.CustomScalars, matchBehaviour, matchOperator);
 
             case "MimePartMatcher":
                 return CreateMimePartMatcher(matchBehaviour, matcherModel);
@@ -166,11 +167,10 @@ internal class MatcherMapper
             case XPathMatcher xpathMatcher:
                 model.XmlNamespaceMap = xpathMatcher.XmlNamespaceMap;
                 break;
-#if GRAPHQL
+
             case IGraphQLMatcher graphQLMatcher:
                 model.CustomScalars = graphQLMatcher.CustomScalars;
                 break;
-#endif
         }
 
         switch (matcher)

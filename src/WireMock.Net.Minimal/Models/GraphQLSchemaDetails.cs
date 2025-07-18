@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using AnyOfTypes;
 using Newtonsoft.Json;
+using WireMock.Models.GraphQL;
 
 namespace WireMock.Models;
 
@@ -24,15 +25,15 @@ public class GraphQLSchemaDetails
 
 #if GRAPHQL
     /// <summary>
-    /// The GraphQL schema as a <seealso cref="GraphQL.Types.ISchema"/>.
+    /// The GraphQL schema as a <seealso cref="ISchemaData"/>.
     /// </summary>
-    public GraphQL.Types.ISchema? SchemaAsISchema { get; set; }
+    public ISchemaData? SchemaAsISchemaData { get; set; }
 
     /// <summary>
     /// The GraphQL Schema.
     /// </summary>
     [JsonIgnore]
-    public AnyOf<string, StringPattern, GraphQL.Types.ISchema>? Schema
+    public AnyOf<string, StringPattern, ISchemaData>? Schema
     {
         get
         {
@@ -46,9 +47,9 @@ public class GraphQLSchemaDetails
                 return SchemaAsStringPattern;
             }
 
-            if (SchemaAsISchema != null)
+            if (SchemaAsISchemaData != null)
             {
-                return new AnyOf<string, StringPattern, GraphQL.Types.ISchema>(SchemaAsISchema);
+                return new AnyOf<string, StringPattern, ISchemaData>(SchemaAsISchemaData);
             }
 
             return null;

@@ -1076,7 +1076,7 @@ message HelloReply {
         };
 
         // Act
-        var matcher = (GraphQLMatcher)_sut.Map(model)!;
+        var matcher = (IGraphQLMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.GetPatterns().Should().HaveElementAt(0, testSchema);

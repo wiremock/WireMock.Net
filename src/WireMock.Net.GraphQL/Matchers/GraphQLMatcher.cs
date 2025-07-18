@@ -16,7 +16,7 @@ using WireMock.Extensions;
 using WireMock.GraphQL.Models;
 using WireMock.Models;
 using WireMock.Models.GraphQL;
-using WireMock.Util;
+using WireMock.Utils;
 
 namespace WireMock.Matchers;
 
@@ -94,7 +94,7 @@ public class GraphQLMatcher : IGraphQLMatcher
                 break;
 
             case AnyOfType.Third:
-                _schema = ((SchemaWrapper)schema.Third).Schema;
+                _schema = ((SchemaDataWrapper)schema.Third).Schema;
                 break;
 
             default:

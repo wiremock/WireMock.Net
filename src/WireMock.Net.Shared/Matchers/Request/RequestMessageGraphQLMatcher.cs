@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AnyOfTypes;
 using Stef.Validation;
 using WireMock.Models;
 using WireMock.Models.GraphQL;
@@ -44,7 +45,7 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     /// <param name="schema">The schema.</param>
     /// <param name="customScalars">A dictionary defining the custom scalars used in this schema. [optional]</param>
     public RequestMessageGraphQLMatcher(MatchBehaviour matchBehaviour, ISchemaData schema, IDictionary<string, Type>? customScalars = null) :
-        this(CreateMatcherArray(matchBehaviour, new AnyOfTypes.AnyOf<string, StringPattern, ISchemaData>(schema), customScalars))
+        this(CreateMatcherArray(matchBehaviour, new AnyOf<string, StringPattern, ISchemaData>(schema), customScalars))
     {
     }
 
@@ -95,11 +96,11 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
 
     private static IMatcher[] CreateMatcherArray(
         MatchBehaviour matchBehaviour,
-        AnyOfTypes.AnyOf<string, StringPattern, ISchemaData> schema,
+        AnyOf<string, StringPattern, ISchemaData> schema,
         IDictionary<string, Type>? customScalars
     )
     {
-        var graphQLMatcher = TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, customScalars, matchBehaviour);
+        var graphQLMatcher = TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, customScalars, matchBehaviour, MatchOperator.Or);
         return [graphQLMatcher];
     }
 }
