@@ -1,6 +1,6 @@
-{
+﻿{
   "consumer": {
-    "name": "Something API Consumer Multiple"
+    "name": "Something API Consumer Get"
   },
   "interactions": [
     {
@@ -9,7 +9,7 @@
         "headers": {
           "Accept": "application/json"
         },
-        "method": "POST",
+        "method": "GET",
         "path": "/tester",
         "query": "q1=test&q2=ok"
       },
@@ -23,27 +23,6 @@
           "Content-Type": "application/json; charset=utf-8"
         },
         "status": 200
-      }
-    },
-    {
-      "description": "A Post request to add the something",
-      "request": {
-        "headers": {
-          "Accept": "application/json"
-        },
-        "method": "POST",
-        "path": "/add",
-        "body": {
-          "Id": "1",
-          "FirstName": "Totally"
-        }
-      },
-      "response": {
-        "body": {
-          "id": "1",
-          "firstName": "Totally"
-        },
-        "status": 303
       }
     }
   ],

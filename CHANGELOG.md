@@ -1,3 +1,7 @@
+# 1.8.15 (18 July 2025)
+- [#1331](https://github.com/wiremock/WireMock.Net/pull/1331) - Correctly map the Pact Interaction Description property [bug] contributed by [StefH](https://github.com/StefH)
+- [#1330](https://github.com/wiremock/WireMock.Net/issues/1330) - Generated Pact-compatible consumer contract does not contain description [bug]
+
 # 1.8.14 (13 July 2025)
 - [#1325](https://github.com/wiremock/WireMock.Net/pull/1325) - Add method CreateHttpClientFactory [feature] contributed by [StefH](https://github.com/StefH)
 - [#1326](https://github.com/wiremock/WireMock.Net/pull/1326) - Implement IMimeMessageData [feature] contributed by [StefH](https://github.com/StefH)

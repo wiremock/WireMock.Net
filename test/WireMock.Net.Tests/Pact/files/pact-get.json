@@ -4,7 +4,7 @@
   },
   "interactions": [
     {
-      "providerState": "A GET request to retrieve the something",
+      "description": "A GET request to retrieve the something",
       "request": {
         "headers": {
           "Accept": "application/json"

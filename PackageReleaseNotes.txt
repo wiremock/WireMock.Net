@@ -1,8 +1,5 @@
-# 1.8.14 (13 July 2025)
-- #1325 Add method CreateHttpClientFactory [feature]
-- #1326 Implement IMimeMessageData [feature]
-- #1329 Fix HandlebarsContext.ParseAndEvaluate [bug]
-- #556 Support OData  [wontfix]
-- #1327 Response Body Does Not Evaluate Multiple Handlebars Templates [bug]
+# 1.8.15 (18 July 2025)
+- #1331 Correctly map the Pact Interaction Description property [bug]
+- #1330 Generated Pact-compatible consumer contract does not contain description [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
