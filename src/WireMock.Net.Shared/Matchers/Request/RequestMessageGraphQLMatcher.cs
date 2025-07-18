@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Stef.Validation;
+using WireMock.Models;
+using WireMock.Models.GraphQL;
 using WireMock.Types;
+using WireMock.Util;
 
 namespace WireMock.Matchers.Request;
 
@@ -40,8 +43,8 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     /// <param name="matchBehaviour">The match behaviour.</param>
     /// <param name="schema">The schema.</param>
     /// <param name="customScalars">A dictionary defining the custom scalars used in this schema. [optional]</param>
-    public RequestMessageGraphQLMatcher(MatchBehaviour matchBehaviour, GraphQL.Types.ISchema schema, IDictionary<string, Type>? customScalars = null) :
-        this(CreateMatcherArray(matchBehaviour, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern, GraphQL.Types.ISchema>(schema), customScalars))
+    public RequestMessageGraphQLMatcher(MatchBehaviour matchBehaviour, ISchemaData schema, IDictionary<string, Type>? customScalars = null) :
+        this(CreateMatcherArray(matchBehaviour, new AnyOfTypes.AnyOf<string, StringPattern, ISchemaData>(schema), customScalars))
     {
     }
 
@@ -87,15 +90,16 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
 
     private IReadOnlyList<MatchResult> CalculateMatchResults(IRequestMessage requestMessage)
     {
-        return Matchers == null ? new[] { new MatchResult() } : Matchers.Select(matcher => CalculateMatchResult(requestMessage, matcher)).ToArray();
+        return Matchers == null ? [new MatchResult()] : Matchers.Select(matcher => CalculateMatchResult(requestMessage, matcher)).ToArray();
     }
 
     private static IMatcher[] CreateMatcherArray(
         MatchBehaviour matchBehaviour,
-        AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern, GraphQL.Types.ISchema> schema,
+        AnyOfTypes.AnyOf<string, StringPattern, ISchemaData> schema,
         IDictionary<string, Type>? customScalars
     )
     {
-        return new[] { new GraphQLMatcher(schema, customScalars, matchBehaviour) }.Cast<IMatcher>().ToArray();
+        var graphQLMatcher = TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, customScalars, matchBehaviour);
+        return [graphQLMatcher];
     }
 }

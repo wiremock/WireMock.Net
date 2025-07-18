@@ -13,8 +13,9 @@ using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Exceptions;
 using WireMock.Extensions;
-using WireMock.Matchers.Models;
+using WireMock.GraphQL.Models;
 using WireMock.Models;
+using WireMock.Models.GraphQL;
 using WireMock.Util;
 
 namespace WireMock.Matchers;
@@ -53,7 +54,7 @@ public class GraphQLMatcher : IGraphQLMatcher
     /// <param name="matchBehaviour">The match behaviour. (default = "AcceptOnMatch")</param>
     /// <param name="matchOperator">The <see cref="Matchers.MatchOperator"/> to use. (default = "Or")</param>
     public GraphQLMatcher(
-        AnyOf<string, StringPattern, ISchema> schema,
+        AnyOf<string, StringPattern, ISchemaData> schema,
         MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch,
         MatchOperator matchOperator = MatchOperator.Or
     ) : this(schema, null, matchBehaviour, matchOperator)
@@ -68,7 +69,7 @@ public class GraphQLMatcher : IGraphQLMatcher
     /// <param name="matchBehaviour">The match behaviour. (default = "AcceptOnMatch")</param>
     /// <param name="matchOperator">The <see cref="Matchers.MatchOperator"/> to use. (default = "Or")</param>
     public GraphQLMatcher(
-        AnyOf<string, StringPattern, ISchema> schema,
+        AnyOf<string, StringPattern, ISchemaData> schema,
         IDictionary<string, Type>? customScalars,
         MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch,
         MatchOperator matchOperator = MatchOperator.Or
@@ -93,7 +94,7 @@ public class GraphQLMatcher : IGraphQLMatcher
                 break;
 
             case AnyOfType.Third:
-                _schema = schema.Third;
+                _schema = ((SchemaWrapper)schema.Third).Schema;
                 break;
 
             default:

@@ -4,6 +4,7 @@
 using System;
 using FluentAssertions;
 using WireMock.Matchers.Models;
+using WireMock.Models;
 using Xunit;
 
 namespace WireMock.Net.Tests.Matchers.Models;

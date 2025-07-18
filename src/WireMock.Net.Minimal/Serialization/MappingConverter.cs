@@ -114,7 +114,7 @@ internal class MappingConverter(MatcherMapper mapper)
 #if GRAPHQL
         if (requestMessageGraphQLMatcher?.Matchers != null)
         {
-            if (requestMessageGraphQLMatcher.Matchers.OfType<GraphQLMatcher>().FirstOrDefault() is { } graphQLMatcher && graphQLMatcher.GetPatterns().Any())
+            if (requestMessageGraphQLMatcher.Matchers.OfType<IGraphQLMatcher>().FirstOrDefault() is { } graphQLMatcher && graphQLMatcher.GetPatterns().Any())
             {
                 sb.AppendLine($"        .WithGraphQLSchema({GetString(graphQLMatcher)})");
             }

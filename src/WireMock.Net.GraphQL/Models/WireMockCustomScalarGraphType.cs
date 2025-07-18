@@ -3,7 +3,8 @@
 using System;
 using GraphQL.Types;
 
-namespace WireMock.Matchers.Models;
+// ReSharper disable once CheckNamespace
+namespace WireMock.GraphQL.Models;
 
 /// <inheritdoc />
 public abstract class WireMockCustomScalarGraphType<T> : ScalarGraphType
