@@ -13,7 +13,6 @@ using WireMock.Constants;
 using WireMock.Extensions;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
-using WireMock.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
@@ -111,7 +110,6 @@ internal class MappingConverter(MatcherMapper mapper)
             sb.AppendLine($"        .WithHttpVersion({requestMessageHttpVersionMatcher.HttpVersion})");
         }
 
-#if GRAPHQL
         if (requestMessageGraphQLMatcher?.Matchers != null)
         {
             if (requestMessageGraphQLMatcher.Matchers.OfType<IGraphQLMatcher>().FirstOrDefault() is { } graphQLMatcher && graphQLMatcher.GetPatterns().Any())
@@ -119,7 +117,6 @@ internal class MappingConverter(MatcherMapper mapper)
                 sb.AppendLine($"        .WithGraphQLSchema({GetString(graphQLMatcher)})");
             }
         }
-#endif
 
         if (requestMessageMultiPartMatcher?.Matchers != null)
         {

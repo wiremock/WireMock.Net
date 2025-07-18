@@ -23,7 +23,6 @@ namespace WireMock.Matchers;
 /// <summary>
 /// GrapQLMatcher Schema Matcher
 /// </summary>
-/// <inheritdoc cref="IStringMatcher"/>
 public class GraphQLMatcher : IGraphQLMatcher
 {
     private sealed class GraphQLRequest
