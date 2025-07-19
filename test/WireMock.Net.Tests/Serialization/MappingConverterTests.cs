@@ -549,7 +549,7 @@ message HelloReply {
    lastName:String
    fullName:String 
   }";
-        var request = Request.Create().WithBodyAsGraphQLSchema(schema);
+        var request = Request.Create().WithGraphQLSchema(schema);
         var response = Response.Create();
         var mapping = new Mapping(_guid, _updatedAt, string.Empty, string.Empty, null, _settings, request, response, 42, null, null, null, null, null, false, null, null);
 

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace WireMock.Util;
+namespace WireMock.Utils;
 
 internal static class ReflectionUtils
 {
