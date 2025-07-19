@@ -132,7 +132,42 @@ namespace WireMock.Net.ConsoleApplication
             }
             """;
 
-        private const string TestSchema =
+        private const string TestSchemaQueryStudents =
+            """
+            type Query {
+                students:[Student]
+            }
+
+            type Student {
+                id:ID!
+                firstName:String
+                lastName:String
+                fullName:String 
+            }
+            """;
+
+        private const string TestSchemaQueryStudentById =
+            """
+            type Query {
+                studentById(id:ID!):Student
+            }
+
+            type Student {
+                id:ID!
+                firstName:String
+                lastName:String
+                fullName:String 
+            }
+            """;
+
+        private const string TestSchemaQueryGreeting =
+            """
+            type Query {
+                greeting:String
+            }
+            """;
+
+        private const string TestSchemaMutationMessage =
             """
             scalar DateTime
             scalar MyCustomScalar
@@ -152,19 +187,6 @@ namespace WireMock.Net.ConsoleApplication
                 createMessage(input: MessageInput): Message
                 createAnotherMessage(x: MyCustomScalar, dt: DateTime): Message
                 updateMessage(id: ID!, input: MessageInput): Message
-            }
-
-            type Query {
-                greeting:String
-                students:[Student]
-                studentById(id:ID!):Student
-            }
-
-            type Student {
-                id:ID!
-                firstName:String
-                lastName:String
-                fullName:String 
             }
             """;
 
@@ -433,10 +455,73 @@ namespace WireMock.Net.ConsoleApplication
                 .Given(Request.Create()
                     .WithPath("/graphql")
                     .UsingPost()
-                    .WithBodyAsGraphQL(TestSchema, customScalars)
+                    .WithGraphQLSchema(TestSchemaQueryStudents)
                 )
                 .RespondWith(Response.Create()
-                    .WithBody("GraphQL is ok")
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody(
+                        """
+                        {
+                          "data": {
+                            "students": [
+                              {
+                                "id": "1",
+                                "firstName": "Alice",
+                                "lastName": "Johnson",
+                                "fullName": "Alice Johnson"
+                              },
+                              {
+                                "id": "2",
+                                "firstName": "Bob",
+                                "lastName": "Smith",
+                                "fullName": "Bob Smith"
+                              }
+                            ]
+                          }
+                        }
+                        """)
+                );
+
+            server
+                .Given(Request.Create()
+                    .WithPath("/graphql")
+                    .UsingPost()
+                    .WithGraphQLSchema(TestSchemaQueryStudentById)
+                    .WithBody(new JsonPartialWildcardMatcher("{ \"variables\": { \"sid\": \"1\" } }"))
+                )
+                .WithTitle("Student found")
+                .RespondWith(Response.Create()
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody(
+                        """
+                        {
+                          "data": {
+                            "studentById": {
+                              "id": "123",
+                              "firstName": "John",
+                              "lastName": "Doe",
+                              "fullName": "John Doe"
+                            }
+                          }
+                        }
+                        """)
+                );
+
+            server
+                .Given(Request.Create()
+                    .WithPath("/graphql")
+                    .UsingPost()
+                    .WithGraphQLSchema(TestSchemaQueryStudentById)
+                )
+                .WithTitle("Student not found")
+                .RespondWith(Response.Create()
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody(
+                        """
+                        {
+                          "data": null
+                        }
+                        """)
                 );
 #endif
 
