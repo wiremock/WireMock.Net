@@ -1,3 +1,7 @@
+# 1.8.16 (19 July 2025)
+- [#1332](https://github.com/wiremock/WireMock.Net/pull/1332) - Use correct Handlebars.Net.Helpers.Xslt (2.5.2) [bug] contributed by [StefH](https://github.com/StefH)
+- [#1328](https://github.com/wiremock/WireMock.Net/issues/1328) - ReflectionTypeLoadException occurs when running multiple unit tests (Nunit 3) [bug]
+
 # 1.8.15 (18 July 2025)
 - [#1331](https://github.com/wiremock/WireMock.Net/pull/1331) - Correctly map the Pact Interaction Description property [bug] contributed by [StefH](https://github.com/StefH)
 - [#1330](https://github.com/wiremock/WireMock.Net/issues/1330) - Generated Pact-compatible consumer contract does not contain description [bug]

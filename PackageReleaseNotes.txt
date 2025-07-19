@@ -1,5 +1,5 @@
-# 1.8.15 (18 July 2025)
-- #1331 Correctly map the Pact Interaction Description property [bug]
-- #1330 Generated Pact-compatible consumer contract does not contain description [bug]
+# 1.8.16 (19 July 2025)
+- #1332 Use correct Handlebars.Net.Helpers.Xslt (2.5.2) [bug]
+- #1328 ReflectionTypeLoadException occurs when running multiple unit tests (Nunit 3) [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
