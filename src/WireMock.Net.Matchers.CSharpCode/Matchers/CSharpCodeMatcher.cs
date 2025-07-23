@@ -18,7 +18,7 @@ namespace WireMock.Matchers;
 /// CSharpCode / CS-Script Matcher
 /// </summary>
 /// <inheritdoc cref="ICSharpCodeMatcher"/>
-internal class CSharpCodeMatcher : ICSharpCodeMatcher
+public class CSharpCodeMatcher : ICSharpCodeMatcher
 {
     private const string TemplateForIsMatchWithString = "public class CodeHelper {{ public bool IsMatch(string it) {{ {0} }} }}";
 
@@ -63,17 +63,24 @@ internal class CSharpCodeMatcher : ICSharpCodeMatcher
         Value = patterns;
     }
 
-    public MatchResult IsMatch(string? input)
+    /// <inheritdoc />
+    public MatchResult IsMatch(string? input) => IsMatchInternal(input);
+
+    /// <inheritdoc />
+    public MatchResult IsMatch(object? input) => IsMatchInternal(input);
+
+    /// <inheritdoc />
+    public string GetCSharpCodeArguments()
     {
-        return IsMatchInternal(input);
+        return $"new {Name}" +
+               $"(" +
+               $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
+               $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +
+               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}" +
+               $")";
     }
 
-    public MatchResult IsMatch(object? input)
-    {
-        return IsMatchInternal(input);
-    }
-
-    public MatchResult IsMatchInternal(object? input)
+    private MatchResult IsMatchInternal(object? input)
     {
         var score = MatchScores.Mismatch;
         Exception? exception = null;
@@ -91,17 +98,6 @@ internal class CSharpCodeMatcher : ICSharpCodeMatcher
         }
 
         return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
-    }
-
-    /// <inheritdoc />
-    public string GetCSharpCodeArguments()
-    {
-        return $"new {Name}" +
-               $"(" +
-               $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}" +
-               $")";
     }
 
     private bool IsMatch(dynamic input, string pattern)

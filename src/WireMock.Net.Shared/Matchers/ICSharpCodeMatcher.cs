@@ -7,6 +7,4 @@ namespace WireMock.Matchers;
 /// </summary>
 /// <inheritdoc cref="IObjectMatcher"/>
 /// <inheritdoc cref="IStringMatcher"/>
-public interface ICSharpCodeMatcher : IObjectMatcher, IStringMatcher
-{
-}
+public interface ICSharpCodeMatcher : IObjectMatcher, IStringMatcher;
