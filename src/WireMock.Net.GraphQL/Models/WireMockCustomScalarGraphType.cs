@@ -1,10 +1,10 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
 using System;
 using GraphQL.Types;
 
-namespace WireMock.Matchers.Models;
+// ReSharper disable once CheckNamespace
+namespace WireMock.GraphQL.Models;
 
 /// <inheritdoc />
 public abstract class WireMockCustomScalarGraphType<T> : ScalarGraphType
@@ -29,4 +29,3 @@ public abstract class WireMockCustomScalarGraphType<T> : ScalarGraphType
         return (T)Convert.ChangeType(value, typeof(T));
     }
 }
-#endif

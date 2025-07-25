@@ -126,7 +126,6 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' and '$(TargetFramework)' != 'net461'">
-        <PackageReference Include="GraphQL.NewtonsoftJson" Version="8.2.1" />
         <PackageReference Include="ProtoBufJsonConverter" Version="0.10.0" />
     </ItemGroup>
 
