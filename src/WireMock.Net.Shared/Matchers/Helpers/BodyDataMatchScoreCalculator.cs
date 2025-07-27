@@ -38,7 +38,7 @@ internal static class BodyDataMatchScoreCalculator
         {
             // If the body is a byte array, try to match.
             var detectedBodyType = requestMessage.DetectedBodyType;
-            if (detectedBodyType is BodyType.Bytes or BodyType.String or BodyType.FormUrlEncoded)
+            if (detectedBodyType is BodyType.Bytes or BodyType.String or BodyType.FormUrlEncoded || exactObjectMatcher.Value is byte[])
             {
                 return exactObjectMatcher.IsMatch(requestMessage.BodyAsBytes);
             }
