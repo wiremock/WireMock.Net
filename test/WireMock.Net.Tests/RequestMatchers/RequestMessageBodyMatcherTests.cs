@@ -405,6 +405,79 @@ public class RequestMessageBodyMatcherTests
     }
 
     [Theory]
+    [InlineData(new byte[] { 1 })]
+    [InlineData(new byte[] { 48 })]
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyTypeBytes_BodyAsBytes_ExactObjectMapper(byte[] bytes)
+    {
+        // Assign
+        var body = new BodyData
+        {
+            BodyAsBytes = bytes,
+            DetectedBodyType = BodyType.Bytes
+        };
+        var exactObjectMapper = new ExactObjectMatcher(bytes);
+
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
+
+        var matcher = new RequestMessageBodyMatcher(exactObjectMapper);
+
+        // Act
+        var result = new RequestMatchResult();
+        double score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        Check.That(score).IsEqualTo(1.0d);
+    }
+
+    [Fact]
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyTypeString_BodyAsBytes_ExactObjectMapper()
+    {
+        // Assign
+        var bytes = Encoding.UTF8.GetBytes("hello");
+        var body = new BodyData
+        {
+            BodyAsBytes = bytes,
+            DetectedBodyType = BodyType.String
+        };
+        var exactObjectMapper = new ExactObjectMatcher(bytes);
+
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
+
+        var matcher = new RequestMessageBodyMatcher(exactObjectMapper);
+
+        // Act
+        var result = new RequestMatchResult();
+        double score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        Check.That(score).IsEqualTo(1.0d);
+    }
+
+    [Fact]
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyTypeJson_BodyAsBytes_ExactObjectMapper()
+    {
+        // Assign
+        var bytes = Encoding.UTF8.GetBytes("""{"value":42}""");
+        var body = new BodyData
+        {
+            BodyAsBytes = bytes,
+            DetectedBodyType = BodyType.Json
+        };
+        var exactObjectMapper = new ExactObjectMatcher(bytes);
+
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
+
+        var matcher = new RequestMessageBodyMatcher(exactObjectMapper);
+
+        // Act
+        var result = new RequestMatchResult();
+        double score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        Check.That(score).IsEqualTo(1.0d);
+    }
+
+    [Theory]
     [MemberData(nameof(MatchingScoreData))]
     public async Task RequestMessageBodyMatcher_GetMatchingScore_Funcs_Matching(object body, RequestMessageBodyMatcher matcher, bool shouldMatch)
     {
@@ -459,13 +532,13 @@ public class RequestMessageBodyMatcherTests
                 {json, new RequestMessageBodyMatcher((object? o) => ((dynamic) o!).a == "b"), true},
                 {json, new RequestMessageBodyMatcher((string? s) => s == json), true},
                 {json, new RequestMessageBodyMatcher((byte[]? b) => b?.SequenceEqual(Encoding.UTF8.GetBytes(json)) == true), true},
-                
+
                 // JSON no match ---
                 {json, new RequestMessageBodyMatcher((object? o) => false), false},
                 {json, new RequestMessageBodyMatcher((string? s) => false), false},
                 {json, new RequestMessageBodyMatcher((byte[]? b) => false), false},
                 {json, new RequestMessageBodyMatcher(), false },
-                
+
                 // string match +++
                 {str, new RequestMessageBodyMatcher((object? o) => o == null), true},
                 {str, new RequestMessageBodyMatcher((string? s) => s == str), true},
@@ -476,7 +549,7 @@ public class RequestMessageBodyMatcherTests
                 {str, new RequestMessageBodyMatcher((string? s) => false), false},
                 {str, new RequestMessageBodyMatcher((byte[]? b) => false), false},
                 {str, new RequestMessageBodyMatcher(), false },
-                
+
                 // binary match +++
                 {bytes, new RequestMessageBodyMatcher((object? o) => o == null), true},
                 {bytes, new RequestMessageBodyMatcher((string? s) => s == null), true},
