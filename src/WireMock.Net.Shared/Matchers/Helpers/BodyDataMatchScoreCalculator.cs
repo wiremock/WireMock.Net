@@ -34,14 +34,10 @@ internal static class BodyDataMatchScoreCalculator
             }
         }
 
-        if (matcher is ExactObjectMatcher exactObjectMatcher)
+        if (matcher is ExactObjectMatcher { Value: byte[] } exactObjectMatcher)
         {
             // If the body is a byte array, try to match.
-            var detectedBodyType = requestMessage.DetectedBodyType;
-            if (detectedBodyType is BodyType.Bytes or BodyType.String or BodyType.FormUrlEncoded || exactObjectMatcher.Value is byte[])
-            {
-                return exactObjectMatcher.IsMatch(requestMessage.BodyAsBytes);
-            }
+            return exactObjectMatcher.IsMatch(requestMessage.BodyAsBytes);
         }
 
         // Check if the matcher is a IObjectMatcher
