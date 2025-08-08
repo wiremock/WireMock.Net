@@ -10,6 +10,7 @@ using WireMock.Admin.Mappings;
 using WireMock.Extensions;
 using WireMock.Matchers;
 using WireMock.Models;
+using WireMock.Models.GraphQL;
 using WireMock.Settings;
 using WireMock.Util;
 
@@ -70,10 +71,11 @@ internal class MatcherMapper
 
             case nameof(ExactObjectMatcher):
                 return CreateExactObjectMatcher(matchBehaviour, stringPatterns[0]);
-#if GRAPHQL
-            case nameof(GraphQLMatcher):
-                return new GraphQLMatcher(stringPatterns[0].GetPattern(), matcherModel.CustomScalars, matchBehaviour, matchOperator);
-#endif
+
+            case "GraphQLMatcher":
+                var patternAsString = stringPatterns[0].GetPattern();
+                var schema = new AnyOf<string, StringPattern, ISchemaData>(patternAsString);
+                return TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, matcherModel.CustomScalars, matchBehaviour, matchOperator);
 
             case "MimePartMatcher":
                 return CreateMimePartMatcher(matchBehaviour, matcherModel);
@@ -165,11 +167,10 @@ internal class MatcherMapper
             case XPathMatcher xpathMatcher:
                 model.XmlNamespaceMap = xpathMatcher.XmlNamespaceMap;
                 break;
-#if GRAPHQL
-            case GraphQLMatcher graphQLMatcher:
+
+            case IGraphQLMatcher graphQLMatcher:
                 model.CustomScalars = graphQLMatcher.CustomScalars;
                 break;
-#endif
         }
 
         switch (matcher)
@@ -277,10 +278,10 @@ internal class MatcherMapper
 
     private IMimePartMatcher CreateMimePartMatcher(MatchBehaviour matchBehaviour, MatcherModel matcher)
     {
-        var contentTypeMatcher = Map(matcher?.ContentTypeMatcher) as IStringMatcher;
-        var contentDispositionMatcher = Map(matcher?.ContentDispositionMatcher) as IStringMatcher;
-        var contentTransferEncodingMatcher = Map(matcher?.ContentTransferEncodingMatcher) as IStringMatcher;
-        var contentMatcher = Map(matcher?.ContentMatcher);
+        var contentTypeMatcher = Map(matcher.ContentTypeMatcher) as IStringMatcher;
+        var contentDispositionMatcher = Map(matcher.ContentDispositionMatcher) as IStringMatcher;
+        var contentTransferEncodingMatcher = Map(matcher.ContentTransferEncodingMatcher) as IStringMatcher;
+        var contentMatcher = Map(matcher.ContentMatcher);
 
         return TypeLoader.LoadNewInstance<IMimePartMatcher>(matchBehaviour, contentTypeMatcher, contentDispositionMatcher, contentTransferEncodingMatcher, contentMatcher);
     }

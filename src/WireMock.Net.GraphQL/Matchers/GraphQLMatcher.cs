@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,17 +13,17 @@ using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Exceptions;
 using WireMock.Extensions;
-using WireMock.Matchers.Models;
+using WireMock.GraphQL.Models;
 using WireMock.Models;
-using WireMock.Util;
+using WireMock.Models.GraphQL;
+using WireMock.Utils;
 
 namespace WireMock.Matchers;
 
 /// <summary>
 /// GrapQLMatcher Schema Matcher
 /// </summary>
-/// <inheritdoc cref="IStringMatcher"/>
-public class GraphQLMatcher : IStringMatcher
+public class GraphQLMatcher : IGraphQLMatcher
 {
     private sealed class GraphQLRequest
     {
@@ -54,7 +53,7 @@ public class GraphQLMatcher : IStringMatcher
     /// <param name="matchBehaviour">The match behaviour. (default = "AcceptOnMatch")</param>
     /// <param name="matchOperator">The <see cref="Matchers.MatchOperator"/> to use. (default = "Or")</param>
     public GraphQLMatcher(
-        AnyOf<string, StringPattern, ISchema> schema,
+        AnyOf<string, StringPattern, ISchemaData> schema,
         MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch,
         MatchOperator matchOperator = MatchOperator.Or
     ) : this(schema, null, matchBehaviour, matchOperator)
@@ -69,7 +68,7 @@ public class GraphQLMatcher : IStringMatcher
     /// <param name="matchBehaviour">The match behaviour. (default = "AcceptOnMatch")</param>
     /// <param name="matchOperator">The <see cref="Matchers.MatchOperator"/> to use. (default = "Or")</param>
     public GraphQLMatcher(
-        AnyOf<string, StringPattern, ISchema> schema,
+        AnyOf<string, StringPattern, ISchemaData> schema,
         IDictionary<string, Type>? customScalars,
         MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch,
         MatchOperator matchOperator = MatchOperator.Or
@@ -94,7 +93,7 @@ public class GraphQLMatcher : IStringMatcher
                 break;
 
             case AnyOfType.Third:
-                _schema = schema.Third;
+                _schema = ((SchemaDataWrapper)schema.Third).Schema;
                 break;
 
             default:
@@ -201,7 +200,7 @@ public class GraphQLMatcher : IStringMatcher
                     throw new WireMockException($"The GraphQL Scalar type '{scalarTypeDefinitionName}' is not defined in the CustomScalars dictionary.");
                 }
 
-                // Create a this custom Scalar GraphType (extending the WireMockCustomScalarGraphType<{clrType}> class)
+                // Create a custom Scalar GraphType (extending the WireMockCustomScalarGraphType<{clrType}> class)
                 var customScalarGraphType = ReflectionUtils.CreateGenericType(customScalarGraphTypeName, typeof(WireMockCustomScalarGraphType<>), clrType);
                 schema.RegisterType(customScalarGraphType);
             }
@@ -210,4 +209,3 @@ public class GraphQLMatcher : IStringMatcher
         return schema;
     }
 }
-#endif
