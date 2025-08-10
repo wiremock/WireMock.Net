@@ -58,7 +58,6 @@ For more info, see also this WIKI page: [What is WireMock.Net](https://github.co
 | | | |
 | &nbsp;&nbsp;**WireMock.Net.RestClient** | [![NuGet Badge WireMock.Net.RestClient](https://img.shields.io/nuget/v/WireMock.Net.RestClient)](https://www.nuget.org/packages/WireMock.Net.RestClient) | [![MyGet Badge WireMock.Net.RestClient](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.RestClient?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.RestClient)
 | &nbsp;&nbsp;**WireMock.Org.RestClient** | [![NuGet Badge WireMock.Org.RestClient](https://img.shields.io/nuget/v/WireMock.Org.RestClient)](https://www.nuget.org/packages/WireMock.Org.RestClient) | [![MyGet Badge WireMock.Org.RestClient](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Org.RestClient?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Org.RestClient)
-| &nbsp;&nbsp;**WireMock.Net.Extensions.Routing** | [![NuGet Badge WireMock.Net.Extensions.Routing](https://img.shields.io/nuget/v/WireMock.Net.Extensions.Routing)](https://www.nuget.org/packages/WireMock.Net.Extensions.Routing) | [![MyGet Badge WireMock.Net.Extensions.Routing](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Extensions.Routing?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Extensions.Routing)
 
 <br />
 

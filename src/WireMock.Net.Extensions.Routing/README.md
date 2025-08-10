@@ -1,10 +1,5 @@
 # WireMock.Net.Extensions.Routing
 
-![NuGet](https://img.shields.io/nuget/v/GennadyGS.WireMock.Net.Extensions.Routing?style=flat-square)
-![Build](https://img.shields.io/github/actions/workflow/status/GennadyGS/WireMock.Net.Extensions.Routing/build.yml?branch=master&style=flat-square)
-[![.NET](https://img.shields.io/badge/.NET-8.0%2B-blue.svg)](https://dotnet.microsoft.com/)
-![License](https://img.shields.io/github/license/GennadyGS/WireMock.Net.Extensions.Routing?style=flat-square)
-
 **WireMock.Net.Extensions.Routing** extends [WireMock.Net](https://github.com/wiremock/wiremock) with modern, minimal-API-style routing for .NET. It provides extension methods for expressive, maintainable, and testable HTTP routing, inspired by [ASP.NET Core Minimal APIs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis?view=aspnetcore-9.0).
 
 ---
