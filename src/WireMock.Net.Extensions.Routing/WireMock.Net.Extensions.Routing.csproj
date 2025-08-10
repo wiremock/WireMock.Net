@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <Description>WireMock.Net.Routing is a modern .NET library for [describe purpose].</Description>
+        <Description>WireMock.Net.Routing extends WireMock.Net with modern, minimal-API-style routing for .NET</Description>
         <Authors>Gennadii Saltyshchak</Authors>
         <TargetFrameworks>net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
