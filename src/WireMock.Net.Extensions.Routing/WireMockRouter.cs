@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;

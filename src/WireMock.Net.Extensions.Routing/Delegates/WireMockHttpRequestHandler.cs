@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 namespace WireMock.Net.Extensions.Routing.Delegates;
 
 /// <summary>

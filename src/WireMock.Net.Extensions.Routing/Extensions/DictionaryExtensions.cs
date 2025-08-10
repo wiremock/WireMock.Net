@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 using System.Collections.Immutable;
 
 namespace WireMock.Net.Extensions.Routing.Extensions;

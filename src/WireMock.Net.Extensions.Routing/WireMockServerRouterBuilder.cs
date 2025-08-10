@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
 using WireMock.Net.Extensions.Routing.Delegates;

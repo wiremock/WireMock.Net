@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 using Microsoft.AspNetCore.Http;
 using WireMock.Types;
 using WireMock.Util;

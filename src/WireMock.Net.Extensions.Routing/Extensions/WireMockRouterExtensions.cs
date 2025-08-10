@@ -1,3 +1,5 @@
+// Copyright © WireMock.Net
+
 using Newtonsoft.Json;
 using WireMock.Net.Extensions.Routing.Models;
 
