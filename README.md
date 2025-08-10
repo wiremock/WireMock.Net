@@ -54,6 +54,7 @@ For more info, see also this WIKI page: [What is WireMock.Net](https://github.co
 | &nbsp;&nbsp;**WireMock.Net.Matchers.CSharpCode** | [![NuGet Badge WireMock.Net.Matchers.CSharpCode](https://img.shields.io/nuget/v/WireMock.Net.Matchers.CSharpCode)](https://www.nuget.org/packages/WireMock.Net.Matchers.CSharpCode) | [![MyGet Badge WireMock.Net.Matchers.CSharpCode](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Matchers.CSharpCode?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Matchers.CSharpCode)
 | &nbsp;&nbsp;**WireMock.Net.OpenApiParser** | [![NuGet Badge WireMock.Net.OpenApiParser](https://img.shields.io/nuget/v/WireMock.Net.OpenApiParser)](https://www.nuget.org/packages/WireMock.Net.OpenApiParser) | [![MyGet Badge WireMock.Net.OpenApiParser](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.OpenApiParser?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.OpenApiParser)
 | &nbsp;&nbsp;**WireMock.Net.MimePart** | [![NuGet Badge WireMock.Net.MimePart](https://img.shields.io/nuget/v/WireMock.Net.MimePart)](https://www.nuget.org/packages/WireMock.Net.MimePart) | [![MyGet Badge WireMock.Net.MimePart](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.MimePart?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.MimePart)
+| &nbsp;&nbsp;**WireMock.Net.GraphQL** | [![NuGet Badge WireMock.Net.GraphQL](https://img.shields.io/nuget/v/WireMock.Net.GraphQL)](https://www.nuget.org/packages/WireMock.Net.GraphQL) | [![MyGet Badge WireMock.Net.GraphQL](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.GraphQL?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.GraphQL)
 | | | |
 | &nbsp;&nbsp;**WireMock.Net.RestClient** | [![NuGet Badge WireMock.Net.RestClient](https://img.shields.io/nuget/v/WireMock.Net.RestClient)](https://www.nuget.org/packages/WireMock.Net.RestClient) | [![MyGet Badge WireMock.Net.RestClient](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.RestClient?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.RestClient)
 | &nbsp;&nbsp;**WireMock.Org.RestClient** | [![NuGet Badge WireMock.Org.RestClient](https://img.shields.io/nuget/v/WireMock.Org.RestClient)](https://www.nuget.org/packages/WireMock.Org.RestClient) | [![MyGet Badge WireMock.Org.RestClient](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Org.RestClient?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Org.RestClient)
@@ -61,7 +62,7 @@ For more info, see also this WIKI page: [What is WireMock.Net](https://github.co
 
 <br />
 
-🔺 **WireMock.Net.Minimal** does not include: **WireMock.Net.MimePart**
+🔺 **WireMock.Net.Minimal** does not include *WireMock.Net.MimePart* and *WireMock.Net.GraphQL*.
 
 ---
 

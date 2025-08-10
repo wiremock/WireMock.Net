@@ -3,7 +3,7 @@
 #if GRAPHQL
 using System;
 using FluentAssertions;
-using WireMock.Matchers.Models;
+using WireMock.GraphQL.Models;
 using Xunit;
 
 namespace WireMock.Net.Tests.Matchers.Models;

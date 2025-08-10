@@ -39,6 +39,10 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    </ItemGroup>
+
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
     </ItemGroup>

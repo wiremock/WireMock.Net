@@ -1,5 +1,4 @@
-# 1.8.18 (04 August 2025)
-- #1339 Fixes an issue with matching JSON bodies as bytes [bug]
-- #1338 Specifying .WithBody(byte[]) fails to match for JSON bodies [bug]
+# 1.9.0 (10 August 2025)
+- #1334 Create GraphQL project [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
