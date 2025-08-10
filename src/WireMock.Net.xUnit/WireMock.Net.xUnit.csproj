@@ -3,7 +3,7 @@
         <Description>Some extensions for xUnit (ITestOutputHelper)</Description>
         <AssemblyTitle>WireMock.Net.xUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net45;net451;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net45;net451;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.xUnit</AssemblyName>
         <RootNamespace>WireMock.Net.Xunit</RootNamespace>

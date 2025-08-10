@@ -4,7 +4,7 @@
         <Description>FluentAssertions extensions for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.FluentAssertions</AssemblyTitle>
         <Authors>Mahmoud Ali;Stef Heyenrath</Authors>
-        <TargetFrameworks>net451;net47;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net451;net47;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.FluentAssertions</AssemblyName>
         <PackageId>WireMock.Net.FluentAssertions</PackageId>
