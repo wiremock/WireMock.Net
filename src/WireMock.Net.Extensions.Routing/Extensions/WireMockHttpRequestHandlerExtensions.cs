@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using WireMock.Net.Extensions.Routing.Delegates;
 
 namespace WireMock.Net.Extensions.Routing.Extensions;

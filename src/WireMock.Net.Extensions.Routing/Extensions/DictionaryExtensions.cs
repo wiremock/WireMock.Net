@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace WireMock.Net.Extensions.Routing.Extensions;

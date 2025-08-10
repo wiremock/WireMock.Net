@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace WireMock.Net.Extensions.Routing.Models;
 
 /// <summary>

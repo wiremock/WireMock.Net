@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace WireMock.Net.Extensions.Routing.Delegates;
 
 /// <summary>
