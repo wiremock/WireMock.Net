@@ -97,7 +97,7 @@ public partial class WireMockServer
 
             if (!string.IsNullOrEmpty(mappingModel.SetStateTo))
             {
-                respondProvider = respondProvider.WillSetStateTo(mappingModel.SetStateTo!);
+                respondProvider = respondProvider.WillSetStateTo(mappingModel.SetStateTo!, mappingModel.TimesInSameState);
             }
         }
 

@@ -56,6 +56,11 @@ public class MappingModel
     /// In case the value is null state will not be changed.
     /// </summary>
     public string? SetStateTo { get; set; }
+    
+    /// <summary>
+    /// The number of times this match should be matched before the state will be changed to the specified one.
+    /// </summary>
+    public int? TimesInSameState { get; set; }
 
     /// <summary>
     /// The request model.
@@ -86,7 +91,7 @@ public class MappingModel
     /// Fire and forget for webhooks.
     /// </summary>
     public bool? UseWebhooksFireAndForget { get; set; }
-    
+
     /// <summary>
     /// Data Object which can be used when WithTransformer is used.
     /// e.g. lookup a path in this object using

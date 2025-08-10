@@ -68,7 +68,7 @@ public interface IMapping
     /// <summary>
     /// The number of times this match should be matched before the state will be changed to the next state.
     /// </summary>
-    int? StateTimes { get; }
+    int? TimesInSameState { get; }
 
     /// <summary>
     /// The RequestMatcher.

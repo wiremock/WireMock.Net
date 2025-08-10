@@ -104,11 +104,18 @@ public class MappingBuilderTests
         ).RespondWith(Response.Create());
 
         _sut.Given(Request.Create()
-                .WithPath("/regex")
-                .WithParam("foo", new RegexMatcher(".*"))
-                .UsingGet()
-            )
-            .RespondWith(Response.Create());
+            .WithPath("/regex")
+            .WithParam("foo", new RegexMatcher(".*"))
+            .UsingGet()
+        ).RespondWith(Response.Create());
+
+        _sut.Given(Request.Create()
+            .WithPath("/todo/items")
+            .UsingGet())
+        .InScenario("To do list")
+        .WillSetStateTo("TodoList State Started", 2)
+        .RespondWith(Response.Create()
+            .WithBody("Buy milk"));
     }
 
     [Fact]

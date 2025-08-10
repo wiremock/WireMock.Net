@@ -267,6 +267,7 @@ internal class MappingConverter(MatcherMapper mapper)
             Scenario = mapping.Scenario,
             WhenStateIs = mapping.ExecutionConditionState,
             SetStateTo = mapping.NextState,
+            TimesInSameState = !string.IsNullOrWhiteSpace(mapping.NextState) ? mapping.TimesInSameState : null,
             Data = mapping.Data,
             Probability = mapping.Probability,
             Request = new RequestModel

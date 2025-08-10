@@ -299,7 +299,7 @@ namespace WireMock.Owin
             scenario.Counter++;
 
             // Only if the number of times this state is executed equals the required StateTimes, proceed to next state and reset the counter to 0
-            if (scenario.Counter == (mapping.StateTimes ?? 1))
+            if (scenario.Counter == (mapping.TimesInSameState ?? 1))
             {
                 scenario.NextState = mapping.NextState;
                 scenario.Counter = 0;

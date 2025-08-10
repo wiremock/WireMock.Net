@@ -165,5 +165,30 @@
       ]
     },
     Response: {}
+  },
+  {
+    Guid: 98fae52e-76df-47d9-876f-2ee32e931005,
+    UpdatedAt: 2023-01-14 15:16:17,
+    Scenario: To do list,
+    SetStateTo: TodoList State Started,
+    TimesInSameState: 2,
+    Request: {
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /todo/items,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Methods: [
+        GET
+      ]
+    },
+    Response: {
+      BodyDestination: SameAsSource,
+      Body: Buy milk
+    }
   }
 ]

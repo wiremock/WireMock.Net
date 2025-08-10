@@ -43,7 +43,7 @@ public class Mapping : IMapping
     public string? NextState { get; }
 
     /// <inheritdoc />
-    public int? StateTimes { get; }
+    public int? TimesInSameState { get; }
 
     /// <inheritdoc />
     public IRequestMatcher RequestMatcher { get; }
@@ -137,7 +137,7 @@ public class Mapping : IMapping
         Scenario = scenario;
         ExecutionConditionState = executionConditionState;
         NextState = nextState;
-        StateTimes = stateTimes;
+        TimesInSameState = stateTimes;
         Webhooks = webhooks;
         UseWebhooksFireAndForget = useWebhooksFireAndForget;
         TimeSettings = timeSettings;
