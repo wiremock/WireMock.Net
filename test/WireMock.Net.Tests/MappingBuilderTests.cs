@@ -34,6 +34,7 @@ public class MappingBuilderTests
     private static readonly DateTime UtcNow = new(2023, 1, 14, 15, 16, 17);
 
     private readonly Mock<IFileSystemHandler> _fileSystemHandlerMock;
+    private readonly int _numMappings;
 
     private readonly MappingBuilder _sut;
 
@@ -116,6 +117,8 @@ public class MappingBuilderTests
         .WillSetStateTo("TodoList State Started", 2)
         .RespondWith(Response.Create()
             .WithBody("Buy milk"));
+
+        _numMappings = _sut.GetMappings().Length;
     }
 
     [Fact]
@@ -204,9 +207,9 @@ public class MappingBuilderTests
         _sut.SaveMappingsToFolder(null);
 
         // Verify
-        _fileSystemHandlerMock.Verify(fs => fs.GetMappingFolder(), Times.Exactly(5));
-        _fileSystemHandlerMock.Verify(fs => fs.FolderExists(mappingFolder), Times.Exactly(5));
-        _fileSystemHandlerMock.Verify(fs => fs.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(5));
+        _fileSystemHandlerMock.Verify(fs => fs.GetMappingFolder(), Times.Exactly(_numMappings));
+        _fileSystemHandlerMock.Verify(fs => fs.FolderExists(mappingFolder), Times.Exactly(_numMappings));
+        _fileSystemHandlerMock.Verify(fs => fs.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(_numMappings));
         _fileSystemHandlerMock.VerifyNoOtherCalls();
     }
 
@@ -222,8 +225,8 @@ public class MappingBuilderTests
 
         // Verify
         _fileSystemHandlerMock.Verify(fs => fs.GetMappingFolder(), Times.Never);
-        _fileSystemHandlerMock.Verify(fs => fs.FolderExists(path), Times.Exactly(5));
-        _fileSystemHandlerMock.Verify(fs => fs.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(5));
+        _fileSystemHandlerMock.Verify(fs => fs.FolderExists(path), Times.Exactly(_numMappings));
+        _fileSystemHandlerMock.Verify(fs => fs.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(_numMappings));
         _fileSystemHandlerMock.VerifyNoOtherCalls();
     }
 }

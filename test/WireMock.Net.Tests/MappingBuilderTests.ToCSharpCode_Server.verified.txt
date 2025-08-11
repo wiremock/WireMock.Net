@@ -66,3 +66,13 @@ server
     .RespondWith(Response.Create()
     );
 
+server
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/todo/items", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("98fae52e-76df-47d9-876f-2ee32e931005")
+    .RespondWith(Response.Create()
+        .WithBody("Buy milk")
+    );
+
