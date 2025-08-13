@@ -168,7 +168,7 @@ internal class MappingConverter(MatcherMapper mapper)
         }
         if (!string.IsNullOrEmpty(mapping.NextState))
         {
-            sb.AppendLine($"    .WhenStateIs({mapping.NextState}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
+            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
         }
 
         if (mapping.Probability != null)
