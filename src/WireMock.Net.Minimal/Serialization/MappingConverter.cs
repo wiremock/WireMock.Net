@@ -161,6 +161,16 @@ internal class MappingConverter(MatcherMapper mapper)
         // Guid
         sb.AppendLine($"    .WithGuid(\"{mapping.Guid}\")");
 
+        // Scenario + State
+        if (!string.IsNullOrEmpty(mapping.Scenario))
+        {
+            sb.AppendLine($"    .InScenario({ToCSharpStringLiteral(mapping.Scenario)})");
+        }
+        if (!string.IsNullOrEmpty(mapping.NextState))
+        {
+            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
+        }
+
         if (mapping.Probability != null)
         {
             sb.AppendLine($"    .WithProbability({mapping.Probability.Value.ToString(CultureInfoUtils.CultureInfoEnUS)})");

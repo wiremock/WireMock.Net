@@ -134,6 +134,8 @@ internal static class CSharpFormatter
         };
     }
 
+    public static string ToCSharpIntLiteral(int? value) => value != null ? string.Format(CultureInfo.InvariantCulture, "{0}", value) : Null;
+
     public static string ToCSharpBooleanLiteral(bool value) => value ? "true" : "false";
 
     public static string ToCSharpStringLiteral(string? value)
