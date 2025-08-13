@@ -164,7 +164,7 @@ internal class MappingConverter(MatcherMapper mapper)
         // Scenario + State
         if (!string.IsNullOrEmpty(mapping.Scenario))
         {
-            sb.AppendLine($"    .InScenario({mapping.Scenario})");
+            sb.AppendLine($"    .InScenario({ToCSharpStringLiteral(mapping.Scenario)})");
         }
         if (!string.IsNullOrEmpty(mapping.NextState))
         {
