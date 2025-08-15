@@ -13,12 +13,11 @@ public sealed class WireMockRouterTests
 {
     private const string DefaultUrlPattern = "/test";
 
-    private readonly WireMockServer _server;
+    private readonly WireMockServer _server = WireMockServer.Start();
     private readonly WireMockRouter _sut;
 
     public WireMockRouterTests()
     {
-        _server = WireMockServer.Start();
         _sut = new WireMockRouter(_server);
     }
 

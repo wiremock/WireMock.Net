@@ -16,18 +16,13 @@ namespace WireMock.Net.Extensions.Routing;
 /// Provides routing and request mapping functionality for WireMock.Net,
 /// mimicking ASP.NET Core Minimal APIs routing style.
 /// </summary>
-public sealed class WireMockRouter
+/// <remarks>
+/// Initializes a new instance of the <see cref="WireMockRouter"/> class.
+/// </remarks>
+/// <param name="server">The WireMock server instance.</param>
+public sealed class WireMockRouter(WireMockServer server)
 {
-    private readonly WireMockServer _server;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WireMockRouter"/> class.
-    /// </summary>
-    /// <param name="server">The WireMock server instance.</param>
-    public WireMockRouter(WireMockServer server)
-    {
-        _server = server;
-    }
+    private readonly WireMockServer _server = server;
 
     /// <summary>
     /// Gets or initializes the collection of middleware for the router.
