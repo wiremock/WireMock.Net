@@ -1,8 +1,9 @@
 // Copyright © WireMock.Net
 
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using WireMock.Matchers;
 using WireMock.Net.Extensions.Routing.Delegates;
 using WireMock.Net.Extensions.Routing.Extensions;
@@ -30,9 +31,14 @@ public sealed class WireMockRouter(WireMockServer server)
     public IReadOnlyCollection<WireMockMiddleware> MiddlewareCollection { get; init; } = [];
 
     /// <summary>
-    /// Gets or initializes the default JSON serializer settings for the router.
+    /// Gets or initializes the default <see cref="IJsonConverter"/> [optional].
     /// </summary>
-    public JsonSerializerSettings? DefaultJsonSettings { get; init; }
+    public IJsonConverter? DefaultJsonConverter { get; init; }
+
+    /// <summary>
+    /// Gets or initializes the default <see cref="JsonConverterOptions"/> [optional].
+    /// </summary>
+    public JsonConverterOptions? DefaultJsonOptions { get; init; }
 
     /// <summary>
     /// Maps a route to a synchronous request handler.
@@ -73,16 +79,18 @@ public sealed class WireMockRouter(WireMockServer server)
     /// <param name="method">The HTTP method.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public WireMockRouter Map<TRequest>(
         string method,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, object?> requestHandler,
-        JsonSerializerSettings? jsonSettings = null)
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null)
     {
         object? CreateBody(IRequestMessage request) =>
-            requestHandler(CreateRequestInfo<TRequest>(request, pattern, jsonSettings));
+            requestHandler(CreateRequestInfo<TRequest>(request, pattern, jsonConverter, jsonOptions));
 
         return Map(method, pattern, CreateBody);
     }
@@ -116,13 +124,20 @@ public sealed class WireMockRouter(WireMockServer server)
         };
 
     private WireMockRequestInfo<TRequest> CreateRequestInfo<TRequest>(
-        IRequestMessage request, string pattern, JsonSerializerSettings? jsonSettings = null)
+        IRequestMessage request,
+        string pattern,
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null)
     {
         var requestInfo = CreateRequestInfo(request, pattern);
+        var establishedJsonConverter =
+            jsonConverter ?? DefaultJsonConverter ?? new NewtonsoftJsonConverter();
+        var establishedJsonOptions = jsonOptions ?? DefaultJsonOptions;
         return new WireMockRequestInfo<TRequest>(requestInfo.Request)
         {
             RouteArgs = requestInfo.RouteArgs,
-            Body = requestInfo.Request.GetBodyAsJson<TRequest>(jsonSettings ?? DefaultJsonSettings),
+            Body = requestInfo.Request.GetBodyAsJson<TRequest>(
+                establishedJsonConverter, establishedJsonOptions),
         };
     }
 

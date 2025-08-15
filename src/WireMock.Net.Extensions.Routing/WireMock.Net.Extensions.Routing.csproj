@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>WireMock.Net.Routing extends WireMock.Net with modern, minimal-API-style routing for .NET</Description>
         <Authors>Gennadii Saltyshchak</Authors>
@@ -18,6 +18,10 @@
 
     <ItemGroup>
         <None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.7.0" />
     </ItemGroup>
 
     <ItemGroup>

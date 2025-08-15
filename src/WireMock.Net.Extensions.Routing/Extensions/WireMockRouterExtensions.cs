@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using Newtonsoft.Json;
+using JsonConverter.Abstractions;
 using WireMock.Net.Extensions.Routing.Models;
 
 namespace WireMock.Net.Extensions.Routing.Extensions;
@@ -69,14 +69,16 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapPost<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, object?> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Post.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Post.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 
     /// <summary>
     /// Maps a POST request to an asynchronous request handler with a typed body.
@@ -85,14 +87,16 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The asynchronous request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapPost<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, Task<object?>> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Post.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Post.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 
     /// <summary>
     /// Maps a PUT request to a synchronous request handler.
@@ -127,14 +131,16 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapPut<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, object?> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Put.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Put.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 
     /// <summary>
     /// Maps a PUT request to an asynchronous request handler with a typed body.
@@ -143,14 +149,16 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The asynchronous request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapPut<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, Task<object?>> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Put.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Put.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 
     /// <summary>
     /// Maps a DELETE request to a synchronous request handler.
@@ -185,14 +193,16 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapDelete<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, object?> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Delete.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Delete.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 
     /// <summary>
     /// Maps a DELETE request to an asynchronous request handler with a typed body.
@@ -201,12 +211,14 @@ public static class WireMockRouterExtensions
     /// <param name="source">The router to extend.</param>
     /// <param name="pattern">The route pattern.</param>
     /// <param name="requestHandler">The asynchronous request handler function.</param>
-    /// <param name="jsonSettings">Optional JSON serializer settings.</param>
+    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
+    /// <param name="jsonOptions">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>The current <see cref="WireMockRouter"/> instance.</returns>
     public static WireMockRouter MapDelete<TRequest>(
         this WireMockRouter source,
         string pattern,
         Func<WireMockRequestInfo<TRequest>, Task<object?>> requestHandler,
-        JsonSerializerSettings? jsonSettings = null) =>
-        source.Map(HttpMethod.Delete.Method, pattern, requestHandler, jsonSettings);
+        IJsonConverter? jsonConverter = null,
+        JsonConverterOptions? jsonOptions = null) =>
+        source.Map(HttpMethod.Delete.Method, pattern, requestHandler, jsonConverter, jsonOptions);
 }

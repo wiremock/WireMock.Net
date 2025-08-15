@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Collections.Concurrent;
-using Newtonsoft.Json;
+using JsonConverter.Abstractions;
 using WireMock.Net.Extensions.Routing.Delegates;
 using WireMock.Server;
 
@@ -10,22 +10,19 @@ namespace WireMock.Net.Extensions.Routing;
 /// <summary>
 /// Provides a builder for configuring and creating a <see cref="WireMockRouter"/> with middleware and JSON settings.
 /// </summary>
-public sealed class WireMockServerRouterBuilder
+/// <remarks>
+/// Initializes a new instance of the <see cref="WireMockServerRouterBuilder"/> class.
+/// </remarks>
+/// <param name="server">The WireMock server instance.</param>
+public sealed class WireMockServerRouterBuilder(WireMockServer server)
 {
-    private readonly WireMockServer _server;
+    private readonly WireMockServer _server = server;
 
     private readonly ConcurrentQueue<WireMockMiddleware> _middlewareCollection = new();
 
-    private JsonSerializerSettings? _defaultJsonSettings;
+    private IJsonConverter? _defaultJsonConverter;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WireMockServerRouterBuilder"/> class.
-    /// </summary>
-    /// <param name="server">The WireMock server instance.</param>
-    public WireMockServerRouterBuilder(WireMockServer server)
-    {
-        _server = server;
-    }
+    private JsonConverterOptions? _defaultJsonOptions;
 
     /// <summary>
     /// Builds a <see cref="WireMockRouter"/> with the configured middleware and JSON settings.
@@ -35,7 +32,8 @@ public sealed class WireMockServerRouterBuilder
         new(_server)
         {
             MiddlewareCollection = _middlewareCollection,
-            DefaultJsonSettings = _defaultJsonSettings,
+            DefaultJsonConverter = _defaultJsonConverter,
+            DefaultJsonOptions = _defaultJsonOptions,
         };
 
     /// <summary>
@@ -50,14 +48,26 @@ public sealed class WireMockServerRouterBuilder
     }
 
     /// <summary>
-    /// Sets the default JSON serializer settings for the router.
+    /// Sets the default <see cref="IJsonConverter"/>.
     /// </summary>
-    /// <param name="defaultJsonSettings">The default JSON serializer settings.</param>
+    /// <param name="defaultJsonConverter">the default <see cref="IJsonConverter"/></param>
     /// <returns>The current <see cref="WireMockServerRouterBuilder"/> instance.</returns>
-    public WireMockServerRouterBuilder WithDefaultJsonSettings(
-        JsonSerializerSettings? defaultJsonSettings)
+    public WireMockServerRouterBuilder WithDefaultJsonConverter(
+        IJsonConverter? defaultJsonConverter)
     {
-        _defaultJsonSettings = defaultJsonSettings;
+        _defaultJsonConverter = defaultJsonConverter;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the default <see cref="JsonConverterOptions"/> [optional].
+    /// </summary>
+    /// <param name="defaultJsonOptions">the default <see cref="JsonConverterOptions"/> [optional]</param>
+    /// <returns>The current <see cref="WireMockServerRouterBuilder"/> instance.</returns>
+    public WireMockServerRouterBuilder WithDefaultJsonOptions(
+        JsonConverterOptions? defaultJsonOptions)
+    {
+        _defaultJsonOptions = defaultJsonOptions;
         return this;
     }
 }

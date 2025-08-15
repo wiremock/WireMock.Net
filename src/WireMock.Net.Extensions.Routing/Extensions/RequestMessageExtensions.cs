@@ -1,14 +1,16 @@
 // Copyright © WireMock.Net
 
-using Newtonsoft.Json;
+using JsonConverter.Abstractions;
 
 namespace WireMock.Net.Extensions.Routing.Extensions;
 
 internal static class RequestMessageExtensions
 {
     public static T? GetBodyAsJson<T>(
-        this IRequestMessage requestMessage, JsonSerializerSettings? settings = null) =>
+        this IRequestMessage requestMessage,
+        IJsonConverter jsonConverter,
+        JsonConverterOptions? jsonOptions = null) =>
         requestMessage.Body is not null
-            ? JsonConvert.DeserializeObject<T>(requestMessage.Body, settings)
+            ? jsonConverter.Deserialize<T>(requestMessage.Body, jsonOptions)
             : default;
 }
