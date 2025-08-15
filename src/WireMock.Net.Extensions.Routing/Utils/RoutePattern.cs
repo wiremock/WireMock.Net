@@ -39,12 +39,12 @@ internal static class RoutePattern
 
     public static string ToRegex(string pattern)
     {
-        static string GetArgMatchingRegex(Match match) =>
-            ArgType.GetByName(match.Groups["type"].Value).GetRegex();
-
         return ArgRegex
             .Replace(pattern, m => $"(?'{m.Groups["name"].Value}'{GetArgMatchingRegex(m)})")
             .ToMatchFullStringRegex();
+
+        static string GetArgMatchingRegex(Match match) =>
+            ArgType.GetByName(match.Groups["type"].Value).GetRegex();
     }
 
     private static IDictionary<string, ArgType> GetArgTypeMap(string pattern) =>

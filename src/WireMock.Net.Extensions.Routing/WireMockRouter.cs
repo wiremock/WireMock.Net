@@ -50,10 +50,10 @@ public sealed class WireMockRouter(WireMockServer server)
     public WireMockRouter Map(
         string method, string pattern, Func<WireMockRequestInfo, object?> requestHandler)
     {
+        return Map(method, pattern, CreateResponse);
+
         object? CreateResponse(IRequestMessage request) =>
             requestHandler(CreateRequestInfo(request, pattern));
-
-        return Map(method, pattern, CreateResponse);
     }
 
     /// <summary>
@@ -66,10 +66,10 @@ public sealed class WireMockRouter(WireMockServer server)
     public WireMockRouter Map(
         string method, string pattern, Func<WireMockRequestInfo, Task<object?>> requestHandler)
     {
+        return Map(method, pattern, CreateResponseAsync);
+
         Task<object?> CreateResponseAsync(IRequestMessage request) =>
             requestHandler(CreateRequestInfo(request, pattern));
-
-        return Map(method, pattern, CreateResponseAsync);
     }
 
     /// <summary>
@@ -89,10 +89,10 @@ public sealed class WireMockRouter(WireMockServer server)
         IJsonConverter? jsonConverter = null,
         JsonConverterOptions? jsonOptions = null)
     {
+        return Map(method, pattern, CreateBody);
+
         object? CreateBody(IRequestMessage request) =>
             requestHandler(CreateRequestInfo<TRequest>(request, pattern, jsonConverter, jsonOptions));
-
-        return Map(method, pattern, CreateBody);
     }
 
     private static WireMockRequestInfo CreateRequestInfo(IRequestMessage request, string pattern) =>
