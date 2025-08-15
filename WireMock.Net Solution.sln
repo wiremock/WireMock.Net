@@ -138,6 +138,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.Tests.UsingNuG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.GraphQL", "src\WireMock.Net.GraphQL\WireMock.Net.GraphQL.csproj", "{B6269AAC-170A-4346-8B9A-444DED3D9A45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.Extensions.Routing.Tests", "test\WireMock.Net.Extensions.Routing.Tests\WireMock.Net.Extensions.Routing.Tests.csproj", "{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.Extensions.Routing", "src\WireMock.Net.Extensions.Routing\WireMock.Net.Extensions.Routing.csproj", "{1E874C8F-08A2-493B-8421-619F9A6E9E77}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -332,6 +336,14 @@ Global
 		{B6269AAC-170A-4346-8B9A-444DED3D9A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6269AAC-170A-4346-8B9A-444DED3D9A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6269AAC-170A-4346-8B9A-444DED3D9A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E874C8F-08A2-493B-8421-619F9A6E9E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E874C8F-08A2-493B-8421-619F9A6E9E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E874C8F-08A2-493B-8421-619F9A6E9E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E874C8F-08A2-493B-8421-619F9A6E9E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -386,6 +398,8 @@ Global
 		{1F80A6E6-D146-4E40-9EA8-49DB8494239F} = {985E0ADB-D4B4-473A-AA40-567E279B7946}
 		{BBA332C6-28A9-42E7-9C4D-A0816E52A198} = {0BB8B634-407A-4610-A91F-11586990767A}
 		{B6269AAC-170A-4346-8B9A-444DED3D9A45} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
+		{3FCBCA9C-9DB0-4A96-B47E-30470764CC9C} = {0BB8B634-407A-4610-A91F-11586990767A}
+		{1E874C8F-08A2-493B-8421-619F9A6E9E77} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC539027-9852-430C-B19F-FD035D018458}
