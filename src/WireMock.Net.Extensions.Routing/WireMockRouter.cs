@@ -20,7 +20,7 @@ namespace WireMock.Net.Extensions.Routing;
 /// <remarks>
 /// Initializes a new instance of the <see cref="WireMockRouter"/> class.
 /// </remarks>
-/// <param name="server">The WireMock server instance.</param>
+/// <param name="server">The WireMock.Net server instance.</param>
 public sealed class WireMockRouter(WireMockServer server)
 {
     private readonly WireMockServer _server = server;

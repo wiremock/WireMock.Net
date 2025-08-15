@@ -14,9 +14,9 @@ namespace WireMock.Net.Extensions.Routing.Extensions;
 public static class WireMockServerExtensions
 {
     /// <summary>
-    /// Maps a request to a WireMock server using the specified method, path matcher, and request handler.
+    /// Maps a request to a WireMock.Net server using the specified method, path matcher, and request handler.
     /// </summary>
-    /// <param name="source">The WireMock server to extend.</param>
+    /// <param name="source">The WireMock.Net server to extend.</param>
     /// <param name="method">The HTTP method to match.</param>
     /// <param name="pathMatcher">The matcher for the request path.</param>
     /// <param name="httpRequestHandler">The handler to process the request.</param>
