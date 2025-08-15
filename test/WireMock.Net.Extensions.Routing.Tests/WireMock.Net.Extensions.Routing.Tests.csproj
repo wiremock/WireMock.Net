@@ -29,7 +29,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\WireMock.Net.Extensions.Routing\WireMock.Net.Extensions.Routing.csproj" />
-      <ProjectReference Include="..\..\src\WireMock.Net.Minimal\WireMock.Net.Minimal.csproj" />
     </ItemGroup>
 
     <ItemGroup>
