@@ -12,11 +12,11 @@ using WireMock.Server;
 
 namespace WireMock.Net.Extensions.Routing;
 
-    /// <summary>
-    /// Provides routing and request mapping functionality for WireMock.Net,
-    /// mimicking ASP.NET Core Minimal APIs routing style.
-    /// </summary>
-    public sealed class WireMockRouter
+/// <summary>
+/// Provides routing and request mapping functionality for WireMock.Net,
+/// mimicking ASP.NET Core Minimal APIs routing style.
+/// </summary>
+public sealed class WireMockRouter
 {
     private readonly WireMockServer _server;
 
