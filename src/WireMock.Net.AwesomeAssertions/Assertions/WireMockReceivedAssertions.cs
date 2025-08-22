@@ -4,7 +4,7 @@ using AwesomeAssertions.Primitives;
 using WireMock.Server;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 /// <summary>
 /// Contains a number of methods to assert that the <see cref="IWireMockServer"/> is in the expected state.

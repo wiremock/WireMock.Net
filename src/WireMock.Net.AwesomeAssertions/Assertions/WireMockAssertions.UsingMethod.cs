@@ -5,7 +5,7 @@ using System;
 using WireMock.Constants;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 public partial class WireMockAssertions
 {

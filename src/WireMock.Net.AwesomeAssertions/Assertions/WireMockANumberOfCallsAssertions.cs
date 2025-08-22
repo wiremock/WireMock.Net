@@ -4,11 +4,11 @@ using Stef.Validation;
 using WireMock.Server;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 /// <summary>
 /// Provides assertion methods to verify the number of calls made to a WireMock server.
-/// This class is used in the context of FluentAssertions.
+/// This class is used in the context of AwesomeAssertions.
 /// </summary>
 public class WireMockANumberOfCallsAssertions
 {

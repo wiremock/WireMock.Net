@@ -3,7 +3,7 @@
 using WireMock.Server;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions
+namespace WireMock.AwesomeAssertions
 {
     /// <summary>
     /// Contains extension methods for custom assertions in unit tests.

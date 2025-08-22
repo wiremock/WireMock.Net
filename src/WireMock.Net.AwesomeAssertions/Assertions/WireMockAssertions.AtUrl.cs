@@ -4,7 +4,7 @@ using WireMock.Extensions;
 using WireMock.Matchers;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 #pragma warning disable CS1591
 public partial class WireMockAssertions

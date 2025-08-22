@@ -7,7 +7,7 @@ using WireMock.Matchers;
 using WireMock.Server;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 public partial class WireMockAssertions
 {

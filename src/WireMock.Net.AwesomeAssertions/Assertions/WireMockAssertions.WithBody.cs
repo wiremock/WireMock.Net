@@ -11,7 +11,7 @@ using WireMock.Matchers;
 using WireMock.Models;
 
 // ReSharper disable once CheckNamespace
-namespace WireMock.FluentAssertions;
+namespace WireMock.AwesomeAssertions;
 
 public partial class WireMockAssertions
 {
