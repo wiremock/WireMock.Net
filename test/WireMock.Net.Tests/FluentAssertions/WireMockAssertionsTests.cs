@@ -108,7 +108,7 @@ public class WireMockAssertionsTests : IDisposable
     }
 
     [Fact]
-    public async Task HaveReceivedACall_AtAbsoluteUrlWilcardMAtcher_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
+    public async Task HaveReceivedACall_AtAbsoluteUrlWildcardMatcher_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
         await _httpClient.GetAsync("anyurl").ConfigureAwait(false);
 
@@ -141,6 +141,106 @@ public class WireMockAssertionsTests : IDisposable
         act.Should()
             .Throw<Exception>()
             .WithMessage($"Expected _server to have been called at address matching the absolute url \"anyurl\", but didn't find it among the calls to {{\"http://localhost:{_portUsed}/\"}}.");
+    }
+
+    [Fact]
+    public async Task HaveReceivedNoCalls_AtAbsolutePath_WhenACallWasNotMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("xxx").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceivedNoCalls()
+            .AtAbsolutePath("anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived0Calls_AtAbsolutePath_WhenACallWasNotMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("xxx").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceived(0).Calls()
+            .AtAbsolutePath("anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived1Calls_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceived(1).Calls()
+            .AtAbsolutePath("/anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived1Calls_AtAbsolutePathUsingPost_WhenAPostCallWasMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.PostAsync("anypath", new StringContent("")).ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceived(1).Calls()
+            .AtAbsolutePath("/anypath")
+            .And
+            .UsingPost();
+    }
+
+    [Fact]
+    public async Task HaveReceived2Calls_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath").ConfigureAwait(false);
+
+        await _httpClient.GetAsync("anypath").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceived(2).Calls()
+            .AtAbsolutePath("/anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceivedACall()
+            .AtAbsolutePath(new WildcardMatcher("/any*"));
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtAbsolutePathWildcardMatcher_WhenACallWasMadeToAbsolutePath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath").ConfigureAwait(false);
+
+        _server.Should()
+            .HaveReceivedACall()
+            .AtAbsolutePath("/anypath");
+    }
+
+    [Fact]
+    public void HaveReceivedACall_AtAbsolutePath_Should_ThrowWhenNoCallsWereMade()
+    {
+        Action act = () => _server.Should()
+            .HaveReceivedACall()
+            .AtAbsolutePath("anypath");
+
+        act.Should()
+            .Throw<Exception>()
+            .WithMessage("Expected _server to have been called at address matching the absolute path \"anypath\", but no calls were made.");
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtAbsolutePath_Should_ThrowWhenNoCallsMatchingTheAbsolutePathWereMade()
+    {
+        await _httpClient.GetAsync("").ConfigureAwait(false);
+
+        Action act = () => _server.Should()
+            .HaveReceivedACall()
+            .AtAbsolutePath("/anypath");
+
+        act.Should()
+            .Throw<Exception>()
+            .WithMessage($"Expected _server to have been called at address matching the absolute path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
     }
 
     [Fact]
