@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using JsonConverter.Abstractions;
 using ProtoBufJsonConverter;
 using ProtoBufJsonConverter.Models;
+using WireMock.ResponseBuilders;
 
 namespace WireMock.Util;
 
@@ -31,5 +32,16 @@ internal class ProtoBufUtils : IProtoBufUtils
         return await SingletonFactory<Converter>
             .GetInstance()
             .ConvertAsync(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    public IResponseBuilder UpdateResponseBuilder(IResponseBuilder responseBuilder, string protoBufMessageType, object bodyAsJson, params string[] protoDefinitions)
+    {
+        if (protoDefinitions.Length > 0)
+        {
+            return responseBuilder.WithBodyAsProtoBuf(protoDefinitions, protoBufMessageType, bodyAsJson);
+        }
+
+        // ProtoDefinition(s) is/are defined at Mapping/Server level
+        return responseBuilder.WithBodyAsProtoBuf(protoBufMessageType, bodyAsJson);
     }
 }

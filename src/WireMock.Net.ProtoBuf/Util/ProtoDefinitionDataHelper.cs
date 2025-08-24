@@ -8,14 +8,13 @@ using ProtoBufJsonConverter;
 using ProtoBufJsonConverter.Models;
 using Stef.Validation;
 using WireMock.Models;
-using WireMock.Settings;
 
 namespace WireMock.Util;
 
 /// <summary>
 /// Some helper methods for Proto Definitions.
 /// </summary>
-public static class ProtoDefinitionHelper
+internal static class ProtoDefinitionDataHelper
 {
     /// <summary>
     /// Builds a dictionary of ProtoDefinitions from a directory.
@@ -77,23 +76,5 @@ public static class ProtoDefinitionHelper
         }
 
         return new ProtoDefinitionData(fileNameMappedToProtoDefinition);
-    }
-
-    internal static IdOrTexts GetIdOrTexts(WireMockServerSettings settings, params string[] protoDefinitionOrId)
-    {
-        switch (protoDefinitionOrId.Length)
-        {
-            case 1:
-                var idOrText = protoDefinitionOrId[0];
-                if (settings.ProtoDefinitions?.TryGetValue(idOrText, out var protoDefinitions) == true)
-                {
-                    return new(idOrText, protoDefinitions);
-                }
-
-                return new(null, protoDefinitionOrId);
-
-            default:
-                return new(null, protoDefinitionOrId);
-        }
     }
 }

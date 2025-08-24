@@ -12,6 +12,8 @@ namespace WireMock.Net.Tests.Grpc;
 
 public class ProtoBufUtilsTests
 {
+    private static readonly IProtoBufUtils ProtoBufUtils = new ProtoBufUtils();
+
     [Fact]
     public async Task GetProtoBufMessageWithHeader_MultipleProtoFiles()
     {

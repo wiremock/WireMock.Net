@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using JsonConverter.Abstractions;
@@ -84,7 +83,7 @@ public interface IBodyResponseBuilder : IFaultResponseBuilder
     IResponseBuilder WithBodyAsJson(Func<IRequestMessage, object> bodyFactory, Encoding? encoding = null);
 
     /// <summary>
-    /// WithBodyAsJson : Create a ... response based on a async callback function.
+    /// WithBodyAsJson : Create a ... response based on an async callback function.
     /// </summary>
     /// <param name="bodyFactory">The async delegate to build the body.</param>
     /// <param name="encoding">The body encoding.</param>
@@ -117,53 +116,4 @@ public interface IBodyResponseBuilder : IFaultResponseBuilder
     /// <param name="options">The <see cref="JsonConverterOptions"/> [optional].</param>
     /// <returns>A <see cref="IResponseBuilder"/>.</returns>
     IResponseBuilder WithBody(object body, Encoding? encoding, IJsonConverter jsonConverter, JsonConverterOptions? options = null);
-
-    /// <summary>
-    /// WithBodyAsProtoBuf : Create a ProtoBuf byte[] response based on a proto definition, message type and the value.
-    /// </summary>
-    /// <param name="protoDefinition">The proto definition as text.</param>
-    /// <param name="messageType">The full type of the protobuf (request/response) message object. Format is "{package-name}.{type-name}".</param>
-    /// <param name="value">The object to convert to protobuf byte[].</param>
-    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
-    /// <param name="options">The <see cref="JsonConverterOptions"/> [optional].</param>
-    /// <returns>A <see cref="IResponseBuilder"/>.</returns>
-    IResponseBuilder WithBodyAsProtoBuf(
-        string protoDefinition,
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    );
-
-    /// <summary>
-    /// WithBodyAsProtoBuf : Create a ProtoBuf byte[] response based on proto definitions, message type and the value.
-    /// </summary>
-    /// <param name="protoDefinitions">The proto definition as text.</param>
-    /// <param name="messageType">The full type of the protobuf (request/response) message object. Format is "{package-name}.{type-name}".</param>
-    /// <param name="value">The object to convert to protobuf byte[].</param>
-    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
-    /// <param name="options">The <see cref="JsonConverterOptions"/> [optional].</param>
-    /// <returns>A <see cref="IResponseBuilder"/>.</returns>
-    IResponseBuilder WithBodyAsProtoBuf(
-        IReadOnlyList<string> protoDefinitions,
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    );
-
-    /// <summary>
-    /// WithBodyAsProtoBuf : Create a ProtoBuf byte[] response based on a proto definition, message type and the value.
-    /// </summary>
-    /// <param name="messageType">The full type of the protobuf (request/response) message object. Format is "{package-name}.{type-name}".</param>
-    /// <param name="value">The object to convert to protobuf byte[].</param>
-    /// <param name="jsonConverter">The <see cref="IJsonConverter"/> [optional]. Default value is NewtonsoftJsonConverter.</param>
-    /// <param name="options">The <see cref="JsonConverterOptions"/> [optional].</param>
-    /// <returns>A <see cref="IResponseBuilder"/>.</returns>
-    IResponseBuilder WithBodyAsProtoBuf(
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    );
 }

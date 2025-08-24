@@ -42,12 +42,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="NewFolder\**" />
-      <EmbeddedResource Remove="NewFolder\**" />
-      <None Remove="NewFolder\**" />
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="PolySharp" Version="1.15.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

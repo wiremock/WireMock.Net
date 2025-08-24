@@ -24,7 +24,7 @@ public class ProtoBufMatcher : IProtoBufMatcher
     public MatchBehaviour MatchBehaviour { get; }
 
     /// <inheritdoc />
-    public Func<IdOrTexts> ProtoDefinition { get; internal set; }
+    public Func<IdOrTexts> ProtoDefinition { get; set; }
 
     /// <inheritdoc />
     public string MessageType { get; }

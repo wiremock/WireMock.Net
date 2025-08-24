@@ -7,4 +7,4 @@ namespace WireMock.Net.Extensions.Routing.Delegates;
 /// </summary>
 /// <param name="requestMessage">The incoming request message.</param>
 /// <returns>A task that resolves to a <see cref="ResponseMessage"/>.</returns>
-public delegate Task<ResponseMessage> WireMockHttpRequestHandler(IRequestMessage requestMessage);
+public delegate Task<IResponseMessage> WireMockHttpRequestHandler(IRequestMessage requestMessage);

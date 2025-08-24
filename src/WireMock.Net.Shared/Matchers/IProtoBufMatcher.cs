@@ -13,7 +13,7 @@ public interface IProtoBufMatcher : IDecodeBytesMatcher, IBytesMatcher
     /// <summary>
     /// The Func to define the proto definition as id or texts.
     /// </summary>
-    Func<IdOrTexts> ProtoDefinition { get; }
+    Func<IdOrTexts> ProtoDefinition { get; set; }
 
     /// <summary>
     /// The full type of the protobuf (request/response) message object. Format is "{package-name}.{type-name}".

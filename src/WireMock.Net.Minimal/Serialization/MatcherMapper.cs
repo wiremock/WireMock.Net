@@ -289,8 +289,8 @@ internal class MatcherMapper
     {
         var objectMatcher = Map(matcher.ContentMatcher) as IObjectMatcher;
 
-        return new ProtoBufMatcher(
-            () => ProtoDefinitionHelper.GetIdOrTexts(_settings, protoDefinitions.ToArray()),
+        return TypeLoader.LoadNewInstance<IProtoBufMatcher>(
+            () => ProtoDefinitionUtils.GetIdOrTexts(_settings, protoDefinitions.ToArray()),
             matcher.ProtoBufMessageType!,
             matchBehaviour ?? MatchBehaviour.AcceptOnMatch,
             objectMatcher

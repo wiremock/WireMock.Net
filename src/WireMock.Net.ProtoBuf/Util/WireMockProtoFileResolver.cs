@@ -29,10 +29,10 @@ internal class WireMockProtoFileResolver : IProtoFileResolver
 
         foreach (var extraProtoDefinition in protoDefinitions)
         {
-            var firstNonEmptyLine = extraProtoDefinition.Split(['\r', '\n']).FirstOrDefault(l => !string.IsNullOrEmpty(l));
+            var firstNonEmptyLine = extraProtoDefinition.Split('\r', '\n').FirstOrDefault(l => !string.IsNullOrEmpty(l));
             if (firstNonEmptyLine != null)
             {
-                if (TryGetValidPath(firstNonEmptyLine.TrimStart(['/', ' ']), out var validPath))
+                if (TryGetValidPath(firstNonEmptyLine.TrimStart('/', ' '), out var validPath))
                 {
                     _files.Add(validPath, extraProtoDefinition);
                 }

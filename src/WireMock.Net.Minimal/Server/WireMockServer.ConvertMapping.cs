@@ -245,7 +245,7 @@ public partial class WireMockServer
             // If the BodyMatcher is a ProtoBufMatcher, and if ProtoDefinition is defined on Mapping-level, set the ProtoDefinition from that Mapping.
             if (bodyMatcher is IProtoBufMatcher protoBufMatcher && mappingModel?.ProtoDefinition != null)
             {
-                protoBufMatcher.ProtoDefinition = () => ProtoDefinitionHelper.GetIdOrTexts(_settings, mappingModel.ProtoDefinition);
+                protoBufMatcher.ProtoDefinition = () => ProtoDefinitionUtils.GetIdOrTexts(_settings, mappingModel.ProtoDefinition);
             }
 
             requestBuilder = requestBuilder.WithBody(bodyMatcher);
@@ -368,18 +368,19 @@ public partial class WireMockServer
         {
             if (responseModel.ProtoBufMessageType != null)
             {
+                var protoBufUtils = TypeLoader.LoadStaticInstance<IProtoBufUtils>();
+
                 if (responseModel.ProtoDefinition != null)
                 {
-                    responseBuilder = responseBuilder.WithBodyAsProtoBuf(responseModel.ProtoDefinition, responseModel.ProtoBufMessageType, responseModel.BodyAsJson);
+                    responseBuilder = protoBufUtils.UpdateResponseBuilder(responseBuilder, responseModel.ProtoBufMessageType, responseModel.BodyAsJson, responseModel.ProtoDefinition);
                 }
                 else if (responseModel.ProtoDefinitions != null)
                 {
-                    responseBuilder = responseBuilder.WithBodyAsProtoBuf(responseModel.ProtoDefinitions, responseModel.ProtoBufMessageType, responseModel.BodyAsJson);
+                    responseBuilder = protoBufUtils.UpdateResponseBuilder(responseBuilder, responseModel.ProtoBufMessageType, responseModel.BodyAsJson, responseModel.ProtoDefinitions);
                 }
                 else
                 {
-                    // ProtoDefinition(s) is/are defined at Mapping/Server level
-                    responseBuilder = responseBuilder.WithBodyAsProtoBuf(responseModel.ProtoBufMessageType, responseModel.BodyAsJson);
+                    responseBuilder = protoBufUtils.UpdateResponseBuilder(responseBuilder, responseModel.ProtoBufMessageType, responseModel.BodyAsJson);
                 }
             }
             else

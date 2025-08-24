@@ -15,12 +15,12 @@ public interface IResponseMessage
     /// <summary>
     /// The Body.
     /// </summary>
-    IBodyData? BodyData { get; }
+    IBodyData? BodyData { get; set; }
 
     /// <summary>
     /// Gets the body destination (Null, SameAsSource, String or Bytes).
     /// </summary>
-    string? BodyDestination { get; }
+    string? BodyDestination { get; set; }
 
     /// <summary>
     /// Gets or sets the body.
@@ -30,27 +30,27 @@ public interface IResponseMessage
     /// <summary>
     /// Gets the Fault percentage.
     /// </summary>
-    double? FaultPercentage { get; }
+    double? FaultPercentage { get; set; }
 
     /// <summary>
     /// The FaultType.
     /// </summary>
-    FaultType FaultType { get; }
+    FaultType FaultType { get; set; }
 
     /// <summary>
     /// Gets the headers.
     /// </summary>
-    IDictionary<string, WireMockList<string>>? Headers { get; }
+    IDictionary<string, WireMockList<string>>? Headers { get; set; }
 
     /// <summary>
     /// Gets the trailing headers.
     /// </summary>
-    IDictionary<string, WireMockList<string>>? TrailingHeaders { get; }
+    IDictionary<string, WireMockList<string>>? TrailingHeaders { get; set; }
 
     /// <summary>
     /// Gets or sets the status code.
     /// </summary>
-    object? StatusCode { get; }
+    object? StatusCode { get; set; }
 
     /// <summary>
     /// Adds the header.

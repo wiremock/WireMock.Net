@@ -105,7 +105,7 @@ public sealed class WireMockRouter(WireMockServer server)
         Func<IRequestMessage, object?> requestHandler) =>
         request => CreateResponseMessageAsync(requestHandler(request));
 
-    private static async Task<ResponseMessage> CreateResponseMessageAsync(object? response)
+    private static async Task<IResponseMessage> CreateResponseMessageAsync(object? response)
     {
         var awaitedResponse = response is Task task
             ? await task.ToGenericTaskAsync()

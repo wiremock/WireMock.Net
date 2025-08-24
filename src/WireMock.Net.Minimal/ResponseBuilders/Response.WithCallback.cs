@@ -13,13 +13,13 @@ public partial class Response
     /// A delegate to execute to generate the response.
     /// </summary>
     [MemberNotNullWhen(true, nameof(WithCallbackUsed))]
-    public Func<IRequestMessage, ResponseMessage>? Callback { get; private set; }
+    public Func<IRequestMessage, IResponseMessage>? Callback { get; private set; }
 
     /// <summary>
     /// A delegate to execute to generate the response async.
     /// </summary>
     [MemberNotNullWhen(true, nameof(WithCallbackUsed))]
-    public Func<IRequestMessage, Task<ResponseMessage>>? CallbackAsync { get; private set; }
+    public Func<IRequestMessage, Task<IResponseMessage>>? CallbackAsync { get; private set; }
 
     /// <summary>
     /// Defines if the method WithCallback(...) is used.
@@ -27,7 +27,7 @@ public partial class Response
     public bool WithCallbackUsed { get; private set; }
 
     /// <inheritdoc />
-    public IResponseBuilder WithCallback(Func<IRequestMessage, ResponseMessage> callbackHandler)
+    public IResponseBuilder WithCallback(Func<IRequestMessage, IResponseMessage> callbackHandler)
     {
         Guard.NotNull(callbackHandler);
 
@@ -35,14 +35,14 @@ public partial class Response
     }
 
     /// <inheritdoc />
-    public IResponseBuilder WithCallback(Func<IRequestMessage, Task<ResponseMessage>> callbackHandler)
+    public IResponseBuilder WithCallback(Func<IRequestMessage, Task<IResponseMessage>> callbackHandler)
     {
         Guard.NotNull(callbackHandler);
 
         return WithCallbackInternal(true, callbackHandler);
     }
 
-    private IResponseBuilder WithCallbackInternal(bool withCallbackUsed, Func<IRequestMessage, ResponseMessage> callbackHandler)
+    private IResponseBuilder WithCallbackInternal(bool withCallbackUsed, Func<IRequestMessage, IResponseMessage> callbackHandler)
     {
         Guard.NotNull(callbackHandler);
 
@@ -52,7 +52,7 @@ public partial class Response
         return this;
     }
 
-    private IResponseBuilder WithCallbackInternal(bool withCallbackUsed, Func<IRequestMessage, Task<ResponseMessage>> callbackHandler)
+    private IResponseBuilder WithCallbackInternal(bool withCallbackUsed, Func<IRequestMessage, Task<IResponseMessage>> callbackHandler)
     {
         Guard.NotNull(callbackHandler);
 
