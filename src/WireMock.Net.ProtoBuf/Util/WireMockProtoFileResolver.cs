@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -72,4 +71,3 @@ internal class WireMockProtoFileResolver : IProtoFileResolver
         return false;
     }
 }
-#endif

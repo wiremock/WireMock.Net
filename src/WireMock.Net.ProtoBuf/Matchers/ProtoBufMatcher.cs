@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,19 +23,13 @@ public class ProtoBufMatcher : IProtoBufMatcher
     /// <inheritdoc />
     public MatchBehaviour MatchBehaviour { get; }
 
-    /// <summary>
-    /// The Func to define the proto definition as id or texts.
-    /// </summary>
+    /// <inheritdoc />
     public Func<IdOrTexts> ProtoDefinition { get; internal set; }
 
-    /// <summary>
-    /// The full type of the protobuf (request/response) message object. Format is "{package-name}.{type-name}".
-    /// </summary>
+    /// <inheritdoc />
     public string MessageType { get; }
 
-    /// <summary>
-    /// The Matcher to use (optional).
-    /// </summary>
+    /// <inheritdoc />
     public IObjectMatcher? Matcher { get; }
 
     private static readonly Converter ProtoBufToJsonConverter = SingletonFactory<Converter>.GetInstance();
@@ -123,4 +116,3 @@ public class ProtoBufMatcher : IProtoBufMatcher
         }
     }
 }
-#endif

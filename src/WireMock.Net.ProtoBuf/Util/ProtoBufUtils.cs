@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,9 +9,9 @@ using ProtoBufJsonConverter.Models;
 
 namespace WireMock.Util;
 
-internal static class ProtoBufUtils
+internal class ProtoBufUtils : IProtoBufUtils
 {
-    internal static async Task<byte[]> GetProtoBufMessageWithHeaderAsync(
+    public async Task<byte[]> GetProtoBufMessageWithHeaderAsync(
         IReadOnlyList<string>? protoDefinitions,
         string? messageType,
         object? value,
@@ -34,4 +33,3 @@ internal static class ProtoBufUtils
             .ConvertAsync(request, cancellationToken).ConfigureAwait(false);
     }
 }
-#endif

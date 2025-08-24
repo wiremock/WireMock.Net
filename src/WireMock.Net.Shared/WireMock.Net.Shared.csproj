@@ -29,6 +29,24 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
+        <DefineConstants>$(DefineConstants);NETSTANDARD;USE_ASPNETCORE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' or '$(TargetFramework)' == 'netcoreapp2.2' or '$(TargetFramework)' == 'netcoreapp3.1' or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+        <DefineConstants>$(DefineConstants);USE_ASPNETCORE</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+        <DefineConstants>$(DefineConstants);USE_ASPNETCORE;NET46</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="NewFolder\**" />
+      <EmbeddedResource Remove="NewFolder\**" />
+      <None Remove="NewFolder\**" />
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="PolySharp" Version="1.15.0">
             <PrivateAssets>all</PrivateAssets>
@@ -37,6 +55,18 @@
         <PackageReference Include="Stef.Validation" Version="0.1.1" />
         <PackageReference Include="AnyOf" Version="0.4.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
+        <PackageReference Include="JsonConverter.Abstractions" Version="0.7.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Handlebars.Net.Helpers" Version="2.5.2" />
+        <!--<PackageReference Include="Handlebars.Net.Helpers.DynamicLinq" Version="2.5.2" />-->
+        <PackageReference Include="Handlebars.Net.Helpers.Humanizer" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers.Json" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers.Random" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers.Xeger" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers.XPath" Version="2.5.2" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">

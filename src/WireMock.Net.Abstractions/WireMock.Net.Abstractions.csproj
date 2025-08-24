@@ -38,9 +38,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- CVE-2018-8292 -->
-        <PackageReference Include="System.Net.Http " Version="4.3.4" />
-
         <!-- See also https://mstack.nl/blog/20210801-source-generators -->
         <PackageReference Include="FluentBuilder" Version="0.10.0">
             <PrivateAssets>all</PrivateAssets>
@@ -50,34 +47,15 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Stef.Validation" Version="0.1.1" />
-        <PackageReference Include="AnyOf" Version="0.4.0" />-->
     </ItemGroup>
 
     <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) and '$(TargetFramework)' != 'netstandard1.0'">
       <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
     </ItemGroup>
 
-    <!--<ItemGroup>
-        <PackageReference Include="Nullable" Version="1.3.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>-->
 
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'net451' or '$(TargetFramework)' == 'net461'">
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-
-        <!--<PackageReference Include="Nullable" Version="1.3.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
-
-        <!--<PackageReference Include="PolySharp" Version="1.14.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
     </ItemGroup>
 
 </Project>

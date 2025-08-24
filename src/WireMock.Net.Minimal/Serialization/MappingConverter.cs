@@ -126,12 +126,10 @@ internal class MappingConverter(MatcherMapper mapper)
             }
         }
 
-#if PROTOBUF
         if (requestMessageProtoBufMatcher?.Matcher != null)
         {
             sb.AppendLine("        // .WithBodyAsProtoBuf() is not yet supported");
         }
-#endif
 
         if (requestMessageBodyMatcher?.Matchers != null)
         {
@@ -188,7 +186,7 @@ internal class MappingConverter(MatcherMapper mapper)
             sb.AppendLine($"        .WithStatusCode({(int)httpStatusCode})");
         }
 
-        if (response.ResponseMessage.Headers is { })
+        if (response.ResponseMessage.Headers != null)
         {
             foreach (var header in response.ResponseMessage.Headers)
             {
@@ -196,7 +194,7 @@ internal class MappingConverter(MatcherMapper mapper)
             }
         }
 
-        if (response.ResponseMessage.TrailingHeaders is { })
+        if (response.ResponseMessage.TrailingHeaders != null)
         {
             foreach (var header in response.ResponseMessage.TrailingHeaders)
             {
@@ -400,13 +398,11 @@ internal class MappingConverter(MatcherMapper mapper)
         {
             void AfterMap(MatcherModel matcherModel)
             {
-#if PROTOBUF
                 // In case the ProtoDefinition is defined at the Mapping level, clear the Pattern at the Matcher level
-                if (bodyMatchers?.OfType<ProtoBufMatcher>().Any() == true && mappingModel.ProtoDefinition != null)
+                if (bodyMatchers?.OfType<IProtoBufMatcher>().Any() == true && mappingModel.ProtoDefinition != null)
                 {
                     matcherModel.Pattern = null;
                 }
-#endif
             }
 
             mappingModel.Request.Body = new BodyModel();

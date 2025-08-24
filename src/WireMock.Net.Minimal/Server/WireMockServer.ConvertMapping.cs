@@ -241,13 +241,13 @@ public partial class WireMockServer
         if (requestModel.Body?.Matcher != null)
         {
             var bodyMatcher = _matcherMapper.Map(requestModel.Body.Matcher)!;
-#if PROTOBUF
+
             // If the BodyMatcher is a ProtoBufMatcher, and if ProtoDefinition is defined on Mapping-level, set the ProtoDefinition from that Mapping.
-            if (bodyMatcher is ProtoBufMatcher protoBufMatcher && mappingModel?.ProtoDefinition != null)
+            if (bodyMatcher is IProtoBufMatcher protoBufMatcher && mappingModel?.ProtoDefinition != null)
             {
                 protoBufMatcher.ProtoDefinition = () => ProtoDefinitionHelper.GetIdOrTexts(_settings, mappingModel.ProtoDefinition);
             }
-#endif
+
             requestBuilder = requestBuilder.WithBody(bodyMatcher);
         }
         else if (requestModel.Body?.Matchers != null)
