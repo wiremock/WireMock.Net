@@ -80,10 +80,9 @@ internal class MatcherMapper
             case "MimePartMatcher":
                 return CreateMimePartMatcher(matchBehaviour, matcherModel);
 
-#if PROTOBUF
-            case nameof(ProtoBufMatcher):
+            case "ProtoBufMatcher":
                 return CreateProtoBufMatcher(matchBehaviour, stringPatterns.GetPatterns(), matcherModel);
-#endif
+
             case nameof(RegexMatcher):
                 return new RegexMatcher(matchBehaviour, stringPatterns, ignoreCase, useRegexExtended, matchOperator);
 
@@ -210,7 +209,7 @@ internal class MatcherMapper
                 break;
 
 #if PROTOBUF
-            case ProtoBufMatcher protoBufMatcher:
+            case IProtoBufMatcher protoBufMatcher:
                 protoBufMatcher.ProtoDefinition().Value(id => model.Pattern = id, texts =>
                 {
                     if (texts.Count == 1)
@@ -286,17 +285,15 @@ internal class MatcherMapper
         return TypeLoader.LoadNewInstance<IMimePartMatcher>(matchBehaviour, contentTypeMatcher, contentDispositionMatcher, contentTransferEncodingMatcher, contentMatcher);
     }
 
-#if PROTOBUF
-    private ProtoBufMatcher CreateProtoBufMatcher(MatchBehaviour? matchBehaviour, IReadOnlyList<string> protoDefinitions, MatcherModel matcher)
+    private IProtoBufMatcher CreateProtoBufMatcher(MatchBehaviour? matchBehaviour, IReadOnlyList<string> protoDefinitions, MatcherModel matcher)
     {
         var objectMatcher = Map(matcher.ContentMatcher) as IObjectMatcher;
 
-        return new ProtoBufMatcher(
-            () => ProtoDefinitionHelper.GetIdOrTexts(_settings, protoDefinitions.ToArray()),
+        return TypeLoader.LoadNewInstance<IProtoBufMatcher>(
+            () => ProtoDefinitionUtils.GetIdOrTexts(_settings, protoDefinitions.ToArray()),
             matcher.ProtoBufMessageType!,
             matchBehaviour ?? MatchBehaviour.AcceptOnMatch,
             objectMatcher
         );
     }
-#endif
 }

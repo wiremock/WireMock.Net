@@ -1,18 +1,18 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using JsonConverter.Abstractions;
 using ProtoBufJsonConverter;
 using ProtoBufJsonConverter.Models;
+using WireMock.ResponseBuilders;
 
 namespace WireMock.Util;
 
-internal static class ProtoBufUtils
+internal class ProtoBufUtils : IProtoBufUtils
 {
-    internal static async Task<byte[]> GetProtoBufMessageWithHeaderAsync(
+    public async Task<byte[]> GetProtoBufMessageWithHeaderAsync(
         IReadOnlyList<string>? protoDefinitions,
         string? messageType,
         object? value,
@@ -33,5 +33,15 @@ internal static class ProtoBufUtils
             .GetInstance()
             .ConvertAsync(request, cancellationToken).ConfigureAwait(false);
     }
+
+    public IResponseBuilder UpdateResponseBuilder(IResponseBuilder responseBuilder, string protoBufMessageType, object bodyAsJson, params string[] protoDefinitions)
+    {
+        if (protoDefinitions.Length > 0)
+        {
+            return responseBuilder.WithBodyAsProtoBuf(protoDefinitions, protoBufMessageType, bodyAsJson);
+        }
+
+        // ProtoDefinition(s) is/are defined at Mapping/Server level
+        return responseBuilder.WithBodyAsProtoBuf(protoBufMessageType, bodyAsJson);
+    }
 }
-#endif

@@ -28,9 +28,7 @@ public partial class Response : IResponseBuilder
 
     private TimeSpan? _delay;
 
-    /// <summary>
-    /// The link back to the mapping.
-    /// </summary>
+    /// <inheritdoc />
     public IMapping Mapping { get; set; } = null!;
 
     /// <summary>
@@ -81,10 +79,8 @@ public partial class Response : IResponseBuilder
     /// </summary>
     public ReplaceNodeOptions TransformerReplaceNodeOptions { get; private set; }
 
-    /// <summary>
-    /// Gets the response message.
-    /// </summary>
-    public ResponseMessage ResponseMessage { get; }
+    /// <inheritdoc />
+    public IResponseMessage ResponseMessage { get; }
 
     /// <summary>
     /// Creates this instance.
@@ -226,7 +222,7 @@ public partial class Response : IResponseBuilder
             ).ConfigureAwait(false);
         }
 
-        ResponseMessage responseMessage;
+        IResponseMessage responseMessage;
         if (!WithCallbackUsed)
         {
             responseMessage = ResponseMessage;

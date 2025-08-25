@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Version>1.10.1-preview-00</Version>
+        <Description>ProtoBuf and gRPC support for WireMock.Net</Description>
+        <AssemblyTitle>WireMock.Net.ProtoBuf</AssemblyTitle>
+        <Authors>Stef Heyenrath</Authors>
+        <TargetFrameworks>netstandard2.1;net462;net6.0;net8.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageTags>wiremock;matchers;matcher;protobuf;grpc</PackageTags>
+        <RootNamespace>WireMock</RootNamespace>
+        <ProjectGuid>{B47413AA-55D3-49A7-896A-17ADBFF72407}</ProjectGuid>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <CodeAnalysisRuleSet>../WireMock.Net/WireMock.Net.ruleset</CodeAnalysisRuleSet>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
+        <!--<DelaySign>true</DelaySign>-->
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ProtoBufJsonConverter" Version="0.10.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WireMock.Net.Shared\WireMock.Net.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

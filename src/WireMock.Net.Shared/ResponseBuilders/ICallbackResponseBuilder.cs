@@ -17,12 +17,12 @@ public interface ICallbackResponseBuilder : IResponseProvider
     /// </summary>
     /// <returns>The <see cref="IResponseBuilder"/>.</returns>
     [PublicAPI]
-    IResponseBuilder WithCallback(Func<IRequestMessage, ResponseMessage> callbackHandler);
+    IResponseBuilder WithCallback(Func<IRequestMessage, IResponseMessage> callbackHandler);
 
     /// <summary>
     /// The async callback builder
     /// </summary>
     /// <returns>The <see cref="IResponseBuilder"/>.</returns>
     [PublicAPI]
-    IResponseBuilder WithCallback(Func<IRequestMessage, Task<ResponseMessage>> callbackHandler);
+    IResponseBuilder WithCallback(Func<IRequestMessage, Task<IResponseMessage>> callbackHandler);
 }

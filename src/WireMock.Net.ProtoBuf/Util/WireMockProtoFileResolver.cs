@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -30,10 +29,10 @@ internal class WireMockProtoFileResolver : IProtoFileResolver
 
         foreach (var extraProtoDefinition in protoDefinitions)
         {
-            var firstNonEmptyLine = extraProtoDefinition.Split(['\r', '\n']).FirstOrDefault(l => !string.IsNullOrEmpty(l));
+            var firstNonEmptyLine = extraProtoDefinition.Split('\r', '\n').FirstOrDefault(l => !string.IsNullOrEmpty(l));
             if (firstNonEmptyLine != null)
             {
-                if (TryGetValidPath(firstNonEmptyLine.TrimStart(['/', ' ']), out var validPath))
+                if (TryGetValidPath(firstNonEmptyLine.TrimStart('/', ' '), out var validPath))
                 {
                     _files.Add(validPath, extraProtoDefinition);
                 }
@@ -72,4 +71,3 @@ internal class WireMockProtoFileResolver : IProtoFileResolver
         return false;
     }
 }
-#endif

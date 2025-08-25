@@ -12,6 +12,8 @@ namespace WireMock.Net.Tests.Grpc;
 
 public class ProtoDefinitionHelperTests
 {
+    private static readonly IProtoBufUtils ProtoBufUtils = new ProtoBufUtils();
+
     [Fact]
     public async Task FromDirectory_Greet_ShouldReturnModifiedProtoFiles()
     {
@@ -21,7 +23,7 @@ public class ProtoDefinitionHelperTests
         var expectedComment = $"// {expectedFilename}";
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
         var protoDefinitions = protoDefinitionData.ToList("greet");
 
         // Assert
@@ -50,7 +52,7 @@ public class ProtoDefinitionHelperTests
         var directory = Path.Combine(Directory.GetCurrentDirectory(), "Grpc", "ot");
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
         var protoDefinitions = protoDefinitionData.ToList("trace_service");
 
         // Assert

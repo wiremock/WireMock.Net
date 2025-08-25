@@ -1,12 +1,10 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using JsonConverter.Abstractions;
 using Stef.Validation;
-using WireMock.Exceptions;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
@@ -234,73 +232,5 @@ public partial class Response
         };
 
         return this;
-    }
-
-    /// <inheritdoc />
-    public IResponseBuilder WithBodyAsProtoBuf(
-        string protoDefinition,
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    )
-    {
-        return WithBodyAsProtoBuf([protoDefinition], messageType, value, jsonConverter, options);
-    }
-
-    /// <inheritdoc />
-    public IResponseBuilder WithBodyAsProtoBuf(
-        IReadOnlyList<string> protoDefinitions,
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    )
-    {
-        Guard.NotNullOrEmpty(protoDefinitions);
-        Guard.NotNullOrWhiteSpace(messageType);
-        Guard.NotNull(value);
-
-#if !PROTOBUF
-        throw new NotSupportedException("The WithBodyAsProtoBuf method can not be used for .NETStandard1.3 or .NET Framework 4.6.1 or lower.");
-#else
-        ResponseMessage.BodyDestination = null;
-        ResponseMessage.BodyData = new BodyData
-        {
-            DetectedBodyType = BodyType.ProtoBuf,
-            BodyAsJson = value,
-            ProtoDefinition = () => new IdOrTexts(null, protoDefinitions),
-            ProtoBufMessageType = messageType
-        };
-
-        return this;
-#endif
-    }
-
-    /// <inheritdoc />
-    public IResponseBuilder WithBodyAsProtoBuf(
-        string messageType,
-        object value,
-        IJsonConverter? jsonConverter = null,
-        JsonConverterOptions? options = null
-    )
-    {
-        Guard.NotNullOrWhiteSpace(messageType);
-        Guard.NotNull(value);
-
-#if !PROTOBUF
-        throw new NotSupportedException("The WithBodyAsProtoBuf method can not be used for .NETStandard1.3 or .NET Framework 4.6.1 or lower.");
-#else
-        ResponseMessage.BodyDestination = null;
-        ResponseMessage.BodyData = new BodyData
-        {
-            DetectedBodyType = BodyType.ProtoBuf,
-            BodyAsJson = value,
-            ProtoDefinition = () => Mapping.ProtoDefinition ?? throw new WireMockException("ProtoDefinition cannot be resolved. You probably forgot to call .WithProtoDefinition(...) on the mapping."),
-            ProtoBufMessageType = messageType
-        };
-
-        return this;
-#endif
     }
 }
