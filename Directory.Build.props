@@ -50,7 +50,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" PrivateAssets="All" />
+        <!-- CVE-2019-0820 -->
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     </ItemGroup>
 
