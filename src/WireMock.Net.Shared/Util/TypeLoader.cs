@@ -119,13 +119,21 @@ internal static class TypeLoader
 
     private static bool TryGetImplementationTypeByInterfaceAndOptionalFullName<T>(Assembly assembly, string? implementationTypeFullName, [NotNullWhen(true)] out Type? type)
     {
-        type = assembly
-            .GetTypes()
-            .FirstOrDefault(t =>
-                typeof(T).IsAssignableFrom(t) && !t.GetTypeInfo().IsInterface &&
-                (implementationTypeFullName == null || string.Equals(t.FullName, implementationTypeFullName, StringComparison.OrdinalIgnoreCase))
-            );
+        try
+        {
+            type = assembly
+                .GetTypes()
+                .FirstOrDefault(t =>
+                    typeof(T).IsAssignableFrom(t) && !t.GetTypeInfo().IsInterface &&
+                    (implementationTypeFullName == null || string.Equals(t.FullName, implementationTypeFullName, StringComparison.OrdinalIgnoreCase))
+                );
 
-        return type != null;
+            return type != null;
+        }
+        catch
+        {
+            type = null;
+            return false;
+        }
     }
 }
