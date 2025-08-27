@@ -38,6 +38,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <!-- CVE-2018-8292 / https://github.com/advisories/GHSA-7jgj-8wvc-jh57 -->
+        <PackageReference Include="System.Net.Http " Version="4.3.4" />
+
         <!-- See also https://mstack.nl/blog/20210801-source-generators -->
         <PackageReference Include="FluentBuilder" Version="0.10.0">
             <PrivateAssets>all</PrivateAssets>
