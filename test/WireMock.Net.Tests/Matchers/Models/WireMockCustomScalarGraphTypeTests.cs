@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
+//#if GRAPHQL
 using System;
 using FluentAssertions;
 using WireMock.GraphQL.Models;
@@ -95,4 +95,4 @@ public class WireMockCustomScalarGraphTypeTests
         result.Should().Be("someString");
     }
 }
-#endif
+//#endif

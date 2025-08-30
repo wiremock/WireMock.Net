@@ -102,7 +102,7 @@ public partial class WireMockServerTests
 
         // then
         Check.That(server.Mappings).IsEmpty();
-        Check.ThatAsyncCode(() => new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path)).ThrowsAny();
+        Check.ThatCode(() => new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path)).ThrowsAny();
 
         server.Stop();
     }

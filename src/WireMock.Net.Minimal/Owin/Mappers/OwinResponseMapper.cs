@@ -8,21 +8,22 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
+using Stef.Validation;
 using WireMock.Http;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
-using Stef.Validation;
 using WireMock.Util;
 
-#if !USE_ASPNETCORE
-using IResponse = Microsoft.Owin.IOwinResponse;
-#else
-using Microsoft.AspNetCore.Http;
-using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
-#endif
+//#if !USE_ASPNETCORE
+//using IResponse = Microsoft.Owin.IOwinResponse;
+//#else
+//using Microsoft.AspNetCore.Http;
+//using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
+//#endif
 
 namespace WireMock.Owin.Mappers
 {
@@ -37,8 +38,8 @@ namespace WireMock.Owin.Mappers
         private readonly Encoding _utf8NoBom = new UTF8Encoding(false);
 
         // https://msdn.microsoft.com/en-us/library/78h415ay(v=vs.110).aspx
-        private static readonly IDictionary<string, Action<IResponse, bool, WireMockList<string>>> ResponseHeadersToFix =
-            new Dictionary<string, Action<IResponse, bool, WireMockList<string>>>(StringComparer.OrdinalIgnoreCase)
+        private static readonly IDictionary<string, Action<HttpResponse, bool, WireMockList<string>>> ResponseHeadersToFix =
+            new Dictionary<string, Action<HttpResponse, bool, WireMockList<string>>>(StringComparer.OrdinalIgnoreCase)
             {
                 { HttpKnownHeaderNames.ContentType, (r, _, v) => r.ContentType = v.FirstOrDefault() },
                 { HttpKnownHeaderNames.ContentLength, (r, hasBody, v) =>
@@ -62,7 +63,7 @@ namespace WireMock.Owin.Mappers
         }
 
         /// <inheritdoc />
-        public async Task MapAsync(IResponseMessage? responseMessage, IResponse response)
+        public async Task MapAsync(IResponseMessage? responseMessage, HttpResponse response)
         {
             if (responseMessage == null)
             {
@@ -128,7 +129,7 @@ namespace WireMock.Owin.Mappers
             SetResponseTrailingHeaders(responseMessage, response);
         }
 
-        private static async Task HandleSseStringAsync(IResponseMessage responseMessage, IResponse response, IBodyData bodyData)
+        private static async Task HandleSseStringAsync(IResponseMessage responseMessage, HttpResponse response, IBodyData bodyData)
         {
             if (bodyData.SseStringQueue == null)
             {
@@ -199,7 +200,7 @@ namespace WireMock.Owin.Mappers
             return null;
         }
 
-        private static void SetResponseHeaders(IResponseMessage responseMessage, bool hasBody, IResponse response)
+        private static void SetResponseHeaders(IResponseMessage responseMessage, bool hasBody, HttpResponse response)
         {
             // Force setting the Date header (#577)
             AppendResponseHeader(
@@ -215,7 +216,7 @@ namespace WireMock.Owin.Mappers
                 var value = item.Value;
                 if (ResponseHeadersToFix.TryGetValue(headerName, out var action))
                 {
-                    action?.Invoke(response, hasBody, value);
+                    action.Invoke(response, hasBody, value);
                 }
                 else
                 {
@@ -228,7 +229,7 @@ namespace WireMock.Owin.Mappers
             }
         }
 
-        private static void SetResponseTrailingHeaders(IResponseMessage responseMessage, IResponse response)
+        private static void SetResponseTrailingHeaders(IResponseMessage responseMessage, HttpResponse response)
         {
             if (responseMessage.TrailingHeaders == null)
             {
@@ -236,13 +237,11 @@ namespace WireMock.Owin.Mappers
             }
 
 #if TRAILINGHEADERS
-            foreach (var item in responseMessage.TrailingHeaders)
+            foreach (var (headerName, value) in responseMessage.TrailingHeaders)
             {
-                var headerName = item.Key;
-                var value = item.Value;
                 if (ResponseHeadersToFix.TryGetValue(headerName, out var action))
                 {
-                    action?.Invoke(response, false, value);
+                    action.Invoke(response, false, value);
                 }
                 else
                 {
@@ -256,13 +255,13 @@ namespace WireMock.Owin.Mappers
 #endif
         }
 
-        private static void AppendResponseHeader(IResponse response, string headerName, string[] values)
+        private static void AppendResponseHeader(HttpResponse response, string headerName, string[] values)
         {
-#if !USE_ASPNETCORE
-            response.Headers.AppendValues(headerName, values);
-#else
+            //#if !USE_ASPNETCORE
+            //            response.Headers.AppendValues(headerName, values);
+            //#else
             response.Headers.Append(headerName, values);
-#endif
+            //#endif
         }
     }
 }

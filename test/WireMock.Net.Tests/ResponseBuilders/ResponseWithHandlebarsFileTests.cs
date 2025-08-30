@@ -105,7 +105,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
 
         // Verify
         _filesystemHandlerMock.Verify(fs => fs.ReadResponseBodyAsString(It.IsAny<string>()), Times.Never);

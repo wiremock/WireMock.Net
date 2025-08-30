@@ -11,24 +11,18 @@ internal static class HttpClientBuilder
 {
     public static HttpClient Build(HttpClientSettings settings)
     {
-#if NETSTANDARD || NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
         var handler = new HttpClientHandler
         {
             CheckCertificateRevocationList = false,
             SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        };
-#elif NET46
-        var handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
 #else
-        var handler = new WebRequestHandler
+        var handler = new HttpClientHandler
         {
-            ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
 #endif

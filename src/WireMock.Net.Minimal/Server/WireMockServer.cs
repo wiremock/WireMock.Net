@@ -62,7 +62,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public int Port => Ports?.FirstOrDefault() ?? default;
+    public int Port => Ports?.FirstOrDefault() ?? 0;
 
     /// <inheritdoc />
     [PublicAPI]
@@ -411,16 +411,16 @@ public partial class WireMockServer : IWireMockServer
             _dateTimeUtils
         );
 
-#if USE_ASPNETCORE
+        //#if USE_ASPNETCORE
         _options.AdditionalServiceRegistration = _settings.AdditionalServiceRegistration;
         _options.CorsPolicyOptions = _settings.CorsPolicyOptions;
-        _options.ClientCertificateMode = _settings.ClientCertificateMode;
+        _options.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
         _options.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
 
         _httpServer = new AspNetCoreSelfHost(_options, urlOptions);
-#else
-        _httpServer = new OwinSelfHost(_options, urlOptions);
-#endif
+        //#else
+        //        _httpServer = new OwinSelfHost(_options, urlOptions);
+        //#endif
         var startTask = _httpServer.StartAsync();
 
         using (var ctsStartTimeout = new CancellationTokenSource(settings.StartTimeout))

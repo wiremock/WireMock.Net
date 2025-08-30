@@ -162,7 +162,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentException>();
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
     }
 
     [Fact]

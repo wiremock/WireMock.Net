@@ -328,7 +328,7 @@ public interface IWireMockAdminApi
     /// <param name="protoDefinition">The ProtoDefinition as text.</param>
     /// <param name="cancellationToken">The optional cancellationToken.</param>
     [Post("protodefinitions/{id}")]
-    Task<StatusModel> AddProtoDefinitionAsync([Path] string id, [Body] string body, CancellationToken cancellationToken = default);
+    Task<StatusModel> AddProtoDefinitionAsync([Path] string id, [Body] string protoDefinition, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Check if a file exists

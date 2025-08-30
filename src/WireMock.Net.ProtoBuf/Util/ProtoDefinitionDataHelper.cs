@@ -40,7 +40,7 @@ internal static class ProtoDefinitionDataHelper
 
             // Build comment and get content from file.
             var comment = $"// {protoRelativePath}";
-#if NETSTANDARD2_0 || NET462
+#if NETSTANDARD2_0 || NET462 || NET48
             var content = File.ReadAllText(filePath);
 #else
             var content = await File.ReadAllTextAsync(filePath, cancellationToken);

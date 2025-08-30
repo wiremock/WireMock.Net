@@ -25,10 +25,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.7.0" />
+        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.7.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WireMock.Net.Minimal\WireMock.Net.Minimal.csproj" />
+        <ProjectReference Include="..\WireMock.Net.Minimal\WireMock.Net.Minimal.csproj" />
     </ItemGroup>
 </Project>

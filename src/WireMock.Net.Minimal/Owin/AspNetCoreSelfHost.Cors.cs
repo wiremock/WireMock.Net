@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Types;

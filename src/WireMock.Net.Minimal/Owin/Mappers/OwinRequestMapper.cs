@@ -4,15 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using WireMock.Http;
 using WireMock.Models;
 using WireMock.Util;
-#if !USE_ASPNETCORE
-using IRequest = Microsoft.Owin.IOwinRequest;
-#else
-using Microsoft.AspNetCore.Http.Extensions;
-using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
-#endif
+//#if !USE_ASPNETCORE
+//using IRequest = Microsoft.Owin.IOwinRequest;
+//#else
+//using Microsoft.AspNetCore.Http.Extensions;
+//using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
+//#endif
 
 namespace WireMock.Owin.Mappers;
 
@@ -22,7 +24,7 @@ namespace WireMock.Owin.Mappers;
 internal class OwinRequestMapper : IOwinRequestMapper
 {
     /// <inheritdoc />
-    public async Task<RequestMessage> MapAsync(IRequest request, IWireMockMiddlewareOptions options)
+    public async Task<RequestMessage> MapAsync(HttpRequest request, IWireMockMiddlewareOptions options)
     {
         var (urlDetails, clientIP) = ParseRequest(request);
 
@@ -83,12 +85,12 @@ internal class OwinRequestMapper : IOwinRequestMapper
         };
     }
 
-    private static (UrlDetails UrlDetails, string ClientIP) ParseRequest(IRequest request)
+    private static (UrlDetails UrlDetails, string ClientIP) ParseRequest(HttpRequest request)
     {
-#if !USE_ASPNETCORE
-        var urlDetails = UrlUtils.Parse(request.Uri, request.PathBase);
-        var clientIP = request.RemoteIpAddress;
-#else
+        //#if !USE_ASPNETCORE
+        //        var urlDetails = UrlUtils.Parse(request.Uri, request.PathBase);
+        //        var clientIP = request.RemoteIpAddress;
+        //#else
         var urlDetails = UrlUtils.Parse(new Uri(request.GetEncodedUrl()), request.PathBase);
 
         var connection = request.HttpContext.Connection;
@@ -105,7 +107,7 @@ internal class OwinRequestMapper : IOwinRequestMapper
         {
             clientIP = connection.RemoteIpAddress.ToString();
         }
-#endif
+        //#endif
         return (urlDetails, clientIP);
     }
 }

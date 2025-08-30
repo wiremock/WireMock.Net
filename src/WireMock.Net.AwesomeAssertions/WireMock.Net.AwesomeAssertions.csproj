@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>AwesomeAssertions extensions for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.AwesomeAssertions</AssemblyTitle>
         <Authors>Francesco Venturoli;Mahmoud Ali;Stef Heyenrath</Authors>
-        <TargetFrameworks>net47;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <!--<TargetFrameworks>net47;netstandard2.0;netstandard2.1</TargetFrameworks>-->
+        <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.AwesomeAssertions</AssemblyName>
         <PackageId>WireMock.Net.AwesomeAssertions</PackageId>

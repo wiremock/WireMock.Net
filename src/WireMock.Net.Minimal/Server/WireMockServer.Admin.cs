@@ -295,11 +295,11 @@ public partial class WireMockServer
             WatchStaticMappings = _settings.WatchStaticMappings,
             WatchStaticMappingsInSubdirectories = _settings.WatchStaticMappingsInSubdirectories,
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
             AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate,
             ClientCertificateMode = _settings.ClientCertificateMode,
             CorsPolicyOptions = _settings.CorsPolicyOptions?.ToString()
-#endif
+//#endif
         };
 
         model.ProxyAndRecordSettings = TinyMapperUtils.Instance.Map(_settings.ProxyAndRecordSettings);
@@ -333,12 +333,12 @@ public partial class WireMockServer
 
         InitSettings(_settings);
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
         if (Enum.TryParse<CorsPolicyOptions>(settings.CorsPolicyOptions, true, out var corsPolicyOptions))
         {
             _settings.CorsPolicyOptions = corsPolicyOptions;
         }
-#endif
+//#endif
 
         WireMockMiddlewareOptionsHelper.InitFromSettings(_settings, _options, o =>
         {
@@ -347,11 +347,11 @@ public partial class WireMockServer
                 o.RequestProcessingDelay = TimeSpan.FromMilliseconds(settings.GlobalProcessingDelay.Value);
             }
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
             o.CorsPolicyOptions = corsPolicyOptions;
-            o.ClientCertificateMode = _settings.ClientCertificateMode;
+            o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode) _settings.ClientCertificateMode;
             o.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
-#endif
+//#endif
         });
 
         return ResponseMessageBuilder.Create(200, "Settings updated");
@@ -900,6 +900,6 @@ public partial class WireMockServer
         }
 
         var singleResult = ((JObject)value).ToObject<T>();
-        return new[] { singleResult! };
+        return [singleResult!];
     }
 }

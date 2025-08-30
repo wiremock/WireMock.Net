@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
+//#if PROTOBUF
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -18,8 +18,8 @@ public class ProtoBufUtilsTests
     public async Task GetProtoBufMessageWithHeader_MultipleProtoFiles()
     {
         // Arrange
-        var greet = await ReadProtoFileAsync("greet1.proto");
-        var request = await ReadProtoFileAsync("request.proto");
+        var greet = ReadProtoFile("greet1.proto");
+        var request = ReadProtoFile("request.proto");
 
         // Act
         var responseBytes = await ProtoBufUtils.GetProtoBufMessageWithHeaderAsync(
@@ -35,9 +35,9 @@ public class ProtoBufUtilsTests
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcKBWhlbGxv");
     }
 
-    private static Task<string> ReadProtoFileAsync(string filename)
+    private string ReadProtoFile(string filename)
     {
-        return File.ReadAllTextAsync(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
+        return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
     }
 }
-#endif
+//#endif

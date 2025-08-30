@@ -120,6 +120,6 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act and Assert
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
     }
 }

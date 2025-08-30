@@ -14,10 +14,7 @@ using WireMock.RegularExpressions;
 using WireMock.Types;
 using System.Globalization;
 using WireMock.Models;
-
-#if USE_ASPNETCORE
 using Microsoft.Extensions.DependencyInjection;
-#endif
 
 namespace WireMock.Settings;
 
@@ -151,7 +148,7 @@ public class WireMockServerSettings
     [JsonIgnore]
     public Action<object>? PostWireMockMiddlewareInit { get; set; }
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
     /// <summary>
     /// Action which is called with IServiceCollection when ASP.NET Core DI is being configured. [Optional]
     /// </summary>
@@ -164,7 +161,7 @@ public class WireMockServerSettings
     /// </summary>
     [PublicAPI]
     public CorsPolicyOptions? CorsPolicyOptions { get; set; }
-#endif
+//#endif
 
     /// <summary>
     /// The IWireMockLogger which logs Debug, Info, Warning or Error
@@ -249,7 +246,7 @@ public class WireMockServerSettings
     [PublicAPI]
     public bool CustomCertificateDefined => CertificateSettings?.IsDefined == true;
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
     /// <summary>
     /// Client certificate mode for the server
     /// </summary>
@@ -260,7 +257,7 @@ public class WireMockServerSettings
     /// Whether to accept any client certificate
     /// </summary>
     public bool AcceptAnyClientCertificate { get; set; }
-#endif
+//#endif
 
     /// <summary>
     /// Defines the global IWebhookSettings to use.

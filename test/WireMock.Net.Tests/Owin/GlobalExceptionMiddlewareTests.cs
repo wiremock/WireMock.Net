@@ -39,7 +39,7 @@ namespace WireMock.Net.Tests.Owin
         public void GlobalExceptionMiddleware_Invoke_NullAsNext_DoesNotInvokeNextAndDoesNotThrow()
         {
             // Act
-            Check.ThatAsyncCode(() => _sut.Invoke(null)).DoesNotThrow();
+            Check.ThatCode(() => _sut.Invoke(null)).DoesNotThrow();
         }
     }
 }

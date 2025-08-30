@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net452;net461;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <DebugType>full</DebugType>
@@ -21,15 +21,19 @@
         <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
+    <!--<PropertyGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
         <DefineConstants>NETFRAMEWORK</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' and '$(TargetFramework)' != 'net461'">
         <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
+    </PropertyGroup>-->
+
+    <PropertyGroup>
+        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' ">
+    <PropertyGroup Condition=" '$(TargetFramework)' != 'net48' ">
         <DefineConstants>$(DefineConstants);TRAILINGHEADERS</DefineConstants>
     </PropertyGroup>
 
@@ -64,21 +68,40 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="CultureAwareTesting.xUnit" Version="0.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="xunit.core" Version="2.9.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="CultureAwareTesting.xUnit" Version="0.0.1.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
         <PackageReference Include="coverlet.collector" Version="3.2.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Moq" Version="4.17.2" />
-        <PackageReference Include="System.Threading" Version="4.3.0" />
-        <PackageReference Include="NFluent" Version="2.8.0" />
+        <PackageReference Include="Moq" Version="4.20.72" />
+        <!--<PackageReference Include="System.Threading" Version="4.3.0" />-->
+        <PackageReference Include="NFluent" Version="3.1.0" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
-        <PackageReference Include="AnyOf" Version="0.4.0" />
-        <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+
+        <PackageReference Include="Verify.Xunit" Version="19.6.0" />
+        <PackageReference Include="JsonConverter.System.Text.Json" Version="0.7.2" />
+        <PackageReference Include="Google.Protobuf" Version="3.25.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.60.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+
+        <Protobuf Include="Grpc\greet.proto" GrpcServices="Client" />
+        <Protobuf Include="Grpc\policy.proto" GrpcServices="Client" />
+
+        <!--<PackageReference Include="AnyOf" Version="0.4.0" />-->
+        <!--<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />-->
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
+    <!--<ItemGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
         <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
@@ -99,9 +122,9 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Verify.Xunit" Version="19.6.0" />
-    </ItemGroup>
+    </ItemGroup>-->
 
-    <ItemGroup Condition="'$(TargetFramework)' != 'net452'">
+    <!--<ItemGroup Condition="'$(TargetFramework)' != 'net452'">
         <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
         <PackageReference Include="JsonConverter.System.Text.Json" Version="0.7.0" />
         <PackageReference Include="Google.Protobuf" Version="3.25.1" />
@@ -113,9 +136,18 @@
 
         <Protobuf Include="Grpc\greet.proto" GrpcServices="Client" />
         <Protobuf Include="Grpc\policy.proto" GrpcServices="Client" />
+    </ItemGroup>-->
+
+    <ItemGroup>
+        <!--<PackageReference Include="System.Net.Http.Json" Version="8.0.1" />-->
+
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+    <!--<ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+        <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />
+    </ItemGroup>-->
+
+    <ItemGroup>
         <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />
     </ItemGroup>
 
@@ -133,26 +165,26 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Grpc\Test\greet.proto">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Grpc\request.proto">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <!--<GrpcServices>Client</GrpcServices>-->
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <!--<GrpcServices>Client</GrpcServices>-->
         </None>
         <None Update="Grpc\greet1.proto">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <!--<GrpcServices>Client</GrpcServices>-->
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <!--<GrpcServices>Client</GrpcServices>-->
         </None>
         <None Update="Grpc\policy.proto">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          <GrpcServices>Client</GrpcServices>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <GrpcServices>Client</GrpcServices>
         </None>
         <None Update="Grpc\greet.proto">
             <GrpcServices>Client</GrpcServices>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Grpc\Test\SubFolder\request.proto">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="Grpc\ot\opentelemetry\proto\**\*.proto">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

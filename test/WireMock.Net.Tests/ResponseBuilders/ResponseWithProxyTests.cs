@@ -84,7 +84,7 @@ public class ResponseWithProxyTests : IDisposable
         // Act
         var request = new RequestMessage(new UrlDetails($"{_server.Urls[0]}/{_guid}"), "GET", ClientIp);
 
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HttpRequestException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HttpRequestException>();
     }
 
     public void Dispose()

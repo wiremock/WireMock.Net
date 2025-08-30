@@ -4,7 +4,8 @@
         <Description>Commonly used interfaces, models, enumerations and types.</Description>
         <AssemblyTitle>WireMock.Net.Abstractions</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net45;net451;net461;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <!--<TargetFrameworks>net45;net451;net461;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>-->
+        <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591;8603</NoWarn>
         <AssemblyName>WireMock.Net.Abstractions</AssemblyName>
@@ -33,32 +34,36 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
+    <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
         <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>
+    </PropertyGroup>-->
 
-    <ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
         <!-- CVE-2018-8292 / https://github.com/advisories/GHSA-7jgj-8wvc-jh57 -->
         <PackageReference Include="System.Net.Http " Version="4.3.4" />
-
-        <!-- See also https://mstack.nl/blog/20210801-source-generators -->
-        <PackageReference Include="FluentBuilder" Version="0.10.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="PolySharp" Version="1.15.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) and '$(TargetFramework)' != 'netstandard1.0'">
+    <ItemGroup>
+        <PackageReference Include="FluentBuilder" Version="0.12.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Polyfill" Version="8.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <!--<PackageReference Include="PolySharp" Version="1.15.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>-->
+    </ItemGroup>
+
+    <!--<ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) and '$(TargetFramework)' != 'netstandard1.0'">
       <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
     </ItemGroup>
 
-
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'net451' or '$(TargetFramework)' == 'net461'">
         <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    </ItemGroup>
+    </ItemGroup>-->
 
 </Project>

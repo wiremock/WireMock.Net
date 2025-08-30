@@ -6,9 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-#if USE_ASPNETCORE
 using System.Security.Cryptography.X509Certificates;
-#endif
+//#if USE_ASPNETCORE
+//using System.Security.Cryptography.X509Certificates;
+//#endif
 using Stef.Validation;
 using WireMock.Models;
 using WireMock.Owin;
@@ -82,11 +83,11 @@ public class RequestMessage : IRequestMessage
     /// <inheritdoc />
     public byte[]? BodyAsBytes { get; }
 
-#if MIMEKIT
+//#if MIMEKIT
     /// <inheritdoc />
     [Newtonsoft.Json.JsonIgnore] // Issue 1001
     public Models.Mime.IMimeMessageData? BodyAsMimeMessage { get; }
-#endif
+//#endif
 
     /// <inheritdoc />
     public string? DetectedBodyType { get; }
@@ -109,10 +110,10 @@ public class RequestMessage : IRequestMessage
     /// <inheritdoc />
     public string Origin { get; }
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
     /// <inheritdoc />
     public X509Certificate2? ClientCertificate { get; }
-#endif
+//#endif
 
     /// <summary>
     /// Used for Unit Testing
@@ -136,9 +137,9 @@ public class RequestMessage : IRequestMessage
         IDictionary<string, string[]>? headers = null,
         IDictionary<string, string>? cookies = null,
         string httpVersion = "1.1"
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
         , X509Certificate2? clientCertificate = null
-#endif
+//#endif
     )
     {
         Guard.NotNull(urlDetails);
@@ -178,9 +179,9 @@ public class RequestMessage : IRequestMessage
         Query = QueryStringParser.Parse(RawQuery, options?.QueryParameterMultipleValueSupport);
         QueryIgnoreCase = new Dictionary<string, WireMockList<string>>(Query, StringComparer.OrdinalIgnoreCase);
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
         ClientCertificate = clientCertificate;
-#endif
+//#endif
 
 #if MIMEKIT
         try
@@ -206,7 +207,6 @@ public class RequestMessage : IRequestMessage
         }
 
         var query = !ignoreCase ? Query : new Dictionary<string, WireMockList<string>>(Query, StringComparer.OrdinalIgnoreCase);
-
-        return query.ContainsKey(key) ? query[key] : null;
+        return query.TryGetValue(key, out var value) ? value : null;
     }
 }

@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
+//#if PROTOBUF
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -72,4 +72,4 @@ public class ProtoDefinitionHelperTests
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcIARIDYWJj");
     }
 }
-#endif
+//#endif

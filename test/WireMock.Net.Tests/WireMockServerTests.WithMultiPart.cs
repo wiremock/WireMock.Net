@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if MIMEKIT
+//#if MIMEKIT
 using System;
 using System.Net;
 using System.Net.Http;
@@ -74,4 +74,4 @@ public partial class WireMockServerTests
         server.Stop();
     }
 }
-#endif
+//#endif

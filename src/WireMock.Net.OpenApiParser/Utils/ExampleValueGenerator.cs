@@ -3,8 +3,7 @@
 using System;
 using System.Linq;
 using System.Text.Json.Nodes;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Stef.Validation;
 using WireMock.Net.OpenApiParser.Extensions;
 using WireMock.Net.OpenApiParser.Settings;

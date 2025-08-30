@@ -779,7 +779,7 @@ public class ResponseWithTransformerTests
         response.Message.BodyData.Encoding.Should().Be(enc);
     }
 
-#if MIMEKIT
+//#if MIMEKIT
     [Theory]
     [InlineData(TransformerType.Handlebars)]
     // [InlineData(TransformerType.Scriban)]
@@ -825,12 +825,12 @@ AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
             .WithTransformer(transformerType);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("text/plain text/json image.png");
     }
-#endif
+//#endif
 
     [Theory]
     [InlineData("/wiremock-data/1", "one")]

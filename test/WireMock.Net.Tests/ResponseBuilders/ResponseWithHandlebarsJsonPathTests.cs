@@ -350,7 +350,7 @@ public class ResponseWithHandlebarsJsonPathTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
     }
 
     [Fact]
