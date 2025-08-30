@@ -14,16 +14,27 @@ internal static class TypeLoader
 {
     private static readonly ConcurrentDictionary<string, Type> Assemblies = new();
     private static readonly ConcurrentDictionary<Type, object> Instances = new();
-    private static readonly ConcurrentBag<Type> StaticInstancesWhichAreNull = new();
+    private static readonly ConcurrentBag<(string FullName, Type Type)> InstancesWhichCannotBeFoundByFullName = [];
+    private static readonly ConcurrentBag<(string FullName, Type Type)> StaticInstancesWhichCannotBeFoundByFullName = [];
+    private static readonly ConcurrentBag<Type> InstancesWhichCannotBeFound = [];
+    private static readonly ConcurrentBag<Type> StaticInstancesWhichCannotBeFound = [];
 
     public static bool TryLoadNewInstance<TInterface>([NotNullWhen(true)] out TInterface? instance, params object?[] args) where TInterface : class
     {
+        var type = typeof(TInterface);
+        if (InstancesWhichCannotBeFound.Contains(type))
+        {
+            instance = null;
+            return false;
+        }
+
         if (TryGetPluginType<TInterface>(out var pluginType))
         {
             instance = (TInterface)Activator.CreateInstance(pluginType, args)!;
             return true;
         }
 
+        InstancesWhichCannotBeFound.Add(type);
         instance = null;
         return false;
     }
@@ -31,7 +42,7 @@ internal static class TypeLoader
     public static bool TryLoadStaticInstance<TInterface>([NotNullWhen(true)] out TInterface? staticInstance, params object?[] args) where TInterface : class
     {
         var type = typeof(TInterface);
-        if (StaticInstancesWhichAreNull.Contains(type))
+        if (StaticInstancesWhichCannotBeFound.Contains(type))
         {
             staticInstance = null;
             return false;
@@ -43,7 +54,7 @@ internal static class TypeLoader
             return true;
         }
 
-        StaticInstancesWhichAreNull.Add(type);
+        StaticInstancesWhichCannotBeFound.Add(type);
         staticInstance = null;
         return false;
     }
@@ -52,12 +63,20 @@ internal static class TypeLoader
     {
         Guard.NotNullOrEmpty(implementationTypeFullName);
 
+        var type = typeof(TInterface);
+        if (InstancesWhichCannotBeFoundByFullName.Contains((implementationTypeFullName, type)))
+        {
+            instance = null;
+            return false;
+        }
+
         if (TryGetPluginTypeByFullName<TInterface>(implementationTypeFullName, out var pluginType))
         {
             instance = (TInterface)Activator.CreateInstance(pluginType, args)!;
             return true;
         }
 
+        InstancesWhichCannotBeFoundByFullName.Add((implementationTypeFullName, type));
         instance = null;
         return false;
     }
@@ -66,12 +85,20 @@ internal static class TypeLoader
     {
         Guard.NotNullOrEmpty(implementationTypeFullName);
 
+        var type = typeof(TInterface);
+        if (StaticInstancesWhichCannotBeFoundByFullName.Contains((implementationTypeFullName, type)))
+        {
+            staticInstance = null;
+            return false;
+        }
+
         if (TryGetPluginTypeByFullName<TInterface>(implementationTypeFullName, out var pluginType))
         {
             staticInstance = (TInterface)Instances.GetOrAdd(pluginType, key => Activator.CreateInstance(key, args)!);
             return true;
         }
 
+        StaticInstancesWhichCannotBeFoundByFullName.Add((implementationTypeFullName, type));
         staticInstance = null;
         return false;
     }

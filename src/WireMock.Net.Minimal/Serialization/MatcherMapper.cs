@@ -294,6 +294,7 @@ internal class MatcherMapper
 
         if (TypeLoader.TryLoadNewInstance<IMimePartMatcher>(
             out var mimePartMatcher,
+            matchBehaviour,
             contentTypeMatcher,
             contentDispositionMatcher,
             contentTransferEncodingMatcher,
