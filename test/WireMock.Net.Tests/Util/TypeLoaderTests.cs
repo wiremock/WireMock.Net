@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.IO;
 using AnyOfTypes;
 using FluentAssertions;
@@ -56,7 +55,7 @@ public class TypeLoaderTests
     }
 
     [Fact]
-    public void LoadNewInstance()
+    public void TryLoadNewInstance()
     {
         var current = Directory.GetCurrentDirectory();
         try
@@ -65,10 +64,11 @@ public class TypeLoaderTests
 
             // Act
             AnyOf<string, StringPattern> pattern = "x";
-            var result = TypeLoader.LoadNewInstance<ICSharpCodeMatcher>(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, pattern);
+            var result = TypeLoader.TryLoadNewInstance<ICSharpCodeMatcher>(out var instance, MatchBehaviour.AcceptOnMatch, MatchOperator.Or, pattern);
 
             // Assert
-            result.Should().NotBeNull();
+            result.Should().BeTrue();
+            instance.Should().BeOfType<CSharpCodeMatcher>();
         }
         finally
         {
@@ -77,63 +77,66 @@ public class TypeLoaderTests
     }
 
     [Fact]
-    public void LoadNewInstanceByFullName()
+    public void TryLoadNewInstanceByFullName()
     {
         // Act
-        var result = TypeLoader.LoadNewInstanceByFullName<IDummyInterfaceWithImplementation>(typeof(DummyClass).FullName!);
+        var result = TypeLoader.TryLoadNewInstanceByFullName<IDummyInterfaceWithImplementation>(out var instance, typeof(DummyClass).FullName!);
 
         // Assert
-        result.Should().BeOfType<DummyClass>();
+        result.Should().BeTrue();
+        instance.Should().BeOfType<DummyClass>();
     }
 
     [Fact]
-    public void LoadStaticInstance_ShouldOnlyCreateInstanceOnce()
+    public void TryLoadStaticInstance_ShouldOnlyCreateInstanceOnce()
     {
         // Arrange
         var counter = new Counter();
 
         // Act
-        var result = TypeLoader.LoadStaticInstance<IDummyInterfaceWithImplementationUsedForStaticTest>(counter);
-        TypeLoader.LoadStaticInstance<IDummyInterfaceWithImplementationUsedForStaticTest>(counter);
+        var result = TypeLoader.TryLoadStaticInstance<IDummyInterfaceWithImplementationUsedForStaticTest>(out var staticInstance, counter);
+        TypeLoader.TryLoadStaticInstance(out staticInstance, counter);
 
         // Assert
-        result.Should().BeOfType<DummyClass1UsedForStaticTest>();
+        result.Should().BeTrue();
+        staticInstance.Should().BeOfType<DummyClass1UsedForStaticTest>();
         counter.Value.Should().Be(1);
     }
 
     [Fact]
-    public void LoadStaticInstanceByFullName_ShouldOnlyCreateInstanceOnce()
+    public void TryLoadStaticInstanceByFullName_ShouldOnlyCreateInstanceOnce()
     {
         // Arrange
         var counter = new Counter();
         var fullName = typeof(DummyClass2UsedForStaticTest).FullName!;
 
         // Act
-        var result = TypeLoader.LoadStaticInstanceByFullName<IDummyInterfaceWithImplementationUsedForStaticTest>(fullName, counter);
-        TypeLoader.LoadStaticInstanceByFullName<IDummyInterfaceWithImplementationUsedForStaticTest>(fullName, counter);
+        var result = TypeLoader.TryLoadStaticInstanceByFullName<IDummyInterfaceWithImplementationUsedForStaticTest>(out var staticInstance, fullName, counter);
+        TypeLoader.TryLoadStaticInstanceByFullName(out staticInstance, fullName, counter);
 
         // Assert
-        result.Should().BeOfType<DummyClass2UsedForStaticTest>();
+        result.Should().BeTrue();
+        staticInstance.Should().BeOfType<DummyClass2UsedForStaticTest>();
         counter.Value.Should().Be(1);
     }
 
     [Fact]
-    public void LoadNewInstance_ButNoImplementationFoundForInterface_ThrowsException()
+    public void TryLoadNewInstance_ButNoImplementationFoundForInterface_ReturnsFalse()
     {
         // Act
-        Action a = () => TypeLoader.LoadNewInstance<IDummyInterfaceNoImplementation>();
+        var result = TypeLoader.TryLoadNewInstance<IDummyInterfaceNoImplementation>(out _);
 
         // Assert
-        a.Should().Throw<DllNotFoundException>().WithMessage("No dll found which implements Interface 'WireMock.Net.Tests.Util.TypeLoaderTests+IDummyInterfaceNoImplementation'.");
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public void LoadNewInstanceByFullName_ButNoImplementationFoundForInterface_ThrowsException()
+    public void TryLoadNewInstanceByFullName_ButNoImplementationFoundForInterface_ReturnsFalse()
     {
         // Act
-        Action a = () => TypeLoader.LoadNewInstanceByFullName<IDummyInterfaceWithImplementation>("xyz");
+        var result = TypeLoader.TryLoadNewInstanceByFullName<IDummyInterfaceWithImplementation>(out _, "xyz");
 
         // Assert
-        a.Should().Throw<DllNotFoundException>().WithMessage("No dll found which implements Interface 'WireMock.Net.Tests.Util.TypeLoaderTests+IDummyInterfaceWithImplementation' and has FullName 'xyz'.");
+        result.Should().BeFalse();
     }
 }

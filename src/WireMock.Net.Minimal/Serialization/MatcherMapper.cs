@@ -55,7 +55,12 @@ internal class MatcherMapper
             case "CSharpCodeMatcher":
                 if (_settings.AllowCSharpCodeMatcher == true)
                 {
-                    return TypeLoader.LoadNewInstance<ICSharpCodeMatcher>(matchBehaviour, matchOperator, stringPatterns);
+                    if (TypeLoader.TryLoadNewInstance<ICSharpCodeMatcher>(out var csharpCodeMatcher, matchBehaviour, matchOperator, stringPatterns))
+                    {
+                        return csharpCodeMatcher;
+                    }
+
+                    throw new InvalidOperationException("The 'CSharpCodeMatcher' cannot be loaded. Please install the WireMock.Net.Matchers.CSharpCode package.");
                 }
 
                 throw new NotSupportedException("It's not allowed to use the 'CSharpCodeMatcher' because WireMockServerSettings.AllowCSharpCodeMatcher is not set to 'true'.");
@@ -75,7 +80,12 @@ internal class MatcherMapper
             case "GraphQLMatcher":
                 var patternAsString = stringPatterns[0].GetPattern();
                 var schema = new AnyOf<string, StringPattern, ISchemaData>(patternAsString);
-                return TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, matcherModel.CustomScalars, matchBehaviour, matchOperator);
+                if (TypeLoader.TryLoadNewInstance<IGraphQLMatcher>(out var graphQLMatcher, schema, matcherModel.CustomScalars, matchBehaviour, matchOperator))
+                {
+                    return graphQLMatcher;
+                }
+
+                throw new InvalidOperationException("The 'GraphQLMatcher' cannot be loaded. Please install the WireMock.Net.GraphQL package.");
 
             case "MimePartMatcher":
                 return CreateMimePartMatcher(matchBehaviour, matcherModel);
@@ -282,18 +292,33 @@ internal class MatcherMapper
         var contentTransferEncodingMatcher = Map(matcher.ContentTransferEncodingMatcher) as IStringMatcher;
         var contentMatcher = Map(matcher.ContentMatcher);
 
-        return TypeLoader.LoadNewInstance<IMimePartMatcher>(matchBehaviour, contentTypeMatcher, contentDispositionMatcher, contentTransferEncodingMatcher, contentMatcher);
+        if (TypeLoader.TryLoadNewInstance<IMimePartMatcher>(
+            out var mimePartMatcher,
+            contentTypeMatcher,
+            contentDispositionMatcher,
+            contentTransferEncodingMatcher,
+            contentMatcher))
+        {
+            return mimePartMatcher;
+        }
+
+        throw new InvalidOperationException("The 'MimePartMatcher' cannot be loaded. Please install the WireMock.Net.MimePart package.");
     }
 
     private IProtoBufMatcher CreateProtoBufMatcher(MatchBehaviour? matchBehaviour, IReadOnlyList<string> protoDefinitions, MatcherModel matcher)
     {
         var objectMatcher = Map(matcher.ContentMatcher) as IObjectMatcher;
 
-        return TypeLoader.LoadNewInstance<IProtoBufMatcher>(
+        if (TypeLoader.TryLoadNewInstance<IProtoBufMatcher>(
+            out var protobufMatcher,
             () => ProtoDefinitionUtils.GetIdOrTexts(_settings, protoDefinitions.ToArray()),
             matcher.ProtoBufMessageType!,
             matchBehaviour ?? MatchBehaviour.AcceptOnMatch,
-            objectMatcher
-        );
+            objectMatcher))
+        {
+            return protobufMatcher;
+        }
+
+        throw new InvalidOperationException("The 'ProtoBufMatcher' cannot be loaded. Please install the WireMock.Net.ProtoBuf package.");
     }
 }

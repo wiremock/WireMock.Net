@@ -366,10 +366,8 @@ public partial class WireMockServer
         }
         else if (responseModel.BodyAsJson != null)
         {
-            if (responseModel.ProtoBufMessageType != null)
+            if (responseModel.ProtoBufMessageType != null && TypeLoader.TryLoadStaticInstance<IProtoBufUtils>(out var protoBufUtils))
             {
-                var protoBufUtils = TypeLoader.LoadStaticInstance<IProtoBufUtils>();
-
                 if (responseModel.ProtoDefinition != null)
                 {
                     responseBuilder = protoBufUtils.UpdateResponseBuilder(responseBuilder, responseModel.ProtoBufMessageType, responseModel.BodyAsJson, responseModel.ProtoDefinition);
