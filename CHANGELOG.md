@@ -1,3 +1,7 @@
+# 1.12.0 (30 August 2025)
+- [#1357](https://github.com/wiremock/WireMock.Net/pull/1357) - Upgrade Testcontainers to 4.7.0 [feature] contributed by [StefH](https://github.com/StefH)
+- [#1356](https://github.com/wiremock/WireMock.Net/issues/1356) - WireMock.Net 1.11.2 is not compatible with TestContainers 4.7.0 [bug]
+
 # 1.11.2 (27 August 2025)
 - [#1352](https://github.com/wiremock/WireMock.Net/pull/1352) - Add additional try-catch to TypeLoader logic [feature] contributed by [StefH](https://github.com/StefH)
 - [#1354](https://github.com/wiremock/WireMock.Net/pull/1354) - Add System.Net.Http again to solve CVE warning [bug] contributed by [StefH](https://github.com/StefH)

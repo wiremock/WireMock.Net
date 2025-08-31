@@ -25,6 +25,8 @@ public partial class TestcontainersTests(ITestOutputHelper testOutputHelper)
         var adminPassword = $"password_{Guid.NewGuid()}";
         var wireMockContainer = new WireMockContainerBuilder()
             .WithAdminUserNameAndPassword(adminUsername, adminPassword)
+            .WithAutoRemove(true)
+            .WithCleanUp(true)
             .Build();
 
         await StartTestAsync(wireMockContainer);

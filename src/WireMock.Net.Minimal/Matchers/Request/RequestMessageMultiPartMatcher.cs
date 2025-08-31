@@ -12,7 +12,7 @@ namespace WireMock.Matchers.Request;
 /// </summary>
 public class RequestMessageMultiPartMatcher : IRequestMatcher
 {
-    private static readonly IMimeKitUtils MimeKitUtils = TypeLoader.LoadStaticInstance<IMimeKitUtils>();
+    private readonly IMimeKitUtils _mimeKitUtils = LoadMimeKitUtils();
 
     /// <summary>
     /// The matchers.
@@ -62,7 +62,7 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
             return requestMatchResult.AddScore(GetType(), score, null);
         }
 
-        if (!MimeKitUtils.TryGetMimeMessage(requestMessage, out var message))
+        if (!_mimeKitUtils.TryGetMimeMessage(requestMessage, out var message))
         {
             return requestMatchResult.AddScore(GetType(), score, null);
         }
@@ -95,5 +95,15 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
         }
 
         return requestMatchResult.AddScore(GetType(), score, exception);
+    }
+
+    private static IMimeKitUtils LoadMimeKitUtils()
+    {
+        if (TypeLoader.TryLoadStaticInstance<IMimeKitUtils>(out var mimeKitUtils))
+        {
+            return mimeKitUtils;
+        }
+
+        throw new InvalidOperationException("MimeKit is required for RequestMessageMultiPartMatcher. Please install the WireMock.Net.MimePart package.");
     }
 }

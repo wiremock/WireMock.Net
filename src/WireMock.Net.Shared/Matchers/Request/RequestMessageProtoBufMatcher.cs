@@ -25,7 +25,10 @@ public class RequestMessageProtoBufMatcher : IRequestMatcher
     /// <param name="matcher">The optional matcher to use to match the ProtoBuf as (json) object.</param>
     public RequestMessageProtoBufMatcher(MatchBehaviour matchBehaviour, Func<IdOrTexts> protoDefinition, string messageType, IObjectMatcher? matcher = null)
     {
-        Matcher = TypeLoader.LoadNewInstance<IProtoBufMatcher>(protoDefinition, messageType, matchBehaviour, matcher);
+        if (TypeLoader.TryLoadNewInstance<IProtoBufMatcher>(out var protoBufMatcher, protoDefinition, messageType, matchBehaviour, matcher))
+        {
+            Matcher = protoBufMatcher;
+        }
     }
 
     /// <inheritdoc />

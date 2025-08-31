@@ -184,16 +184,9 @@ public class RequestMessage : IRequestMessage
 //#endif
 
 #if MIMEKIT
-        try
+        if (TypeLoader.TryLoadStaticInstance<IMimeKitUtils>(out var mimeKitUtils) && mimeKitUtils.TryGetMimeMessage(this, out var mimeMessage))
         {
-            if (TypeLoader.LoadStaticInstance<IMimeKitUtils>().TryGetMimeMessage(this, out var mimeMessage))
-            {
-                BodyAsMimeMessage = mimeMessage;
-            }
-        }
-        catch
-        {
-            // Ignore exception from MimeMessage.Load
+            BodyAsMimeMessage = mimeMessage;
         }
 #endif
     }

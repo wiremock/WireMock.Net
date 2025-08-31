@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Net.Sockets;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 
 namespace WireMock.Net.Aspire.Tests;

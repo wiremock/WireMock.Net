@@ -100,7 +100,10 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
         IDictionary<string, Type>? customScalars
     )
     {
-        var graphQLMatcher = TypeLoader.LoadNewInstance<IGraphQLMatcher>(schema, customScalars, matchBehaviour, MatchOperator.Or);
-        return [graphQLMatcher];
+        if (TypeLoader.TryLoadNewInstance<IGraphQLMatcher>(out var graphQLMatcher, schema, customScalars, matchBehaviour, MatchOperator.Or))
+        {
+            return [graphQLMatcher];
+        }
+        return [];
     }
 }

@@ -1,9 +1,5 @@
-# 1.11.2 (27 August 2025)
-- #1352 Add additional try-catch to TypeLoader logic [feature]
-- #1354 Add System.Net.Http again to solve CVE warning [bug]
-- #1355 Revert JetBrains.Annotations and add System.Text.RegularExpressions t&#8230; [bug]
-- #1071 Split WireMock into multiple nuget packages depending on features [feature]
-- #1351 Version 1.11.0 seems to have a dependency to non-existing version of JetBrans.Annotations [bug]
-- #1353 1.11.0: NU1903: Warning As Error: Package 'System.Net.Http' 4.3.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-7jgj-8wvc-jh57 [bug]
+# 1.12.0 (30 August 2025)
+- #1357 Upgrade Testcontainers to 4.7.0 [feature]
+- #1356 WireMock.Net 1.11.2 is not compatible with TestContainers 4.7.0 [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

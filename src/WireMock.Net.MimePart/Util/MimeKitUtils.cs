@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -33,16 +32,25 @@ internal class MimeKitUtils : IMimeKitUtils
             StartsWithMultiPart(contentTypeHeader)
         )
         {
-            var bytes = requestMessage.BodyData?.DetectedBodyType switch
+            byte[] bytes;
+
+            switch (requestMessage.BodyData?.DetectedBodyType)
             {
                 // If the body is bytes, use the BodyAsBytes to match on.
-                BodyType.Bytes => requestMessage.BodyData.BodyAsBytes!,
+                case BodyType.Bytes:
+                    bytes = requestMessage.BodyData.BodyAsBytes!;
+                    break;
 
                 // If the body is a String or MultiPart, use the BodyAsString to match on.
-                BodyType.String or BodyType.MultiPart => Encoding.UTF8.GetBytes(requestMessage.BodyData.BodyAsString!),
+                case BodyType.String or BodyType.MultiPart:
+                    bytes = Encoding.UTF8.GetBytes(requestMessage.BodyData.BodyAsString!);
+                    break;
 
-                _ => throw new NotSupportedException()
-            };
+                // Else return false.
+                default:
+                    mimeMessageData = null;
+                    return false;
+            }
 
             var fixedBytes = FixBytes(bytes, contentTypeHeader[0]);
 
