@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -52,10 +51,10 @@ public class ResponseWithHandlebarsRandomTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Text"].Value<string>()).IsNotEmpty();
-        Check.That(j["Integer"].Value<int>()).IsEqualTo(1000);
-        Check.That(j["Long"].Value<long>()).IsStrictlyGreaterThan(77777777).And.IsStrictlyLessThan(99999999);
+        JObject j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["Text"]?.Value<string>().Should().NotBeNullOrEmpty();
+        j["Integer"]?.Value<int>().Should().Be(1000);
+        j["Long"]?.Value<long>().Should().BeInRange(77777777, 99999999);
     }
 
     [Fact]
@@ -75,8 +74,8 @@ public class ResponseWithHandlebarsRandomTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Value"].Type).IsEqualTo(JTokenType.Boolean);
+        JObject j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["Value"]?.Type.Should().Be(JTokenType.Boolean);
     }
 
     [Theory]
@@ -166,9 +165,9 @@ public class ResponseWithHandlebarsRandomTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        string value = j["StringValue"].Value<string>();
-        Check.That(new[] { "a", "b", "c" }.Contains(value)).IsTrue();
+        JObject j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        var value = j["StringValue"]?.Value<string>();
+        new[] { "a", "b", "c" }.Should().Contain(value);
     }
 
     [Fact]
@@ -188,8 +187,8 @@ public class ResponseWithHandlebarsRandomTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Integer"].Value<int>()).IsStrictlyGreaterThan(10000000).And.IsStrictlyLessThan(99999999);
+        JObject j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["Integer"]?.Value<int>().Should().BeInRange(10000000, 99999999);
     }
 
     [Fact]
@@ -209,7 +208,7 @@ public class ResponseWithHandlebarsRandomTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        j["Long"].Value<long>().Should().BeInRange(1000000000, 9999999999);
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["Long"]?.Value<long>().Should().BeInRange(1000000000, 9999999999);
     }
 }

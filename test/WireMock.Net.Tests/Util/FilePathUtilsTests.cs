@@ -31,7 +31,7 @@ public class FilePathUtilsTests
     [InlineData(@"\", "")]
     [InlineData(@"\\", "")]
     [InlineData(@"\\a", "a")]
-    public void PathUtils_CleanPath_RemoveLeadingDirectorySeparators(string path, string expected)
+    public void PathUtils_CleanPath_RemoveLeadingDirectorySeparators(string? path, string? expected)
     {
         // Arrange
         var cleanPath = FilePathUtils.CleanPath(path);
