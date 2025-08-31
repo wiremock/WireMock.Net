@@ -22,7 +22,7 @@ public class ByteArrayContentHelperTests
 
         // Assert
         result.Headers.ContentType.Should().BeNull();
-        (await result.ReadAsByteArrayAsync().ConfigureAwait(false)).Should().BeEquivalentTo(content);
+        (await result.ReadAsByteArrayAsync()).Should().BeEquivalentTo(content);
     }
 
     [Theory]
@@ -40,6 +40,6 @@ public class ByteArrayContentHelperTests
 
         // Assert
         result.Headers.ContentType.ToString().Should().Be(expected);
-        (await result.ReadAsByteArrayAsync().ConfigureAwait(false)).Should().BeEquivalentTo(content);
+        (await result.ReadAsByteArrayAsync()).Should().BeEquivalentTo(content);
     }
 }

@@ -49,7 +49,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -72,7 +72,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -95,7 +95,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -120,7 +120,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -142,7 +142,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -163,7 +163,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -185,7 +185,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -206,7 +206,7 @@ public class ResponseWithHandlebarsRandomTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);

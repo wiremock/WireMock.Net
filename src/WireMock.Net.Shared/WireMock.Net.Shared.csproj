@@ -17,10 +17,6 @@
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     </PropertyGroup>
 
-    <!-- https://github.com/aspnet/RoslynCodeDomProvider/issues/51 -->
-    <!-- This is needed else we cannot build net452 in Azure DevOps Pipeline -->
-    <!--<Target Name="CheckIfShouldKillVBCSCompiler" />-->
-
     <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">
         <CodeAnalysisRuleSet>../WireMock.Net/WireMock.Net.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
@@ -29,18 +25,6 @@
         <!--<PathMap>$(MSBuildProjectDirectory)=/</PathMap>-->
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
-
-    <!--<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
-        <DefineConstants>$(DefineConstants);NETSTANDARD;USE_ASPNETCORE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' or '$(TargetFramework)' == 'netcoreapp2.2' or '$(TargetFramework)' == 'netcoreapp3.1' or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
-        <DefineConstants>$(DefineConstants);USE_ASPNETCORE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-        <DefineConstants>$(DefineConstants);USE_ASPNETCORE;NET46</DefineConstants>
-    </PropertyGroup>-->
 
     <ItemGroup>
         <!-- Keep at 6.14.0 -->
@@ -65,10 +49,6 @@
         <PackageReference Include="Handlebars.Net.Helpers.XPath" Version="2.5.2" />
         <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.5.2" />
     </ItemGroup>
-
-    <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    </ItemGroup>-->
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />

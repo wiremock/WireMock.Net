@@ -9,10 +9,6 @@
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>
-
     <ItemGroup>
         <PackageReference Include="AwesomeAssertions" Version="9.1.0" />
         <PackageReference Include="coverlet.collector" Version="6.0.4">

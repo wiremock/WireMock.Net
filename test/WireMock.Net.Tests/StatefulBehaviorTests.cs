@@ -30,7 +30,7 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create());
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + path);
 
         // then
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NotFound);
@@ -58,8 +58,8 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("Test state msg"));
 
         // Act
-        var responseNoState = await new HttpClient().GetStringAsync(server.Url + path).ConfigureAwait(false);
-        var responseWithState = await new HttpClient().GetStringAsync(server.Url + path).ConfigureAwait(false);
+        var responseNoState = await new HttpClient().GetStringAsync(server.Url + path);
+        var responseWithState = await new HttpClient().GetStringAsync(server.Url + path);
 
         // Assert
         Check.That(responseNoState).Equals("No state msg");
@@ -137,9 +137,9 @@ public class StatefulBehaviorTests
 
         // when
         var client = new HttpClient();
-        var responseScenario1 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseScenario2 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithState = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseScenario1 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path);
+        var responseScenario2 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path);
+        var responseWithState = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path);
 
         // then
         responseScenario1.Should().Be(body1);
@@ -184,11 +184,11 @@ public class StatefulBehaviorTests
 
         // when
         var client = new HttpClient();
-        var t1a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1).ConfigureAwait(false);
-        var t1b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1).ConfigureAwait(false);
-        var t2a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2).ConfigureAwait(false);
-        var t2b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2).ConfigureAwait(false);
-        var t3 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path3).ConfigureAwait(false);
+        var t1a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1);
+        var t1b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1);
+        var t2a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2);
+        var t2b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2);
+        var t3 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path3);
 
         // then
         t1a.Should().Be(body1);
@@ -220,8 +220,8 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("Scenario 1, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
 
         // then
         Check.That(responseIntScenario).Equals("Scenario 1, Setting State 2");
@@ -250,8 +250,8 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("string state, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
 
         // then
         Check.That(responseIntScenario).Equals("string state, Setting State 2");
@@ -280,8 +280,8 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("string state, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path);
 
         // then
         Check.That(responseIntScenario).Equals("int state, Setting State 2");
@@ -319,7 +319,7 @@ public class StatefulBehaviorTests
         Check.That(server.Scenarios.Any()).IsFalse();
 
         // Act and Assert
-        var getResponse1 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        var getResponse1 = await client.GetStringAsync("/todo/items");
         Check.That(getResponse1).Equals("Buy milk");
 
         Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
@@ -327,7 +327,7 @@ public class StatefulBehaviorTests
         Check.That(server.Scenarios["To do list"].Started).IsTrue();
         Check.That(server.Scenarios["To do list"].Finished).IsFalse();
 
-        var postResponse = await client.PostAsync("/todo/items", new StringContent("Cancel newspaper subscription")).ConfigureAwait(false);
+        var postResponse = await client.PostAsync("/todo/items", new StringContent("Cancel newspaper subscription"));
         Check.That(postResponse.StatusCode).Equals(HttpStatusCode.Created);
 
         Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
@@ -335,7 +335,7 @@ public class StatefulBehaviorTests
         Check.That(server.Scenarios["To do list"].Started).IsTrue();
         Check.That(server.Scenarios["To do list"].Finished).IsFalse();
 
-        string getResponse2 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        string getResponse2 = await client.GetStringAsync("/todo/items");
         Check.That(getResponse2).Equals("Buy milk;Cancel newspaper subscription");
 
         Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
@@ -370,14 +370,14 @@ public class StatefulBehaviorTests
         server.SetScenarioState(scenario, "Buy milk");
         server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Buy milk" });
         
-        var getResponse1 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        var getResponse1 = await client.GetStringAsync("/todo/items");
         getResponse1.Should().Be("Buy milk");
 
         server.SetScenarioState(scenario, "Cancel newspaper");
         server.Scenarios[scenario].Name.Should().Be(scenario);
         server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Cancel newspaper" });
 
-        var getResponse2 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        var getResponse2 = await client.GetStringAsync("/todo/items");
         getResponse2.Should().Be("Buy milk;Cancel newspaper subscription");
     }
 
@@ -441,16 +441,16 @@ public class StatefulBehaviorTests
 
         // Act and Assert
         string url = "http://localhost:" + server.Ports[0];
-        var responseNoState1 = await new HttpClient().GetStringAsync(url + "/state1").ConfigureAwait(false);
+        var responseNoState1 = await new HttpClient().GetStringAsync(url + "/state1");
         Check.That(responseNoState1).Equals("No state msg 1");
 
-        var responseNoState2 = await new HttpClient().GetStringAsync(url + "/state2").ConfigureAwait(false);
+        var responseNoState2 = await new HttpClient().GetStringAsync(url + "/state2");
         Check.That(responseNoState2).Equals("No state msg 2");
 
-        var responseWithState1 = await new HttpClient().GetStringAsync(url + "/foo1X").ConfigureAwait(false);
+        var responseWithState1 = await new HttpClient().GetStringAsync(url + "/foo1X");
         Check.That(responseWithState1).Equals("Test state msg 1");
 
-        var responseWithState2 = await new HttpClient().GetStringAsync(url + "/foo2X").ConfigureAwait(false);
+        var responseWithState2 = await new HttpClient().GetStringAsync(url + "/foo2X");
         Check.That(responseWithState2).Equals("Test state msg 2");
 
         server.Stop();

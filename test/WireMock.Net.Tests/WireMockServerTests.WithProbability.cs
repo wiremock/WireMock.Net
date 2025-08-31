@@ -29,7 +29,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
         Assert.True(new[] { HttpStatusCode.OK, HttpStatusCode.InternalServerError }.Contains(response.StatusCode));

@@ -75,8 +75,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -124,8 +124,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -180,8 +180,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -235,8 +235,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -267,8 +267,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -301,8 +301,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");

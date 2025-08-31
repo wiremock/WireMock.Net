@@ -41,7 +41,7 @@ message HelloReply {
 
         // Act
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var getMappingsResult = await api.GetMappingsAsync().ConfigureAwait(false);
+        var getMappingsResult = await api.GetMappingsAsync();
 
         await Verifier.Verify(getMappingsResult, VerifySettings);
     }
@@ -54,7 +54,7 @@ message HelloReply {
 
         // Act
         var client = server.CreateClient();
-        var getMappingsResult = await client.GetStringAsync("/__admin/mappings").ConfigureAwait(false);
+        var getMappingsResult = await client.GetStringAsync("/__admin/mappings");
 
         await Verifier.VerifyJson(getMappingsResult, VerifySettings);
     }

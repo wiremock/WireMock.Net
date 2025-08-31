@@ -37,23 +37,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!--<PackageReference Include="Nullable" Version="1.3.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>
-
-    <!--<ItemGroup>
-        <PackageReference Include="MimeKitLite" Version="4.12.0" />
-    </ItemGroup>-->
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
         <PackageReference Include="MimeKitLite" Version="4.13.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.40" PrivateAssets="All" />
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" PrivateAssets="All" />
         <PackageReference Include="MimeKitLite" Version="4.13.0" PrivateAssets="All" />
     </ItemGroup>
 

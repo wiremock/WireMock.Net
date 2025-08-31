@@ -34,10 +34,6 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
-        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>-->
-
     <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
         <!-- CVE-2018-8292 / https://github.com/advisories/GHSA-7jgj-8wvc-jh57 -->
         <PackageReference Include="System.Net.Http " Version="4.3.4" />
@@ -55,13 +51,5 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
-    <!--<ItemGroup Condition="$(TargetFramework.StartsWith('netstandard')) and '$(TargetFramework)' != 'netstandard1.0'">
-      <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'net451' or '$(TargetFramework)' == 'net461'">
-        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    </ItemGroup>-->
 
 </Project>

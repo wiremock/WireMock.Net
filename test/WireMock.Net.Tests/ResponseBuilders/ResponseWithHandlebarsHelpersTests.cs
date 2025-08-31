@@ -40,7 +40,7 @@ public class ResponseWithHandlebarsHelpersTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("ABC");

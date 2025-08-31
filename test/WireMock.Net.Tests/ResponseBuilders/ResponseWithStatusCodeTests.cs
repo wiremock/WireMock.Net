@@ -42,7 +42,7 @@ public class ResponseWithStatusCodeTests
                 break;
         }
 
-        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settingsMock.Object).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settingsMock.Object);
 
         // Assert
         response.Message.StatusCode.Should().Be(expectedStatusCode);

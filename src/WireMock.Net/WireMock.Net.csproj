@@ -29,22 +29,11 @@
         <CodeAnalysisRuleSet>WireMock.Net.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>
-
     <ItemGroup>
         <ProjectReference Include="../WireMock.Net.Minimal/WireMock.Net.Minimal.csproj" />
         <ProjectReference Include="../WireMock.Net.MimePart/WireMock.Net.MimePart.csproj" />
         <ProjectReference Include="../WireMock.Net.GraphQL/WireMock.Net.GraphQL.csproj" />
         <ProjectReference Include="../WireMock.Net.ProtoBuf/WireMock.Net.ProtoBuf.csproj" />
     </ItemGroup>
-
-    <!--<ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' and '$(TargetFramework)' != 'net461'">
-        <ProjectReference Include="../WireMock.Net.MimePart/WireMock.Net.MimePart.csproj" />
-        <ProjectReference Include="../WireMock.Net.GraphQL/WireMock.Net.GraphQL.csproj" />
-        <ProjectReference Include="../WireMock.Net.ProtoBuf/WireMock.Net.ProtoBuf.csproj" />
-    </ItemGroup>-->
-
 
 </Project>

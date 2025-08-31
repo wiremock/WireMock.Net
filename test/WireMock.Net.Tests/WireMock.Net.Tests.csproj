@@ -21,18 +21,6 @@
         <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     </PropertyGroup>
 
-    <!--<PropertyGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
-        <DefineConstants>NETFRAMEWORK</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46' and '$(TargetFramework)' != 'net461'">
-        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>-->
-
-    <PropertyGroup>
-        <DefineConstants>$(DefineConstants);GRAPHQL;MIMEKIT;PROTOBUF</DefineConstants>
-    </PropertyGroup>
-
     <PropertyGroup Condition=" '$(TargetFramework)' != 'net48' ">
         <DefineConstants>$(DefineConstants);TRAILINGHEADERS</DefineConstants>
     </PropertyGroup>
@@ -81,7 +69,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Moq" Version="4.20.72" />
-        <!--<PackageReference Include="System.Threading" Version="4.3.0" />-->
         <PackageReference Include="NFluent" Version="3.1.0" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
 
@@ -96,56 +83,7 @@
 
         <Protobuf Include="Grpc\greet.proto" GrpcServices="Client" />
         <Protobuf Include="Grpc\policy.proto" GrpcServices="Client" />
-
-        <!--<PackageReference Include="AnyOf" Version="0.4.0" />-->
-        <!--<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />-->
     </ItemGroup>
-
-    <!--<ItemGroup Condition="'$(TargetFramework)' == 'net452' or '$(TargetFramework)' == 'net461'">
-        <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="3.1.0" />
-        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="FluentAssertions" Version="5.10.3" />
-        <PackageReference Include="xunit" Version="2.4.1" />
-        <PackageReference Include="xunit.core" Version="2.4.1" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net461'">
-        <PackageReference Include="FluentAssertions" Version="6.9.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
-        <PackageReference Include="xunit.core" Version="2.4.2" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Verify.Xunit" Version="19.6.0" />
-    </ItemGroup>-->
-
-    <!--<ItemGroup Condition="'$(TargetFramework)' != 'net452'">
-        <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
-        <PackageReference Include="JsonConverter.System.Text.Json" Version="0.7.0" />
-        <PackageReference Include="Google.Protobuf" Version="3.25.1" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.60.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.60.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-
-        <Protobuf Include="Grpc\greet.proto" GrpcServices="Client" />
-        <Protobuf Include="Grpc\policy.proto" GrpcServices="Client" />
-    </ItemGroup>-->
-
-    <ItemGroup>
-        <!--<PackageReference Include="System.Net.Http.Json" Version="8.0.1" />-->
-
-    </ItemGroup>
-
-    <!--<ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
-        <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />
-    </ItemGroup>-->
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />

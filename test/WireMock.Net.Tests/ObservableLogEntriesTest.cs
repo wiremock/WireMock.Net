@@ -45,7 +45,7 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged += (sender, args) => throw new Exception();
 
         // Act
-        await new HttpClient().GetAsync($"http://localhost:{server.Ports[0]}{path}").ConfigureAwait(false);
+        await new HttpClient().GetAsync($"http://localhost:{server.Ports[0]}{path}");
 
         // Assert
         loggerMock.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -69,10 +69,10 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged += (sender, args) => count++;
 
         // Act 1a
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path);
 
         // Act 1b
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path);
 
         // Assert
         count.Should().Be(2);
@@ -102,7 +102,7 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged += OnServerOnLogEntriesChanged;
 
         // Act 1
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path);
 
         // Assert 1
         count.Should().Be(1);
@@ -111,7 +111,7 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged -= OnServerOnLogEntriesChanged;
 
         // Act 2
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path);
 
         // Assert 2
         count.Should().Be(1);
@@ -147,7 +147,7 @@ public class ObservableLogEntriesTest
             Thread.Sleep(50);
             listOfTasks.Add(http.GetAsync($"{server.Urls[0]}{path}"));
         }
-        var responses = await Task.WhenAll(listOfTasks).ConfigureAwait(false);
+        var responses = await Task.WhenAll(listOfTasks);
         var countResponsesWithStatusNotOk = responses.Count(r => r.StatusCode != HttpStatusCode.OK);
 
         // Assert

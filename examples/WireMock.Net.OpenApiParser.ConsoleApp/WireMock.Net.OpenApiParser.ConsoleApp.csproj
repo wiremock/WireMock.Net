@@ -6,6 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="2.3.0" />
+        
         <ProjectReference Include="..\..\src\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.OpenApiParser\WireMock.Net.OpenApiParser.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net\WireMock.Net.csproj" />

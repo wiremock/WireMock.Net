@@ -72,7 +72,7 @@ public partial class WireMockAdminApiTests
             Title = "test 2",
             Description = "description 2"
         };
-        var result = await api.PostMappingsAsync(new[] { model1, model2 }).ConfigureAwait(false);
+        var result = await api.PostMappingsAsync(new[] { model1, model2 });
 
         // Assert
         Check.That(result).IsNotNull();
@@ -105,7 +105,7 @@ public partial class WireMockAdminApiTests
             Priority = 500,
             Title = "test"
         };
-        var result = await api.PostMappingAsync(model).ConfigureAwait(false);
+        var result = await api.PostMappingAsync(model);
 
         // Assert
         Check.That(result).IsNotNull();
@@ -116,7 +116,7 @@ public partial class WireMockAdminApiTests
         Check.That(mapping).IsNotNull();
         Check.That(mapping.Title).Equals("test");
 
-        var response = await mapping.ProvideResponseAsync(new RequestMessage(new UrlDetails("http://localhost/1"), "GET", "")).ConfigureAwait(false);
+        var response = await mapping.ProvideResponseAsync(new RequestMessage(new UrlDetails("http://localhost/1"), "GET", ""));
         Check.That(response.Message.StatusCode).Equals(expectedStatusCode);
 
         server.Stop();

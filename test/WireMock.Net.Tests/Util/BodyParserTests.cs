@@ -31,7 +31,7 @@ public class BodyParserTests
         };
 
         // Act
-        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         Check.That(body.BodyAsBytes).IsNotNull();
@@ -55,7 +55,7 @@ public class BodyParserTests
         };
 
         // Act
-        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         Check.That(body.BodyAsBytes).IsNotNull();
@@ -80,7 +80,7 @@ public class BodyParserTests
         };
 
         // act
-        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // assert
         Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
@@ -101,7 +101,7 @@ public class BodyParserTests
         };
 
         // act
-        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // assert
         Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
@@ -142,7 +142,7 @@ public class BodyParserTests
         };
 
         // Act
-        var result = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         Check.That(result.DetectedBodyType).IsEqualTo(BodyType.String);
@@ -166,7 +166,7 @@ public class BodyParserTests
         };
 
         // Act
-        var result = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         Check.That(result.DetectedBodyType).IsEqualTo(BodyType.Bytes);
@@ -189,7 +189,7 @@ public class BodyParserTests
         };
 
         // Act
-        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         Check.That(body.BodyAsBytes).IsNotNull();
@@ -217,7 +217,7 @@ public class BodyParserTests
         };
 
         // Act
-        var result = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         result.DetectedBodyType.Should().Be(BodyType.String);
@@ -246,7 +246,7 @@ public class BodyParserTests
         };
 
         // Act
-        var result = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+        var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
         result.BodyAsBytes.Should().BeEquivalentTo(compressed);

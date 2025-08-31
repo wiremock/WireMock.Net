@@ -40,7 +40,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo?query={queryValue}");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Accepted);
@@ -64,7 +64,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo?query={queryValue}");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -87,7 +87,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/v1/person/workers?showsourcesystem=true&count=700&page=1&sections=personal%2Corganizations%2Cemployment");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -110,7 +110,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/v1/person/workers?showsourcesystem=true&count=700&page=1&sections=personal%2Corganizations%2Cemployment");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

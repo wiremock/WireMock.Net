@@ -491,7 +491,7 @@ public class RequestMessageBodyMatcherTests
                 ContentType = null,
                 DeserializeJson = true
             };
-            bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+            bodyData = await BodyParser.ParseAsync(bodyParserSettings);
         }
         else if (body is string s)
         {
@@ -501,7 +501,7 @@ public class RequestMessageBodyMatcherTests
                 ContentType = null,
                 DeserializeJson = true
             };
-            bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+            bodyData = await BodyParser.ParseAsync(bodyParserSettings);
         }
         else
         {
