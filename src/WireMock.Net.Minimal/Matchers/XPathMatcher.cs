@@ -11,9 +11,9 @@ using WireMock.Models;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
 using WireMock.Util;
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
 using Wmhelp.XPath2;
-#endif
+//#endif
 
 namespace WireMock.Matchers;
 
@@ -151,18 +151,18 @@ public class XPathMatcher : IStringMatcher
             var xmlNamespaceManager = GetXmlNamespaceManager(xmlNamespaceMap);
             if (xmlNamespaceManager == null)
             {
-#if NETSTANDARD1_3
-                return navigator.Evaluate(xpath);
-#else
+//#if NETSTANDARD1_3
+                //return navigator.Evaluate(xpath);
+//#else
                 return navigator.XPath2Evaluate(xpath);
-#endif
+//#endif
             }
 
-#if NETSTANDARD1_3
-            return navigator.Evaluate(xpath, xmlNamespaceManager);
-#else
+//#if NETSTANDARD1_3
+            //return navigator.Evaluate(xpath, xmlNamespaceManager);
+//#else
             return navigator.XPath2Evaluate(xpath, xmlNamespaceManager);
-#endif
+//#endif
         }
 
         private XmlNamespaceManager? GetXmlNamespaceManager(IEnumerable<XmlNamespace>? xmlNamespaceMap)

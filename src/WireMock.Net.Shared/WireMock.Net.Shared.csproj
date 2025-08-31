@@ -43,7 +43,8 @@
     </PropertyGroup>-->
 
     <ItemGroup>
-        <PackageReference Include="Polyfill" Version="8.8.0">
+        <!-- Keep at 6.14.0 -->
+        <PackageReference Include="Polyfill" Version="6.14.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Threading.Tasks;
-using System.Xml;
+//using System.Xml;
 using NFluent;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -12,9 +12,9 @@ using Xunit;
 using Moq;
 using WireMock.Handlers;
 using FluentAssertions;
-#if !NETSTANDARD1_3
-using Wmhelp.XPath2;
-#endif
+//#if !NETSTANDARD1_3
+//using Wmhelp.XPath2;
+//#endif
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -57,7 +57,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>abc</response>");
@@ -85,7 +85,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("abc");
@@ -113,7 +113,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>abc,def,xyz</response>");
@@ -169,7 +169,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>0000083256</response>");
@@ -197,7 +197,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualIgnoringCase("True");
@@ -225,7 +225,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("a1");

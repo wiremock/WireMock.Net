@@ -39,7 +39,7 @@ public class CultureInfoUtilsTests
         result.Should().Be(expectedCulture);
     }
 
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
     [Fact]
     public void Parse_IntegerInput_ReturnsExpectedCultureInfo()
     {
@@ -53,7 +53,7 @@ public class CultureInfoUtilsTests
         // Assert
         result.Should().Be(expectedCulture);
     }
-#endif
+//#endif
 
     [Fact]
     public void Parse_CurrentCultureInput_ReturnsCurrentCulture()

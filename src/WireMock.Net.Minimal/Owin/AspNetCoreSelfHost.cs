@@ -136,17 +136,17 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 #if NET8_0
             _logger.Info("Server using .NET 8.0");
 #elif NET48
-            _logger.Info("Server using .NET Framework 4.6.1 or higher");
+            _logger.Info("Server using .NET Framework 4.8");
 #endif
 
-#if NETSTANDARD1_3
-            return Task.Run(() =>
-            {
-                _host.Run(token);
-            });
-#else
+//#if NETSTANDARD1_3
+//            return Task.Run(() =>
+//            {
+//                _host.Run(token);
+//            });
+//#else
             return _host.RunAsync(token);
-#endif
+//#endif
         }
         catch (Exception e)
         {

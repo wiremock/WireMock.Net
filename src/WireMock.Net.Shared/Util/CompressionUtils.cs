@@ -23,9 +23,9 @@ internal static class CompressionUtils
         using var zipStream = Create(contentEncoding, compressedStream, CompressionMode.Compress);
         zipStream.Write(data, 0, data.Length);
 
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
         zipStream.Close();
-#endif
+//#endif
         return compressedStream.ToArray();
     }
 

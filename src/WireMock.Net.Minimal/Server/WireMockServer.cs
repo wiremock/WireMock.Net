@@ -541,15 +541,15 @@ public partial class WireMockServer : IWireMockServer
         Guard.NotNull(tenant);
         Guard.NotNull(audience);
 
-#if NETSTANDARD1_3
-        throw new NotSupportedException("AzureADAuthentication is not supported for NETStandard 1.3");
-#else
+//#if NETSTANDARD1_3
+//        throw new NotSupportedException("AzureADAuthentication is not supported for NETStandard 1.3");
+//#else
         _options.AuthenticationMatcher = new AzureADAuthenticationMatcher(
             new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler(),
             new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>($"https://login.microsoftonline.com/{tenant}/.well-known/openid-configuration", new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever()),
             tenant,
             audience);
-#endif
+//#endif
     }
 
     /// <inheritdoc cref="IWireMockServer.SetBasicAuthentication(string, string)" />
