@@ -13,7 +13,7 @@
         <RepositoryUrl>https://github.com/wiremock/WireMock.Net</RepositoryUrl>
         <ApplicationIcon>../../resources/WireMock.Net-Logo.ico</ApplicationIcon>
         <PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
-        <LangVersion>13</LangVersion>
+        <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
