@@ -55,10 +55,10 @@ internal class HostUrlOptions
 
     private static int FindFreeTcpPort()
     {
-#if USE_ASPNETCORE || NETSTANDARD2_0 || NETSTANDARD2_1
+//#if USE_ASPNETCORE || NETSTANDARD2_0 || NETSTANDARD2_1
         return 0;
-#else
-        return PortUtils.FindFreeTcpPort();
-#endif
+//#else
+        //return PortUtils.FindFreeTcpPort();
+//#endif
     }
 }

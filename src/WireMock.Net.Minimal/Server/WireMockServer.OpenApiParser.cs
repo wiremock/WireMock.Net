@@ -1,11 +1,11 @@
 // Copyright © WireMock.Net
 
 using System.Net;
-#if OPENAPIPARSER
+//#if OPENAPIPARSER
 using System;
 using System.Linq;
 using WireMock.Net.OpenApiParser;
-#endif
+//#endif
 
 namespace WireMock.Server;
 
@@ -13,7 +13,7 @@ public partial class WireMockServer
 {
     private IResponseMessage OpenApiConvertToMappings(IRequestMessage requestMessage)
     {
-#if OPENAPIPARSER
+//#if OPENAPIPARSER
         try
         {
             var mappingModels = new WireMockOpenApiParser().FromText(requestMessage.Body!, out var diagnostic);
@@ -24,14 +24,14 @@ public partial class WireMockServer
             _settings.Logger.Error("HttpStatusCode set to {0} {1}", HttpStatusCode.BadRequest, e);
             return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
         }
-#else
-        return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Not supported for .NETStandard 1.3 and .NET 4.6.x or lower.");
-#endif
+//#else
+//        return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Not supported for .NETStandard 1.3 and .NET 4.6.x or lower.");
+//#endif
     }
 
     private IResponseMessage OpenApiSaveToMappings(IRequestMessage requestMessage)
     {
-#if OPENAPIPARSER
+//#if OPENAPIPARSER
         try
         {
             var mappingModels = new WireMockOpenApiParser().FromText(requestMessage.Body!, out var diagnostic);
@@ -49,8 +49,8 @@ public partial class WireMockServer
             _settings.Logger.Error("HttpStatusCode set to {0} {1}", HttpStatusCode.BadRequest, e);
             return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
         }
-#else
-        return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Not supported for .NETStandard 1.3 and .NET 4.6.x or lower.");
-#endif
+//#else
+//        return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Not supported for .NETStandard 1.3 and .NET 4.6.x or lower.");
+//#endif
     }
 }

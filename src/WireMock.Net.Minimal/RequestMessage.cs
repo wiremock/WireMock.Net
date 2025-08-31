@@ -183,12 +183,12 @@ public class RequestMessage : IRequestMessage
         ClientCertificate = clientCertificate;
 //#endif
 
-#if MIMEKIT
+//#if MIMEKIT
         if (TypeLoader.TryLoadStaticInstance<IMimeKitUtils>(out var mimeKitUtils) && mimeKitUtils.TryGetMimeMessage(this, out var mimeMessage))
         {
             BodyAsMimeMessage = mimeMessage;
         }
-#endif
+//#endif
     }
 
     /// <inheritdoc />

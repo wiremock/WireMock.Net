@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
+//#if PROTOBUF
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -108,4 +108,4 @@ message HelloReply {
         result.Exception.Should().BeOfType<ArgumentException>();
     }
 }
-#endif
+//#endif

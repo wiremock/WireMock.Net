@@ -75,10 +75,10 @@ internal class OwinRequestMapper : IOwinRequestMapper
             body,
             headers,
             cookies,
-            httpVersion
-#if USE_ASPNETCORE
-            , await request.HttpContext.Connection.GetClientCertificateAsync()
-#endif
+            httpVersion,
+//#if USE_ASPNETCORE
+            await request.HttpContext.Connection.GetClientCertificateAsync()
+//#endif
             )
         {
             DateTime = DateTime.UtcNow

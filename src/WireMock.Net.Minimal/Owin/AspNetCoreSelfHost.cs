@@ -19,8 +19,6 @@ namespace WireMock.Owin;
 
 internal partial class AspNetCoreSelfHost : IOwinSelfHost
 {
-    private const string CorsPolicyName = "WireMock.Net - Policy";
-
     private readonly CancellationTokenSource _cts = new();
     private readonly IWireMockMiddlewareOptions _wireMockMiddlewareOptions;
     private readonly IWireMockLogger _logger;
@@ -99,36 +97,36 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             })
             .ConfigureKestrelServerOptions()
 
-//#if NETSTANDARD1_3
-//            .UseUrls(_urlOptions.GetDetails().Select(u => u.Url).ToArray())
-//#endif
+            //#if NETSTANDARD1_3
+            //            .UseUrls(_urlOptions.GetDetails().Select(u => u.Url).ToArray())
+            //#endif
             .Build();
 
         return RunHost(_cts.Token);
     }
 
-        private Task RunHost(CancellationToken token)
+    private Task RunHost(CancellationToken token)
+    {
+        try
         {
-            try
-            {
 #if NET8_0_OR_GREATER
-                var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
+            var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
 #else
-                var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
+            var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
 #endif
-                appLifetime.ApplicationStarted.Register(() =>
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                var addresses = _host.ServerFeatures
+                    .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
+                    .Addresses;
+
+                foreach (var address in addresses)
                 {
-                    var addresses = _host.ServerFeatures
-                        .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
-                        .Addresses;
+                    Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
 
-                    foreach (var address in addresses)
-                    {
-                        Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
-
-                        PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
-                        Ports.Add(port);
-                    }
+                    PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
+                    Ports.Add(port);
+                }
 
                 IsStarted = true;
             });
@@ -139,14 +137,14 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             _logger.Info("Server using .NET Framework 4.8");
 #endif
 
-//#if NETSTANDARD1_3
-//            return Task.Run(() =>
-//            {
-//                _host.Run(token);
-//            });
-//#else
+            //#if NETSTANDARD1_3
+            //            return Task.Run(() =>
+            //            {
+            //                _host.Run(token);
+            //            });
+            //#else
             return _host.RunAsync(token);
-//#endif
+            //#endif
         }
         catch (Exception e)
         {
@@ -164,11 +162,11 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
         _cts.Cancel();
 
         IsStarted = false;
-//#if NETSTANDARD1_3
-//     return Task.CompletedTask;
-//#else
+        //#if NETSTANDARD1_3
+        //     return Task.CompletedTask;
+        //#else
         return _host.StopAsync();
-//#endif
+        //#endif
     }
 }
 //#endif

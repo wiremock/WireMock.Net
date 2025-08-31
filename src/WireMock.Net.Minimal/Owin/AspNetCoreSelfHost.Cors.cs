@@ -9,6 +9,8 @@ namespace WireMock.Owin;
 
 internal partial class AspNetCoreSelfHost
 {
+    private const string CorsPolicyName = "WireMock.Net - Policy";
+
     public void AddCors(IServiceCollection services)
     {
         if (_wireMockMiddlewareOptions.CorsPolicyOptions > CorsPolicyOptions.None)

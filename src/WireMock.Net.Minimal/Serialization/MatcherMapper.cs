@@ -218,7 +218,7 @@ internal class MatcherMapper
                 model.ContentTypeMatcher = Map(mimePartMatcher.ContentTypeMatcher);
                 break;
 
-#if PROTOBUF
+//#if PROTOBUF
             case IProtoBufMatcher protoBufMatcher:
                 protoBufMatcher.ProtoDefinition().Value(id => model.Pattern = id, texts =>
                 {
@@ -235,7 +235,7 @@ internal class MatcherMapper
                 model.ProtoBufMessageType = protoBufMatcher.MessageType;
                 model.ContentMatcher = Map(protoBufMatcher.Matcher);
                 break;
-#endif
+//#endif
         }
 
         afterMap?.Invoke(model);
