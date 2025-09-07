@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-//#if USE_ASPNETCORE
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -96,10 +95,6 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 SetHttpsAndUrls(options, _wireMockMiddlewareOptions, _urlOptions.GetDetails());
             })
             .ConfigureKestrelServerOptions()
-
-            //#if NETSTANDARD1_3
-            //            .UseUrls(_urlOptions.GetDetails().Select(u => u.Url).ToArray())
-            //#endif
             .Build();
 
         return RunHost(_cts.Token);
@@ -137,14 +132,7 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             _logger.Info("Server using .NET Framework 4.8");
 #endif
 
-            //#if NETSTANDARD1_3
-            //            return Task.Run(() =>
-            //            {
-            //                _host.Run(token);
-            //            });
-            //#else
             return _host.RunAsync(token);
-            //#endif
         }
         catch (Exception e)
         {
@@ -162,11 +150,6 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
         _cts.Cancel();
 
         IsStarted = false;
-        //#if NETSTANDARD1_3
-        //     return Task.CompletedTask;
-        //#else
         return _host.StopAsync();
-        //#endif
     }
 }
-//#endif

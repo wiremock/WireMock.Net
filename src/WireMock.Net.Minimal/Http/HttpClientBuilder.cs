@@ -56,10 +56,8 @@ internal static class HttpClientBuilder
             }
         }
 
-//#if !NETSTANDARD1_3
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
         ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
-//#endif
 
         return HttpClientFactory2.Create(handler);
     }

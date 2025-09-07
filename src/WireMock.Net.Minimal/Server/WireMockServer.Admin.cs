@@ -295,11 +295,9 @@ public partial class WireMockServer
             WatchStaticMappings = _settings.WatchStaticMappings,
             WatchStaticMappingsInSubdirectories = _settings.WatchStaticMappingsInSubdirectories,
 
-//#if USE_ASPNETCORE
             AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate,
             ClientCertificateMode = _settings.ClientCertificateMode,
             CorsPolicyOptions = _settings.CorsPolicyOptions?.ToString()
-//#endif
         };
 
         model.ProxyAndRecordSettings = TinyMapperUtils.Instance.Map(_settings.ProxyAndRecordSettings);

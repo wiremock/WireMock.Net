@@ -43,11 +43,8 @@ internal static class CertificateLoader
             }
             finally
             {
-//#if NETSTANDARD || NET48
                 certStore.Dispose();
-//#else
                 certStore.Close();
-//#endif
             }
         }
 
@@ -113,11 +110,8 @@ internal static class CertificateLoader
         }
         finally
         {
-//#if NETSTANDARD || NET46
             certStore.Dispose();
-//#else
             certStore.Close();
-//#endif
         }
     }
 }
