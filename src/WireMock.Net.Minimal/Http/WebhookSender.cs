@@ -11,24 +11,17 @@ using Stef.Validation;
 using WireMock.Models;
 using WireMock.Settings;
 using WireMock.Transformers;
-using WireMock.Transformers.Handlebars;
-using WireMock.Transformers.Scriban;
 using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.Http;
 
-internal class WebhookSender
+internal class WebhookSender(WireMockServerSettings settings)
 {
     private const string ClientIp = "::1";
     private static readonly ThreadLocal<Random> Random = new(() => new Random(DateTime.UtcNow.Millisecond));
 
-    private readonly WireMockServerSettings _settings;
-
-    public WebhookSender(WireMockServerSettings settings)
-    {
-        _settings = Guard.NotNull(settings);
-    }
+    private readonly WireMockServerSettings _settings = Guard.NotNull(settings);
 
     public async Task<HttpResponseMessage> SendAsync(
         HttpClient client,
@@ -49,24 +42,7 @@ internal class WebhookSender
         string requestUrl;
         if (webhookRequest.UseTransformer == true)
         {
-            ITransformer transformer;
-            switch (webhookRequest.TransformerType)
-            {
-                case TransformerType.Handlebars:
-                    var factoryHandlebars = new HandlebarsContextFactory(_settings);
-                    transformer = new Transformer(_settings, factoryHandlebars);
-                    break;
-
-                case TransformerType.Scriban:
-                case TransformerType.ScribanDotLiquid:
-                    var factoryDotLiquid = new ScribanContextFactory(_settings.FileSystemHandler, webhookRequest.TransformerType);
-                    transformer = new Transformer(_settings, factoryDotLiquid);
-                    break;
-
-                default:
-                    throw new NotImplementedException($"TransformerType '{webhookRequest.TransformerType}' is not supported.");
-            }
-
+            var transformer = TransformerFactory.Create(webhookRequest.TransformerType, _settings);
             bodyData = transformer.TransformBody(mapping, originalRequestMessage, originalResponseMessage, webhookRequest.BodyData, webhookRequest.TransformerReplaceNodeOptions);
             headers = transformer.TransformHeaders(mapping, originalRequestMessage, originalResponseMessage, webhookRequest.Headers);
             requestUrl = transformer.TransformString(mapping, originalRequestMessage, originalResponseMessage, webhookRequest.Url);

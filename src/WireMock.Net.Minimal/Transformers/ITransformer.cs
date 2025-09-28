@@ -6,7 +6,7 @@ using WireMock.Util;
 
 namespace WireMock.Transformers;
 
-interface ITransformer
+internal interface ITransformer
 {
     ResponseMessage Transform(IMapping mapping, IRequestMessage requestMessage, IResponseMessage original, bool useTransformerForBodyAsFile, ReplaceNodeOptions options);
 
@@ -15,4 +15,6 @@ interface ITransformer
     IDictionary<string, WireMockList<string>> TransformHeaders(IMapping mapping, IRequestMessage originalRequestMessage, IResponseMessage originalResponseMessage, IDictionary<string, WireMockList<string>>? headers);
 
     string TransformString(IMapping mapping, IRequestMessage originalRequestMessage, IResponseMessage originalResponseMessage, string? value);
+
+    string Transform(string template, object? model);
 }
