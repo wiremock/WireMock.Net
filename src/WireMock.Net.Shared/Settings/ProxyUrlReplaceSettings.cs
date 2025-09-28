@@ -26,7 +26,7 @@ public class ProxyUrlReplaceSettings
     public bool IgnoreCase { get; set; }
 
     /// <summary>
-    /// The new path value to replace the old value with.
+    /// Holds the transformation template used when <see cref="UseTransformer"/> is true.
     /// </summary>
     public string? TransformTemplate { get; set; }
 
