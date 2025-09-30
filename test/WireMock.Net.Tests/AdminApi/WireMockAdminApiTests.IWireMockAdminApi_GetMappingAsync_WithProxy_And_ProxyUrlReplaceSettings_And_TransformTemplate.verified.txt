@@ -1,0 +1,29 @@
+﻿{
+  Guid: 90356dba-b36c-469a-a17e-669cd84f1f06,
+  UpdatedAt: DateTime_1,
+  Request: {
+    Path: {
+      Matchers: [
+        {
+          Name: WildcardMatcher,
+          Pattern: /1,
+          IgnoreCase: false
+        }
+      ]
+    },
+    Body: {
+      Matcher: {
+        Name: RegexMatcher,
+        Pattern: hello,
+        IgnoreCase: true
+      }
+    }
+  },
+  Response: {
+    ProxyUrl: https://my-proxy.com,
+    ProxyUrlReplaceSettings: {
+      IgnoreCase: false,
+      TransformTemplate: x{{this}}y
+    }
+  }
+}

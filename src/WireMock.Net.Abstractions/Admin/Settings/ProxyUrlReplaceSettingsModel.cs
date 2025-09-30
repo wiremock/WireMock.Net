@@ -1,5 +1,7 @@
 // Copyright © WireMock.Net
 
+using WireMock.Types;
+
 namespace WireMock.Admin.Settings;
 
 /// <summary>
@@ -19,7 +21,17 @@ public class ProxyUrlReplaceSettingsModel
     public string NewValue { get; set; } = null!;
 
     /// <summary>
-    /// Defines if the case should be ignore when replacing.
+    /// Defines if the case should be ignored when replacing.
     /// </summary>
     public bool IgnoreCase { get; set; }
+
+    /// <summary>
+    /// Holds the transformation template.
+    /// </summary>
+    public string? TransformTemplate { get; set; }
+
+    /// <summary>
+    /// The transformer type.
+    /// </summary>
+    public TransformerType TransformerType { get; set; } = TransformerType.Handlebars;
 }
