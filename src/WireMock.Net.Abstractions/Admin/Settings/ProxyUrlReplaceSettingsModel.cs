@@ -13,12 +13,12 @@ public class ProxyUrlReplaceSettingsModel
     /// <summary>
     /// The old path value to be replaced by the new path value
     /// </summary>
-    public string OldValue { get; set; } = null!;
+    public string? OldValue { get; set; }
 
     /// <summary>
     /// The new path value to replace the old value with
     /// </summary>
-    public string NewValue { get; set; } = null!;
+    public string? NewValue { get; set; }
 
     /// <summary>
     /// Defines if the case should be ignored when replacing.
