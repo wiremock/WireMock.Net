@@ -4,7 +4,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>1.13.0</Version>
+        <Version>1.14.0-preview-01</Version>
         <PackageIcon>WireMock.Net-Logo.png</PackageIcon>
         <PackageProjectUrl>https://github.com/wiremock/WireMock.Net</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
