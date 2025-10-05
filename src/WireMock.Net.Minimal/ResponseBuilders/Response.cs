@@ -272,25 +272,8 @@ public partial class Response : IResponseBuilder
                 }
             }
 
-            ITransformer responseMessageTransformer;
-            switch (TransformerType)
-            {
-                case TransformerType.Handlebars:
-                    var factoryHandlebars = new HandlebarsContextFactory(settings);
-                    responseMessageTransformer = new Transformer(settings, factoryHandlebars);
-                    break;
-
-                case TransformerType.Scriban:
-                case TransformerType.ScribanDotLiquid:
-                    var factoryDotLiquid = new ScribanContextFactory(settings.FileSystemHandler, TransformerType);
-                    responseMessageTransformer = new Transformer(settings, factoryDotLiquid);
-                    break;
-
-                default:
-                    throw new NotSupportedException($"TransformerType '{TransformerType}' is not supported.");
-            }
-
-            return (responseMessageTransformer.Transform(mapping, requestMessage, responseMessage, UseTransformerForBodyAsFile, TransformerReplaceNodeOptions), null);
+            var transformer = TransformerFactory.Create(TransformerType, settings);
+            return (transformer.Transform(mapping, requestMessage, responseMessage, UseTransformerForBodyAsFile, TransformerReplaceNodeOptions), null);
         }
 
         if (!UseTransformer && ResponseMessage.BodyData?.BodyAsFileIsCached == true && responseMessage.BodyData?.BodyAsFile is not null)

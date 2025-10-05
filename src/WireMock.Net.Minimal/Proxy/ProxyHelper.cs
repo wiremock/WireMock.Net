@@ -13,16 +13,10 @@ using WireMock.Util;
 
 namespace WireMock.Proxy;
 
-internal class ProxyHelper
+internal class ProxyHelper(WireMockServerSettings settings)
 {
-    private readonly WireMockServerSettings _settings;
-    private readonly ProxyMappingConverter _proxyMappingConverter;
-
-    public ProxyHelper(WireMockServerSettings settings)
-    {
-        _settings = Guard.NotNull(settings);
-        _proxyMappingConverter = new ProxyMappingConverter(settings, new GuidUtils(), new DateTimeUtils());
-    }
+    private readonly WireMockServerSettings _settings = Guard.NotNull(settings);
+    private readonly ProxyMappingConverter _proxyMappingConverter = new(settings, new GuidUtils(), new DateTimeUtils());
 
     public async Task<(IResponseMessage Message, IMapping? Mapping)> SendAsync(
         IMapping? mapping,
@@ -39,18 +33,7 @@ internal class ProxyHelper
         var requiredUri = new Uri(url);
 
         // Create HttpRequestMessage
-        var replaceSettings = proxyAndRecordSettings.ReplaceSettings;
-        string proxyUrl;
-        if (replaceSettings is not null)
-        {
-            var stringComparison = replaceSettings.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-            proxyUrl = url.Replace(replaceSettings.OldValue, replaceSettings.NewValue, stringComparison);
-        }
-        else
-        {
-            proxyUrl = url;
-        }
-
+        var proxyUrl = proxyAndRecordSettings.ReplaceSettings != null ? ProxyUrlTransformer.Transform(_settings, proxyAndRecordSettings.ReplaceSettings, url) : url;
         var httpRequestMessage = HttpRequestMessageHelper.Create(requestMessage, proxyUrl);
 
         // Call the URL

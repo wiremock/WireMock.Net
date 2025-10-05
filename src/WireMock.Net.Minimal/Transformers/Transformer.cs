@@ -75,6 +75,11 @@ internal class Transformer : ITransformer
         return transformerContext.ParseAndRender(value, model);
     }
 
+    public string Transform(string template, object? model)
+    {
+        return model is null ? string.Empty : _factory.Create().ParseAndRender(template, model);
+    }
+
     public ResponseMessage Transform(IMapping mapping, IRequestMessage requestMessage, IResponseMessage original, bool useTransformerForBodyAsFile, ReplaceNodeOptions options)
     {
         var responseMessage = new ResponseMessage();

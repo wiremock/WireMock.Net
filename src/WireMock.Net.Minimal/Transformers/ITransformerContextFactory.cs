@@ -1,9 +1,8 @@
 // Copyright © WireMock.Net
 
-namespace WireMock.Transformers
+namespace WireMock.Transformers;
+
+internal interface ITransformerContextFactory
 {
-    interface ITransformerContextFactory
-    {
-        ITransformerContext Create();
-    }
+    ITransformerContext Create();
 }
