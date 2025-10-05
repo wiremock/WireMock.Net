@@ -15,8 +15,13 @@ internal static class HttpClientBuilder
         var handler = new HttpClientHandler
         {
             CheckCertificateRevocationList = false,
+#if NET5_0_OR_GREATER
             SslProtocols = System.Security.Authentication.SslProtocols.Tls13 | System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
+#else
+            SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
+#endif
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
+
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
 #elif NET46
@@ -62,8 +67,11 @@ internal static class HttpClientBuilder
             }
         }
 
-#if !NETSTANDARD1_3
+#if NET5_0_OR_GREATER
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
+#elif !NETSTANDARD1_3
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
         ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
 #endif
 
