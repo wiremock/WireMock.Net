@@ -15,7 +15,7 @@ internal static class HttpClientBuilder
         var handler = new HttpClientHandler
         {
             CheckCertificateRevocationList = false,
-            SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
+            SslProtocols = System.Security.Authentication.SslProtocols.Tls13 | System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
@@ -56,7 +56,7 @@ internal static class HttpClientBuilder
             }
         }
 
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
         ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
 
         return HttpClientFactory2.Create(handler);
