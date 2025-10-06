@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Net.Http.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Projects;
 using WireMock.Net.Aspire.Tests.Facts;
 using Xunit.Abstractions;

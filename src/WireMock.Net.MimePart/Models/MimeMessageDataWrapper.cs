@@ -135,6 +135,6 @@ internal class MimeMessageDataWrapper : IMimeMessageData
     /// <inheritdoc/>
     public override string ToString()
     {
-        return _message.ToString();
+        return _message.ToString() ?? string.Empty;
     }
 }

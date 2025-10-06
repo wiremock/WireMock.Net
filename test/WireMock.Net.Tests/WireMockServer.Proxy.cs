@@ -49,7 +49,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         Check.That(server.Mappings).HasSize(2);
@@ -82,7 +82,7 @@ public class WireMockServerProxyTests
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(server.Url!)
             };
-            await client.SendAsync(requestMessage).ConfigureAwait(false);
+            await client.SendAsync(requestMessage);
         }
 
         // Assert
@@ -115,7 +115,7 @@ public class WireMockServerProxyTests
                 RequestUri = new Uri(server.Url!)
             };
             var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-            await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+            await new HttpClient(httpClientHandler).SendAsync(requestMessage);
         }
 
         // Assert
@@ -170,7 +170,7 @@ public class WireMockServerProxyTests
             Content = new StringContent(stringBody)
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         server.Mappings.Should().HaveCount(2);
@@ -205,7 +205,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -241,7 +241,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -280,7 +280,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -311,7 +311,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         server.Mappings.Should().HaveCount(2);
@@ -335,8 +335,8 @@ public class WireMockServerProxyTests
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        var response = await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
-        string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient(httpClientHandler).SendAsync(requestMessage);
+        string content = await response.Content.ReadAsStringAsync();
 
         // Assert
         Check.That(server.Mappings).HasSize(1);
@@ -376,7 +376,7 @@ public class WireMockServerProxyTests
         };
         requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
         requestMessage.Content.Headers.Add("bbb", "test");
-        await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient().SendAsync(requestMessage);
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -425,10 +425,10 @@ public class WireMockServerProxyTests
             Content = new StringContent("stringContent", Encoding.ASCII)
         };
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("BASIC", "test-A");
-        var result = await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        var result = await new HttpClient().SendAsync(requestMessage);
 
         // Assert
-        (await result.Content.ReadAsStringAsync().ConfigureAwait(false)).Should().Be("BASIC test-A");
+        (await result.Content.ReadAsStringAsync()).Should().Be("BASIC test-A");
 
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
         receivedRequest.Headers!["Authorization"].ToString().Should().Be("BASIC test-A");
@@ -471,7 +471,7 @@ public class WireMockServerProxyTests
         };
         requestMessage.Headers.Add("foobar", "exact_match");
         requestMessage.Headers.Add("ok", "ok-value");
-        await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient().SendAsync(requestMessage);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -518,7 +518,7 @@ public class WireMockServerProxyTests
         cookieContainer.Add(new Uri("http://localhost"), new Cookie("GoodCookie", "I_should_pass"));
 
         var handler = new HttpClientHandler { CookieContainer = cookieContainer };
-        await new HttpClient(handler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(handler).SendAsync(requestMessage);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -562,7 +562,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri($"{server.Urls[0]}{path}{param01}{param02}"),
             Content = new StringContent("stringContent"),
         };
-        await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient().SendAsync(requestMessage);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -609,7 +609,7 @@ public class WireMockServerProxyTests
         };
 
         var handler = new HttpClientHandler();
-        await new HttpClient(handler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(handler).SendAsync(requestMessage);
 
         // Assert
         var mapping = serverForProxyForwarding.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -641,7 +641,7 @@ public class WireMockServerProxyTests
             Content = new StringContent("")
         };
         requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
-        await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient().SendAsync(requestMessage);
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -673,10 +673,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
-        var response = await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(requestMessage);
 
         // Assert
-        Check.That(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).IsEqualTo("body");
+        Check.That(await response.Content.ReadAsStringAsync()).IsEqualTo("body");
         Check.That(response.Content.Headers.Contains("Content-Type")).IsTrue();
         Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("text/plain");
     }
@@ -707,7 +707,7 @@ public class WireMockServerProxyTests
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        var response = await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         Check.That(response.Headers.Contains("Location")).IsTrue();
@@ -738,7 +738,7 @@ public class WireMockServerProxyTests
         };
         var clientHandler = new HttpClientHandler();
         clientHandler.CookieContainer.Add(requestUri, new Cookie("name", "value"));
-        await new HttpClient(clientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        await new HttpClient(clientHandler).SendAsync(requestMessage);
 
         // then
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -777,7 +777,7 @@ public class WireMockServerProxyTests
             .RespondWith(Response.Create().WithProxy(serverForProxyForwarding.Urls[0]));
 
         // act
-        var response = await new HttpClient().PostAsync(server.Urls[0], new ByteArrayContent(jpegHeader)).ConfigureAwait(false);
+        var response = await new HttpClient().PostAsync(server.Urls[0], new ByteArrayContent(jpegHeader));
 
         // assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -806,10 +806,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
-        var response = await new HttpClient().SendAsync(requestMessage).ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(requestMessage);
 
         // Assert
-        string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        string content = await response.Content.ReadAsStringAsync();
         Check.That(content).IsEqualTo("{\"i\":42}");
         Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
     }
@@ -837,10 +837,10 @@ public class WireMockServerProxyTests
         {
             { new StringContent("data"), "test", "test.txt" }
         };
-        var response = await new HttpClient().PostAsync(uri, form).ConfigureAwait(false);
+        var response = await new HttpClient().PostAsync(uri, form);
 
         // Assert
-        string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        string content = await response.Content.ReadAsStringAsync();
         Check.That(content).IsEqualTo("{\"i\":42}");
     }
 
@@ -872,10 +872,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
-        var response1 = await new HttpClient().SendAsync(requestMessage1).ConfigureAwait(false);
+        var response1 = await new HttpClient().SendAsync(requestMessage1);
 
         // Assert 1
-        string content1 = await response1.Content.ReadAsStringAsync().ConfigureAwait(false);
+        string content1 = await response1.Content.ReadAsStringAsync();
         Check.That(content1).IsEqualTo("ok");
 
         // Act 2
@@ -884,10 +884,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}/__admin/mappings")
         };
-        var response2 = await new HttpClient().SendAsync(requestMessage2).ConfigureAwait(false);
+        var response2 = await new HttpClient().SendAsync(requestMessage2);
 
         // Assert 2
-        string content2 = await response2.Content.ReadAsStringAsync().ConfigureAwait(false);
+        string content2 = await response2.Content.ReadAsStringAsync();
         Check.That(content2).IsEqualTo("[]");
     }
 
@@ -913,12 +913,12 @@ public class WireMockServerProxyTests
             RequestUri = new Uri(server.Urls[0])
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        var result = await new HttpClient(httpClientHandler).SendAsync(requestMessage).ConfigureAwait(false);
+        var result = await new HttpClient(httpClientHandler).SendAsync(requestMessage);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 
-        var content = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var content = await result.Content.ReadAsStringAsync();
         content.Should().NotBeEmpty();
 
         server.LogEntries.Should().HaveCount(1);

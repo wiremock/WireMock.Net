@@ -1,4 +1,4 @@
-#if !(NET452 || NET461 || NETCOREAPP3_1)
+//#if !(NET452 || NET461 || NETCOREAPP3_1)
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -40,7 +40,7 @@ public class WireMockOpenApiParserTests
             ExampleValues = _exampleValuesMock.Object
         };
 
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "payroc-openapi-spec.yaml"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "payroc-openapi-spec.yaml"));
 
         // Act
         var mappings = _sut.FromText(openApiDocument, settings, out _);
@@ -58,7 +58,7 @@ public class WireMockOpenApiParserTests
             ExampleValues = _exampleValuesMock.Object
         };
 
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "oas-content-example.json"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "oas-content-example.json"));
 
         // Act
         var mappings = _sut.FromText(openApiDocument, settings, out _);
@@ -67,4 +67,4 @@ public class WireMockOpenApiParserTests
         await Verifier.Verify(mappings);
     }
 }
-#endif
+//#endif

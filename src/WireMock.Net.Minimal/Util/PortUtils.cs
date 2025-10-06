@@ -37,9 +37,9 @@ internal static class PortUtils
         }
         finally
         {
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
             portSocket.Close();
-#endif
+//#endif
             portSocket.Dispose();
         }
     }
@@ -75,9 +75,9 @@ internal static class PortUtils
         {
             foreach (var socket in sockets)
             {
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
                 socket.Close();
-#endif
+//#endif
                 socket.Dispose();
             }
         }
