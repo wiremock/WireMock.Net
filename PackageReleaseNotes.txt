@@ -1,6 +1,7 @@
-# 1.13.0 (28 September 2025)
-- #1358 TypeLoader: implement Try methods [feature]
-- #1361 ProxyUrlTransformer [feature]
+# 1.14.0 (06 October 2025)
+- #1362 Update ProxyUrlReplaceSettingsModel with TransformTemplate property [feature]
+- #1363 Add Tls13 [bug]
+- #1342 Facing SSL certificate validation error when using .NET 5 and above framework for some http services during recording [bug]
 - #1360 ProxyURL path configuration [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

@@ -1,7 +1,12 @@
+# 1.14.0 (06 October 2025)
+- [#1362](https://github.com/wiremock/WireMock.Net/pull/1362) - Update ProxyUrlReplaceSettingsModel with TransformTemplate property [feature] contributed by [StefH](https://github.com/StefH)
+- [#1363](https://github.com/wiremock/WireMock.Net/pull/1363) - Add Tls13 [bug] contributed by [StefH](https://github.com/StefH)
+- [#1342](https://github.com/wiremock/WireMock.Net/issues/1342) - Facing SSL certificate validation error when using .NET 5 and above framework for some http services during recording [bug]
+- [#1360](https://github.com/wiremock/WireMock.Net/issues/1360) - ProxyURL path configuration [feature]
+
 # 1.13.0 (28 September 2025)
 - [#1358](https://github.com/wiremock/WireMock.Net/pull/1358) - TypeLoader: implement Try methods [feature] contributed by [StefH](https://github.com/StefH)
 - [#1361](https://github.com/wiremock/WireMock.Net/pull/1361) - ProxyUrlTransformer [feature] contributed by [StefH](https://github.com/StefH)
-- [#1360](https://github.com/wiremock/WireMock.Net/issues/1360) - ProxyURL path configuration [feature]
 
 # 1.12.0 (30 August 2025)
 - [#1357](https://github.com/wiremock/WireMock.Net/pull/1357) - Upgrade Testcontainers to 4.7.0 [feature] contributed by [StefH](https://github.com/StefH)
