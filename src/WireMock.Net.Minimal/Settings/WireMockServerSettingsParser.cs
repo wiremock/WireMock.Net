@@ -202,14 +202,27 @@ public static class WireMockServerSettingsParser
 
     private static void ParseProxyUrlReplaceSettings(ProxyAndRecordSettings settings, SimpleSettingsParser parser)
     {
-        var proxyUrlReplaceOldValue = parser.GetStringValue("ProxyUrlReplaceOldValue");
-        var proxyUrlReplaceNewValue = parser.GetStringValue("ProxyUrlReplaceNewValue");
+        const string prefix = "ProxyUrlReplace";
+        var proxyUrlReplaceOldValue = parser.GetStringValue($"{prefix}OldValue");
+        var proxyUrlReplaceNewValue = parser.GetStringValue($"{prefix}NewValue");
         if (!string.IsNullOrEmpty(proxyUrlReplaceOldValue) && proxyUrlReplaceNewValue != null)
         {
             settings.ReplaceSettings = new ProxyUrlReplaceSettings
             {
-                OldValue = proxyUrlReplaceOldValue!,
-                NewValue = proxyUrlReplaceNewValue
+                OldValue = proxyUrlReplaceOldValue,
+                NewValue = proxyUrlReplaceNewValue,
+                IgnoreCase = parser.GetBoolValue($"{prefix}IgnoreCase")
+            };
+            return;
+        }
+
+        var transformTemplate = parser.GetStringValue($"{prefix}TransformTemplate");
+        if (!string.IsNullOrEmpty(transformTemplate))
+        {
+            settings.ReplaceSettings = new ProxyUrlReplaceSettings
+            {
+                TransformTemplate = transformTemplate,
+                TransformerType = parser.GetEnumValue($"{prefix}TransformerType", TransformerType.Handlebars)
             };
         }
     }

@@ -451,6 +451,55 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
+    public async Task IWireMockAdminApi_GetMappingAsync_WithProxy_And_ProxyUrlReplaceSettings_And_TransformTemplate()
+    {
+        // Arrange
+        var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f06");
+        var server = WireMockServer.StartWithAdminInterface();
+        var api = RestClient.For<IWireMockAdminApi>(server.Url);
+
+        // Act
+        var model = new MappingModel
+        {
+            Guid = guid,
+            Request = new RequestModel
+            {
+                Path = "/1",
+                Body = new BodyModel
+                {
+                    Matcher = new MatcherModel
+                    {
+                        Name = "RegexMatcher",
+                        Pattern = "hello",
+                        IgnoreCase = true
+                    }
+                }
+            },
+            Response = new ResponseModel
+            {
+                ProxyUrl = "https://my-proxy.com",
+                ProxyUrlReplaceSettings = new ProxyUrlReplaceSettingsModel
+                {
+                    TransformTemplate = "x{{this}}y"
+                }
+            }
+        };
+        var postMappingResult = await api.PostMappingAsync(model).ConfigureAwait(false);
+
+        // Assert
+        postMappingResult.Should().NotBeNull();
+
+        var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
+        mapping.Should().NotBeNull();
+
+        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+
+        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+
+        server.Stop();
+    }
+
+    [Fact]
     public async Task IWireMockAdminApi_GetRequestsAsync_Json()
     {
         // Arrange
