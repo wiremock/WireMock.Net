@@ -19,18 +19,12 @@ using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WireMock.Net.OpenApiParser.Mappers;
 
-internal class OpenApiPathsMapper
+internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
 {
     private const string HeaderContentType = "Content-Type";
 
-    private readonly WireMockOpenApiParserSettings _settings;
-    private readonly ExampleValueGenerator _exampleValueGenerator;
-
-    public OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
-    {
-        _settings = Guard.NotNull(settings);
-        _exampleValueGenerator = new ExampleValueGenerator(settings);
-    }
+    private readonly WireMockOpenApiParserSettings _settings = Guard.NotNull(settings);
+    private readonly ExampleValueGenerator _exampleValueGenerator = new(settings);
 
     public IReadOnlyList<MappingModel> ToMappingModels(OpenApiPaths? paths, IList<OpenApiServer> servers)
     {
@@ -41,7 +35,7 @@ internal class OpenApiPathsMapper
             .ToArray() ?? [];
     }
 
-    private IReadOnlyList<MappingModel> MapPath(string path, IOpenApiPathItem pathItem, IList<OpenApiServer> servers)
+    private MappingModel[] MapPath(string path, IOpenApiPathItem pathItem, IList<OpenApiServer> servers)
     {
         return pathItem.Operations?.Select(o => MapOperationToMappingModel(path, o.Key.ToString().ToUpperInvariant(), o.Value, servers)).ToArray() ?? [];
     }
@@ -50,35 +44,7 @@ internal class OpenApiPathsMapper
     {
         var queryParameters = operation.Parameters?.Where(p => p.In == ParameterLocation.Query) ?? [];
         var pathParameters = operation.Parameters?.Where(p => p.In == ParameterLocation.Path) ?? [];
-        var headers = operation.Parameters?.Where(p => p.In == ParameterLocation.Header) ?? [];
-
-        var response = operation.Responses?.FirstOrDefault() ?? new KeyValuePair<string, IOpenApiResponse>();
-
-        TryGetContent(response.Value?.Content, out OpenApiMediaType? responseContent, out var responseContentType);
-        var responseSchema = response.Value?.Content?.FirstOrDefault().Value?.Schema;
-        var responseExample = responseContent?.Example;
-        var responseSchemaExample = responseContent?.Schema?.Example;
-
-        var responseBody = responseExample ?? responseSchemaExample ?? MapSchemaToObject(responseSchema);
-
-        var requestBodyModel = new BodyModel();
-        if (operation.RequestBody != null && operation.RequestBody.Content != null && operation.RequestBody.Required)
-        {
-            var request = operation.RequestBody.Content;
-            TryGetContent(request, out var requestContent, out _);
-
-            var requestBodySchema = operation.RequestBody.Content.First().Value?.Schema;
-            var requestBodyExample = requestContent!.Example;
-            var requestBodySchemaExample = requestContent.Schema?.Example;
-
-            var requestBodyMapped = requestBodyExample ?? requestBodySchemaExample ?? MapSchemaToObject(requestBodySchema);
-            requestBodyModel = MapRequestBody(requestBodyMapped);
-        }
-
-        if (!int.TryParse(response.Key, out var httpStatusCode))
-        {
-            httpStatusCode = 200;
-        }
+        var requestHeaders = operation.Parameters?.Where(p => p.In == ParameterLocation.Header) ?? [];
 
         return new MappingModel
         {
@@ -88,15 +54,94 @@ internal class OpenApiPathsMapper
                 Methods = [httpMethod],
                 Path = PathUtils.Combine(MapBasePath(servers), MapPathWithParameters(path, pathParameters)),
                 Params = MapQueryParameters(queryParameters),
-                Headers = MapRequestHeaders(headers),
-                Body = requestBodyModel
+                Headers = MapRequestHeaders(requestHeaders),
+                Body = GetRequestBodyModel(operation.RequestBody)
             },
-            Response = new ResponseModel
-            {
-                StatusCode = httpStatusCode,
-                Headers = MapHeaders(responseContentType, response.Value?.Headers),
-                BodyAsJson = responseBody != null ? JsonConvert.DeserializeObject(SystemTextJsonSerializer.Serialize(responseBody)) : null
-            }
+            Response = GetResponseModel(operation.Responses?.FirstOrDefault())
+        };
+    }
+
+    private BodyModel GetRequestBodyModel(IOpenApiRequestBody? openApiRequestBody)
+    {
+        if (openApiRequestBody is not { Content: not null, Required: true })
+        {
+            return new BodyModel();
+        }
+
+        var content = openApiRequestBody.Content;
+
+        TryGetContent(content, out var requestContent, out _);
+
+        var requestExample = requestContent?.Example;
+        var requestExamples = requestContent?.Examples;
+        var requestSchemaExample = requestContent?.Schema?.Example;
+        var requestSchemaExamples = requestContent?.Schema?.Examples;
+
+        JsonNode? request;
+        if (requestExample != null)
+        {
+            request = requestExample;
+        }
+        else if (requestSchemaExample != null)
+        {
+            request = requestSchemaExample;
+        }
+        else if (requestExamples != null)
+        {
+            request = requestExamples.FirstOrDefault().Value.Value;
+        }
+        else if (requestSchemaExamples != null)
+        {
+            request = requestSchemaExamples.FirstOrDefault();
+        }
+        else
+        {
+            var requestSchema = content?.FirstOrDefault().Value.Schema;
+            request = MapSchemaToObject(requestSchema);
+        }
+
+        return MapRequestBody(request) ?? new BodyModel();
+    }
+
+    private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse>? openApiResponse)
+    {
+        var content = openApiResponse?.Value.Content;
+
+        TryGetContent(content, out var responseContent, out var contentType);
+
+        var responseExample = responseContent?.Example;
+        var responseExamples = responseContent?.Examples;
+        var responseSchemaExample = responseContent?.Schema?.Example;
+        var responseSchemaExamples = responseContent?.Schema?.Examples;
+
+        JsonNode? response;
+        if (responseExample != null)
+        {
+            response = responseExample;
+        }
+        else if (responseSchemaExample != null)
+        {
+            response = responseSchemaExample;
+        }
+        else if (responseExamples != null)
+        {
+            response = responseExamples.FirstOrDefault().Value.Value;
+        }
+        else if (responseSchemaExamples != null)
+        {
+            response = responseSchemaExamples.FirstOrDefault();
+        }
+        else
+        {
+            var responseSchema = content?.FirstOrDefault().Value?.Schema;
+            response = MapSchemaToObject(responseSchema);
+        }
+
+        return new ResponseModel
+        {
+            StatusCode = int.TryParse(openApiResponse?.Key, out var httpStatusCode) ? httpStatusCode : 200,
+            Headers = MapHeaders(contentType, openApiResponse?.Value.Headers),
+            BodyAsJson = response != null ? JsonConvert.DeserializeObject(SystemTextJsonSerializer.Serialize(response)) : null
         };
     }
 
