@@ -28,7 +28,7 @@ internal class MappingMatcher : IMappingMatcher
 
         var mappings = _options.Mappings.Values
             .Where(m => m.TimeSettings.IsValid())
-            .Where(m => m.Probability is null || m.Probability <= _randomizerDoubleBetween0And1.Generate())
+            .Where(m => m.Probability is null || m.Probability > _randomizerDoubleBetween0And1.Generate())
             .ToArray();
 
         foreach (var mapping in mappings)
@@ -62,14 +62,16 @@ internal class MappingMatcher : IMappingMatcher
             }
         }
 
-        var partialMappings = possibleMappings
+        var partialMatches = possibleMappings
             .Where(pm => (pm.Mapping.IsAdminInterface && pm.RequestMatchResult.IsPerfectMatch) || !pm.Mapping.IsAdminInterface)
             .OrderBy(m => m.RequestMatchResult)
                 .ThenBy(m => m.RequestMatchResult.TotalNumber)
                 .ThenBy(m => m.Mapping.Priority)
+                .ThenByDescending(m => m.Mapping.Probability ?? 0)
                 .ThenByDescending(m => m.Mapping.UpdatedAt)
-            .ToList();
-        var partialMatch = partialMappings.FirstOrDefault(pm => pm.RequestMatchResult.AverageTotalScore > 0.0);
+            .Where(pm => pm.RequestMatchResult.AverageTotalScore > 0.0)
+            .ToArray();
+        var partialMatch = partialMatches.FirstOrDefault();
 
         if (_options.AllowPartialMapping == true)
         {
@@ -78,7 +80,10 @@ internal class MappingMatcher : IMappingMatcher
 
         var match = possibleMappings
             .Where(m => m.RequestMatchResult.IsPerfectMatch)
-            .OrderBy(m => m.Mapping.Priority).ThenBy(m => m.RequestMatchResult).ThenByDescending(m => m.Mapping.UpdatedAt)
+            .OrderBy(m => m.Mapping.Priority)
+                .ThenBy(m => m.RequestMatchResult)
+                .ThenByDescending(m => m.Mapping.Probability ?? 0)
+                .ThenByDescending(m => m.Mapping.UpdatedAt)
             .FirstOrDefault();
 
         return (match, partialMatch);
