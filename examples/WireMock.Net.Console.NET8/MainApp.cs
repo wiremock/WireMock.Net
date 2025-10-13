@@ -309,7 +309,7 @@ namespace WireMock.Net.ConsoleApplication
             //        .WithBodyAsJson(rm => todos[int.Parse(rm.Query!["id"].ToString())])
             //    );
 
-            var pX = 0.40;
+            var pX = 0.80;
             server
                 .Given(Request.Create().UsingGet().WithPath("/p"))
                 .WithProbability(pX)
@@ -338,8 +338,8 @@ namespace WireMock.Net.ConsoleApplication
                     defaultCount++;
                 }
             }
-            System.Console.WriteLine("X = {0} ; default = {1} ; pX = {2} ; valueX = {3:0.00}", xCount, defaultCount, pX, 1.0 * xCount / tot);
-
+            System.Console.WriteLine("X = {0} ; default = {1} ; pX = {2:0.00} ; valueX = {3:0.00}", xCount, defaultCount, pX, 1.0 * xCount / tot);
+            return;
             using var httpAndHttpsWithPort = WireMockServer.Start(new WireMockServerSettings
             {
                 HostingScheme = HostingScheme.HttpAndHttps,
