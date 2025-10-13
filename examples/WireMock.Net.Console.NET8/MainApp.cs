@@ -339,7 +339,6 @@ namespace WireMock.Net.ConsoleApplication
                 }
             }
             System.Console.WriteLine("X = {0} ; default = {1} ; pX = {2} ; valueX = {3:0.00}", xCount, defaultCount, pX, 1.0 * xCount / tot);
-            return;
 
             using var httpAndHttpsWithPort = WireMockServer.Start(new WireMockServerSettings
             {
