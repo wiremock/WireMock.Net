@@ -34,8 +34,8 @@ internal class MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDou
                 var mappingMatcherResult = new MappingMatcherResult(mapping, mapping.GetRequestMatchResult(request, nextState));
 
                 var exceptions = mappingMatcherResult.RequestMatchResult.MatchDetails
-                    .Select(md => md.Exception)
-                    .OfType<Exception>()
+                    .Where(md => md.Exception != null)
+                    .Select(md => md.Exception!)
                     .ToArray();
 
                 if (exceptions.Length == 0)
