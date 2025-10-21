@@ -128,12 +128,14 @@ public sealed class WireMockContainer : DockerContainer
     /// </summary>
     /// <param name="source">The source directory or file to be copied.</param>
     /// <param name="target">The target directory path to copy the files to.</param>
+    /// <param name="uid">The user ID to set for the copied file or directory. Defaults to 0 (root).</param>
+    /// <param name="gid">The group ID to set for the copied file or directory. Defaults to 0 (root).</param>
     /// <param name="fileMode">The POSIX file mode permission.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A task that completes when the directory or file has been copied.</returns>
-    public new async Task CopyAsync(string source, string target, UnixFileModes fileMode = Unix.FileMode644, CancellationToken ct = default)
+    public new async Task CopyAsync(string source, string target, uint uid = 0, uint gid = 0, UnixFileModes fileMode = Unix.FileMode644, CancellationToken ct = default)
     {
-        await base.CopyAsync(source, target, fileMode, ct);
+        await base.CopyAsync(source, target, uid, gid, fileMode, ct);
 
         if (_configuration.WatchStaticMappings && await PathStartsWithContainerMappingsPath(target))
         {
