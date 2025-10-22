@@ -1,10 +1,8 @@
 // Copyright © WireMock.Net
 
-#if USE_ASPNETCORE
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -20,8 +18,6 @@ namespace WireMock.Owin;
 
 internal partial class AspNetCoreSelfHost : IOwinSelfHost
 {
-    private const string CorsPolicyName = "WireMock.Net - Policy";
-
     private readonly CancellationTokenSource _cts = new();
     private readonly IWireMockMiddlewareOptions _wireMockMiddlewareOptions;
     private readonly IWireMockLogger _logger;
@@ -74,7 +70,7 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 services.AddSingleton<IOwinResponseMapper, OwinResponseMapper>();
                 services.AddSingleton<IGuidUtils, GuidUtils>();
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 AddCors(services);
 #endif
                 _wireMockMiddlewareOptions.AdditionalServiceRegistration?.Invoke(services);
@@ -83,7 +79,7 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             {
                 appBuilder.UseMiddleware<GlobalExceptionMiddleware>();
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 UseCors(appBuilder);
 #endif
                 _wireMockMiddlewareOptions.PreWireMockMiddlewareInit?.Invoke(appBuilder);
@@ -99,69 +95,44 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 SetHttpsAndUrls(options, _wireMockMiddlewareOptions, _urlOptions.GetDetails());
             })
             .ConfigureKestrelServerOptions()
-
-#if NETSTANDARD1_3
-            .UseUrls(_urlOptions.GetDetails().Select(u => u.Url).ToArray())
-#endif
             .Build();
 
         return RunHost(_cts.Token);
     }
 
-        private Task RunHost(CancellationToken token)
+    private Task RunHost(CancellationToken token)
+    {
+        try
         {
-            try
-            {
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
-                var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
+#if NET8_0_OR_GREATER
+            var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
 #else
-                var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
+            var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
 #endif
-                appLifetime.ApplicationStarted.Register(() =>
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                var addresses = _host.ServerFeatures
+                    .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
+                    .Addresses;
+
+                foreach (var address in addresses)
                 {
-                    var addresses = _host.ServerFeatures
-                        .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
-                        .Addresses;
+                    Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
 
-                    foreach (var address in addresses)
-                    {
-                        Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
-
-                        PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
-                        Ports.Add(port);
-                    }
+                    PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
+                    Ports.Add(port);
+                }
 
                 IsStarted = true;
             });
 
-#if NETSTANDARD1_3
-            _logger.Info("Server using netstandard1.3");
-#elif NETSTANDARD2_0
-            _logger.Info("Server using netstandard2.0");
-#elif NETSTANDARD2_1
-            _logger.Info("Server using netstandard2.1");
-#elif NETCOREAPP3_1
-            _logger.Info("Server using .NET Core App 3.1");
-#elif NET5_0
-            _logger.Info("Server using .NET 5.0");
-#elif NET6_0
-            _logger.Info("Server using .NET 6.0");
-#elif NET7_0
-            _logger.Info("Server using .NET 7.0");
-#elif NET8_0
+#if NET8_0
             _logger.Info("Server using .NET 8.0");
-#elif NET46
-            _logger.Info("Server using .NET Framework 4.6.1 or higher");
+#elif NET48
+            _logger.Info("Server using .NET Framework 4.8");
 #endif
 
-#if NETSTANDARD1_3
-            return Task.Run(() =>
-            {
-                _host.Run(token);
-            });
-#else
             return _host.RunAsync(token);
-#endif
         }
         catch (Exception e)
         {
@@ -179,11 +150,6 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
         _cts.Cancel();
 
         IsStarted = false;
-#if NETSTANDARD1_3
-        return Task.CompletedTask;
-#else
         return _host.StopAsync();
-#endif
     }
 }
-#endif

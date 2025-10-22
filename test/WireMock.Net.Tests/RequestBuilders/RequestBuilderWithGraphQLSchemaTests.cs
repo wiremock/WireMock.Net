@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
+//#if GRAPHQL
 using System.Collections.Generic;
 using FluentAssertions;
 using GraphQL.Types;
@@ -70,4 +70,4 @@ public class RequestBuilderWithGraphQLSchemaTests
         ((RequestMessageGraphQLMatcher)matchers[0]).Matchers.Should().ContainItemsAssignableTo<GraphQLMatcher>();
     }
 }
-#endif
+//#endif

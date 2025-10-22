@@ -18,12 +18,12 @@ internal static class CultureInfoUtils
 
         try
         {
-#if !NETSTANDARD1_3
+//#if !NETSTANDARD1_3
             if (int.TryParse(value, out var culture))
             {
                 return new CultureInfo(culture);
             }
-#endif
+//#endif
             if (string.Equals(value, nameof(CultureInfo.CurrentCulture), StringComparison.OrdinalIgnoreCase))
             {
                 return CultureInfo.CurrentCulture;

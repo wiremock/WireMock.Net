@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
+//#if PROTOBUF
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -41,7 +41,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType);
-        var result = await matcher.DecodeAsync(bytes).ConfigureAwait(false);
+        var result = await matcher.DecodeAsync(bytes);
 
         // Assert
         result.Should().BeEquivalentTo(new { name = "stef" });
@@ -55,7 +55,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType);
-        var result = await matcher.IsMatchAsync(bytes).ConfigureAwait(false);
+        var result = await matcher.IsMatchAsync(bytes);
 
         // Assert
         result.Score.Should().Be(MatchScores.Perfect);
@@ -108,4 +108,4 @@ message HelloReply {
         result.Exception.Should().BeOfType<ArgumentException>();
     }
 }
-#endif
+//#endif
