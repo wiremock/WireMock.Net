@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using WireMock.RequestBuilders;
@@ -32,7 +32,7 @@ public partial class WireMockServerTests
         var response = await server.CreateClient().GetAsync(requestUri);
 
         // Assert
-        Assert.Contains(response.StatusCode, [HttpStatusCode.OK, HttpStatusCode.InternalServerError]);
+        Assert.Contains(response.StatusCode, new HashSet<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.InternalServerError });
 
         server.Stop();
     }
