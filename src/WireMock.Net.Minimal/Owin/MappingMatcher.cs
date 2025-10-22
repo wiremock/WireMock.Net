@@ -9,16 +9,10 @@ using WireMock.Services;
 
 namespace WireMock.Owin;
 
-internal class MappingMatcher : IMappingMatcher
+internal class MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDoubleBetween0And1 randomizerDoubleBetween0And1) : IMappingMatcher
 {
-    private readonly IWireMockMiddlewareOptions _options;
-    private readonly IRandomizerDoubleBetween0And1 _randomizerDoubleBetween0And1;
-
-    public MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDoubleBetween0And1 randomizerDoubleBetween0And1)
-    {
-        _options = Guard.NotNull(options);
-        _randomizerDoubleBetween0And1 = Guard.NotNull(randomizerDoubleBetween0And1);
-    }
+    private readonly IWireMockMiddlewareOptions _options = Guard.NotNull(options);
+    private readonly IRandomizerDoubleBetween0And1 _randomizerDoubleBetween0And1 = Guard.NotNull(randomizerDoubleBetween0And1);
 
     public (MappingMatcherResult? Match, MappingMatcherResult? Partial) FindBestMatch(RequestMessage request)
     {
@@ -28,7 +22,7 @@ internal class MappingMatcher : IMappingMatcher
 
         var mappings = _options.Mappings.Values
             .Where(m => m.TimeSettings.IsValid())
-            .Where(m => m.Probability is null || m.Probability <= _randomizerDoubleBetween0And1.Generate())
+            .Where(m => m.Probability is null || _randomizerDoubleBetween0And1.Generate() <= m.Probability)
             .ToArray();
 
         foreach (var mapping in mappings)
@@ -41,10 +35,10 @@ internal class MappingMatcher : IMappingMatcher
 
                 var exceptions = mappingMatcherResult.RequestMatchResult.MatchDetails
                     .Where(md => md.Exception != null)
-                    .Select(md => md.Exception)
+                    .Select(md => md.Exception!)
                     .ToArray();
 
-                if (!exceptions.Any())
+                if (exceptions.Length == 0)
                 {
                     possibleMappings.Add(mappingMatcherResult);
                 }
@@ -52,7 +46,7 @@ internal class MappingMatcher : IMappingMatcher
                 {
                     foreach (var ex in exceptions)
                     {
-                        LogException(mapping, ex!);
+                        LogException(mapping, ex);
                     }
                 }
             }
@@ -62,14 +56,16 @@ internal class MappingMatcher : IMappingMatcher
             }
         }
 
-        var partialMappings = possibleMappings
+        var partialMatches = possibleMappings
             .Where(pm => (pm.Mapping.IsAdminInterface && pm.RequestMatchResult.IsPerfectMatch) || !pm.Mapping.IsAdminInterface)
             .OrderBy(m => m.RequestMatchResult)
                 .ThenBy(m => m.RequestMatchResult.TotalNumber)
                 .ThenBy(m => m.Mapping.Priority)
+                .ThenByDescending(m => m.Mapping.Probability)
                 .ThenByDescending(m => m.Mapping.UpdatedAt)
-            .ToList();
-        var partialMatch = partialMappings.FirstOrDefault(pm => pm.RequestMatchResult.AverageTotalScore > 0.0);
+            .Where(pm => pm.RequestMatchResult.AverageTotalScore > 0.0)
+            .ToArray();
+        var partialMatch = partialMatches.FirstOrDefault();
 
         if (_options.AllowPartialMapping == true)
         {
@@ -78,7 +74,11 @@ internal class MappingMatcher : IMappingMatcher
 
         var match = possibleMappings
             .Where(m => m.RequestMatchResult.IsPerfectMatch)
-            .OrderBy(m => m.Mapping.Priority).ThenBy(m => m.RequestMatchResult).ThenByDescending(m => m.Mapping.UpdatedAt)
+            .OrderBy(m => m.Mapping.Priority)
+                .ThenBy(m => m.RequestMatchResult)
+                .ThenBy(m => m.RequestMatchResult.TotalNumber)
+                .ThenByDescending(m => m.Mapping.Probability)
+                .ThenByDescending(m => m.Mapping.UpdatedAt)
             .FirstOrDefault();
 
         return (match, partialMatch);

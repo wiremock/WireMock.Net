@@ -1,3 +1,8 @@
+# 1.15.0 (22 October 2025)
+- [#1367](https://github.com/wiremock/WireMock.Net/pull/1367) - Fix WithProbability logic [bug] contributed by [StefH](https://github.com/StefH)
+- [#1370](https://github.com/wiremock/WireMock.Net/pull/1370) - Support Testcontainers 4.8.0 [bug] contributed by [MD-V](https://github.com/MD-V)
+- [#1126](https://github.com/wiremock/WireMock.Net/issues/1126) - Request matching WithProbability strange behaviour [bug]
+
 # 1.14.0 (06 October 2025)
 - [#1362](https://github.com/wiremock/WireMock.Net/pull/1362) - Update ProxyUrlReplaceSettingsModel with TransformTemplate property [feature] contributed by [StefH](https://github.com/StefH)
 - [#1363](https://github.com/wiremock/WireMock.Net/pull/1363) - Add Tls13 [bug] contributed by [StefH](https://github.com/StefH)

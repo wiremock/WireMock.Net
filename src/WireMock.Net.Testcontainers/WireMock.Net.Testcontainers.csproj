@@ -39,7 +39,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
-        <PackageReference Include="Testcontainers" Version="4.7.0" />
+        <PackageReference Include="Testcontainers" Version="4.8.0" />
     </ItemGroup>
 
     <ItemGroup>

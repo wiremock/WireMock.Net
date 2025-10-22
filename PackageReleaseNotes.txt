@@ -1,7 +1,6 @@
-# 1.14.0 (06 October 2025)
-- #1362 Update ProxyUrlReplaceSettingsModel with TransformTemplate property [feature]
-- #1363 Add Tls13 [bug]
-- #1342 Facing SSL certificate validation error when using .NET 5 and above framework for some http services during recording [bug]
-- #1360 ProxyURL path configuration [feature]
+# 1.15.0 (22 October 2025)
+- #1367 Fix WithProbability logic [bug]
+- #1370 Support Testcontainers 4.8.0 [bug]
+- #1126 Request matching WithProbability strange behaviour [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

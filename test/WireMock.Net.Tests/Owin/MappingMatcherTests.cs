@@ -9,7 +9,6 @@ using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Services;
-using WireMock.Util;
 using Xunit;
 
 namespace WireMock.Net.Tests.Owin;
@@ -26,7 +25,7 @@ public class MappingMatcherTests
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
         _optionsMock.Setup(o => o.Mappings).Returns(new ConcurrentDictionary<Guid, IMapping>());
-        _optionsMock.Setup(o => o.LogEntries).Returns(new ConcurrentObservableCollection<LogEntry>());
+        _optionsMock.Setup(o => o.LogEntries).Returns([]);
         _optionsMock.Setup(o => o.Scenarios).Returns(new ConcurrentDictionary<string, ScenarioState>());
 
         var loggerMock = new Mock<IWireMockLogger>();
@@ -35,7 +34,7 @@ public class MappingMatcherTests
         _optionsMock.Setup(o => o.Logger).Returns(loggerMock.Object);
 
         _randomizerDoubleBetween0And1Mock = new Mock<IRandomizerDoubleBetween0And1>();
-        _randomizerDoubleBetween0And1Mock.Setup(r => r.Generate()).Returns(0.0);
+        _randomizerDoubleBetween0And1Mock.Setup(r => r.Generate()).Returns(0.5);
 
         _sut = new MappingMatcher(_optionsMock.Object, _randomizerDoubleBetween0And1Mock.Object);
     }
@@ -84,8 +83,8 @@ public class MappingMatcherTests
         var guid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var mappings = InitMappings
         (
-            (guid1, new[] { 0.1 }, null),
-            (guid2, new[] { 1.0 }, null)
+            (guid1, [0.1], null),
+            (guid2, [1.0], null)
         );
         _optionsMock.Setup(o => o.Mappings).Returns(mappings);
 
@@ -112,8 +111,8 @@ public class MappingMatcherTests
         var guid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var mappings = InitMappings
         (
-            (guid1, new[] { 0.1 }, null),
-            (guid2, new[] { 0.9 }, null)
+            (guid1, [0.1], null),
+            (guid2, [0.9], null)
         );
         _optionsMock.Setup(o => o.Mappings).Returns(mappings);
 
@@ -139,8 +138,8 @@ public class MappingMatcherTests
 
         _optionsMock.SetupGet(o => o.AllowPartialMapping).Returns(true);
         var mappings = InitMappings(
-            (guid1, new[] { 0.1 }, null),
-            (guid2, new[] { 0.9 }, null)
+            (guid1, [0.1], null),
+            (guid2, [0.9], null)
         );
         _optionsMock.Setup(o => o.Mappings).Returns(mappings);
 
@@ -166,8 +165,8 @@ public class MappingMatcherTests
         var guid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
         var guid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var mappings = InitMappings(
-            (guid1, new[] { 1.0 }, null),
-            (guid2, new[] { 1.0, 1.0 }, null)
+            (guid1, [1.0], null),
+            (guid2, [1.0, 1.0], null)
         );
         _optionsMock.Setup(o => o.Mappings).Returns(mappings);
 
@@ -187,15 +186,15 @@ public class MappingMatcherTests
     }
 
     [Fact]
-    public void MappingMatcher_FindBestMatch_WhenProbabilityFailsFirst_ShouldReturnSecondMatch()
+    public void MappingMatcher_FindBestMatch_WhenProbabilityDoesNotMatch_ShouldReturnNormalMatch()
     {
         // Assign
-        var guid1 = Guid.Parse("00000000-0000-0000-0000-000000000001");
-        var guid2 = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var withProbability = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var noProbability = Guid.Parse("00000000-0000-0000-0000-000000000002");
         var mappings = InitMappings
         (
-            (guid1, new[] { 1.0 }, 1.0),
-            (guid2, new[] { 1.0 }, null)
+            (withProbability, [1.0], 0.4),
+            (noProbability, [1.0], null)
         );
         _optionsMock.Setup(o => o.Mappings).Returns(mappings);
 
@@ -206,8 +205,30 @@ public class MappingMatcherTests
 
         // Assert
         result.Match.Should().NotBeNull();
-        result.Match!.Mapping.Guid.Should().Be(guid2);
-        result.Match.RequestMatchResult.AverageTotalScore.Should().Be(1.0);
+        result.Match!.Mapping.Guid.Should().Be(noProbability);
+    }
+
+    [Fact]
+    public void MappingMatcher_FindBestMatch_WhenProbabilityDoesMatch_ShouldReturnProbabilityMatch()
+    {
+        // Assign
+        var withProbability = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var noProbability = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var mappings = InitMappings
+        (
+            (withProbability, [1.0], 0.6),
+            (noProbability, [1.0], null)
+        );
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindBestMatch(request);
+
+        // Assert
+        result.Match.Should().NotBeNull();
+        result.Match!.Mapping.Guid.Should().Be(withProbability);
     }
 
     private static ConcurrentDictionary<Guid, IMapping> InitMappings(params (Guid guid, double[] scores, double? probability)[] matches)

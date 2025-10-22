@@ -267,7 +267,7 @@ namespace WireMock.Net.ConsoleApplication
             }
         }
 
-        public static void Run()
+        public static async Task RunAsync()
         {
             //RunSse();
             //RunOnLocal();
@@ -290,25 +290,56 @@ namespace WireMock.Net.ConsoleApplication
 
             var server = WireMockServer.Start();
 
+            //server
+            //    .Given(Request.Create()
+            //        .WithPath("todos")
+            //        .UsingGet()
+            //    )
+            //    .RespondWith(Response.Create()
+            //        .WithBodyAsJson(todos.Values)
+            //    );
+
+            //server
+            //    .Given(Request.Create()
+            //        .UsingGet()
+            //        .WithPath("todos")
+            //        .WithParam("id")
+            //    )
+            //    .RespondWith(Response.Create()
+            //        .WithBodyAsJson(rm => todos[int.Parse(rm.Query!["id"].ToString())])
+            //    );
+
+            var pX = 0.80;
             server
-                .Given(Request.Create()
-                    .WithPath("todos")
-                    .UsingGet()
-                )
-                .RespondWith(Response.Create()
-                    .WithBodyAsJson(todos.Values)
-                );
+                .Given(Request.Create().UsingGet().WithPath("/p"))
+                .WithProbability(pX)
+                .RespondWith(Response.Create().WithStatusCode(200).WithBody("X"));
 
             server
-                .Given(Request.Create()
-                    .UsingGet()
-                    .WithPath("todos")
-                    .WithParam("id")
-                )
-                .RespondWith(Response.Create()
-                    .WithBodyAsJson(rm => todos[int.Parse(rm.Query!["id"].ToString())])
-                );
+                .Given(Request.Create().UsingGet().WithPath("/p"))
+                .RespondWith(Response.Create().WithStatusCode(200).WithBody("default"));
 
+            // Act
+            var requestUri = new Uri($"http://localhost:{server.Port}/p");
+            var c = server.CreateClient();
+            var xCount = 0;
+            var defaultCount = 0;
+            var tot = 1000;
+            for (var i = 0; i < tot; i++)
+            {
+                var response = await c.GetAsync(requestUri);
+                var value = await response.Content.ReadAsStringAsync();
+                if (value == "X")
+                {
+                    xCount++;
+                }
+                else if (value == "default")
+                {
+                    defaultCount++;
+                }
+            }
+            System.Console.WriteLine("X = {0} ; default = {1} ; pX = {2:0.00} ; valueX = {3:0.00}", xCount, defaultCount, pX, 1.0 * xCount / tot);
+            return;
             using var httpAndHttpsWithPort = WireMockServer.Start(new WireMockServerSettings
             {
                 HostingScheme = HostingScheme.HttpAndHttps,

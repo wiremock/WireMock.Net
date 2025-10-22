@@ -1,7 +1,11 @@
 # ![Project Icon](./resources/logo_32x32.png) WireMock.Net
-A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) which mimics the functionality from the JAVA based [WireMock](http://wiremock.org).
+A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) which mimics functionality from the original Java based WireMock.
 
-For more info, see also this WIKI page: [What is WireMock.Net](https://github.com/wiremock/WireMock.Net/wiki/What-Is-WireMock.Net).
+---
+
+:books: <strong>Full documentation can now be found at <a href="https://wiremock.org/dotnet/" title="WireMock.Net docs">wiremock.org</a>
+
+---
 
 ## :star: Key Features
 * HTTP response stubbing, matchable on URL/Path, headers, cookies and body content patterns
