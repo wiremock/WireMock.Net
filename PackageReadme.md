@@ -59,4 +59,4 @@ For more details see also [Docker](https://github.com/wiremock/WireMock.Net-dock
 More details on using HTTPS (SSL) can be found here [HTTPS](https://wiremock.org/dotnet/using-https-ssl/)
 
 ## :books: Documentation
-For more info, see also this WIKI page: [What is WireMock.Net](https://wiremock.org/dotnet/what-is-wiremock-net/).
+For more info, see also this documentation page: [What is WireMock.Net](https://wiremock.org/dotnet/what-is-wiremock-net/).
