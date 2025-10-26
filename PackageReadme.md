@@ -46,7 +46,7 @@ It's simple to install WireMock.Net as (global) dotnet tool, see [dotnet tool](h
 This is quite straight forward to launch a mock server within a console application, see [Standalone Process](https://wiremock.org/dotnet/wiremock-as-a-standalone-process).
 
 #### As a Windows Service
-You can also run WireMock.Net as a Windows Service, follow this [WireMock-as-a-Windows-Service](https://wiremock.org/dotnet/wiremock-as-a-Windows-Service).
+You can also run WireMock.Net as a Windows Service, follow this [Windows Service](https://wiremock.org/dotnet/wiremock-as-a-windows-service).
 
 #### As a Web Job in Azure or application in IIS
 See this link [WireMock-as-a-(Azure)-Web-App](https://wiremock.org/dotnet/wiremock-as-a-azure-web-app/)
