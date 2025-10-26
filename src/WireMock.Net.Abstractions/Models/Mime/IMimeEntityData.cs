@@ -26,7 +26,7 @@ public interface IMimeEntityData
     /// Get the type of the content.
     /// </summary>
     /// <value>The type of the content.</value>
-    IContentTypeData? ContentType { get; }
+    IContentTypeData? ContentType { get; set; }
 
     /// <summary>
     /// Get the base content URI.

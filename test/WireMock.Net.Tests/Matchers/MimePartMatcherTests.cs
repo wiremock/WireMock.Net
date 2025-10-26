@@ -3,7 +3,9 @@
 #if MIMEKIT
 using System;
 using FluentAssertions;
+using MimeKit;
 using WireMock.Matchers;
+using WireMock.Models;
 using WireMock.Util;
 using Xunit;
 
@@ -21,6 +23,35 @@ public class MimePartMatcherTests
         Message-Id: <HZ3K1HEAJKU4.IO57XCVO4BWV@desktop-6dd5qi2>
         MIME-Version: 1.0
         Content-Type: multipart/mixed; boundary="=-5XgmpXt0XOfzdtcgNJc2ZQ=="
+
+        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
+        Content-Type: text/plain; charset=utf-8
+
+        This is some plain text
+        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
+        Content-Type: text/json; charset=utf-8
+
+        {
+            "Key": "Value"
+        }
+        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
+        Content-Type: image/png; name=image.png
+        Content-Disposition: attachment; filename=image.png
+        Content-Transfer-Encoding: base64
+
+        iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAgMAAAAP2OW3AAAADFBMVEX/tID/vpH/pWX/sHidUyjl
+        AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
+
+        --=-5XgmpXt0XOfzdtcgNJc2ZQ==-- 
+        """;
+
+    private const string TestMultiPartWithoutContentType =
+        """
+        From:
+        Date: Sun, 23 Jul 2023 16:13:13 +0200
+        Subject:
+        Message-Id: <HZ3K1HEAJKU4.IO57XCVO4BWV@desktop-6dd5qi2>
+        MIME-Version: 1.0
 
         --=-5XgmpXt0XOfzdtcgNJc2ZQ==
         Content-Type: text/plain; charset=utf-8
@@ -94,6 +125,25 @@ public class MimePartMatcherTests
         var contentMatcher = new ExactObjectMatcher(Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAgMAAAAP2OW3AAAADFBMVEX/tID/vpH/pWX/sHidUyjlAAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC"));
 
         var matcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, contentTypeMatcher, contentDispositionMatcher, contentTransferEncodingMatcher, contentMatcher);
+        var result = matcher.IsMatch(part);
+
+        // Assert
+        result.Score.Should().Be(MatchScores.Perfect);
+    }
+
+    [Fact]
+    public void MimePartMatcher_WithoutContentType_IsMatch_Part_TextPlain()
+    {
+        // Arrange
+        var message = MimeKitUtils.LoadFromStream(StreamUtils.CreateStream(TestMultiPartWithoutContentType));
+        var part = message.BodyParts[0];
+        part.ContentType = new ContentTypeDataWrapper(new ContentType("fd", "")); // Content-Type: multipart/mixed; boundary="=-5XgmpXt0XOfzdtcgNJc2ZQ=="
+
+        // Act
+        var contentTypeMatcher = new ContentTypeMatcher("text/plain");
+        var contentMatcher = new ExactMatcher("This is some plain text");
+
+        var matcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, contentTypeMatcher, null, null, contentMatcher);
         var result = matcher.IsMatch(part);
 
         // Assert
