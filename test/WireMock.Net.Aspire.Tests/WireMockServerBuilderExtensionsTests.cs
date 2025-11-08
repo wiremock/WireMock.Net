@@ -67,7 +67,7 @@ public class WireMockServerBuilderExtensionsTests
             MappingsPath = null,
             HttpPort = port
         });
-        wiremock.Resource.Annotations.Should().HaveCount(5);
+        wiremock.Resource.Annotations.Should().HaveCount(6);
 
         var containerImageAnnotation = wiremock.Resource.Annotations.OfType<ContainerImageAnnotation>().FirstOrDefault();
         containerImageAnnotation.Should().BeEquivalentTo(new ContainerImageAnnotation

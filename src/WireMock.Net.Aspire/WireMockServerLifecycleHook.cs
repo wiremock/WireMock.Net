@@ -10,32 +10,38 @@ internal class WireMockServerLifecycleHook(ILoggerFactory loggerFactory) : IDist
 {
     private readonly CancellationTokenSource _shutdownCts = new();
 
-    public async Task AfterResourcesCreatedAsync(DistributedApplicationModel appModel, CancellationToken cancellationToken = default)
+    private Task? _mappingTask;
+
+    public async Task AfterEndpointsAllocatedAsync(DistributedApplicationModel appModel, CancellationToken cancellationToken = default)
     {
         var cts = CancellationTokenSource.CreateLinkedTokenSource(_shutdownCts.Token, cancellationToken);
 
-        var wireMockServerResources = appModel.Resources
-            .OfType<WireMockServerResource>()
-            .ToArray();
-
-        foreach (var wireMockServerResource in wireMockServerResources)
+        _mappingTask = Task.Run(async () =>
         {
-            wireMockServerResource.SetLogger(loggerFactory.CreateLogger<WireMockServerResource>());
+            var wireMockServerResources = appModel.Resources
+                .OfType<WireMockServerResource>()
+                .ToArray();
 
-            var endpoint = wireMockServerResource.GetEndpoint();
-            if (endpoint.IsAllocated)
+            foreach (var wireMockServerResource in wireMockServerResources)
             {
+                wireMockServerResource.SetLogger(loggerFactory.CreateLogger<WireMockServerResource>());
+
+                var endpoint = wireMockServerResource.GetEndpoint();
+                System.Diagnostics.Debug.Assert(endpoint.IsAllocated);
+
                 await wireMockServerResource.WaitForHealthAsync(cts.Token);
 
                 await wireMockServerResource.CallApiMappingBuilderActionAsync(cts.Token);
 
                 wireMockServerResource.StartWatchingStaticMappings(cts.Token);
             }
-        }
+        }, cts.Token);
     }
 
     public async ValueTask DisposeAsync()
     {
         await _shutdownCts.CancelAsync();
+        if (_mappingTask is not null)
+            await _mappingTask;
     }
 }
