@@ -56,7 +56,7 @@ public class ProxyMappingConverterTests
 
         var request = Request.Create()
             .UsingPost()
-            .WithPath("x")
+            .WithPath("/x")
             .WithParam("p1", "p1-v")
             .WithParam("p2", "p2-v")
             .WithHeader("Content-Type", new ContentTypeMatcher("text/plain"))

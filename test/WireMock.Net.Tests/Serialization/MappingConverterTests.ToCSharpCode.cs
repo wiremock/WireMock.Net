@@ -109,7 +109,7 @@ public partial class MappingConverterTests
         var guid = new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc");
         var request = Request.Create()
             .UsingGet()
-            .WithPath("test_path")
+            .WithPath("/test_path")
             .WithParam("q", "42")
             .WithClientIP("112.123.100.99")
             .WithHeader("h-key", "h-value")

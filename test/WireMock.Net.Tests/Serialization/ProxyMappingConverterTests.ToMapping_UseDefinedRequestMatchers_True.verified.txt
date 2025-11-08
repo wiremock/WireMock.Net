@@ -9,7 +9,7 @@
       Matchers: [
         {
           Name: WildcardMatcher,
-          Pattern: x,
+          Pattern: /x,
           IgnoreCase: false
         }
       ]
