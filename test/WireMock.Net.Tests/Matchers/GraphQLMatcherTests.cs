@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
+//#if GRAPHQL
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
@@ -233,4 +233,4 @@ public class GraphQLMatcherTests
         action.Should().Throw<GraphQLSyntaxErrorException>();
     }
 }
-#endif
+//#endif

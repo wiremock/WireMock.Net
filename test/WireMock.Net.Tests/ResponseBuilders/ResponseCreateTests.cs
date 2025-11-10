@@ -25,7 +25,7 @@ public class ResponseCreateTests
         var responseBuilder = Response.Create(() => responseMessage);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(mapping, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(mapping, request, _settings);
 
         // Assert
         Check.That(response.Message).Equals(responseMessage);
