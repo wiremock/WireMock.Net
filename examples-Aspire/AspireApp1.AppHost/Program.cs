@@ -45,6 +45,7 @@ IResourceBuilder<WireMockServerResource> apiService = builder
 
 builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WithExternalHttpEndpoints()
-    .WithReference(apiService);
+    .WithReference(apiService)
+    .WaitFor(apiService);
 
 builder.Build().Run();
