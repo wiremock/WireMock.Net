@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
+using WireMock.Validators;
 
 // ReSharper disable once CheckNamespace
 namespace WireMock.Admin.Mappings;
@@ -94,9 +95,14 @@ public partial class RequestModelBuilder
     }
 
     /// <summary>
-    /// Set the Path.
+    /// Set the Path. Must start with a forward slash (/).
     /// </summary>
-    public RequestModelBuilder WithPath(string value) => WithPath(() => value);
+    public RequestModelBuilder WithPath(string value)
+    {
+        PathValidator.ValidateAndThrow(value);
+
+        return WithPath(() => value);
+    }
 
     /// <summary>
     /// Set the Path.

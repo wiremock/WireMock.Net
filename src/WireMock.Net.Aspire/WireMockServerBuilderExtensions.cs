@@ -3,6 +3,7 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Lifecycle;
 using Aspire.Hosting.WireMock;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Stef.Validation;
 using WireMock.Client.Builders;
@@ -53,11 +54,21 @@ public static class WireMockServerBuilderExtensions
         Guard.NotNull(arguments);
 
         var wireMockContainerResource = new WireMockServerResource(name, arguments);
+
+        var healthCheckKey = $"{name}_check";
+        var healthCheckRegistration = new HealthCheckRegistration(
+            healthCheckKey,
+            _ => new WireMockHealthCheck(wireMockContainerResource),
+            failureStatus: null,
+            tags: null);
+        builder.Services.AddHealthChecks().Add(healthCheckRegistration);
+
         var resourceBuilder = builder
             .AddResource(wireMockContainerResource)
             .WithImage(DefaultLinuxImage)
             .WithEnvironment(ctx => ctx.EnvironmentVariables.Add("DOTNET_USE_POLLING_FILE_WATCHER", "1")) // https://khalidabuhakmeh.com/aspnet-docker-gotchas-and-workarounds#configuration-reloads-and-filesystemwatcher
             .WithHttpEndpoint(port: arguments.HttpPort, targetPort: WireMockServerArguments.HttpContainerPort)
+            .WithHealthCheck(healthCheckKey)
             .WithWireMockInspectorCommand();
 
         if (!string.IsNullOrEmpty(arguments.MappingsPath))
@@ -172,6 +183,7 @@ public static class WireMockServerBuilderExtensions
 
         wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
         wiremock.Resource.Arguments.ApiMappingBuilder = configure;
+        wiremock.Resource.ApiMappingState = WireMockMappingState.NotSubmitted;
 
         return wiremock;
     }

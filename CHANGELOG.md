@@ -1300,7 +1300,7 @@
 - [#132](https://github.com/wiremock/WireMock.Net/issues/132) - LogEntries not being recorded on subsequent tests
 - [#136](https://github.com/wiremock/WireMock.Net/issues/136) - Question: Does the WireMock send Content-Length response header
 - [#137](https://github.com/wiremock/WireMock.Net/issues/137) - Question: How to specify Transfer-Encoding response header?
-- [#139](https://github.com/wiremock/WireMock.Net/issues/139) - Wiki link https://github.com/StefH/WireMock.Net/wiki/Record-(via-proxy)-and-Save is dead
+- [#139](https://github.com/wiremock/WireMock.Net/issues/139) - Wiki link https://wiremock.org/dotnet/Record-(via-proxy)-and-Save is dead
 
 # 1.0.3.17 (16 May 2018)
 - [#134](https://github.com/wiremock/WireMock.Net/pull/134) - Stef negate matcher contributed by [alastairtree](https://github.com/alastairtree)

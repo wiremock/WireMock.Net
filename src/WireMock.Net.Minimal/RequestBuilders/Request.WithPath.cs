@@ -4,6 +4,7 @@ using System;
 using Stef.Validation;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
+using WireMock.Validators;
 
 namespace WireMock.RequestBuilders;
 
@@ -34,6 +35,10 @@ public partial class Request
     public IRequestBuilder WithPath(MatchOperator matchOperator, params string[] paths)
     {
         Guard.NotNullOrEmpty(paths);
+        foreach (var path in paths)
+        {
+            PathValidator.ValidateAndThrow(path, nameof(paths));
+        }
 
         _requestMatchers.Add(new RequestMessagePathMatcher(MatchBehaviour.AcceptOnMatch, matchOperator, paths));
         return this;

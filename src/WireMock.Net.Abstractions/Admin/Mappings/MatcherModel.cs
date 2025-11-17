@@ -22,7 +22,7 @@ public class MatcherModel
     public object? Pattern { get; set; }
 
     /// <summary>
-    /// Gets or sets the patterns. Can be array of strings (default) or an array of objects.
+    /// Gets or sets the patterns. Can be an array of strings (default) or an array of objects.
     /// </summary>
     public object[]? Patterns { get; set; }
 

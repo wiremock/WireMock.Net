@@ -3,7 +3,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 
 ---
 
-:books: <strong>Full documentation can now be found at <a href="https://wiremock.org/dotnet/" title="WireMock.Net docs">wiremock.org</a>
+### :books: Full documentation can now be found at [wiremock.org](https://wiremock.org/dotnet)
 
 ---
 
@@ -41,7 +41,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 
 ### :package: NuGet packages
 
-| | Official | Preview [:information_source:](https://github.com/wiremock/WireMock.Net/wiki/MyGet-preview-versions) |
+| | Official | Preview [:information_source:](https://wiremock.org/dotnet/MyGet-preview-versions) |
 | - | - | - |
 | &nbsp;&nbsp;**WireMock.Net** | [![NuGet Badge WireMock.Net](https://img.shields.io/nuget/v/WireMock.Net)](https://www.nuget.org/packages/WireMock.Net) |  [![MyGet Badge WireMock.Net](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net)
 | &nbsp;&nbsp;**WireMock.Net.Minimal** 🔺| [![NuGet Badge WireMock.Net.Minimal](https://img.shields.io/nuget/v/WireMock.Net.Minimal)](https://www.nuget.org/packages/WireMock.Net.Minimal) |  [![MyGet Badge WireMock.Net](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Minimal?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Minimal)
@@ -93,52 +93,55 @@ To still enable this feature, you need to add the `Environment` category to the 
 ---
 
 ## :memo: Development
-For the supported frameworks and build information, see [this](https://github.com/wiremock/WireMock.Net/wiki/Development-Information) page.
+For the supported frameworks and build information, see [this](https://wiremock.org/dotnet/development-information) page.
 
 ## :star: Stubbing
 A core feature of WireMock.Net is the ability to return predefined HTTP responses for requests matching criteria.
-See [Wiki : Stubbing](https://github.com/wiremock/WireMock.Net/wiki/Stubbing).
+See [Stubbing](https://wiremock.org/dotnet/stubbing).
 
 ## :star: Request Matching
-WireMock.Net support advanced request-matching logic, see [Wiki : Request Matching](https://github.com/wiremock/WireMock.Net/wiki/Request-Matching).
+WireMock.Net support advanced request-matching logic, see [Request Matching](https://wiremock.org/dotnet/request-matching).
 
 ## :star: Response Templating
-The response which is returned WireMock.Net can be changed using templating. This is described here [Wiki : Response Templating](https://github.com/wiremock/WireMock.Net/wiki/Response-Templating).
+The response which is returned WireMock.Net can be changed using templating. This is described here [Response Templating](https://wiremock.org/dotnet/response-templating).
 
 ## :star: Admin API Reference
-The WireMock admin API provides functionality to define the mappings via a http interface see [Wiki : Admin API Reference](https://github.com/StefH/WireMock.Net/wiki/Admin-API-Reference).
+The WireMock admin API provides functionality to define the mappings via a http interface see [Admin API Reference](https://wiremock.org/dotnet/admin-api-reference).
 
 ## :star: Using
 WireMock.Net can be used in several ways:
 
 ### UnitTesting
 You can use your favorite test framework and use WireMock within your tests, see
-[Wiki : UnitTesting](https://github.com/StefH/WireMock.Net/wiki/Using-WireMock-in-UnitTests).
+[UnitTesting](https://wiremock.org/dotnet/using-wiremock-in-unittests).
 
 ### Unit/Integration Testing using Testcontainers.DotNet
-See [Wiki : WireMock.Net.Testcontainers](https://github.com/wiremock/WireMock.Net/wiki/Using-WireMock.Net.Testcontainers) on how to build a WireMock.Net Docker container which can be used in Unit/Integration testing.
+See [WireMock.Net.Testcontainers](https://wiremock.org/dotnet/using-wiremock-net-testcontainers/) on how to build a WireMock.Net Docker container which can be used in Unit/Integration testing.
 
 ### Unit/Integration Testing using an an Aspire Distributed Application
-See [Wiki : WireMock.Net.Aspire](https://github.com/wiremock/WireMock.Net/wiki/Using-WireMock.Net.Aspire) on how to use WireMock.Net as an Aspire Hosted application to do Unit/Integration testing.
+See [WireMock.Net.Aspire](https://wiremock.org/dotnet/using-wiremock-net-Aspire) on how to use WireMock.Net as an Aspire Hosted application to do Unit/Integration testing.
 
 ### As a dotnet tool
-It's simple to install WireMock.Net as (global) dotnet tool, see [Wiki : dotnet tool](https://github.com/StefH/WireMock.Net/wiki/WireMock-as-dotnet-tool).
+It's simple to install WireMock.Net as (global) dotnet tool, see [dotnet tool](https://wiremock.org/dotnet/wiremock-as-dotnet-tool).
 
 ### As standalone process / console application
-This is quite straight forward to launch a mock server within a console application, see [Wiki : Standalone Process](https://github.com/StefH/WireMock.Net/wiki/WireMock-as-a-standalone-process).
+This is quite straight forward to launch a mock server within a console application, see [Standalone Process](https://wiremock.org/dotnet/wiremock-as-a-standalone-process).
 
 ### As a Windows Service
-You can also run WireMock.Net as a Windows Service, follow this [WireMock-as-a-Windows-Service](https://github.com/wiremock/WireMock.Net/wiki/WireMock-as-a-Windows-Service).
+You can also run WireMock.Net as a Windows Service, follow this [Windows Service](https://wiremock.org/dotnet/wiremock-as-a-windows-service).
 
 ### As a Web Job in Azure or application in IIS
-See this link [WireMock-as-a-(Azure)-Web-App](https://github.com/wiremock/WireMock.Net/wiki/WireMock-as-a-(Azure)-Web-App)
+See this link [WireMock-as-a-(Azure)-Web-App](https://wiremock.org/dotnet/wiremock-as-a-azure-web-app/)
 
 ### In a docker container
 There is also a Linux and Windows-Nano container available at [hub.docker.com](https://hub.docker.com/r/sheyenrath).
 For more details see also [Docker](https://github.com/wiremock/WireMock.Net-docker).
 
-#### HTTPS / SSL
-More details on using HTTPS (SSL) can be found here [Wiki : HTTPS](https://github.com/wiremock/WireMock.Net/wiki/Using-HTTPS-(SSL))
+### HTTPS / SSL
+More details on using HTTPS (SSL) can be found here [HTTPS](https://wiremock.org/dotnet/using-https-ssl/)
+
+## :books: Documentation
+For more info, see also this documentation page: [What is WireMock.Net](https://wiremock.org/dotnet/what-is-wiremock-net/).
 
 ---
 
