@@ -46,7 +46,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsByteArrayAsync().ConfigureAwait(false)).ContainsExactly(Encoding.UTF8.GetBytes("hi"));
+        Check.That(await message.Content!.ReadAsByteArrayAsync()).ContainsExactly(Encoding.UTF8.GetBytes("hi"));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("0123");
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals("0123");
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals("{\"x\":42}");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json");
     }
 
@@ -121,7 +121,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
     }
 
@@ -142,7 +142,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
     }
 
@@ -242,7 +242,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals(body);
+        Check.That(await message.Content!.ReadAsStringAsync()).Equals(body);
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
     }
 

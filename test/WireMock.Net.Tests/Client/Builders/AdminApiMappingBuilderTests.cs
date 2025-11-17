@@ -56,12 +56,12 @@ public class AdminApiMappingBuilderTests
         );
 
         // Act
-        var status = await mappingBuilder.BuildAndPostAsync().ConfigureAwait(false);
+        var status = await mappingBuilder.BuildAndPostAsync();
 
         // Assert
         status.Status.Should().Be("Mapping added");
 
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid);
 
         await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
 

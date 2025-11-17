@@ -4,7 +4,8 @@
         <Description>ProtoBuf and gRPC support for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.ProtoBuf</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>netstandard2.1;net462;net6.0;net8.0</TargetFrameworks>
+        <!--<TargetFrameworks>netstandard2.1;net462;net6.0;net8.0</TargetFrameworks>-->
+        <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>wiremock;matchers;matcher;protobuf;grpc</PackageTags>
         <RootNamespace>WireMock</RootNamespace>
@@ -26,7 +27,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ProtoBufJsonConverter" Version="0.10.0" />
+        <PackageReference Include="ProtoBufJsonConverter" Version="0.10.0.1" />
     </ItemGroup>
 
     <ItemGroup>

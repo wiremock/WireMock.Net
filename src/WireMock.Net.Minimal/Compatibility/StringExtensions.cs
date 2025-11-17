@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if NET451 || NET452 || NET46 || NET451 || NET461 || NETSTANDARD1_3 || NETSTANDARD2_0
+#if NET48
 using System.Text.RegularExpressions;
 using WireMock.Constants;
 

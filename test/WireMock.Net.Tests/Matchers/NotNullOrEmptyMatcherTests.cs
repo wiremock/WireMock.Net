@@ -24,7 +24,7 @@ public class NotNullOrEmptyMatcherTests
     [InlineData(null, 0.0)]
     [InlineData(new byte[0], 0.0)]
     [InlineData(new byte[] { 48 }, 1.0)]
-    public void NotNullOrEmptyMatcher_IsMatch_ByteArray(byte[] data, double expected)
+    public void NotNullOrEmptyMatcher_IsMatch_ByteArray(byte[]? data, double expected)
     {
         // Act
         var matcher = new NotNullOrEmptyMatcher();
@@ -38,7 +38,7 @@ public class NotNullOrEmptyMatcherTests
     [InlineData(null, 0.0)]
     [InlineData("", 0.0)]
     [InlineData("x", 1.0)]
-    public void NotNullOrEmptyMatcher_IsMatch_String(string @string, double expected)
+    public void NotNullOrEmptyMatcher_IsMatch_String(string? @string, double expected)
     {
         // Act
         var matcher = new NotNullOrEmptyMatcher();
@@ -52,11 +52,11 @@ public class NotNullOrEmptyMatcherTests
     [InlineData(null, 0.0)]
     [InlineData("", 0.0)]
     [InlineData("x", 1.0)]
-    public void NotNullOrEmptyMatcher_IsMatch_StringAsObject(string @string, double expected)
+    public void NotNullOrEmptyMatcher_IsMatch_StringAsObject(string? @string, double expected)
     {
         // Act
         var matcher = new NotNullOrEmptyMatcher();
-        var result = matcher.IsMatch((object)@string).Score;
+        var result = matcher.IsMatch((object?)@string).Score;
 
         // Assert
         result.Should().Be(expected);
