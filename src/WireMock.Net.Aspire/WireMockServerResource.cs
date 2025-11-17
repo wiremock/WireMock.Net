@@ -5,6 +5,7 @@ using RestEase;
 using Stef.Validation;
 using WireMock.Client;
 using WireMock.Client.Extensions;
+using WireMock.Net.Aspire;
 using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
@@ -19,14 +20,7 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
 
     internal WireMockServerArguments Arguments { get; }
     internal Lazy<IWireMockAdminApi> AdminApi => new(CreateWireMockAdminApi);
-
-    internal enum MappingState
-    {
-        NoMappings,
-        NotSubmitted,
-        Submitted,
-    }
-    internal MappingState ApiMappingState { get; set; } = MappingState.NoMappings;
+    internal WireMockMappingState ApiMappingState { get; set; } = WireMockMappingState.NoMappings;
 
     private ILogger? _logger;
     private EnhancedFileSystemWatcher? _enhancedFileSystemWatcher;
@@ -73,7 +67,7 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
         var mappingBuilder = AdminApi.Value.GetMappingBuilder();
         await Arguments.ApiMappingBuilder.Invoke(mappingBuilder, cancellationToken);
 
-        ApiMappingState = MappingState.Submitted;
+        ApiMappingState = WireMockMappingState.Submitted;
     }
 
     internal void StartWatchingStaticMappings(CancellationToken cancellationToken)

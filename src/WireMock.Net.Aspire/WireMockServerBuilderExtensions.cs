@@ -183,7 +183,7 @@ public static class WireMockServerBuilderExtensions
 
         wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
         wiremock.Resource.Arguments.ApiMappingBuilder = configure;
-        wiremock.Resource.ApiMappingState = WireMockServerResource.MappingState.NotSubmitted;
+        wiremock.Resource.ApiMappingState = WireMockMappingState.NotSubmitted;
 
         return wiremock;
     }

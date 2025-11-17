@@ -21,7 +21,7 @@ public class WireMockHealthCheck(WireMockServerResource resource) : IHealthCheck
             return HealthCheckResult.Unhealthy("WireMock.Net is not healthy");
         }
 
-        if (resource.ApiMappingState == WireMockServerResource.MappingState.NotSubmitted)
+        if (resource.ApiMappingState == WireMockMappingState.NotSubmitted)
         {
             return HealthCheckResult.Unhealthy("WireMock.Net has not received mappings");
         }
