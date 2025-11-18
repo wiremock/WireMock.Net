@@ -1,6 +1,10 @@
-# 1.15.0 (22 October 2025)
-- #1367 Fix WithProbability logic [bug]
-- #1370 Support Testcontainers 4.8.0 [bug]
-- #1126 Request matching WithProbability strange behaviour [bug]
+# 1.16.0 (18 November 2025)
+- #1366 WireMock.Net.OpenApiParser : support Examples [feature]
+- #1375 Add WireMockHealthCheck in WireMock.Net.Aspire [feature]
+- #1377 Check if the path is valid when using WithPath(...) [feature]
+- #1380 Add WireMock.Net.xUnit.v3 project [feature]
+- #1364 Choosing examples from open api specification for responses. [feature]
+- #1376 AdminApiMappingBuilder `WithPath` should add the starting `/` if missing [feature]
+- #1379 xUnit v3 [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

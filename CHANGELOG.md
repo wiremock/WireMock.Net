@@ -1,3 +1,12 @@
+# 1.16.0 (18 November 2025)
+- [#1366](https://github.com/wiremock/WireMock.Net/pull/1366) - WireMock.Net.OpenApiParser : support Examples [feature] contributed by [StefH](https://github.com/StefH)
+- [#1375](https://github.com/wiremock/WireMock.Net/pull/1375) - Add WireMockHealthCheck in WireMock.Net.Aspire [feature] contributed by [Zguy](https://github.com/Zguy)
+- [#1377](https://github.com/wiremock/WireMock.Net/pull/1377) - Check if the path is valid when using WithPath(...) [feature] contributed by [StefH](https://github.com/StefH)
+- [#1380](https://github.com/wiremock/WireMock.Net/pull/1380) - Add WireMock.Net.xUnit.v3 project [feature] contributed by [StefH](https://github.com/StefH)
+- [#1364](https://github.com/wiremock/WireMock.Net/issues/1364) - Choosing examples from open api specification for responses. [feature]
+- [#1376](https://github.com/wiremock/WireMock.Net/issues/1376) - AdminApiMappingBuilder `WithPath` should add the starting `/` if missing [feature]
+- [#1379](https://github.com/wiremock/WireMock.Net/issues/1379) - xUnit v3 [feature]
+
 # 1.15.0 (22 October 2025)
 - [#1367](https://github.com/wiremock/WireMock.Net/pull/1367) - Fix WithProbability logic [bug] contributed by [StefH](https://github.com/StefH)
 - [#1370](https://github.com/wiremock/WireMock.Net/pull/1370) - Support Testcontainers 4.8.0 [bug] contributed by [MD-V](https://github.com/MD-V)
@@ -1300,7 +1309,7 @@
 - [#132](https://github.com/wiremock/WireMock.Net/issues/132) - LogEntries not being recorded on subsequent tests
 - [#136](https://github.com/wiremock/WireMock.Net/issues/136) - Question: Does the WireMock send Content-Length response header
 - [#137](https://github.com/wiremock/WireMock.Net/issues/137) - Question: How to specify Transfer-Encoding response header?
-- [#139](https://github.com/wiremock/WireMock.Net/issues/139) - Wiki link https://wiremock.org/dotnet/Record-(via-proxy)-and-Save is dead
+- [#139](https://github.com/wiremock/WireMock.Net/issues/139) - Wiki link https://github.com/StefH/WireMock.Net/wiki/Record-(via-proxy)-and-Save is dead
 
 # 1.0.3.17 (16 May 2018)
 - [#134](https://github.com/wiremock/WireMock.Net/pull/134) - Stef negate matcher contributed by [alastairtree](https://github.com/alastairtree)
