@@ -144,6 +144,10 @@ jobs:
     vmImage: 'windows-2022'
 
   steps:
+  - script: |
+      echo "BuildId = $(buildId)"
+    displayName: 'Print buildId'
+
   - task: UseDotNet@2
     displayName: Use .NET 8.0
     inputs:
