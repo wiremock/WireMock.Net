@@ -113,7 +113,7 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
 
     private async void FileCreatedChangedOrDeleted(object sender, FileSystemEventArgs args)
     {
-        _logger?.LogInformation("MappingFile created, changed or deleted: '{0}'. Triggering ReloadStaticMappings.", args.FullPath);
+        _logger?.LogInformation("MappingFile created, changed or deleted: '{FullPath}'. Triggering ReloadStaticMappings.", args.FullPath);
         try
         {
             await AdminApi.Value.ReloadStaticMappingsAsync();

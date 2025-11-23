@@ -68,6 +68,11 @@ public class WireMockServerArguments
     public Func<AdminApiMappingBuilder, CancellationToken, Task>? ApiMappingBuilder { get; set; }
 
     /// <summary>
+    /// Use HTTP 2 (used for Grpc).
+    /// </summary>
+    public bool UseHttp2 { get; set; }
+
+    /// <summary>
     /// Converts the current instance's properties to an array of command-line arguments for starting the WireMock.Net server.
     /// </summary>
     /// <returns>An array of strings representing the command-line arguments.</returns>
@@ -93,6 +98,11 @@ public class WireMockServerArguments
             Add(args, "--ReadStaticMappings", "true");
             Add(args, "--WatchStaticMappings", "true");
             Add(args, "--WatchStaticMappingsInSubdirectories", "true");
+        }
+
+        if (UseHttp2)
+        {
+            Add(args, "--UseHttp2", "true");
         }
 
         return args
