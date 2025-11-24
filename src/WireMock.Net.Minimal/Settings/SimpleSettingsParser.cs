@@ -55,7 +55,7 @@ internal class SimpleSettingsParser
         // Now also parse environment
         if (environment != null)
         {
-            foreach (string key in environment.Keys)
+            foreach (var key in environment.Keys.OfType<string>())
             {
                 if (key.StartsWith(Prefix, StringComparison.OrdinalIgnoreCase) && environment.TryGetStringValue(key, out var value))
                 {

@@ -153,7 +153,7 @@ public static class WireMockServerSettingsParser
         }
         else if (settings.HostingScheme is null)
         {
-            settings.Urls = parser.GetValues("Urls", ["http://*:9091/"]);
+            settings.Urls = parser.GetValues(nameof(WireMockServerSettings.Urls), defaultValue: ["http://*:9091/"]);
         }
     }
 

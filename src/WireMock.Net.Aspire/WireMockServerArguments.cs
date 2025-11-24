@@ -76,7 +76,7 @@ public class WireMockServerArguments
     /// <summary>
     /// Aadditional Urls on which WireMock listens.
     /// </summary>
-    public List<string> Urls { get; set; } = [];
+    public List<string> AdditionalUrls { get; set; } = [];
 
     /// <summary>
     /// Add an additional Url on which WireMock listens.
@@ -85,7 +85,7 @@ public class WireMockServerArguments
     /// <param name="port">The port to add.</param>
     internal void WithAdditionalUrlWithPort(string url, int port)
     {
-        Urls.Add(Guard.NotNullOrWhiteSpace(url));
+        AdditionalUrls.Add(Guard.NotNullOrWhiteSpace(url));
         HttpPorts.Add(port);
     }
 
@@ -120,6 +120,11 @@ public class WireMockServerArguments
         if (UseHttp2)
         {
             Add(args, "--UseHttp2", "true");
+        }
+
+        if (AdditionalUrls.Count > 0)
+        {
+            Add(args, "--Urls", $"http://*:{HttpContainerPort} {string.Join(' ', AdditionalUrls)}");
         }
 
         return args

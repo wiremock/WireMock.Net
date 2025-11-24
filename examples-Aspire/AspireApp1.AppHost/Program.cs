@@ -7,7 +7,8 @@ var builder = DistributedApplication.CreateBuilder(args);
 var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "WireMockMappings");
 
 IResourceBuilder<WireMockServerResource> apiService = builder
-    .AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
+    //.AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
+    .AddWireMock("apiservice", ["http://*:8080", "grpc://*:9090"])
     .WithMappingsPath(mappingsPath)
     .WithReadStaticMappings()
     .WithWatchStaticMappings()
@@ -48,4 +49,4 @@ builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WithReference(apiService)
     .WaitFor(apiService);
 
-builder.Build().Run();
+await builder.Build().RunAsync();
