@@ -9,6 +9,7 @@ var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "WireMockMappin
 IResourceBuilder<WireMockServerResource> apiService = builder
     //.AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
     .AddWireMock("apiservice", ["http://*:8080", "grpc://*:9090"])
+    .AsHttp2Service()
     .WithMappingsPath(mappingsPath)
     .WithReadStaticMappings()
     .WithWatchStaticMappings()

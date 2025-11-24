@@ -97,14 +97,36 @@ public static class WireMockServerBuilderExtensions
         var resourceBuilder = builder
             .AddResource(wireMockContainerResource)
             .WithImage(DefaultLinuxImage)
-            .WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort)
             .WithEnvironment(ctx => ctx.EnvironmentVariables.Add("DOTNET_USE_POLLING_FILE_WATCHER", "1")) // https://khalidabuhakmeh.com/aspnet-docker-gotchas-and-workarounds#configuration-reloads-and-filesystemwatcher
             .WithHealthCheck(healthCheckKey)
             .WithWireMockInspectorCommand();
 
-        foreach (var httpPort in arguments.HttpPorts)
+        if (arguments.HttpPorts.Count == 0)
         {
-            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: httpPort, name: $"http-{httpPort}");
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort);
+        }
+        else if (arguments.HttpPorts.Count == 1)
+        {
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: arguments.HttpPorts[0], targetPort: WireMockServerArguments.HttpContainerPort);
+        }
+        else
+        {
+            // Required for the default admin endpoint and health checks
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort);
+
+            var anyIsHttp2 = false;
+            foreach (var url in arguments.AdditionalUrls)
+            {
+                PortUtils.TryExtract(url, out _, out var isHttp2, out var scheme, out _, out var httpPort);
+                anyIsHttp2 |= isHttp2;
+
+                resourceBuilder = resourceBuilder.WithEndpoint(port: httpPort, targetPort: httpPort, scheme: scheme, name: $"{scheme}-{httpPort}");
+            }
+
+            if (anyIsHttp2)
+            {
+                resourceBuilder = resourceBuilder.AsHttp2Service();
+            }
         }
 
         if (!string.IsNullOrEmpty(arguments.MappingsPath))

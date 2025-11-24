@@ -28,6 +28,11 @@ public class WireMockServerArguments
     public List<int> HttpPorts { get; set; } = [];
 
     /// <summary>
+    /// Additional Urls on which WireMock listens.
+    /// </summary>
+    public List<string> AdditionalUrls { get; set; } = [];
+
+    /// <summary>
     /// The admin username.
     /// </summary>
     [MemberNotNullWhen(true, nameof(HasBasicAuthentication))]
@@ -69,16 +74,6 @@ public class WireMockServerArguments
     public Func<AdminApiMappingBuilder, CancellationToken, Task>? ApiMappingBuilder { get; set; }
 
     /// <summary>
-    /// Use HTTP 2 (used for Grpc).
-    /// </summary>
-    public bool UseHttp2 { get; set; }
-
-    /// <summary>
-    /// Aadditional Urls on which WireMock listens.
-    /// </summary>
-    public List<string> AdditionalUrls { get; set; } = [];
-
-    /// <summary>
     /// Add an additional Url on which WireMock listens.
     /// </summary>
     /// <param name="url">The url to add.</param>
@@ -115,11 +110,6 @@ public class WireMockServerArguments
             Add(args, "--ReadStaticMappings", "true");
             Add(args, "--WatchStaticMappings", "true");
             Add(args, "--WatchStaticMappingsInSubdirectories", "true");
-        }
-
-        if (UseHttp2)
-        {
-            Add(args, "--UseHttp2", "true");
         }
 
         if (AdditionalUrls.Count > 0)
