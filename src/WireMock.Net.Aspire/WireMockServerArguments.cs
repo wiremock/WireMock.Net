@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
+using Stef.Validation;
 using WireMock.Client.Builders;
 
 // ReSharper disable once CheckNamespace
@@ -24,7 +25,7 @@ public class WireMockServerArguments
     /// The HTTP port where WireMock.Net is listening.
     /// If not defined, .NET Aspire automatically assigns a random port.
     /// </summary>
-    public int? HttpPort { get; set; }
+    public List<int> HttpPorts { get; set; } = [];
 
     /// <summary>
     /// The admin username.
@@ -71,6 +72,22 @@ public class WireMockServerArguments
     /// Use HTTP 2 (used for Grpc).
     /// </summary>
     public bool UseHttp2 { get; set; }
+
+    /// <summary>
+    /// Aadditional Urls on which WireMock listens.
+    /// </summary>
+    public List<string> Urls { get; set; } = [];
+
+    /// <summary>
+    /// Add an additional Url on which WireMock listens.
+    /// </summary>
+    /// <param name="url">The url to add.</param>
+    /// <param name="port">The port to add.</param>
+    internal void WithAdditionalUrlWithPort(string url, int port)
+    {
+        Urls.Add(Guard.NotNullOrWhiteSpace(url));
+        HttpPorts.Add(port);
+    }
 
     /// <summary>
     /// Converts the current instance's properties to an array of command-line arguments for starting the WireMock.Net server.

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Stef.Validation;
 using WireMock.Client.Builders;
 using WireMock.Net.Aspire;
+using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Aspire.Hosting;
@@ -36,7 +37,10 @@ public static class WireMockServerBuilderExtensions
 
         return builder.AddWireMock(name, callback =>
         {
-            callback.HttpPort = port;
+            if (port != null)
+            {
+                callback.HttpPorts = [port.Value];
+            }
         });
     }
 
@@ -67,9 +71,20 @@ public static class WireMockServerBuilderExtensions
             .AddResource(wireMockContainerResource)
             .WithImage(DefaultLinuxImage)
             .WithEnvironment(ctx => ctx.EnvironmentVariables.Add("DOTNET_USE_POLLING_FILE_WATCHER", "1")) // https://khalidabuhakmeh.com/aspnet-docker-gotchas-and-workarounds#configuration-reloads-and-filesystemwatcher
-            .WithHttpEndpoint(port: arguments.HttpPort, targetPort: WireMockServerArguments.HttpContainerPort)
             .WithHealthCheck(healthCheckKey)
             .WithWireMockInspectorCommand();
+
+        if (arguments.HttpPorts.Count == 0)
+        {
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort);
+        }
+        else
+        {
+            foreach (var httpPort in arguments.HttpPorts)
+            {
+                resourceBuilder = resourceBuilder.WithHttpEndpoint(port: httpPort, targetPort: WireMockServerArguments.HttpContainerPort);
+            }
+        }
 
         if (!string.IsNullOrEmpty(arguments.MappingsPath))
         {
@@ -165,7 +180,7 @@ public static class WireMockServerBuilderExtensions
     /// </summary>
     /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
     /// <param name="configure">Delegate that will be invoked to configure the WireMock.Net resource.</param>
-    /// <returns></returns>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> WithApiMappingBuilder(this IResourceBuilder<WireMockServerResource> wiremock, Func<AdminApiMappingBuilder, Task> configure)
     {
         return wiremock.WithApiMappingBuilder((adminApiMappingBuilder, _) => configure.Invoke(adminApiMappingBuilder));
@@ -176,7 +191,7 @@ public static class WireMockServerBuilderExtensions
     /// </summary>
     /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
     /// <param name="configure">Delegate that will be invoked to configure the WireMock.Net resource.</param>
-    /// <returns></returns>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> WithApiMappingBuilder(this IResourceBuilder<WireMockServerResource> wiremock, Func<AdminApiMappingBuilder, CancellationToken, Task> configure)
     {
         Guard.NotNull(wiremock);
@@ -184,6 +199,25 @@ public static class WireMockServerBuilderExtensions
         wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
         wiremock.Resource.Arguments.ApiMappingBuilder = configure;
         wiremock.Resource.ApiMappingState = WireMockMappingState.NotSubmitted;
+
+        return wiremock;
+    }
+
+    /// <summary>
+    /// Adds another URL to the WireMock container. By default, the WireMock container will listen on <c>http://*:80</c>.
+    ///
+    /// This method can be used to also host the WireMock container on another port or protocol (like grpc).
+    /// </summary>
+    /// <example>grpc://*:9090</example>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> AddUrl(this IResourceBuilder<WireMockServerResource> wiremock, string url)
+    {
+        if (!PortUtils.TryExtract(Guard.NotNullOrEmpty(url), out _, out _, out _, out _, out var port))
+        {
+            throw new ArgumentException("The URL is not valid.", nameof(url));
+        }
+
+        wiremock.Resource.Arguments.WithAdditionalUrlWithPort(url, port);
 
         return wiremock;
     }
