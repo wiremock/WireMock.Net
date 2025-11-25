@@ -2,6 +2,7 @@
 
 #if !(NET452 || NET461 || NETCOREAPP3_1)
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Moq;
 using VerifyTests;
@@ -117,6 +118,35 @@ public class MappingBuilderTests
         .WillSetStateTo("TodoList State Started", 2)
         .RespondWith(Response.Create()
             .WithBody("Buy milk"));
+
+        _sut.Given(Request.Create()
+            .WithPath("/delay")
+            .UsingGet()
+        ).RespondWith(Response.Create()
+            .WithDelay(1000)
+        );
+
+        _sut.Given(Request.Create()
+            .WithPath("/random-delay")
+            .UsingGet()
+        ).RespondWith(Response.Create()
+            .WithRandomDelay(1234)
+        );
+
+        _sut.Given(Request.Create()
+            .WithPath("/prob")
+            .UsingGet()
+        ).WithProbability(0.1)
+            .RespondWith(Response.Create()
+            .WithStatusCode(HttpStatusCode.Ambiguous)
+        );
+        _sut.Given(Request.Create()
+            .WithPath("/prob")
+            .UsingGet()
+        ).WithProbability(0.9)
+            .RespondWith(Response.Create()
+            .WithStatusCode(HttpStatusCode.Created)
+        );
 
         _numMappings = _sut.GetMappings().Length;
     }

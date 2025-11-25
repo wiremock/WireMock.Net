@@ -186,5 +186,92 @@
       BodyDestination: SameAsSource,
       Body: Buy milk
     }
+  },
+  {
+    Guid: 98fae52e-76df-47d9-876f-2ee32e931006,
+    UpdatedAt: 2023-01-14T15:16:17,
+    Request: {
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /delay,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Methods: [
+        GET
+      ]
+    },
+    Response: {
+      Delay: 1000
+    }
+  },
+  {
+    Guid: 98fae52e-76df-47d9-876f-2ee32e931007,
+    UpdatedAt: 2023-01-14T15:16:17,
+    Request: {
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /random-delay,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Methods: [
+        GET
+      ]
+    },
+    Response: {
+      MinimumRandomDelay: 1234,
+      MaximumRandomDelay: 60000
+    }
+  },
+  {
+    Guid: 98fae52e-76df-47d9-876f-2ee32e931008,
+    UpdatedAt: 2023-01-14T15:16:17,
+    Request: {
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /prob,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Methods: [
+        GET
+      ]
+    },
+    Response: {
+      StatusCode: 300
+    },
+    Probability: 0.1
+  },
+  {
+    Guid: 98fae52e-76df-47d9-876f-2ee32e931009,
+    UpdatedAt: 2023-01-14T15:16:17,
+    Request: {
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /prob,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Methods: [
+        GET
+      ]
+    },
+    Response: {
+      StatusCode: 201
+    },
+    Probability: 0.9
   }
 ]
