@@ -226,13 +226,13 @@ internal class MappingConverter(MatcherMapper mapper)
             }
         }
 
-        if (response.Delay is { })
-        {
-            sb.AppendLine($"        .WithDelay({response.Delay.Value.TotalMilliseconds})");
-        }
-        else if (response is { MinimumDelayMilliseconds: > 0, MaximumDelayMilliseconds: > 0 })
+        if (response is { MinimumDelayMilliseconds: > 0, MaximumDelayMilliseconds: > 0 })
         {
             sb.AppendLine($"        .WithRandomDelay({response.MinimumDelayMilliseconds}, {response.MaximumDelayMilliseconds})");
+        }
+        else if (response.Delay is { })
+        {
+            sb.AppendLine($"        .WithDelay({response.Delay.Value.TotalMilliseconds})");
         }
 
         if (response.UseTransformer)
