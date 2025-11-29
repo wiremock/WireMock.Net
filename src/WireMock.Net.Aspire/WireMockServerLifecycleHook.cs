@@ -34,6 +34,8 @@ internal class WireMockServerLifecycleHook(ILoggerFactory loggerFactory) : IDist
 
                 await wireMockServerResource.CallApiMappingBuilderActionAsync(_linkedCts.Token);
 
+                await wireMockServerResource.CallAddProtoDefinitionsAsync(_linkedCts.Token);
+
                 wireMockServerResource.StartWatchingStaticMappings(_linkedCts.Token);
             }
         }, _linkedCts.Token);

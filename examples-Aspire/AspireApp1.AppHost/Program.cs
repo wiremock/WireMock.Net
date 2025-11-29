@@ -19,6 +19,7 @@ IResourceBuilder<WireMockServerResource> apiService2 = builder
     .AddWireMock("apiservice2", args =>
     {
         args.WithAdditionalUrls("http://*:8081", "grpc://*:9091");
+        args.AddProtoDefinition("my-greeter", ReadFile("greet.proto"));
     })
     .AsHttp2Service()
     .WithMappingsPath(mappingsPath)
@@ -62,3 +63,10 @@ builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WaitFor(apiService2);
 
 await builder.Build().RunAsync();
+
+return;
+
+static string ReadFile(string filename)
+{
+    return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings", filename));
+}

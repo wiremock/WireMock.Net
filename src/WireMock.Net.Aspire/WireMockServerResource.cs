@@ -70,6 +70,27 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
         ApiMappingState = WireMockMappingState.Submitted;
     }
 
+    internal async Task CallAddProtoDefinitionsAsync(CancellationToken cancellationToken)
+    {
+        _logger?.LogInformation("Calling AdminApi to add GRPC ProtoDefinition at server level to WireMock.Net");
+
+        foreach (var (id, protoDefinitions) in Arguments.ProtoDefinitions)
+        {
+            _logger?.LogInformation("Adding ProtoDefinition {Id}", id);
+            foreach (var protoDefinition in protoDefinitions)
+            {
+                try
+                {
+                    await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", id);
+                }
+            }
+        }
+    }
+
     internal void StartWatchingStaticMappings(CancellationToken cancellationToken)
     {
         if (!Arguments.WatchStaticMappings || string.IsNullOrEmpty(Arguments.MappingsPath))

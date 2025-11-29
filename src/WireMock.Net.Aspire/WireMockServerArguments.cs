@@ -75,6 +75,11 @@ public class WireMockServerArguments
     public Func<AdminApiMappingBuilder, CancellationToken, Task>? ApiMappingBuilder { get; set; }
 
     /// <summary>
+    /// Grpc ProtoDefinitions.
+    /// </summary>
+    public Dictionary<string, string[]> ProtoDefinitions { get; set; } = [];
+
+    /// <summary>
     /// Add an additional Urls on which WireMock should listen.
     /// </summary>
     /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
@@ -90,6 +95,19 @@ public class WireMockServerArguments
             AdditionalUrls.Add(Guard.NotNullOrWhiteSpace(url));
             HttpPorts.Add(port);
         }
+    }
+
+    /// <summary>
+    /// Add a Grpc ProtoDefinition at server-level.
+    /// </summary>
+    /// <param name="id">Unique identifier for the ProtoDefinition.</param>
+    /// <param name="protoDefinition">The ProtoDefinition as text.</param>
+    public void AddProtoDefinition(string id, params string[] protoDefinition)
+    {
+        Guard.NotNullOrWhiteSpace(id);
+        Guard.NotNullOrEmpty(protoDefinition);
+
+        ProtoDefinitions[id] = protoDefinition;
     }
 
     /// <summary>
