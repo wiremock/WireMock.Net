@@ -51,7 +51,7 @@ public class WireMockServerBuilderExtensionsTests
         Action act = () => builder.AddWireMock("ValidName", invalidUrls);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("The URL err is not valid.");
+        act.Should().Throw<ArgumentException>().WithMessage("The URL 'err' is not valid.");
     }
 
     [Fact]
