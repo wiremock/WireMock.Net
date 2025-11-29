@@ -56,7 +56,7 @@ public partial class TestcontainersTests
                 var grpcPort = wireMockContainer.GetMappedPublicPort(9090);
                 grpcPort.Should().BeGreaterThan(0);
 
-                var grpcUrl = wireMockContainer.GetMappedPublicUrl(80);
+                var grpcUrl = wireMockContainer.GetMappedPublicUrl(9090);
                 grpcUrl.Should().StartWith("http://");
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();

@@ -81,7 +81,7 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
             {
                 try
                 {
-                    await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition);
+                    await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition, cancellationToken);
                 }
                 catch (Exception ex)
                 {

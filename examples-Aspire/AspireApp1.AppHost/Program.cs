@@ -4,27 +4,27 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // IResourceBuilder<ProjectResource> apiService = builder.AddProject<Projects.AspireApp1_ApiService>("apiservice");
 
-var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "WireMockMappings");
+var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings");
 
-IResourceBuilder<WireMockServerResource> apiService1 = builder
-    //.AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
-    .AddWireMock("apiservice1", "http://*:8081", "grpc://*:9091")
-    .AsHttp2Service()
-    .WithMappingsPath(mappingsPath)
-    .WithReadStaticMappings()
-    .WithWatchStaticMappings()
-    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
+//IResourceBuilder<WireMockServerResource> apiService1 = builder
+//    //.AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
+//    .AddWireMock("apiservice1", "http://*:8081", "grpc://*:9091")
+//    .AsHttp2Service()
+//    .WithMappingsPath(mappingsPath)
+//    .WithReadStaticMappings()
+//    .WithWatchStaticMappings()
+//    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
 
 IResourceBuilder<WireMockServerResource> apiService2 = builder
-    .AddWireMock("apiservice2", args =>
+    .AddWireMock("apiservice", args =>
     {
-        args.WithAdditionalUrls("http://*:8081", "grpc://*:9091");
-        args.AddProtoDefinition("my-greeter", ReadFile("greet.proto"));
+        args.WithAdditionalUrls("http://*:8081", "grpc://*:9093");
     })
     .AsHttp2Service()
+    .WithProtoDefinition("my-greeter", await File.ReadAllTextAsync(Path.Combine(mappingsPath, "greet.proto")))
     .WithMappingsPath(mappingsPath)
     .WithReadStaticMappings()
-    .WithWatchStaticMappings()
+    .WithWatchStaticMappings()    
     .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
 
 //var apiServiceUsedForDocs = builder
@@ -63,10 +63,3 @@ builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WaitFor(apiService2);
 
 await builder.Build().RunAsync();
-
-return;
-
-static string ReadFile(string filename)
-{
-    return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings", filename));
-}

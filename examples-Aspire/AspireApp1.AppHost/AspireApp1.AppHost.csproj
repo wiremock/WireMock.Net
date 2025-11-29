@@ -22,9 +22,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="__admin\mappings\greet.proto">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Update="__admin\mappings\*.proto">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="__admin\mappings\*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

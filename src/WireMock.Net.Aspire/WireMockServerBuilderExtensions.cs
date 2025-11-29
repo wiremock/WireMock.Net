@@ -242,17 +242,33 @@ public static class WireMockServerBuilderExtensions
     }
 
     /// <summary>
+    /// Add a Grpc ProtoDefinition at server-level.
+    /// </summary>
+    /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
+    /// <param name="id">Unique identifier for the ProtoDefinition.</param>
+    /// <param name="protoDefinitions">The ProtoDefinition as text.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> WithProtoDefinition(this IResourceBuilder<WireMockServerResource> wiremock, string id, params string[] protoDefinitions)
+    {
+        Guard.NotNull(wiremock).Resource.Arguments.AddProtoDefinition(id, protoDefinitions);
+
+        wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
+
+        return wiremock;
+    }
+
+    /// <summary>
     /// Enables the WireMockInspect, a cross-platform UI app that facilitates WireMock troubleshooting.
     /// This requires installation of the WireMockInspector tool.
     /// <code>
     /// dotnet tool install WireMockInspector --global --no-cache --ignore-failed-sources
     /// </code>
     /// </summary>
-    /// <param name="builder">The <see cref="IResourceBuilder{WireMockNetResource}"/>.</param>
-    /// <returns></returns>
-    public static IResourceBuilder<WireMockServerResource> WithWireMockInspectorCommand(this IResourceBuilder<WireMockServerResource> builder)
+    /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockNetResource}"/>.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> WithWireMockInspectorCommand(this IResourceBuilder<WireMockServerResource> wiremock)
     {
-        Guard.NotNull(builder);
+        Guard.NotNull(wiremock);
 
         CommandOptions commandOptions = new()
         {
@@ -262,13 +278,13 @@ public static class WireMockServerBuilderExtensions
             IconVariant = IconVariant.Filled
         };
 
-        builder.WithCommand(
+        wiremock.WithCommand(
             name: "wiremock-inspector",
             displayName: "WireMock Inspector",
-            executeCommand: _ => OnRunOpenInspectorCommandAsync(builder),
+            executeCommand: _ => OnRunOpenInspectorCommandAsync(wiremock),
             commandOptions: commandOptions);
 
-        return builder;
+        return wiremock;
     }
 
     private static Task<ExecuteCommandResult> OnRunOpenInspectorCommandAsync(IResourceBuilder<WireMockServerResource> builder)

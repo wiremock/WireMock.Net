@@ -101,13 +101,13 @@ public class WireMockServerArguments
     /// Add a Grpc ProtoDefinition at server-level.
     /// </summary>
     /// <param name="id">Unique identifier for the ProtoDefinition.</param>
-    /// <param name="protoDefinition">The ProtoDefinition as text.</param>
-    public void AddProtoDefinition(string id, params string[] protoDefinition)
+    /// <param name="protoDefinitions">The ProtoDefinition as text.</param>
+    public void AddProtoDefinition(string id, params string[] protoDefinitions)
     {
         Guard.NotNullOrWhiteSpace(id);
-        Guard.NotNullOrEmpty(protoDefinition);
+        Guard.NotNullOrEmpty(protoDefinitions);
 
-        ProtoDefinitions[id] = protoDefinition;
+        ProtoDefinitions[id] = protoDefinitions;
     }
 
     /// <summary>
