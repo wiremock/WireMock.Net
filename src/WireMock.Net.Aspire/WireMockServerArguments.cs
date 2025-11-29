@@ -3,6 +3,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Stef.Validation;
 using WireMock.Client.Builders;
+using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Aspire.Hosting;
@@ -22,7 +23,7 @@ public class WireMockServerArguments
     private const string DefaultLogger = "WireMockConsoleLogger";
 
     /// <summary>
-    /// The HTTP port where WireMock.Net is listening.
+    /// The HTTP ports where WireMock.Net is listening on.
     /// If not defined, .NET Aspire automatically assigns a random port.
     /// </summary>
     public List<int> HttpPorts { get; set; } = [];
@@ -74,14 +75,21 @@ public class WireMockServerArguments
     public Func<AdminApiMappingBuilder, CancellationToken, Task>? ApiMappingBuilder { get; set; }
 
     /// <summary>
-    /// Add an additional Url on which WireMock listens.
+    /// Add an additional Urls on which WireMock should listen.
     /// </summary>
-    /// <param name="url">The url to add.</param>
-    /// <param name="port">The port to add.</param>
-    internal void WithAdditionalUrlWithPort(string url, int port)
+    /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
+    public void WithAdditionalUrls(params string[] additionalUrls)
     {
-        AdditionalUrls.Add(Guard.NotNullOrWhiteSpace(url));
-        HttpPorts.Add(port);
+        foreach (var url in additionalUrls)
+        {
+            if (!PortUtils.TryExtract(Guard.NotNullOrEmpty(url), out _, out _, out _, out _, out var port))
+            {
+                throw new ArgumentException($"The URL '{url}' is not valid.");
+            }
+
+            AdditionalUrls.Add(Guard.NotNullOrWhiteSpace(url));
+            HttpPorts.Add(port);
+        }
     }
 
     /// <summary>

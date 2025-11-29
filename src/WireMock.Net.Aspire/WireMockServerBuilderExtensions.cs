@@ -49,7 +49,7 @@ public static class WireMockServerBuilderExtensions
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
     /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
-    /// <param name="additionalUrls">The additional urls which the WireMock Server listens on.</param>
+    /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> AddWireMock(this IDistributedApplicationBuilder builder, string name, params string[] additionalUrls)
     {
@@ -59,15 +59,7 @@ public static class WireMockServerBuilderExtensions
 
         return builder.AddWireMock(name, serverArguments =>
         {
-            foreach (var url in additionalUrls)
-            {
-                if (!PortUtils.TryExtract(Guard.NotNullOrEmpty(url), out _, out _, out _, out _, out var port))
-                {
-                    throw new ArgumentException($"The URL {url} is not valid.");
-                }
-
-                serverArguments.WithAdditionalUrlWithPort(url, port);
-            }
+            serverArguments.WithAdditionalUrls(additionalUrls);
         });
     }
 

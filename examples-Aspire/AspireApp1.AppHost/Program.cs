@@ -6,9 +6,20 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "WireMockMappings");
 
-IResourceBuilder<WireMockServerResource> apiService = builder
+IResourceBuilder<WireMockServerResource> apiService1 = builder
     //.AddWireMock("apiservice", WireMockServerArguments.DefaultPort)
-    .AddWireMock("apiservice", ["http://*:8080", "grpc://*:9090"])
+    .AddWireMock("apiservice1", "http://*:8081", "grpc://*:9091")
+    .AsHttp2Service()
+    .WithMappingsPath(mappingsPath)
+    .WithReadStaticMappings()
+    .WithWatchStaticMappings()
+    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
+
+IResourceBuilder<WireMockServerResource> apiService2 = builder
+    .AddWireMock("apiservice2", args =>
+    {
+        args.WithAdditionalUrls("http://*:8081", "grpc://*:9091");
+    })
     .AsHttp2Service()
     .WithMappingsPath(mappingsPath)
     .WithReadStaticMappings()
@@ -47,7 +58,7 @@ IResourceBuilder<WireMockServerResource> apiService = builder
 
 builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WithExternalHttpEndpoints()
-    .WithReference(apiService)
-    .WaitFor(apiService);
+    .WithReference(apiService2)
+    .WaitFor(apiService2);
 
 await builder.Build().RunAsync();
