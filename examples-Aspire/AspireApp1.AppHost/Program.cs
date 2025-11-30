@@ -23,8 +23,7 @@ IResourceBuilder<WireMockServerResource> apiService2 = builder
     .AsHttp2Service()
     .WithProtoDefinition("my-greeter", await File.ReadAllTextAsync(Path.Combine(mappingsPath, "greet.proto")))
     .WithMappingsPath(mappingsPath)
-    .WithReadStaticMappings()
-    .WithWatchStaticMappings()    
+    .WithWatchStaticMappings()
     .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
 
 //var apiServiceUsedForDocs = builder

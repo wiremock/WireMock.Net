@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Diagnostics;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Lifecycle;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ internal class WireMockServerLifecycleHook(ILoggerFactory loggerFactory) : IDist
                 wireMockServerResource.SetLogger(loggerFactory.CreateLogger<WireMockServerResource>());
 
                 var endpoint = wireMockServerResource.GetEndpoint();
-                System.Diagnostics.Debug.Assert(endpoint.IsAllocated);
+                Debug.Assert(endpoint.IsAllocated);
 
                 await wireMockServerResource.WaitForHealthAsync(_linkedCts.Token);
 

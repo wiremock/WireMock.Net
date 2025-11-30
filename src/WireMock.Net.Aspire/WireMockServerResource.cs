@@ -81,13 +81,20 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
             {
                 try
                 {
-                    await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition, cancellationToken);
+                    var status = await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition, cancellationToken);
+                    _logger?.LogInformation("ProtoDefinition '{Id}' added with status: {Status}.", id, status.Status);
                 }
                 catch (Exception ex)
                 {
                     _logger?.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", id);
                 }
             }
+        }
+
+        // Force a reload of static mappings when ProtoDefinitions are added at server-level to fix #1382
+        if (Arguments.ProtoDefinitions.Count > 0)
+        {
+            await ReloadStaticMappingsAsync(default);
         }
     }
 
@@ -135,9 +142,16 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
     private async void FileCreatedChangedOrDeleted(object sender, FileSystemEventArgs args)
     {
         _logger?.LogInformation("MappingFile created, changed or deleted: '{FullPath}'. Triggering ReloadStaticMappings.", args.FullPath);
+
+        await ReloadStaticMappingsAsync(default);
+    }
+
+    private async Task ReloadStaticMappingsAsync(CancellationToken cancellationToken)
+    {
         try
         {
-            await AdminApi.Value.ReloadStaticMappingsAsync();
+            var status = await AdminApi.Value.ReloadStaticMappingsAsync(cancellationToken);
+            _logger?.LogInformation("ReloadStaticMappings called with status: {Status}.", status);
         }
         catch (Exception ex)
         {

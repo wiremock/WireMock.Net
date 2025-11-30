@@ -156,7 +156,8 @@ public sealed class WireMockContainer : DockerContainer
 
         try
         {
-            await _adminApi.ReloadStaticMappingsAsync(cancellationToken);
+            var result = await _adminApi.ReloadStaticMappingsAsync(cancellationToken);
+            Logger.LogInformation("ReloadStaticMappings result: {Result}", result);
         }
         catch (Exception ex)
         {
@@ -231,13 +232,20 @@ public sealed class WireMockContainer : DockerContainer
             {
                 try
                 {
-                    await _adminApi!.AddProtoDefinitionAsync(kvp.Key, protoDefinition);
+                    var result = await _adminApi!.AddProtoDefinitionAsync(kvp.Key, protoDefinition);
+                    Logger.LogInformation("AddProtoDefinition '{Id}' result: {Result}", kvp.Key, result);
                 }
                 catch (Exception ex)
                 {
                     Logger.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", kvp.Key);
                 }
             }
+        }
+
+        // Force a reload of static mappings when ProtoDefinitions are added at server-level to fix #1382
+        if (_configuration.ProtoDefinitions.Count > 0)
+        {
+            await ReloadStaticMappingsAsync();
         }
     }
 
@@ -246,6 +254,7 @@ public sealed class WireMockContainer : DockerContainer
         try
         {
             await ReloadStaticMappingsAsync(args.FullPath);
+            Logger.LogInformation("ReloadStaticMappings triggered from file change: '{FullPath}'.", args.FullPath);
         }
         catch (Exception ex)
         {
