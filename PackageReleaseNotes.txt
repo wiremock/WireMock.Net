@@ -1,10 +1,11 @@
-# 1.16.0 (18 November 2025)
-- #1366 WireMock.Net.OpenApiParser : support Examples [feature]
-- #1375 Add WireMockHealthCheck in WireMock.Net.Aspire [feature]
-- #1377 Check if the path is valid when using WithPath(...) [feature]
-- #1380 Add WireMock.Net.xUnit.v3 project [feature]
-- #1364 Choosing examples from open api specification for responses. [feature]
-- #1376 AdminApiMappingBuilder `WithPath` should add the starting `/` if missing [feature]
-- #1379 xUnit v3 [feature]
+# 1.17.0 (07 December 2025)
+- #1383 Aspire: Add WithProtoDefinition to support proto definition at server level [feature]
+- #1386 Fix random delay in mapping json file [bug]
+- #812 Wiki page for using WireMock.Net with appium for mobile automation testing [wontfix]
+- #1274 .WithMappings to mount volume is not working for GRPC [bug]
+- #1381 Downstream dependencies missing after 1.16.0 release [bug]
+- #1382 Does Aspire support enabling HTTP/2? [feature]
+- #1385 Do delays and probabilities show in saved static mappings? [bug]
+- #1387 Tests failing with TaskCanceledException on Windows Server 2025 Build 7171 [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
