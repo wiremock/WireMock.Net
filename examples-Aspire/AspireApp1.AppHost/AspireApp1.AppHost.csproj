@@ -21,4 +21,13 @@
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="__admin\mappings\*.proto">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="__admin\mappings\*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

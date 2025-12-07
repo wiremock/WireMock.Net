@@ -15,13 +15,13 @@ public class PortUtilsTests
         var url = "test";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeFalse();
         isHttps.Should().BeFalse();
         isGrpc.Should().BeFalse();
-        proto.Should().BeNull();
+        scheme.Should().BeNull();
         host.Should().BeNull();
         port.Should().Be(default(int));
     }
@@ -33,13 +33,13 @@ public class PortUtilsTests
         var url = "http://0.0.0.0";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeFalse();
         isHttps.Should().BeFalse();
         isGrpc.Should().BeFalse();
-        proto.Should().BeNull();
+        scheme.Should().BeNull();
         host.Should().BeNull();
         port.Should().Be(default(int));
     }
@@ -51,13 +51,13 @@ public class PortUtilsTests
         var url = "http://wiremock.net:1234";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeTrue();
         isHttps.Should().BeFalse();
         isGrpc.Should().BeFalse();
-        proto.Should().Be("http");
+        scheme.Should().Be("http");
         host.Should().Be("wiremock.net");
         port.Should().Be(1234);
     }
@@ -69,13 +69,13 @@ public class PortUtilsTests
         var url = "https://wiremock.net:5000";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeTrue();
         isHttps.Should().BeTrue();
         isGrpc.Should().BeFalse();
-        proto.Should().Be("https");
+        scheme.Should().Be("https");
         host.Should().Be("wiremock.net");
         port.Should().Be(5000);
     }
@@ -87,13 +87,13 @@ public class PortUtilsTests
         var url = "grpc://wiremock.net:1234";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeTrue();
         isHttps.Should().BeFalse();
         isGrpc.Should().BeTrue();
-        proto.Should().Be("grpc");
+        scheme.Should().Be("grpc");
         host.Should().Be("wiremock.net");
         port.Should().Be(1234);
     }
@@ -105,13 +105,13 @@ public class PortUtilsTests
         var url = "https://0.0.0.0:5000";
 
         // Act
-        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var proto, out var host, out var port);
+        var result = PortUtils.TryExtract(url, out var isHttps, out var isGrpc, out var scheme, out var host, out var port);
 
         // Assert
         result.Should().BeTrue();
         isHttps.Should().BeTrue();
         isGrpc.Should().BeFalse();
-        proto.Should().Be("https");
+        scheme.Should().Be("https");
         host.Should().Be("0.0.0.0");
         port.Should().Be(5000);
     }

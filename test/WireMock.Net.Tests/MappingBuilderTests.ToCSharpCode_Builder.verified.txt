@@ -78,3 +78,45 @@ builder
         .WithBody("Buy milk")
     );
 
+builder
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/delay", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("98fae52e-76df-47d9-876f-2ee32e931006")
+    .RespondWith(Response.Create()
+        .WithDelay(1000)
+    );
+
+builder
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/random-delay", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("98fae52e-76df-47d9-876f-2ee32e931007")
+    .RespondWith(Response.Create()
+        .WithRandomDelay(1234, 60000)
+    );
+
+builder
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/prob", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("98fae52e-76df-47d9-876f-2ee32e931008")
+    .WithProbability(0.1)
+    .RespondWith(Response.Create()
+        .WithStatusCode(300)
+    );
+
+builder
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/prob", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("98fae52e-76df-47d9-876f-2ee32e931009")
+    .WithProbability(0.9)
+    .RespondWith(Response.Create()
+        .WithStatusCode(201)
+    );
+

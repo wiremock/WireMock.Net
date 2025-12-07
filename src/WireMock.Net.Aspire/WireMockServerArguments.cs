@@ -1,7 +1,9 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
+using Stef.Validation;
 using WireMock.Client.Builders;
+using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Aspire.Hosting;
@@ -21,10 +23,15 @@ public class WireMockServerArguments
     private const string DefaultLogger = "WireMockConsoleLogger";
 
     /// <summary>
-    /// The HTTP port where WireMock.Net is listening.
+    /// The HTTP ports where WireMock.Net is listening on.
     /// If not defined, .NET Aspire automatically assigns a random port.
     /// </summary>
-    public int? HttpPort { get; set; }
+    public List<int> HttpPorts { get; set; } = [];
+
+    /// <summary>
+    /// Additional Urls on which WireMock listens.
+    /// </summary>
+    public List<string> AdditionalUrls { get; set; } = [];
 
     /// <summary>
     /// The admin username.
@@ -68,6 +75,42 @@ public class WireMockServerArguments
     public Func<AdminApiMappingBuilder, CancellationToken, Task>? ApiMappingBuilder { get; set; }
 
     /// <summary>
+    /// Grpc ProtoDefinitions.
+    /// </summary>
+    public Dictionary<string, string[]> ProtoDefinitions { get; set; } = [];
+
+    /// <summary>
+    /// Add an additional Urls on which WireMock should listen.
+    /// </summary>
+    /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
+    public void WithAdditionalUrls(params string[] additionalUrls)
+    {
+        foreach (var url in additionalUrls)
+        {
+            if (!PortUtils.TryExtract(Guard.NotNullOrEmpty(url), out _, out _, out _, out _, out var port))
+            {
+                throw new ArgumentException($"The URL '{url}' is not valid.");
+            }
+
+            AdditionalUrls.Add(Guard.NotNullOrWhiteSpace(url));
+            HttpPorts.Add(port);
+        }
+    }
+
+    /// <summary>
+    /// Add a Grpc ProtoDefinition at server-level.
+    /// </summary>
+    /// <param name="id">Unique identifier for the ProtoDefinition.</param>
+    /// <param name="protoDefinitions">The ProtoDefinition as text.</param>
+    public void WithProtoDefinition(string id, params string[] protoDefinitions)
+    {
+        Guard.NotNullOrWhiteSpace(id);
+        Guard.NotNullOrEmpty(protoDefinitions);
+
+        ProtoDefinitions[id] = protoDefinitions;
+    }
+
+    /// <summary>
     /// Converts the current instance's properties to an array of command-line arguments for starting the WireMock.Net server.
     /// </summary>
     /// <returns>An array of strings representing the command-line arguments.</returns>
@@ -93,6 +136,11 @@ public class WireMockServerArguments
             Add(args, "--ReadStaticMappings", "true");
             Add(args, "--WatchStaticMappings", "true");
             Add(args, "--WatchStaticMappingsInSubdirectories", "true");
+        }
+
+        if (AdditionalUrls.Count > 0)
+        {
+            Add(args, "--Urls", $"http://*:{HttpContainerPort} {string.Join(' ', AdditionalUrls)}");
         }
 
         return args
