@@ -134,6 +134,9 @@ public static class WireMockServerBuilderExtensions
             }
         });
 
+        // Always add the lifecycle hook to support dynamic mappings and proto definitions
+        resourceBuilder.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
+
         return resourceBuilder;
     }
 
@@ -234,7 +237,6 @@ public static class WireMockServerBuilderExtensions
     {
         Guard.NotNull(wiremock);
 
-        wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
         wiremock.Resource.Arguments.ApiMappingBuilder = configure;
         wiremock.Resource.ApiMappingState = WireMockMappingState.NotSubmitted;
 
@@ -250,9 +252,7 @@ public static class WireMockServerBuilderExtensions
     /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> WithProtoDefinition(this IResourceBuilder<WireMockServerResource> wiremock, string id, params string[] protoDefinitions)
     {
-        Guard.NotNull(wiremock).Resource.Arguments.AddProtoDefinition(id, protoDefinitions);
-
-        wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
+        Guard.NotNull(wiremock).Resource.Arguments.WithProtoDefinition(id, protoDefinitions);
 
         return wiremock;
     }

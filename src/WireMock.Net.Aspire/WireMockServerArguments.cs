@@ -102,7 +102,7 @@ public class WireMockServerArguments
     /// </summary>
     /// <param name="id">Unique identifier for the ProtoDefinition.</param>
     /// <param name="protoDefinitions">The ProtoDefinition as text.</param>
-    public void AddProtoDefinition(string id, params string[] protoDefinitions)
+    public void WithProtoDefinition(string id, params string[] protoDefinitions)
     {
         Guard.NotNullOrWhiteSpace(id);
         Guard.NotNullOrEmpty(protoDefinitions);

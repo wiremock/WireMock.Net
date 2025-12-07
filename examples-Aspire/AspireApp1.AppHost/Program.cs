@@ -16,12 +16,12 @@ var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "__admin", "map
 //    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
 
 IResourceBuilder<WireMockServerResource> apiService2 = builder
-    .AddWireMock("apiservice", args =>
+    .AddWireMock("apiservice", async args =>
     {
         args.WithAdditionalUrls("http://*:8081", "grpc://*:9093");
+        args.WithProtoDefinition("my-greeter", await File.ReadAllTextAsync(Path.Combine(mappingsPath, "greet.proto")));
     })
     .AsHttp2Service()
-    .WithProtoDefinition("my-greeter", await File.ReadAllTextAsync(Path.Combine(mappingsPath, "greet.proto")))
     .WithMappingsPath(mappingsPath)
     .WithWatchStaticMappings()
     .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
