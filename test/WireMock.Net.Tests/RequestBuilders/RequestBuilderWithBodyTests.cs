@@ -93,8 +93,10 @@ public class RequestBuilderWithBodyTests
         Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
     }
 
-    [Fact]
-    public void Request_WithBodyAsType_Func()
+    [Theory]
+    [InlineData("""{ "X": 123, "Y": "a" }""", 1.0)]
+    [InlineData("""{ "X": 123, "Y": "b" }""", 0.0)]
+    public void Request_WithBodyAsType_Func(string json, double expected)
     {
         // Assign
         var requestBuilder = Request.Create()
@@ -104,14 +106,14 @@ public class RequestBuilderWithBodyTests
         // Act
         var body = new BodyData
         {
-            BodyAsJson = JObject.Parse("""{ "X": 123, "Y": "a" }"""),
+            BodyAsJson = JObject.Parse(json),
             DetectedBodyType = BodyType.Json
         };
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, body);
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(expected);
     }
 
     private class FuncType
