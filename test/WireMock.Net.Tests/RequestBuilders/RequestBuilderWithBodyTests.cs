@@ -94,12 +94,12 @@ public class RequestBuilderWithBodyTests
     }
 
     [Fact]
-    public void Request_WithBody_FuncType()
+    public void Request_WithBodyAsType_Func()
     {
         // Assign
         var requestBuilder = Request.Create()
             .UsingAnyMethod()
-            .WithBodyType<FuncType>(ft => ft != null && ft.X == 123 && ft.Y == "a");
+            .WithBodyAsType<FuncType>(ft => ft != null && ft.X == 123 && ft.Y == "a");
 
         // Act
         var body = new BodyData

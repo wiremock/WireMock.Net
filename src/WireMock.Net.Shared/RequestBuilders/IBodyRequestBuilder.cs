@@ -83,9 +83,10 @@ public interface IBodyRequestBuilder : IMultiPartRequestBuilder
     /// <summary>
     /// WithBody: func (type)
     /// </summary>
+    /// <typeparam name="T">The type.</typeparam>
     /// <param name="func">The function.</param>
     /// <returns>The <see cref="IRequestBuilder"/>.</returns>
-    IRequestBuilder WithBodyType<T>(Func<T?, bool> func);
+    IRequestBuilder WithBodyAsType<T>(Func<T?, bool> func);
 
     /// <summary>
     /// WithBody: func (BodyData object)
