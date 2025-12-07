@@ -29,7 +29,7 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
     /// <returns>The <see cref="IRequestBuilder"/>.</returns>
     public static IRequestBuilder Create()
     {
-        return new Request(new List<IRequestMatcher>());
+        return new Request([]);
     }
 
     /// <summary>

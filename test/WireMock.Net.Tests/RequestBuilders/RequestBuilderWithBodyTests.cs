@@ -116,6 +116,27 @@ public class RequestBuilderWithBodyTests
         Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(expected);
     }
 
+    [Fact]
+    public void Request_WithBodyAsType_Func_IncorrectType()
+    {
+        // Assign
+        var requestBuilder = Request.Create()
+            .UsingAnyMethod()
+            .WithBodyAsType<Version>(ft => ft != null);
+
+        // Act
+        var body = new BodyData
+        {
+            BodyAsJson = JObject.Parse("""{ "X": 123, "Y": "a" }"""),
+            DetectedBodyType = BodyType.Json
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, body);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(0.0);
+    }
+
     private class FuncType
     {
         public int X { get; set; } = 42;

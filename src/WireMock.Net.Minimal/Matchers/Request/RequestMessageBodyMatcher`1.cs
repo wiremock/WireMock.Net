@@ -43,11 +43,16 @@ public class RequestMessageBodyMatcher<T> : IRequestMatcher
         {
             if (requestMessage.BodyData?.BodyAsJson is JObject jsonObject)
             {
-                var bodyAsT = jsonObject.ToObject<T>();
-                return MatchScores.ToScore(Func(bodyAsT));
+                try
+                {
+                    var bodyAsT = jsonObject.ToObject<T>();
+                    return MatchScores.ToScore(Func(bodyAsT));
+                }
+                catch (Exception ex)
+                {
+                    return new MatchResult(ex);
+                }
             }
-
-            return MatchScores.ToScore(Func(default));
         }
 
         return default;
