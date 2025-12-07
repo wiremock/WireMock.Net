@@ -84,6 +84,15 @@ public partial class Request
     }
 
     /// <inheritdoc />
+    public IRequestBuilder WithBodyType<T>(Func<T?, bool> func)
+    {
+        Guard.NotNull(func);
+
+        _requestMatchers.Add(new RequestMessageBodyMatcher<T>(func));
+        return this;
+    }
+
+    /// <inheritdoc />
     public IRequestBuilder WithBody(Func<IBodyData?, bool> func)
     {
         Guard.NotNull(func);
