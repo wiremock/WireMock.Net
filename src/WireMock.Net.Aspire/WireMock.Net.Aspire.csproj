@@ -30,7 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\WireMock.Net.Minimal\Util\EnhancedFileSystemWatcher.cs" Link="Utils\EnhancedFileSystemWatcher.cs" />
+        <Compile Include="..\WireMock.Net.Minimal\Util\EnhancedFileSystemWatcher.cs" Link="Util\EnhancedFileSystemWatcher.cs" />
+        <Compile Include="..\WireMock.Net.Minimal\Constants\WireMockConstants.cs" Link="Constants\WireMockConstants.cs" />
+        <Compile Include="..\WireMock.Net.Shared\Constants\RegexConstants.cs" Link="Constants\RegexConstants.cs" />
+        <Compile Include="..\WireMock.Net.Minimal\Util\PortUtils.cs" Link="Util\PortUtils.cs" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">

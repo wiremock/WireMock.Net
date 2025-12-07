@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Stef.Validation;
 using WireMock.Client.Builders;
 using WireMock.Net.Aspire;
+using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Aspire.Hosting;
@@ -34,9 +35,31 @@ public static class WireMockServerBuilderExtensions
         Guard.NotNullOrWhiteSpace(name);
         Guard.Condition(port, p => p is null or > 0 and <= ushort.MaxValue);
 
-        return builder.AddWireMock(name, callback =>
+        return builder.AddWireMock(name, serverArguments =>
         {
-            callback.HttpPort = port;
+            if (port != null)
+            {
+                serverArguments.HttpPorts = [port.Value];
+            }
+        });
+    }
+
+    /// <summary>
+    /// Adds a WireMock.Net Server resource to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
+    /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> AddWireMock(this IDistributedApplicationBuilder builder, string name, params string[] additionalUrls)
+    {
+        Guard.NotNull(builder);
+        Guard.NotNullOrWhiteSpace(name);
+        Guard.NotNull(additionalUrls);
+
+        return builder.AddWireMock(name, serverArguments =>
+        {
+            serverArguments.WithAdditionalUrls(additionalUrls);
         });
     }
 
@@ -67,9 +90,36 @@ public static class WireMockServerBuilderExtensions
             .AddResource(wireMockContainerResource)
             .WithImage(DefaultLinuxImage)
             .WithEnvironment(ctx => ctx.EnvironmentVariables.Add("DOTNET_USE_POLLING_FILE_WATCHER", "1")) // https://khalidabuhakmeh.com/aspnet-docker-gotchas-and-workarounds#configuration-reloads-and-filesystemwatcher
-            .WithHttpEndpoint(port: arguments.HttpPort, targetPort: WireMockServerArguments.HttpContainerPort)
             .WithHealthCheck(healthCheckKey)
             .WithWireMockInspectorCommand();
+
+        if (arguments.HttpPorts.Count == 0)
+        {
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort);
+        }
+        else if (arguments.HttpPorts.Count == 1)
+        {
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: arguments.HttpPorts[0], targetPort: WireMockServerArguments.HttpContainerPort);
+        }
+        else
+        {
+            // Required for the default admin endpoint and health checks
+            resourceBuilder = resourceBuilder.WithHttpEndpoint(port: null, targetPort: WireMockServerArguments.HttpContainerPort);
+
+            var anyIsHttp2 = false;
+            foreach (var url in arguments.AdditionalUrls)
+            {
+                PortUtils.TryExtract(url, out _, out var isHttp2, out var scheme, out _, out var httpPort);
+                anyIsHttp2 |= isHttp2;
+
+                resourceBuilder = resourceBuilder.WithEndpoint(port: httpPort, targetPort: httpPort, scheme: scheme, name: $"{scheme}-{httpPort}");
+            }
+
+            if (anyIsHttp2)
+            {
+                resourceBuilder = resourceBuilder.AsHttp2Service();
+            }
+        }
 
         if (!string.IsNullOrEmpty(arguments.MappingsPath))
         {
@@ -84,6 +134,9 @@ public static class WireMockServerBuilderExtensions
             }
         });
 
+        // Always add the lifecycle hook to support dynamic mappings and proto definitions
+        resourceBuilder.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
+
         return resourceBuilder;
     }
 
@@ -94,7 +147,10 @@ public static class WireMockServerBuilderExtensions
     /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
     /// <param name="callback">A callback that allows for setting the <see cref="WireMockServerArguments"/>.</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
-    public static IResourceBuilder<WireMockServerResource> AddWireMock(this IDistributedApplicationBuilder builder, string name, Action<WireMockServerArguments> callback)
+    public static IResourceBuilder<WireMockServerResource> AddWireMock(
+        this IDistributedApplicationBuilder builder,
+        string name,
+        Action<WireMockServerArguments> callback)
     {
         Guard.NotNull(builder);
         Guard.NotNullOrWhiteSpace(name);
@@ -165,7 +221,7 @@ public static class WireMockServerBuilderExtensions
     /// </summary>
     /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
     /// <param name="configure">Delegate that will be invoked to configure the WireMock.Net resource.</param>
-    /// <returns></returns>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> WithApiMappingBuilder(this IResourceBuilder<WireMockServerResource> wiremock, Func<AdminApiMappingBuilder, Task> configure)
     {
         return wiremock.WithApiMappingBuilder((adminApiMappingBuilder, _) => configure.Invoke(adminApiMappingBuilder));
@@ -176,14 +232,27 @@ public static class WireMockServerBuilderExtensions
     /// </summary>
     /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
     /// <param name="configure">Delegate that will be invoked to configure the WireMock.Net resource.</param>
-    /// <returns></returns>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
     public static IResourceBuilder<WireMockServerResource> WithApiMappingBuilder(this IResourceBuilder<WireMockServerResource> wiremock, Func<AdminApiMappingBuilder, CancellationToken, Task> configure)
     {
         Guard.NotNull(wiremock);
 
-        wiremock.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
         wiremock.Resource.Arguments.ApiMappingBuilder = configure;
         wiremock.Resource.ApiMappingState = WireMockMappingState.NotSubmitted;
+
+        return wiremock;
+    }
+
+    /// <summary>
+    /// Add a Grpc ProtoDefinition at server-level.
+    /// </summary>
+    /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
+    /// <param name="id">Unique identifier for the ProtoDefinition.</param>
+    /// <param name="protoDefinitions">The ProtoDefinition as text.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> WithProtoDefinition(this IResourceBuilder<WireMockServerResource> wiremock, string id, params string[] protoDefinitions)
+    {
+        Guard.NotNull(wiremock).Resource.Arguments.WithProtoDefinition(id, protoDefinitions);
 
         return wiremock;
     }
@@ -195,11 +264,11 @@ public static class WireMockServerBuilderExtensions
     /// dotnet tool install WireMockInspector --global --no-cache --ignore-failed-sources
     /// </code>
     /// </summary>
-    /// <param name="builder">The <see cref="IResourceBuilder{WireMockNetResource}"/>.</param>
-    /// <returns></returns>
-    public static IResourceBuilder<WireMockServerResource> WithWireMockInspectorCommand(this IResourceBuilder<WireMockServerResource> builder)
+    /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockNetResource}"/>.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    public static IResourceBuilder<WireMockServerResource> WithWireMockInspectorCommand(this IResourceBuilder<WireMockServerResource> wiremock)
     {
-        Guard.NotNull(builder);
+        Guard.NotNull(wiremock);
 
         CommandOptions commandOptions = new()
         {
@@ -209,13 +278,13 @@ public static class WireMockServerBuilderExtensions
             IconVariant = IconVariant.Filled
         };
 
-        builder.WithCommand(
+        wiremock.WithCommand(
             name: "wiremock-inspector",
             displayName: "WireMock Inspector",
-            executeCommand: _ => OnRunOpenInspectorCommandAsync(builder),
+            executeCommand: _ => OnRunOpenInspectorCommandAsync(wiremock),
             commandOptions: commandOptions);
 
-        return builder;
+        return wiremock;
     }
 
     private static Task<ExecuteCommandResult> OnRunOpenInspectorCommandAsync(IResourceBuilder<WireMockServerResource> builder)

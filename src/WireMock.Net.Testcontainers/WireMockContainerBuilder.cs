@@ -112,6 +112,7 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
     {
         DockerResourceConfiguration.WithWatchStaticMappings(includeSubDirectories);
         return
+            WithCommand("--ReadStaticMappings true").
             WithCommand("--WatchStaticMappings true").
             WithCommand("--WatchStaticMappingsInSubdirectories", includeSubDirectories);
     }
@@ -129,9 +130,7 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
 
         DockerResourceConfiguration.WithStaticMappingsPath(path);
 
-        return
-            WithReadStaticMappings().
-            WithCommand("--WatchStaticMappingsInSubdirectories", includeSubDirectories);
+        return WithWatchStaticMappings(includeSubDirectories);
     }
 
     /// <summary>

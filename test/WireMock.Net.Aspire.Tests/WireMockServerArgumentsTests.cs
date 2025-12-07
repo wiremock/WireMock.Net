@@ -13,7 +13,7 @@ public class WireMockServerArgumentsTests
         var args = new WireMockServerArguments();
 
         // Assert
-        args.HttpPort.Should().BeNull();
+        args.HttpPorts.Should().BeEmpty();
         args.AdminUsername.Should().BeNull();
         args.AdminPassword.Should().BeNull();
         args.ReadStaticMappings.Should().BeFalse();

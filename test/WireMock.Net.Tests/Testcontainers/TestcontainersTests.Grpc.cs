@@ -56,7 +56,7 @@ public partial class TestcontainersTests
                 var grpcPort = wireMockContainer.GetMappedPublicPort(9090);
                 grpcPort.Should().BeGreaterThan(0);
 
-                var grpcUrl = wireMockContainer.GetMappedPublicUrl(80);
+                var grpcUrl = wireMockContainer.GetMappedPublicUrl(9090);
                 grpcUrl.Should().StartWith("http://");
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();
@@ -149,6 +149,18 @@ public partial class TestcontainersTests
         await StopAsync(wireMockContainer);
     }
 
+    [Fact]
+    public async Task WireMockContainer_Build_Grpc_ProtoDefinitionAtServerLevel_UsingGrpcGeneratedClient_AndWithWatchStaticMappings()
+    {
+        var wireMockContainer = await Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync();
+
+        var reply = await When_GrpcClient_Calls_SayHelloAsync(wireMockContainer);
+
+        Then_ReplyMessage_Should_BeCorrect(reply);
+
+        await StopAsync(wireMockContainer);
+    }
+
     private static async Task<WireMockContainer> Given_WireMockContainerIsStartedForHttpAndGrpcAsync()
     {
         var wireMockContainer = new WireMockContainerBuilder()
@@ -165,6 +177,19 @@ public partial class TestcontainersTests
         var wireMockContainer = new WireMockContainerBuilder()
             .AddUrl("grpc://*:9090")
             .AddProtoDefinition("my-greeter", ReadFile("greet.proto"))
+            .Build();
+
+        await wireMockContainer.StartAsync();
+
+        return wireMockContainer;
+    }
+
+    private static async Task<WireMockContainer> Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync()
+    {
+        var wireMockContainer = new WireMockContainerBuilder()
+            .AddUrl("grpc://*:9090")
+            .AddProtoDefinition("my-greeter", ReadFile("greet.proto"))
+            .WithMappings(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings"))
             .Build();
 
         await wireMockContainer.StartAsync();

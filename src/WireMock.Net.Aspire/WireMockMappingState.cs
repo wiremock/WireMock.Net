@@ -4,7 +4,9 @@ namespace WireMock.Net.Aspire;
 
 internal enum WireMockMappingState
 {
-    NoMappings,
-    NotSubmitted,
-    Submitted,
+    NoMappings = 0,
+
+    NotSubmitted = 1,
+
+    Submitted = 2
 }

@@ -70,6 +70,34 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
         ApiMappingState = WireMockMappingState.Submitted;
     }
 
+    internal async Task CallAddProtoDefinitionsAsync(CancellationToken cancellationToken)
+    {
+        _logger?.LogInformation("Calling AdminApi to add GRPC ProtoDefinition at server level to WireMock.Net");
+
+        foreach (var (id, protoDefinitions) in Arguments.ProtoDefinitions)
+        {
+            _logger?.LogInformation("Adding ProtoDefinition {Id}", id);
+            foreach (var protoDefinition in protoDefinitions)
+            {
+                try
+                {
+                    var status = await AdminApi.Value.AddProtoDefinitionAsync(id, protoDefinition, cancellationToken);
+                    _logger?.LogInformation("ProtoDefinition '{Id}' added with status: {Status}.", id, status.Status);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", id);
+                }
+            }
+        }
+
+        // Force a reload of static mappings when ProtoDefinitions are added at server-level to fix #1382
+        if (Arguments.ProtoDefinitions.Count > 0)
+        {
+            await ReloadStaticMappingsAsync(default);
+        }
+    }
+
     internal void StartWatchingStaticMappings(CancellationToken cancellationToken)
     {
         if (!Arguments.WatchStaticMappings || string.IsNullOrEmpty(Arguments.MappingsPath))
@@ -113,10 +141,17 @@ public class WireMockServerResource : ContainerResource, IResourceWithServiceDis
 
     private async void FileCreatedChangedOrDeleted(object sender, FileSystemEventArgs args)
     {
-        _logger?.LogInformation("MappingFile created, changed or deleted: '{0}'. Triggering ReloadStaticMappings.", args.FullPath);
+        _logger?.LogInformation("MappingFile created, changed or deleted: '{FullPath}'. Triggering ReloadStaticMappings.", args.FullPath);
+
+        await ReloadStaticMappingsAsync(default);
+    }
+
+    private async Task ReloadStaticMappingsAsync(CancellationToken cancellationToken)
+    {
         try
         {
-            await AdminApi.Value.ReloadStaticMappingsAsync();
+            var status = await AdminApi.Value.ReloadStaticMappingsAsync(cancellationToken);
+            _logger?.LogInformation("ReloadStaticMappings called with status: {Status}.", status);
         }
         catch (Exception ex)
         {
