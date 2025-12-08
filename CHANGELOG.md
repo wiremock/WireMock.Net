@@ -1,3 +1,12 @@
+# 1.17.0 (07 December 2025)
+- [#1383](https://github.com/wiremock/WireMock.Net/pull/1383) - Aspire: Add WithProtoDefinition to support proto definition at server level [feature] contributed by [StefH](https://github.com/StefH)
+- [#1386](https://github.com/wiremock/WireMock.Net/pull/1386) - Fix random delay in mapping json file [bug] contributed by [StefH](https://github.com/StefH)
+- [#1274](https://github.com/wiremock/WireMock.Net/issues/1274) - .WithMappings to mount volume is not working for GRPC [bug]
+- [#1381](https://github.com/wiremock/WireMock.Net/issues/1381) - Downstream dependencies missing after 1.16.0 release [bug]
+- [#1382](https://github.com/wiremock/WireMock.Net/issues/1382) - Does Aspire support enabling HTTP/2? [feature]
+- [#1385](https://github.com/wiremock/WireMock.Net/issues/1385) - Do delays and probabilities show in saved static mappings? [bug]
+- [#1387](https://github.com/wiremock/WireMock.Net/issues/1387) - Tests failing with TaskCanceledException on Windows Server 2025 Build 7171 [bug]
+
 # 1.16.0 (18 November 2025)
 - [#1366](https://github.com/wiremock/WireMock.Net/pull/1366) - WireMock.Net.OpenApiParser : support Examples [feature] contributed by [StefH](https://github.com/StefH)
 - [#1375](https://github.com/wiremock/WireMock.Net/pull/1375) - Add WireMockHealthCheck in WireMock.Net.Aspire [feature] contributed by [Zguy](https://github.com/Zguy)

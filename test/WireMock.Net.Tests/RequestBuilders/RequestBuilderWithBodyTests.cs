@@ -1,11 +1,12 @@
 // Copyright © WireMock.Net
 
 using System;
-using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FluentAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
@@ -72,15 +73,17 @@ public class RequestBuilderWithBodyTests
     }
 
     [Fact]
-    public void Request_WithBody_FuncJson()
+    public void Request_WithBody_FuncObject()
     {
         // Assign
-        var requestBuilder = Request.Create().UsingAnyMethod().WithBody(b => b != null);
+        var requestBuilder = Request.Create()
+            .UsingAnyMethod()
+            .WithBody(b => b != null);
 
         // Act
         var body = new BodyData
         {
-            BodyAsJson = 123,
+            BodyAsJson = JObject.Parse("""{ "X": 123, "Y": "a" }"""),
             DetectedBodyType = BodyType.Json
         };
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, body);
@@ -88,6 +91,57 @@ public class RequestBuilderWithBodyTests
         // Assert
         var requestMatchResult = new RequestMatchResult();
         Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+    }
+
+    [Theory]
+    [InlineData("""{ "X": 123, "Y": "a" }""", 1.0)]
+    [InlineData("""{ "X": 123, "Y": "b" }""", 0.0)]
+    public void Request_WithBodyAsType_Func(string json, double expected)
+    {
+        // Assign
+        var requestBuilder = Request.Create()
+            .UsingAnyMethod()
+            .WithBodyAsType<FuncType>(ft => ft != null && ft.X == 123 && ft.Y == "a");
+
+        // Act
+        var body = new BodyData
+        {
+            BodyAsJson = JObject.Parse(json),
+            DetectedBodyType = BodyType.Json
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, body);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(expected);
+    }
+
+    [Fact]
+    public void Request_WithBodyAsType_Func_IncorrectType()
+    {
+        // Assign
+        var requestBuilder = Request.Create()
+            .UsingAnyMethod()
+            .WithBodyAsType<Version>(ft => ft != null);
+
+        // Act
+        var body = new BodyData
+        {
+            BodyAsJson = JObject.Parse("""{ "X": 123, "Y": "a" }"""),
+            DetectedBodyType = BodyType.Json
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, body);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(0.0);
+    }
+
+    private class FuncType
+    {
+        public int X { get; set; } = 42;
+
+        public string Y { get; set; } = string.Empty;
     }
 
     [Fact]
