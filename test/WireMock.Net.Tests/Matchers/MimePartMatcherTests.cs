@@ -15,32 +15,31 @@ public class MimePartMatcherTests
 
     private const string TestMultiPart =
         """
-        From:
-        Date: Sun, 23 Jul 2023 16:13:13 +0200
-        Subject:
-        Message-Id: <HZ3K1HEAJKU4.IO57XCVO4BWV@desktop-6dd5qi2>
-        MIME-Version: 1.0
-        Content-Type: multipart/mixed; boundary="=-5XgmpXt0XOfzdtcgNJc2ZQ=="
+        Content-Type: multipart/mixed; boundary=----MyBoundary123
 
-        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
-        Content-Type: text/plain; charset=utf-8
+        ------MyBoundary123
+        Content-Type: text/plain
+        Content-Disposition: form-data; name="textPart"
 
-        This is some plain text
-        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
-        Content-Type: text/json; charset=utf-8
+        This is some plain text.
+        ------MyBoundary123
+        Content-Type: application/json
+        Content-Disposition: form-data; name="jsonPart"
 
         {
-            "Key": "Value"
+          "id": 42,
+          "message": "Hello from JSON"
         }
-        --=-5XgmpXt0XOfzdtcgNJc2ZQ==
-        Content-Type: image/png; name=image.png
-        Content-Disposition: attachment; filename=image.png
+
+        ------MyBoundary123
+        Content-Type: image/png
+        Content-Disposition: form-data; name="imagePart"; filename="example.png"
         Content-Transfer-Encoding: base64
 
-        iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAgMAAAAP2OW3AAAADFBMVEX/tID/vpH/pWX/sHidUyjl
-        AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
+        iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
+        //8wEzIABCMDgAEMwEAAAwAA//8DAKkCBf4AAAAASUVORK5CYII=
 
-        --=-5XgmpXt0XOfzdtcgNJc2ZQ==-- 
+        ------MyBoundary123--
         """;
 
     [Fact]
@@ -52,7 +51,7 @@ public class MimePartMatcherTests
 
         // Act
         var contentTypeMatcher = new ContentTypeMatcher("text/plain");
-        var contentMatcher = new ExactMatcher("This is some plain text");
+        var contentMatcher = new ExactMatcher("This is some plain text.");
 
         var matcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, contentTypeMatcher, null, null, contentMatcher);
         var result = matcher.IsMatch(part);
@@ -70,8 +69,8 @@ public class MimePartMatcherTests
         var part = message.BodyParts[1];
 
         // Act
-        var contentTypeMatcher = new ContentTypeMatcher("text/json");
-        var contentMatcher = new JsonMatcher(new { Key = "Value" }, true);
+        var contentTypeMatcher = new ContentTypeMatcher("application/json");
+        var contentMatcher = new JsonPartialMatcher(new { id = 42 }, true);
 
         var matcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, contentTypeMatcher, null, null, contentMatcher);
         var result = matcher.IsMatch(part);
@@ -89,9 +88,9 @@ public class MimePartMatcherTests
 
         // Act
         var contentTypeMatcher = new ContentTypeMatcher("image/png");
-        var contentDispositionMatcher = new ExactMatcher("attachment; filename=\"image.png\"");
+        var contentDispositionMatcher = new WildcardMatcher("*filename=\"example.png\"");
         var contentTransferEncodingMatcher = new ExactMatcher("base64");
-        var contentMatcher = new ExactObjectMatcher(Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAgMAAAAP2OW3AAAADFBMVEX/tID/vpH/pWX/sHidUyjlAAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC"));
+        var contentMatcher = new ExactObjectMatcher(Convert.FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4\r\n//8wEzIABCMDgAEMwEAAAwAA//8DAKkCBf4AAAAASUVORK5CYII="));
 
         var matcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, contentTypeMatcher, contentDispositionMatcher, contentTransferEncodingMatcher, contentMatcher);
         var result = matcher.IsMatch(part);
