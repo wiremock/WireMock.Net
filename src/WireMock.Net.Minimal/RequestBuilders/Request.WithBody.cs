@@ -35,13 +35,6 @@ public partial class Request
     }
 
     /// <inheritdoc />
-    public IRequestBuilder WithBodyAsJson(object body, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch)
-    {
-        var matcher = body as IMatcher ?? new JsonMatcher(matchBehaviour, body);
-        return WithBody([matcher]);
-    }
-
-    /// <inheritdoc />
     public IRequestBuilder WithBody(IMatcher matcher)
     {
         return WithBody([matcher]);
@@ -96,6 +89,22 @@ public partial class Request
     public IRequestBuilder WithBody(Func<IDictionary<string, string>?, bool> func)
     {
         _requestMatchers.Add(new RequestMessageBodyMatcher(Guard.NotNull(func)));
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IRequestBuilder WithBodyAsJson(object body, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch)
+    {
+        var matcher = body as IMatcher ?? new JsonMatcher(matchBehaviour, body);
+        return WithBody([matcher]);
+    }
+
+    /// <inheritdoc />
+    public IRequestBuilder WithBodyAsType<T>(Func<T?, bool> func)
+    {
+        Guard.NotNull(func);
+
+        _requestMatchers.Add(new RequestMessageBodyMatcher<T>(func));
         return this;
     }
 }
