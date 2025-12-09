@@ -1,3 +1,6 @@
+# 1.18.0 (09 December 2025)
+- [#1388](https://github.com/wiremock/WireMock.Net/pull/1388) - Add WithBodyAsType to RequestMatcher [feature] contributed by [StefH](https://github.com/StefH)
+
 # 1.17.0 (07 December 2025)
 - [#1383](https://github.com/wiremock/WireMock.Net/pull/1383) - Aspire: Add WithProtoDefinition to support proto definition at server level [feature] contributed by [StefH](https://github.com/StefH)
 - [#1386](https://github.com/wiremock/WireMock.Net/pull/1386) - Fix random delay in mapping json file [bug] contributed by [StefH](https://github.com/StefH)
