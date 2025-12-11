@@ -63,6 +63,29 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
     }
 
     /// <summary>
+    /// Sets a custom WireMock.Net image for which to create the container.
+    /// </summary>
+    /// <param name="image">The image name.</param>
+    /// <returns>A configured instance of <see cref="WireMockContainerBuilder"/></returns>
+    [PublicAPI]
+    public new WireMockContainerBuilder WithImage(string image)
+    {
+        return WithCustomImage(image);
+    }
+
+    /// <summary>
+    /// Sets a custom WireMock.Net image for which to create the container.
+    /// </summary>
+    /// <param name="image">The image name.</param>
+    /// <returns>A configured instance of <see cref="WireMockContainerBuilder"/></returns>
+    [PublicAPI]
+    public WireMockContainerBuilder WithCustomImage(string image)
+    {
+        _imageOS ??= TestcontainersUtils.GetImageOSAsync.Value.GetAwaiter().GetResult();
+        return base.WithImage(image);
+    }
+
+    /// <summary>
     /// Set the admin username and password for the container (basic authentication).
     /// </summary>
     /// <param name="username">The admin username.</param>
