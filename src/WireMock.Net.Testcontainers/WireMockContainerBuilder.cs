@@ -230,9 +230,9 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
         // In case the _imageOS is not set, determine it from the Image FullName.
         if (_imageOS == null)
         {
-            if (builder.DockerResourceConfiguration.Image.FullName.IndexOf("wiremock.net", StringComparison.OrdinalIgnoreCase) < 0)
+            if (builder.DockerResourceConfiguration.Image.FullName.IndexOf("wiremock", StringComparison.OrdinalIgnoreCase) < 0)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("It's only possible to use a wiremock docker image.");
             }
 
             _imageOS = builder.DockerResourceConfiguration.Image.FullName.IndexOf("windows", StringComparison.OrdinalIgnoreCase) >= 0 ? OSPlatform.Windows : OSPlatform.Linux;
