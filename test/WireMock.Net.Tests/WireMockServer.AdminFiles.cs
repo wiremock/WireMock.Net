@@ -40,7 +40,7 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream(Encoding.ASCII.GetBytes("Here's a string."))));
 
         // Act
-        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent).ConfigureAwait(false);
+        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -74,7 +74,7 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream(Encoding.ASCII.GetBytes("Here's a string."))));
 
         // Act
-        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent).ConfigureAwait(false);
+        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -107,12 +107,12 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream()));
 
         // Act
-        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt").ConfigureAwait(false);
+        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt");
 
         // Assert
         httpResponseMessageGet.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await httpResponseMessageGet.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var result = await httpResponseMessageGet.Content.ReadAsStringAsync();
         result.Should().Be("Here's a string.");
 
         // Verify
@@ -142,12 +142,12 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream()));
 
         // Act
-        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.bin").ConfigureAwait(false);
+        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.bin");
 
         // Assert
         httpResponseMessageGet.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await httpResponseMessageGet.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
+        var result = await httpResponseMessageGet.Content.ReadAsByteArrayAsync();
         result.Should().BeEquivalentTo(symbol);
 
         // Verify
@@ -173,7 +173,7 @@ public class WireMockServerAdminFilesTests
         // Act
         var requestUri = "http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt";
         var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, requestUri);
-        var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+        var httpResponseMessage = await _client.SendAsync(httpRequestMessage);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -200,7 +200,7 @@ public class WireMockServerAdminFilesTests
         // Act
         var requestUri = "http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt";
         var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, requestUri);
-        var httpResponseMessage = await _client.SendAsync(httpRequestMessage).ConfigureAwait(false);
+        var httpResponseMessage = await _client.SendAsync(httpRequestMessage);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.NotFound);

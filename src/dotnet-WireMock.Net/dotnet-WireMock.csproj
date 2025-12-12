@@ -1,27 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>dotnet-wiremock</ToolCommandName>
-    <Description>A dotnet commandline tool for WireMock.Net (A Lightweight Http Mocking Server for .NET)</Description>
-    <PackageTags>tdd;mock;http;wiremock;test;server;unittest;dotnet;tool;dotnet-tool</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Authors>Stef Heyenrath</Authors>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <PackAsTool>true</PackAsTool>
+        <RootNamespace>WireMock.Net</RootNamespace>
+        <ToolCommandName>dotnet-wiremock</ToolCommandName>
+        <Description>A dotnet commandline tool for WireMock.Net (A Lightweight Http Mocking Server for .NET)</Description>
+        <PackageTags>tdd;mock;http;wiremock;test;server;unittest;dotnet;tool;dotnet-tool</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Authors>Stef Heyenrath</Authors>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\WireMock.Net.StandAlone\WireMock.Net.StandAlone.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\WireMock.Net.StandAlone\WireMock.Net.StandAlone.csproj" />
+    </ItemGroup>
 
 </Project>

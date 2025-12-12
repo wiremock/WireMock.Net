@@ -33,7 +33,7 @@ public partial class TestcontainersTests
 
         try
         {
-            await wireMockContainer.StartAsync().ConfigureAwait(false);
+            await wireMockContainer.StartAsync();
 
             // Assert
             using (new AssertionScope())
@@ -86,7 +86,7 @@ public partial class TestcontainersTests
 
         try
         {
-            await wireMockContainer.StartAsync().ConfigureAwait(false);
+            await wireMockContainer.StartAsync();
 
             // Assert
             using (new AssertionScope())

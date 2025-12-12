@@ -356,7 +356,7 @@ public class WireMockServerAdminTests
         Check.That(mappings).HasSize(2);
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1").ConfigureAwait(false);
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1");
 
         // then
         Check.That((int)response.StatusCode).IsEqualTo(400);
@@ -371,7 +371,7 @@ public class WireMockServerAdminTests
         var server = WireMockServer.Start();
 
         // when
-        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo").ConfigureAwait(false);
+        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo");
 
         // then
         Check.That(server.LogEntries).HasSize(1);
@@ -391,9 +391,9 @@ public class WireMockServerAdminTests
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(2);
 
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1");
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2");
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3");
 
         // Assert
         Check.That(server.LogEntries).HasSize(2);
@@ -417,9 +417,9 @@ public class WireMockServerAdminTests
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(0);
 
-        await client.GetAsync("http://localhost:" + server.Port + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo1");
+        await client.GetAsync("http://localhost:" + server.Port + "/foo2");
+        await client.GetAsync("http://localhost:" + server.Port + "/foo3");
 
         // Assert
         server.LogEntries.Should().BeEmpty();
@@ -443,7 +443,7 @@ public class WireMockServerAdminTests
             client.GetAsync($"{server.Url}/foo3")
         };
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        await Task.WhenAll(tasks);
 
         // Act
         var logEntries = server.FindLogEntries(new RequestMessageMethodMatcher("GET"));
@@ -549,7 +549,7 @@ public class WireMockServerAdminTests
             Content = new StringContent(guidsJsonBody, Encoding.UTF8, "application/json")
         };
 
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request);
 
         // Assert
         var guids = server.MappingModels.Select(mapping => mapping.Guid!.Value).ToArray();
@@ -557,7 +557,7 @@ public class WireMockServerAdminTests
         Check.That(guids.Contains(guid2.Value)).IsFalse();
         Check.That(guids.Contains(guid3.Value)).IsTrue();
         Check.That(response.StatusCode).Equals(HttpStatusCode.OK);
-        Check.That(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
+        Check.That(await response.Content.ReadAsStringAsync()).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
     }
 
 #if NET5_0_OR_GREATER
@@ -570,7 +570,7 @@ public class WireMockServerAdminTests
         var client = factory.CreateClient("any name");
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo");
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);
@@ -592,7 +592,7 @@ public class WireMockServerAdminTests
         var client = server.CreateClient();
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo");
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);
@@ -617,7 +617,7 @@ public class WireMockServerAdminTests
         var client = server.CreateClient();
 
         // Act
-        var settings = await client.GetStringAsync($"{server.Url}/adm/settings").ConfigureAwait(false);
+        var settings = await client.GetStringAsync($"{server.Url}/adm/settings");
 
         // Assert
         settings.Should().NotBeNull();

@@ -44,7 +44,7 @@ public class ResponseWithHandlebarsHumanizerTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);

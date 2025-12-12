@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -64,7 +65,7 @@ public partial class WireMockServerTests
         var requestUri = new Uri($"http://localhost:{server.Port}/a");
 
         var json = new { requestId = "1", value = "A" };
-        var response = await server.CreateClient().PostAsJsonAsync(requestUri, json).ConfigureAwait(false);
+        var response = await server.CreateClient().PostAsJsonAsync(requestUri, json);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -114,7 +115,7 @@ public partial class WireMockServerTests
         var requestUri = new Uri($"http://localhost:{server.Port}/a");
 
         var json = new { extra = "X", requestId = "1", value = "A" };
-        var response = await server.CreateClient().PostAsJsonAsync(requestUri, json).ConfigureAwait(false);
+        var response = await server.CreateClient().PostAsJsonAsync(requestUri, json);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -140,7 +141,7 @@ public partial class WireMockServerTests
         };
 
         // Act
-        var response = await new HttpClient().PostAsJsonAsync("http://localhost:" + server.Ports[0] + "/foo", jsonObject).ConfigureAwait(false);
+        var response = await new HttpClient().PostAsJsonAsync("http://localhost:" + server.Ports[0] + "/foo", jsonObject);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -161,7 +162,7 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var response = await new HttpClient().PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("{ Hi = \"Hello World\" }")).ConfigureAwait(false);
+        var response = await new HttpClient().PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("{ Hi = \"Hello World\" }"));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -194,7 +195,7 @@ public partial class WireMockServerTests
         var content = "{\"jsonrpc\":\"2.0\",\"id\":\"ec475f56d4694b48bc737500ba575b35-1\",\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"clientInfo\":{\"name\":\"GitHub Test\",\"version\":\"1.0.0\"}}}";
         var response = await new HttpClient()
             .PostAsync($"{server.Url}/foo", new StringContent(content, Encoding.UTF8, "application/json"))
-            .ConfigureAwait(false);
+;
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -222,7 +223,7 @@ public partial class WireMockServerTests
         var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("key1", "value1") });
         var response = await new HttpClient()
             .PostAsync($"{server.Url}/foo", content)
-            .ConfigureAwait(false);
+;
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -255,7 +256,7 @@ public partial class WireMockServerTests
         });
         var response = await new HttpClient()
             .PostAsync($"{server.Url}/foo", content)
-            .ConfigureAwait(false);
+;
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -299,7 +300,7 @@ public partial class WireMockServerTests
         });
         var responseOrdered = await new HttpClient()
             .PostAsync($"{server.Url}/foo", contentOrdered)
-            .ConfigureAwait(false);
+;
 
         // Assert 1
         responseOrdered.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -313,7 +314,7 @@ public partial class WireMockServerTests
         });
         var responseUnordered = await new HttpClient()
             .PostAsync($"{server.Url}/bar", contentUnordered)
-            .ConfigureAwait(false);
+;
 
         // Assert 2
         responseUnordered.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -360,7 +361,7 @@ public partial class WireMockServerTests
         // Act 1
         var normal = await new HttpClient()
             .GetAsync(server.Url)
-            .ConfigureAwait(false);
+;
         (await normal.Content.ReadAsStringAsync()).Should().Be("normal");
 
         // Act 2
