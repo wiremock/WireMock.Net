@@ -1,5 +1,6 @@
-# 1.18.0 (09 December 2025)
-- #1388 Add WithBodyAsType to RequestMatcher [feature]
-- #330 Feature: Add support for CSharpCode Transformer [wontfix]
+# 1.19.0 (12 December 2025)
+- #1391 Update WireMockContainerBuilder (WithImage and WithCustomImage) [feature]
+- #1392 WireMockContainerBuilder: allow all docker images named wiremock [feature]
+- #1390 Unable to build WireMockContainerBuilder with custom image [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
