@@ -16,7 +16,7 @@ namespace WireMock.Util;
 internal static class BodyParser
 {
     private static readonly Encoding DefaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
-    private static readonly Encoding[] SupportedBodyAsStringEncodingForMultipart = [ DefaultEncoding, Encoding.ASCII ];
+    private static readonly Encoding[] SupportedBodyAsStringEncodingForMultipart = [DefaultEncoding, Encoding.ASCII];
 
     /*
         HEAD - No defined body semantics.
@@ -132,7 +132,9 @@ internal static class BodyParser
     {
         Guard.NotNull(settings);
 
-        var bodyWithContentEncoding = await ReadBytesAsync(settings.Stream, settings.ContentEncoding, settings.DecompressGZipAndDeflate).ConfigureAwait(false);
+        bool decompressGZipAndDeflate = settings.BodyHandling.HasFlag(BodyHandling.DecompressGZipAndDeflate);
+
+        var bodyWithContentEncoding = await ReadBytesAsync(settings.Stream, settings.ContentEncoding, decompressGZipAndDeflate).ConfigureAwait(false);
         var data = new BodyData
         {
             BodyAsBytes = bodyWithContentEncoding.Bytes,
@@ -140,6 +142,11 @@ internal static class BodyParser
             DetectedBodyType = BodyType.Bytes,
             DetectedBodyTypeFromContentType = DetectBodyTypeFromContentType(settings.ContentType)
         };
+
+        if (settings.BodyHandling == BodyHandling.None)
+        {
+            return data;
+        }
 
         // In case of MultiPart: check if the BodyAsBytes is a valid UTF8 or ASCII string, in that case read as String else keep as-is
         if (data.DetectedBodyTypeFromContentType == BodyType.MultiPart)
@@ -163,7 +170,7 @@ internal static class BodyParser
             data.DetectedBodyType = BodyType.String;
 
             // If string is not null or empty, try to deserialize the string to a IDictionary<string, string>
-            if (settings.DeserializeFormUrlEncoded &&
+            if (settings.BodyHandling.HasFlag(BodyHandling.TryDeserializeFormUrlEncoded) &&
                 data.DetectedBodyTypeFromContentType == BodyType.FormUrlEncoded &&
                 QueryStringParser.TryParse(data.BodyAsString, false, out var nameValueCollection)
             )
@@ -180,7 +187,7 @@ internal static class BodyParser
             }
 
             // If string is not null or empty, try to deserialize the string to a JObject
-            if (settings.DeserializeJson && JsonUtils.IsJson(data.BodyAsString))
+            if (settings.BodyHandling.HasFlag(BodyHandling.TryDeserializeJson) && JsonUtils.IsJson(data.BodyAsString))
             {
                 try
                 {
@@ -200,7 +207,7 @@ internal static class BodyParser
 
         return data;
     }
-    
+
     private static async Task<(string? ContentType, byte[] Bytes)> ReadBytesAsync(Stream stream, string? contentEncoding = null, bool decompressGZipAndDeflate = true)
     {
         using var memoryStream = new MemoryStream();

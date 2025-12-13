@@ -12,13 +12,14 @@ namespace WireMock.Http;
 
 internal static class HttpResponseMessageHelper
 {
-    public static async Task<ResponseMessage> CreateAsync(
+    internal static async Task<ResponseMessage> CreateAsync(
         HttpResponseMessage httpResponseMessage,
         Uri requiredUri,
         Uri originalUri,
-        bool deserializeJson,
-        bool decompressGzipAndDeflate,
-        bool deserializeFormUrlEncoded)
+        BodyHandling bodyHandling)
+        //bool deserializeJson,
+        //bool decompressGzipAndDeflate,
+        //bool deserializeFormUrlEncoded)
     {
         var responseMessage = new ResponseMessage { StatusCode = (int)httpResponseMessage.StatusCode };
 
@@ -45,10 +46,8 @@ internal static class HttpResponseMessageHelper
                 {
                     Stream = stream,
                     ContentType = contentTypeHeader?.FirstOrDefault(),
-                    DeserializeJson = deserializeJson,
                     ContentEncoding = contentEncodingHeader?.FirstOrDefault(),
-                    DecompressGZipAndDeflate = decompressGzipAndDeflate,
-                    DeserializeFormUrlEncoded = deserializeFormUrlEncoded
+                    BodyHandling = bodyHandling
                 };
                 responseMessage.BodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
             }

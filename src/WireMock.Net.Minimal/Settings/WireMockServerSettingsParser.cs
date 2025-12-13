@@ -119,23 +119,24 @@ public static class WireMockServerSettingsParser
             var proxyAndRecordSettings = new ProxyAndRecordSettings
             {
                 AllowAutoRedirect = parser.GetBoolValue(nameof(ProxyAndRecordSettings.AllowAutoRedirect)),
+                AppendGuidToSavedMappingFile = parser.GetBoolValue(nameof(ProxyAndRecordSettings.AppendGuidToSavedMappingFile)),
                 ClientX509Certificate2ThumbprintOrSubjectName = parser.GetStringValue(nameof(ProxyAndRecordSettings.ClientX509Certificate2ThumbprintOrSubjectName)),
                 ExcludedCookies = parser.GetValues(nameof(ProxyAndRecordSettings.ExcludedCookies)),
                 ExcludedHeaders = parser.GetValues(nameof(ProxyAndRecordSettings.ExcludedHeaders)),
+                NoBodyHandling = parser.GetBoolValue(nameof(ProxyAndRecordSettings.NoBodyHandling)),
                 // PreferProxyMapping = parser.GetBoolValue(nameof(ProxyAndRecordSettings.PreferProxyMapping)),
+                PrefixForSavedMappingFile = parser.GetStringValue(nameof(ProxyAndRecordSettings.PrefixForSavedMappingFile), ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile),
+                ProxyAll = parser.GetBoolValue(nameof(ProxyAndRecordSettings.ProxyAll)),
                 SaveMapping = parser.GetBoolValue(nameof(ProxyAndRecordSettings.SaveMapping)),
                 SaveMappingForStatusCodePattern = parser.GetStringValue(nameof(ProxyAndRecordSettings.SaveMappingForStatusCodePattern), "*"),
-                SaveMappingToFile = parser.GetBoolValue(nameof(ProxyAndRecordSettings.SaveMappingToFile)),
-                UseDefinedRequestMatchers = parser.GetBoolValue(nameof(ProxyAndRecordSettings.UseDefinedRequestMatchers)),
-                AppendGuidToSavedMappingFile = parser.GetBoolValue(nameof(ProxyAndRecordSettings.AppendGuidToSavedMappingFile)),
-                PrefixForSavedMappingFile = parser.GetStringValue(nameof(ProxyAndRecordSettings.PrefixForSavedMappingFile), ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile),
-                Url = proxyUrl!,
                 SaveMappingSettings = new ProxySaveMappingSettings
                 {
                     StatusCodePattern = parser.GetStringValue(nameof(ProxyAndRecordSettings.SaveMappingForStatusCodePattern), "*"),
                     // HttpMethods = new ProxySaveMappingSetting<string[]>(parser.GetValues("DoNotSaveMappingForHttpMethods", new string[0]), MatchBehaviour.RejectOnMatch)
                 },
-                ProxyAll = parser.GetBoolValue(nameof(ProxyAndRecordSettings.ProxyAll))
+                SaveMappingToFile = parser.GetBoolValue(nameof(ProxyAndRecordSettings.SaveMappingToFile)),
+                Url = proxyUrl!,
+                UseDefinedRequestMatchers = parser.GetBoolValue(nameof(ProxyAndRecordSettings.UseDefinedRequestMatchers))
             };
 
             ParseWebProxyAddressSettings(proxyAndRecordSettings, parser);

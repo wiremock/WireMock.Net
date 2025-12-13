@@ -40,17 +40,27 @@ internal class ProxyHelper(WireMockServerSettings settings)
         var httpResponseMessage = await client.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
 
         // Create ResponseMessage
-        bool deserializeJson = !_settings.DisableJsonBodyParsing.GetValueOrDefault(false);
-        bool decompressGzipAndDeflate = !_settings.DisableRequestBodyDecompressing.GetValueOrDefault(false);
-        bool deserializeFormUrlEncoded = !_settings.DisableDeserializeFormUrlEncoded.GetValueOrDefault(false);
+        var bodyHandling = BodyHandling.None;
+        if (!_settings.DisableJsonBodyParsing.GetValueOrDefault())
+        {
+            bodyHandling |= BodyHandling.TryDeserializeJson;
+        }
+
+        if (!_settings.DisableRequestBodyDecompressing.GetValueOrDefault())
+        {
+            bodyHandling |= BodyHandling.DecompressGZipAndDeflate;
+        }
+
+        if (!_settings.DisableDeserializeFormUrlEncoded.GetValueOrDefault())
+        {
+            bodyHandling |= BodyHandling.TryDeserializeFormUrlEncoded;
+        }
 
         var responseMessage = await HttpResponseMessageHelper.CreateAsync(
             httpResponseMessage,
             requiredUri,
             originalUri,
-            deserializeJson,
-            decompressGzipAndDeflate,
-            deserializeFormUrlEncoded
+            bodyHandling
         ).ConfigureAwait(false);
 
         IMapping? newMapping = null;

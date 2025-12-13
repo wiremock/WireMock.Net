@@ -219,7 +219,7 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("key1", "value1") });
+        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
         var response = await new HttpClient()
             .PostAsync($"{server.Url}/foo", content)
             .ConfigureAwait(false);

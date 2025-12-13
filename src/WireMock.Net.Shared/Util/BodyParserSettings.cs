@@ -21,18 +21,8 @@ internal class BodyParserSettings
     /// </summary>
     public string? ContentEncoding { get; set; }
 
-    /// <summary>
-    /// Automatically decompress GZip and Deflate encoded content.
-    /// </summary>
-    public bool DecompressGZipAndDeflate { get; set; } = true;
-
-    /// <summary>
-    /// Try to deserialize the body as JSON.
-    /// </summary>
-    public bool DeserializeJson { get; set; } = true;
-
-    /// <summary>
-    /// Try to deserialize the body as FormUrlEncoded.
-    /// </summary>
-    public bool DeserializeFormUrlEncoded { get; set; } = true;
+    public BodyHandling BodyHandling { get; set; } =
+        BodyHandling.TryDeserializeJson |
+        BodyHandling.TryDeserializeFormUrlEncoded |
+        BodyHandling.DecompressGZipAndDeflate;
 }

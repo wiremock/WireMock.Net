@@ -15,6 +15,31 @@ namespace WireMock.Net.Tests.Util;
 public class BodyParserTests
 {
     [Theory]
+    [InlineData("application/json", "{ \"x\": 1 }", BodyType.Json)]
+    [InlineData("application/xml", "<xml>hello</xml>", BodyType.String)]
+    [InlineData("something", "hello", BodyType.Bytes)]
+    public async Task BodyParser_Json_WhenBodyHandlingNone_ShouldKeepBytes(string contentType, string value, BodyType detectedBodyTypeFromContentType)
+    {
+        // Arrange
+        var bodyParserSettings = new BodyParserSettings
+        {
+            Stream = new MemoryStream(Encoding.UTF8.GetBytes(value)),
+            ContentType = contentType,
+            BodyHandling = BodyHandling.None
+        };
+
+        // Act
+        var body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+
+        // Assert
+        body.BodyAsBytes.Should().NotBeEmpty();
+        body.BodyAsJson.Should().BeNull();
+        body.BodyAsString.Should().BeNull();
+        body.DetectedBodyType.Should().Be(BodyType.Bytes);
+        body.DetectedBodyTypeFromContentType.Should().Be(detectedBodyTypeFromContentType);
+    }
+
+    [Theory]
     [InlineData("application/json", "{ \"x\": 1 }", BodyType.Json, BodyType.Json)]
     [InlineData("application/json; charset=utf-8", "{ \"x\": 1 }", BodyType.Json, BodyType.Json)]
     [InlineData("application/json; odata.metadata=minimal", "{ \"x\": 1 }", BodyType.Json, BodyType.Json)]
@@ -27,7 +52,7 @@ public class BodyParserTests
         {
             Stream = new MemoryStream(Encoding.UTF8.GetBytes(bodyAsJson)),
             ContentType = contentType,
-            DeserializeJson = true
+            BodyHandling = BodyHandling.TryDeserializeJson
         };
 
         // Act
@@ -51,7 +76,7 @@ public class BodyParserTests
         {
             Stream = new MemoryStream(Encoding.UTF8.GetBytes(bodyAsString)),
             ContentType = contentType,
-            DeserializeJson = true
+            BodyHandling = BodyHandling.TryDeserializeJson
         };
 
         // Act
@@ -76,7 +101,7 @@ public class BodyParserTests
         {
             Stream = new MemoryStream(content),
             ContentType = null,
-            DeserializeJson = true
+            BodyHandling = BodyHandling.TryDeserializeJson
         };
 
         // act
@@ -97,7 +122,7 @@ public class BodyParserTests
         {
             Stream = new MemoryStream(content),
             ContentType = null,
-            DeserializeJson = false
+            BodyHandling = BodyHandling.TryDeserializeFormUrlEncoded | BodyHandling.DecompressGZipAndDeflate
         };
 
         // act
@@ -137,8 +162,7 @@ public class BodyParserTests
         var bodyParserSettings = new BodyParserSettings
         {
             Stream = new MemoryStream(Encoding.UTF8.GetBytes(body)),
-            ContentType = contentType,
-            DeserializeJson = true
+            ContentType = contentType
         };
 
         // Act
@@ -162,7 +186,7 @@ public class BodyParserTests
         {
             Stream = new MemoryStream(Encoding.UTF8.GetBytes(body)),
             ContentType = contentType,
-            DeserializeJson = true
+            BodyHandling = BodyHandling.TryDeserializeJson
         };
 
         // Act
@@ -184,8 +208,7 @@ public class BodyParserTests
         var bodyParserSettings = new BodyParserSettings
         {
             Stream = new MemoryStream(Encoding.UTF8.GetBytes(bodyAsString)),
-            ContentType = null,
-            DeserializeJson = true
+            ContentType = null
         };
 
         // Act
@@ -209,11 +232,10 @@ public class BodyParserTests
         var compressed = CompressionUtils.Compress(compression, bytes);
         var bodyParserSettings = new BodyParserSettings
         {
+            BodyHandling = BodyHandling.DecompressGZipAndDeflate,
             Stream = new MemoryStream(compressed),
             ContentType = "text/plain",
-            DeserializeJson = false,
             ContentEncoding = compression.ToUpperInvariant(),
-            DecompressGZipAndDeflate = true
         };
 
         // Act
@@ -238,11 +260,10 @@ public class BodyParserTests
         var compressed = CompressionUtils.Compress(compression, bytes);
         var bodyParserSettings = new BodyParserSettings
         {
+            BodyHandling = BodyHandling.None,
             Stream = new MemoryStream(compressed),
             ContentType = "text/plain",
-            DeserializeJson = false,
             ContentEncoding = compression.ToUpperInvariant(),
-            DecompressGZipAndDeflate = false
         };
 
         // Act
