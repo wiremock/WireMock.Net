@@ -117,5 +117,5 @@ public class ProxyAndRecordSettings : HttpClientSettings
     /// Set to true to disable any body handling when processing responses. (default set to <c>false</c>).
     /// </summary>
     [PublicAPI]
-    public bool NoBodyHandling { get; set; } = false;
+    public bool NoBodyHandling { get; set; }
 }

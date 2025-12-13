@@ -84,10 +84,10 @@ public class ProxyAndRecordSettingsModel
     /// <summary>
     /// Proxy all Api calls, irrespective of any condition
     /// </summary>
-    public bool ProxyAll { get; set; } = false;
+    public bool ProxyAll { get; set; }
 
     /// <summary>
     /// Set to true to disable any body handling when processing responses. (default set to <c>false</c>).
     /// </summary>
-    public bool NoBodyHandling { get; set; } = false;
+    public bool NoBodyHandling { get; set; }
 }
