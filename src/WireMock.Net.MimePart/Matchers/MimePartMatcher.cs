@@ -94,11 +94,10 @@ public class MimePartMatcher : IMimePartMatcher
 
         var bodyParserSettings = new BodyParserSettings
         {
+            BodyHandling = BodyHandling.TryDeserializeJson | BodyHandling.DecompressGZipAndDeflate,
             Stream = mimePart.Open(),
             ContentType = GetContentTypeAsString(mimePart.ContentType),
-            DeserializeJson = true,
             ContentEncoding = null, // mimePart.ContentType?.CharsetEncoding.ToString(),
-            DecompressGZipAndDeflate = true
         };
 
         var bodyData = BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false).GetAwaiter().GetResult();

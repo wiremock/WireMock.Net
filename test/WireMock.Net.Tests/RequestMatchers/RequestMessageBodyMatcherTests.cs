@@ -489,7 +489,7 @@ public class RequestMessageBodyMatcherTests
             {
                 Stream = new MemoryStream(b),
                 ContentType = null,
-                DeserializeJson = true
+                BodyHandling = BodyHandling.TryDeserializeJson
             };
             bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
         }
@@ -499,7 +499,7 @@ public class RequestMessageBodyMatcherTests
             {
                 Stream = new MemoryStream(Encoding.UTF8.GetBytes(s)),
                 ContentType = null,
-                DeserializeJson = true
+                BodyHandling = BodyHandling.TryDeserializeJson
             };
             bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
         }

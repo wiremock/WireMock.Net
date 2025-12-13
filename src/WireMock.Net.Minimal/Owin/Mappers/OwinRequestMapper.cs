@@ -53,13 +53,23 @@ internal class OwinRequestMapper : IOwinRequestMapper
         IBodyData? body = null;
         if (request.Body != null && BodyParser.ShouldParseBody(method, options.AllowBodyForAllHttpMethods == true))
         {
+            var bodyHandling = BodyHandling.TryDeserializeFormUrlEncoded;
+            if (!options.DisableJsonBodyParsing.GetValueOrDefault())
+            {
+                bodyHandling |= BodyHandling.TryDeserializeJson;
+            }
+
+            if (!options.DisableRequestBodyDecompressing.GetValueOrDefault())
+            {
+                bodyHandling |= BodyHandling.DecompressGZipAndDeflate;
+            }
+
             var bodyParserSettings = new BodyParserSettings
             {
+                BodyHandling = bodyHandling,
                 Stream = request.Body,
                 ContentType = request.ContentType,
-                DeserializeJson = !options.DisableJsonBodyParsing.GetValueOrDefault(false),
-                ContentEncoding = contentEncodingHeader?.FirstOrDefault(),
-                DecompressGZipAndDeflate = !options.DisableRequestBodyDecompressing.GetValueOrDefault(false)
+                ContentEncoding = contentEncodingHeader?.FirstOrDefault()
             };
 
             body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
