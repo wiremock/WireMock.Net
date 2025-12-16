@@ -8,9 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime;
 using System.Threading;
 using AnyOfTypes;
 using JetBrains.Annotations;
+using JsonConverter.Newtonsoft.Json;
 using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
@@ -47,6 +49,7 @@ public partial class WireMockServer : IWireMockServer
     private readonly MappingBuilder _mappingBuilder;
     private readonly IGuidUtils _guidUtils = new GuidUtils();
     private readonly IDateTimeUtils _dateTimeUtils = new DateTimeUtils();
+    private readonly MappingSerializer _mappingSerializer;
 
     /// <inheritdoc />
     [PublicAPI]
@@ -357,6 +360,8 @@ public partial class WireMockServer : IWireMockServer
     {
         _settings = Guard.NotNull(settings);
 
+        _mappingSerializer = new MappingSerializer(settings.MappingJsonSerializer ?? new NewtonsoftJsonConverter());
+
         // Set default values if not provided
         _settings.Logger = settings.Logger ?? new WireMockNullLogger();
         _settings.FileSystemHandler = settings.FileSystemHandler ?? new LocalFileSystemHandler();
@@ -639,7 +644,7 @@ public partial class WireMockServer : IWireMockServer
     [PublicAPI]
     public IWireMockServer WithMapping(string mappings)
     {
-        var mappingModels = DeserializeJsonToArray<MappingModel>(mappings);
+        var mappingModels = _mappingSerializer.DeserializeJsonToArray<MappingModel>(mappings);
         foreach (var mappingModel in mappingModels)
         {
             ConvertMappingAndRegisterAsRespondProvider(mappingModel, mappingModel.Guid ?? Guid.NewGuid());

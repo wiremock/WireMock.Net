@@ -14,6 +14,7 @@ using WireMock.RegularExpressions;
 using WireMock.Types;
 using System.Globalization;
 using WireMock.Models;
+using JsonConverter.Abstractions;
 
 #if USE_ASPNETCORE
 using Microsoft.Extensions.DependencyInjection;
@@ -338,4 +339,14 @@ public class WireMockServerSettings
     /// </summary>
     [PublicAPI]
     public HandlebarsSettings? HandlebarsSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the JSON converter used for MappingModel serialization.
+    /// </summary>
+    /// <remarks>
+    /// Set this property to customize how objects are serialized to and deserialized from JSON during mapping.
+    /// If not set, the NewtonsoftJsonConverter will be used.
+    /// </remarks>
+    [PublicAPI]
+    public IJsonConverter? MappingJsonSerializer { get; set; }
 }
