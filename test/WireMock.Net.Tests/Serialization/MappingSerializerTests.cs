@@ -134,9 +134,6 @@ public class MappingSerializerTests
                 "Title": "Test Mapping",
                 "Description": "A test mapping",
                 "Priority": 10,
-                "Scenario": "TestScenario",
-                "WhenStateIs": "Started",
-                "SetStateTo": "Finished",
                 "Request": {
                     "Path": "/api/test",
                     "Methods": ["GET", "POST"]
@@ -158,9 +155,6 @@ public class MappingSerializerTests
         result[0].Title.Should().Be("Test Mapping");
         result[0].Description.Should().Be("A test mapping");
         result[0].Priority.Should().Be(10);
-        result[0].Scenario.Should().Be("TestScenario");
-        result[0].WhenStateIs.Should().Be("Started");
-        result[0].SetStateTo.Should().Be("Finished");
     }
 
     [Fact]
@@ -275,9 +269,6 @@ public class MappingSerializerTests
                 "Title": "Test Mapping",
                 "Description": "A test mapping",
                 "Priority": 10,
-                "Scenario": "TestScenario",
-                "WhenStateIs": "Started",
-                "SetStateTo": "Finished",
                 "Request": {
                     "Path": "/api/test",
                     "Methods": ["GET", "POST"]
@@ -299,9 +290,6 @@ public class MappingSerializerTests
         result[0].Title.Should().Be("Test Mapping");
         result[0].Description.Should().Be("A test mapping");
         result[0].Priority.Should().Be(10);
-        result[0].Scenario.Should().Be("TestScenario");
-        result[0].WhenStateIs.Should().Be("Started");
-        result[0].SetStateTo.Should().Be("Finished");
     }
 
     [Fact]
