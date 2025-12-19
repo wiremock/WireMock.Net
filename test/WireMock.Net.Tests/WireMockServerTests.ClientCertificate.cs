@@ -1,23 +1,22 @@
 // Copyright © WireMock.Net
 
-//#if !NET451 && !NET452
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using FluentAssertions;
-using System.Security.Cryptography.X509Certificates;
+using WireMock.Net.Tests.Facts;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
 public partial class WireMockServerTests
 {
-    [Fact]
+    [IgnoreOnContinuousIntegrationFact]
     public async Task WireMockServer_WithRequiredClientCertificates_Should_Work_Correct()
     {
         // Arrange
@@ -54,4 +53,3 @@ public partial class WireMockServerTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
-//#endif
