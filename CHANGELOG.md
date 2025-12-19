@@ -1,3 +1,11 @@
+# 1.19.0 (12 December 2025)
+- [#1391](https://github.com/wiremock/WireMock.Net/pull/1391) - Update WireMockContainerBuilder (WithImage and WithCustomImage) [feature] contributed by [StefH](https://github.com/StefH)
+- [#1392](https://github.com/wiremock/WireMock.Net/pull/1392) - WireMockContainerBuilder: allow all docker images named wiremock [feature] contributed by [StefH](https://github.com/StefH)
+- [#1390](https://github.com/wiremock/WireMock.Net/issues/1390) - Unable to build WireMockContainerBuilder with custom image [feature]
+
+# 1.18.0 (09 December 2025)
+- [#1388](https://github.com/wiremock/WireMock.Net/pull/1388) - Add WithBodyAsType to RequestMatcher [feature] contributed by [StefH](https://github.com/StefH)
+
 # 1.17.0 (07 December 2025)
 - [#1383](https://github.com/wiremock/WireMock.Net/pull/1383) - Aspire: Add WithProtoDefinition to support proto definition at server level [feature] contributed by [StefH](https://github.com/StefH)
 - [#1386](https://github.com/wiremock/WireMock.Net/pull/1386) - Fix random delay in mapping json file [bug] contributed by [StefH](https://github.com/StefH)

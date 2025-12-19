@@ -92,7 +92,7 @@ public partial class TestcontainersTests(ITestOutputHelper testOutputHelper)
         }
         else
         {
-            wireMockContainerBuilder = wireMockContainerBuilder.WithImage("sheyenrath/wiremock.net");
+            wireMockContainerBuilder = wireMockContainerBuilder.WithImage("sheyenrath/wiremock.net-alpine");
         }
 
         var wireMockContainer = wireMockContainerBuilder.Build();
