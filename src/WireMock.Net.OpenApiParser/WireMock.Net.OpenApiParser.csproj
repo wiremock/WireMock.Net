@@ -42,7 +42,7 @@
         <PackageReference Include="Microsoft.OpenApi" Version="2.3.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="2.3.0" PrivateAssets="All" />
         <PackageReference Include="System.Text.Json" Version="8.0.5" />
-        <!--<PackageReference Include="SharpYaml" Version="2.1.1" />-->
+        <PackageReference Include="SharpYaml" Version="2.1.3" />
     </ItemGroup>
 
     <ItemGroup>
