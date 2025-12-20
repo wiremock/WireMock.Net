@@ -206,7 +206,7 @@ public partial class TestcontainersTests
         var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
         result.EnsureSuccessStatusCode();
 
-        await Task.Delay(1000);
+        await Task.Delay(5000);
     }
 
     private static async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(WireMockContainer wireMockContainer)
