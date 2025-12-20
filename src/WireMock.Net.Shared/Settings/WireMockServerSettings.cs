@@ -15,6 +15,7 @@ using WireMock.Types;
 using System.Globalization;
 using WireMock.Models;
 using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 
 #if USE_ASPNETCORE
 using Microsoft.Extensions.DependencyInjection;
@@ -341,12 +342,12 @@ public class WireMockServerSettings
     public HandlebarsSettings? HandlebarsSettings { get; set; }
 
     /// <summary>
-    /// Gets or sets the JSON converter used for MappingModel serialization.
+    /// Gets or sets the default JSON converter used for serialization.
     /// </summary>
     /// <remarks>
     /// Set this property to customize how objects are serialized to and deserialized from JSON during mapping.
-    /// If not set, the NewtonsoftJsonConverter will be used.
+    /// Default is <see cref="NewtonsoftJsonConverter"/>.
     /// </remarks>
     [PublicAPI]
-    public IJsonConverter? MappingJsonSerializer { get; set; }
+    public IJsonConverter DefaultJsonSerializer { get; set; } = new NewtonsoftJsonConverter();
 }

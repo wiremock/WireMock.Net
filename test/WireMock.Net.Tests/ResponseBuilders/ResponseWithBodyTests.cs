@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JsonConverter.Newtonsoft.Json;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NFluent;
@@ -316,12 +317,11 @@ public class ResponseWithBodyTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request1, _settings).ConfigureAwait(false);
 
         Check.That(response.Message.StatusCode).IsEqualTo(200);
-        Check.That(response.Message.BodyData.BodyAsString).Contains("File deleted.");
+        Check.That(response.Message.BodyData?.BodyAsString).Contains("File deleted.");
     }
 
-#if !(NET451 || NET452)
     [Fact]
-    public async Task Response_ProvideResponse_WithBody_IJsonConverter_SystemTextJson()
+    public async Task Response_ProvideResponse_WithBody_NewtonsoftJsonConverter()
     {
         // Arrange
         var requestBody = new BodyData
@@ -331,13 +331,34 @@ public class ResponseWithBodyTests
         };
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, requestBody);
 
-        var responseBuilder = Response.Create().WithBody(new { foo = "bar", n = 42 }, new JsonConverter.System.Text.Json.SystemTextJsonConverter());
+        var responseBuilder = Response.Create().WithBody(new { foo = "< > & ' 😀 👍 ❤️", n = 42 }, new NewtonsoftJsonConverter());
 
         // Act
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
 
         // Assert
-        response.Message.BodyData!.BodyAsString.Should().Be(@"{""foo"":""bar"",""n"":42}");
+        response.Message.BodyData!.BodyAsString.Should().Be("""{"foo":"< > & ' 😀 👍 ❤️","n":42}""");
+    }
+
+#if !(NET451 || NET452 || NET461)
+    [Fact]
+    public async Task Response_ProvideResponse_WithBody_SystemTextJsonConverter()
+    {
+        // Arrange
+        var requestBody = new BodyData
+        {
+            DetectedBodyType = BodyType.String,
+            BodyAsString = "abc"
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp, requestBody);
+
+        var responseBuilder = Response.Create().WithBody(new { foo = "< > & ' 😀 👍 ❤️", n = 42 }, new JsonConverter.System.Text.Json.SystemTextJsonConverter());
+
+        // Act
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+
+        // Assert
+        response.Message.BodyData!.BodyAsString.Should().Be("""{"foo":"\u003C \u003E \u0026 \u0027 \uD83D\uDE00 \uD83D\uDC4D \u2764\uFE0F","n":42}""");
     }
 #endif
 }

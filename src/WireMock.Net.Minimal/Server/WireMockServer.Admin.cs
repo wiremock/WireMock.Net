@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
+using JsonConverter.Abstractions;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
@@ -826,23 +826,29 @@ public partial class WireMockServer
         }
     }
 
-    private static Encoding? ToEncoding(EncodingModel? encodingModel)
+    private ResponseMessage ToJson<T>(T result, bool keepNullValues = false, object? statusCode = null)
     {
-        return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
-    }
+        var jsonOptions = new JsonConverterOptions
+        {
+            WriteIndented = true,
+            IgnoreNullValues = !keepNullValues
+        };
 
-    private static ResponseMessage ToJson<T>(T result, bool keepNullValues = false, object? statusCode = null)
-    {
         return new ResponseMessage
         {
             BodyData = new BodyData
             {
                 DetectedBodyType = BodyType.String,
-                BodyAsString = JsonConvert.SerializeObject(result, keepNullValues ? JsonSerializationConstants.JsonSerializerSettingsIncludeNullValues : JsonSerializationConstants.JsonSerializerSettingsDefault)
+                BodyAsString = _settings.DefaultJsonSerializer.Serialize(result!, jsonOptions)
             },
             StatusCode = statusCode ?? (int)HttpStatusCode.OK,
             Headers = new Dictionary<string, WireMockList<string>> { { HttpKnownHeaderNames.ContentType, new WireMockList<string>(WireMockConstants.ContentTypeJson) } }
         };
+    }
+
+    private static Encoding? ToEncoding(EncodingModel? encodingModel)
+    {
+        return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
     }
 
     private static ResponseMessage ToResponseMessage(string text)

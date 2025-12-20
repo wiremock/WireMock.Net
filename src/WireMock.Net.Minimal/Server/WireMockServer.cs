@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime;
 using System.Threading;
 using AnyOfTypes;
 using JetBrains.Annotations;
@@ -360,7 +359,7 @@ public partial class WireMockServer : IWireMockServer
     {
         _settings = Guard.NotNull(settings);
 
-        _mappingSerializer = new MappingSerializer(settings.MappingJsonSerializer ?? new NewtonsoftJsonConverter());
+        _mappingSerializer = new MappingSerializer(settings.DefaultJsonSerializer ?? new NewtonsoftJsonConverter());
 
         // Set default values if not provided
         _settings.Logger = settings.Logger ?? new WireMockNullLogger();
