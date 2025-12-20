@@ -33,7 +33,8 @@ public partial class TestcontainersTests
 
         try
         {
-            await wireMockContainer.StartAsync().ConfigureAwait(false);
+            await wireMockContainer.StartAsync();
+            await Task.Delay(1000);
 
             // Assert
             using (new AssertionScope())
@@ -86,7 +87,8 @@ public partial class TestcontainersTests
 
         try
         {
-            await wireMockContainer.StartAsync().ConfigureAwait(false);
+            await wireMockContainer.StartAsync();
+            await Task.Delay(1000);
 
             // Assert
             using (new AssertionScope())
@@ -168,6 +170,7 @@ public partial class TestcontainersTests
             .Build();
 
         await wireMockContainer.StartAsync();
+        await Task.Delay(1000);
 
         return wireMockContainer;
     }
@@ -180,6 +183,7 @@ public partial class TestcontainersTests
             .Build();
 
         await wireMockContainer.StartAsync();
+        await Task.Delay(1000);
 
         return wireMockContainer;
     }
@@ -193,6 +197,7 @@ public partial class TestcontainersTests
             .Build();
 
         await wireMockContainer.StartAsync();
+        await Task.Delay(1000);
 
         return wireMockContainer;
     }
