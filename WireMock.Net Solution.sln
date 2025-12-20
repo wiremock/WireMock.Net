@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11205.157 d18.0
+VisualStudioVersion = 18.0.11205.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8F890C6F-9ACC-438D-928A-AD61CDA862F2}"
 EndProject
@@ -145,6 +145,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.ProtoBuf", "src\WireMock.Net.ProtoBuf\WireMock.Net.ProtoBuf.csproj", "{B47413AA-55D3-49A7-896A-17ADBFF72407}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.xUnit.v3", "src\WireMock.Net.xUnit.v3\WireMock.Net.xUnit.v3.csproj", "{4F46BD02-BEBC-4B2D-B857-4169AD1FB067}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WireMock.Net.NUnit", "src\WireMock.Net.NUnit\WireMock.Net.NUnit.csproj", "{2DBBD70D-8051-441F-92BB-FF9B8B4B4982}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -356,6 +358,10 @@ Global
 		{4F46BD02-BEBC-4B2D-B857-4169AD1FB067}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F46BD02-BEBC-4B2D-B857-4169AD1FB067}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F46BD02-BEBC-4B2D-B857-4169AD1FB067}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBBD70D-8051-441F-92BB-FF9B8B4B4982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBBD70D-8051-441F-92BB-FF9B8B4B4982}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBBD70D-8051-441F-92BB-FF9B8B4B4982}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBBD70D-8051-441F-92BB-FF9B8B4B4982}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -414,6 +420,7 @@ Global
 		{1E874C8F-08A2-493B-8421-619F9A6E9E77} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
 		{B47413AA-55D3-49A7-896A-17ADBFF72407} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
 		{4F46BD02-BEBC-4B2D-B857-4169AD1FB067} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
+		{2DBBD70D-8051-441F-92BB-FF9B8B4B4982} = {8F890C6F-9ACC-438D-928A-AD61CDA862F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC539027-9852-430C-B19F-FD035D018458}
