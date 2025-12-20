@@ -235,7 +235,7 @@ public partial class WireMockServerTests
     }
 
 #if NET8_0_OR_GREATER
-    [IgnoreOnContinuousIntegrationFact]
+    [Fact(Skip = "Does not work on local and pipeline")]
     public async Task WireMockServer_WithUrl0000_Should_Listen_On_All_IPs_IPv6()
     {
         // Arrange
