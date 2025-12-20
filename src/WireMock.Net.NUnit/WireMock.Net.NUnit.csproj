@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <Description>Some extensions for NUnit</Description>
+        <AssemblyTitle>WireMock.Net.NUnit</AssemblyTitle>
+        <Authors>Stef Heyenrath</Authors>
+        <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <AssemblyName>WireMock.Net.NUnit</AssemblyName>
+        <RootNamespace>WireMock.Net.NUnit</RootNamespace>
+        <PackageId>WireMock.Net.NUnit</PackageId>
+        <PackageTags>tdd;wiremock;test;unittest;nunit</PackageTags>
+        <ProjectGuid>{2DBBD70D-8051-441F-92BB-3F9B8B4B4983}</ProjectGuid>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
+        <PackageReference Include="NUnit" Version="4.4.0" />
+        <PackageReference Include="Stef.Validation" Version="0.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
+    </ItemGroup>
+</Project>
