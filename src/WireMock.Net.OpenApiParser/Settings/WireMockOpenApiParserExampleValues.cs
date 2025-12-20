@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 
 namespace WireMock.Net.OpenApiParser.Settings;
 
