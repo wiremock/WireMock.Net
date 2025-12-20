@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <Version>0.0.1-preview-01</Version>
         <Description>Some extensions for NUnit</Description>
         <AssemblyTitle>WireMock.Net.NUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
