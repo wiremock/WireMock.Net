@@ -3,7 +3,7 @@
         <Description>Some extensions for NUnit</Description>
         <AssemblyTitle>WireMock.Net.NUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.NUnit</AssemblyName>
         <RootNamespace>WireMock.Net.NUnit</RootNamespace>
