@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.Testcontainers;
 
-public partial class TestcontainersTests(ITestOutputHelper testOutputHelper)
+public class TestcontainersTests(ITestOutputHelper testOutputHelper)
 {
     [Fact]
     public async Task WireMockContainer_Build_And_StartAsync_and_StopAsync()
