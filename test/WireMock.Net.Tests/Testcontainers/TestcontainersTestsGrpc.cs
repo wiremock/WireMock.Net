@@ -15,10 +15,12 @@ using WireMock.Constants;
 using WireMock.Net.Testcontainers;
 using WireMock.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.Testcontainers;
 
-public partial class TestcontainersTests
+[Collection("Grpc")]
+public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
     [Fact]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls1()
@@ -167,6 +169,28 @@ public partial class TestcontainersTests
         Then_ReplyMessage_Should_BeCorrect(reply);
 
         await StopAsync(wireMockContainer);
+    }
+
+    private async Task StopAsync(WireMockContainer wireMockContainer)
+    {
+        try
+        {
+            await wireMockContainer.StopAsync();
+        }
+        catch (Exception ex)
+        {
+            // Sometimes we get this exception, so for now ignore it.
+            /*
+            Failed WireMock.Net.Tests.Testcontainers.TestcontainersTests.WireMockContainer_Build_WithImageAsText_And_StartAsync_and_StopAsync [9 s]
+               Error Message:
+                System.NullReferenceException : Object reference not set to an instance of an object.
+               Stack Trace:
+                  at DotNet.Testcontainers.Containers.DockerContainer.UnsafeStopAsync(CancellationToken ct) in /_/src/Testcontainers/Containers/DockerContainer.cs:line 567
+                at DotNet.Testcontainers.Containers.DockerContainer.StopAsync(CancellationToken ct) in /_/src/Testcontainers/Containers/DockerContainer.cs:line 319
+            */
+
+            testOutputHelper.WriteLine($"Exception during StopAsync: {ex}");
+        }
     }
 
     private static async Task<WireMockContainer> Given_WireMockContainerIsStartedForHttpAndGrpcAsync()
