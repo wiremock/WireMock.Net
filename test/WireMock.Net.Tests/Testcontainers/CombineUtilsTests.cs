@@ -66,7 +66,7 @@ public class CombineUtilsTests
     }
 
     [Fact]
-    public void Combine_Lists_WithDuplicates_PreservesDuplicates()
+    public void Combine_Lists_WithDuplicates_RemovesDuplicates()
     {
         // Arrange
         var oldValue = new List<string> { "a", "b", "c" };
@@ -76,7 +76,7 @@ public class CombineUtilsTests
         var result = CombineUtils.Combine(oldValue, newValue);
 
         // Assert
-        result.Should().Equal("a", "b", "c", "b", "c", "d");
+        result.Should().Equal("a", "b", "c", "d");
     }
 
     [Fact]

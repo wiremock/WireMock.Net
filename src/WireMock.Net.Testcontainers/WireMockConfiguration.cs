@@ -1,12 +1,12 @@
 // Copyright © WireMock.Net
 
 using System.Collections.Generic;
-using System.Linq;
 using Docker.DotNet.Models;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using JetBrains.Annotations;
 using Stef.Validation;
+using WireMock.Net.Testcontainers.Utils;
 
 namespace WireMock.Net.Testcontainers;
 
@@ -77,8 +77,8 @@ public sealed class WireMockConfiguration : ContainerConfiguration
         StaticMappingsPath = BuildConfiguration.Combine(oldValue.StaticMappingsPath, newValue.StaticMappingsPath);
         WatchStaticMappings = BuildConfiguration.Combine(oldValue.WatchStaticMappings, newValue.WatchStaticMappings);
         WatchStaticMappingsInSubdirectories = BuildConfiguration.Combine(oldValue.WatchStaticMappingsInSubdirectories, newValue.WatchStaticMappingsInSubdirectories);
-        AdditionalUrls = Combine(oldValue.AdditionalUrls, newValue.AdditionalUrls);
-        ProtoDefinitions = Combine(oldValue.ProtoDefinitions, newValue.ProtoDefinitions);
+        AdditionalUrls = CombineUtils.Combine(oldValue.AdditionalUrls, newValue.AdditionalUrls);
+        ProtoDefinitions = CombineUtils.Combine(oldValue.ProtoDefinitions, newValue.ProtoDefinitions);
     }
 
     /// <summary>
@@ -129,17 +129,5 @@ public sealed class WireMockConfiguration : ContainerConfiguration
         ProtoDefinitions[id] = protoDefinition;
 
         return this;
-    }
-
-    private static List<T> Combine<T>(List<T> oldValue, List<T> newValue)
-    {
-        return oldValue.Concat(newValue).ToList();
-    }
-
-    private static Dictionary<TKey, TValue> Combine<TKey, TValue>(Dictionary<TKey, TValue> oldValue, Dictionary<TKey, TValue> newValue)
-    {
-        return newValue
-            .Concat(oldValue.Where(item => !newValue.Keys.Contains(item.Key)))
-            .ToDictionary(item => item.Key, item => item.Value);
     }
 }
