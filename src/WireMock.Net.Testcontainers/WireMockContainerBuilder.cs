@@ -268,7 +268,6 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
                 .ForPath("/health")
                 .WithMethod(HttpMethod.Get)
                 .ForStatusCode(HttpStatusCode.OK)
-                .ForResponsePredicate(body => body.Contains("Healthy"))
             );
 
         return builder
