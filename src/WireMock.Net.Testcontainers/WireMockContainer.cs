@@ -27,6 +27,8 @@ namespace WireMock.Net.Testcontainers;
 public sealed class WireMockContainer : DockerContainer
 {
     private const int EnhancedFileSystemWatcherTimeoutMs = 2000;
+    private const string HealthStatusHealthy = "Healthy";
+    private const int MaxHealthCheckRetries = 10;
     internal const int ContainerPort = 80;
 
     private readonly WireMockConfiguration _configuration;
@@ -225,6 +227,14 @@ public sealed class WireMockContainer : DockerContainer
 
     private async Task CallAdditionalActionsAfterStartedAsync()
     {
+        foreach (int i = 0; i < MaxHealthCheckRetries; i++)
+        {
+            if (await IsHealthyAsync())
+            {
+                break;
+            }
+        }
+
         foreach (var kvp in _configuration.ProtoDefinitions)
         {
             Logger.LogInformation("Adding ProtoDefinition {Id}", kvp.Key);
@@ -290,5 +300,18 @@ public sealed class WireMockContainer : DockerContainer
         }
 
         return _publicUris;
+    }
+
+    private static async Task<bool> IsHealthyAsync()
+    {
+        try
+        {
+            var status = await adminApi.GetHealthAsync();
+            return string.Equals(status, HealthStatusHealthy, StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
