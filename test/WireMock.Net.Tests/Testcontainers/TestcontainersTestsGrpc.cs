@@ -185,11 +185,16 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         catch (Exception ex)
         {
             testOutputHelper.WriteLine("Exception during GrpcClient Call to {0}. Exception = {1}.", address, ex);
-            testOutputHelper.WriteLine("Dumping WireMock logs:");
-            var (stdOut, stdError) = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
-            testOutputHelper.WriteLine("Out  : {0}", stdOut);
-            testOutputHelper.WriteLine("Error: {0}", stdError);
 
+            testOutputHelper.WriteLine("Dumping WireMock.Net logs:");
+            var (stdOut, stdError) = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+            testOutputHelper.WriteLine("Out  :\r\n{0}", stdOut);
+            testOutputHelper.WriteLine("Error:\r\n{0}", stdError);
+
+            testOutputHelper.WriteLine("Dumping WireMock.Net mappings:");
+            using var httpClient = wireMockContainer.CreateClient();
+            using var response = await httpClient.GetAsync("/__admin/mappings");
+            testOutputHelper.WriteLine("Mappings:\r\n{0}", response.Content.ReadAsStringAsync());
             throw;
         }
     }
