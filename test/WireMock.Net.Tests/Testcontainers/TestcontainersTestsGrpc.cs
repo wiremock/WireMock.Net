@@ -171,6 +171,29 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
+    private async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(WireMockContainer wireMockContainer)
+    {
+        var address = wireMockContainer.GetPublicUrls().First(x => x.Key != 80).Value;
+        var channel = GrpcChannel.ForAddress(address);
+
+        var client = new Greeter.GreeterClient(channel);
+
+        try
+        {
+            return await client.SayHelloAsync(new HelloRequest { Name = "stef" });
+        }
+        catch (Exception ex)
+        {
+            testOutputHelper.WriteLine("Exception during GrpcClient Call to {0}. Exception = {1}.", address, ex);
+            testOutputHelper.WriteLine("Dumping WireMock logs:");
+            var (stdOut, stdError) = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+            testOutputHelper.WriteLine("Out  : {0}", stdOut);
+            testOutputHelper.WriteLine("Error: {0}", stdError);
+
+            throw;
+        }
+    }
+
     private async Task StopAsync(WireMockContainer wireMockContainer)
     {
         try
@@ -240,16 +263,6 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
         result.EnsureSuccessStatusCode();
-    }
-
-    private static async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(WireMockContainer wireMockContainer)
-    {
-        var address = wireMockContainer.GetPublicUrls().First(x => x.Key != 80).Value;
-        var channel = GrpcChannel.ForAddress(address);
-
-        var client = new Greeter.GreeterClient(channel);
-
-        return await client.SayHelloAsync(new HelloRequest { Name = "stef" });
     }
 
     private static void Then_ReplyMessage_Should_BeCorrect(HelloReply reply)
