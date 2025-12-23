@@ -302,7 +302,7 @@ public sealed class WireMockContainer : DockerContainer
         return _publicUris;
     }
 
-    private static async Task<bool> IsHealthyAsync()
+    private async Task<bool> IsHealthyAsync()
     {
         try
         {
