@@ -1,6 +1,8 @@
 // Copyright © WireMock.Net
 
 using System;
+using System.Net;
+using System.Net.Http;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Docker.DotNet.Models;
