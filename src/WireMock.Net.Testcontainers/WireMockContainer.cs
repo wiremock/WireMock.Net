@@ -227,17 +227,12 @@ public sealed class WireMockContainer : DockerContainer
 
     private async Task CallAdditionalActionsAfterStartedAsync()
     {
-        for (int i = 0; i < MaxHealthCheckRetries; i++)
-        {
-            if (await IsHealthyAsync())
-            {
-                break;
-            }
-        }
+        await WaitOnHealthyAsync();
 
         foreach (var kvp in _configuration.ProtoDefinitions)
         {
             Logger.LogInformation("Adding ProtoDefinition {Id}", kvp.Key);
+
             foreach (var protoDefinition in kvp.Value)
             {
                 try
@@ -256,6 +251,19 @@ public sealed class WireMockContainer : DockerContainer
         if (_configuration.ProtoDefinitions.Count > 0)
         {
             await ReloadStaticMappingsAsync();
+        }
+    }
+
+    private async Task WaitOnHealthyAsync()
+    {
+        Logger.LogInformation("Waiting on Healthy");
+
+        for (int i = 0; i < MaxHealthCheckRetries; i++)
+        {
+            if (await IsHealthyAsync())
+            {
+                break;
+            }
         }
     }
 
@@ -306,7 +314,7 @@ public sealed class WireMockContainer : DockerContainer
     {
         try
         {
-            var status = await _adminApi.GetHealthAsync();
+            var status = await _adminApi!.GetHealthAsync();
             return string.Equals(status, HealthStatusHealthy, StringComparison.OrdinalIgnoreCase);
         }
         catch

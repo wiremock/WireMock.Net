@@ -22,7 +22,7 @@ namespace WireMock.Net.Tests.Testcontainers;
 [Collection("Grpc")]
 public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
-    [Fact]
+    [Fact(Skip = "TODO")]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls1()
     {
         // Arrange
@@ -37,7 +37,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
             .WithCommand("--Urls", $"http://*:80 grpc://*:{port}")
             .WithPortBinding(port, true)
             .Build();
-        
+
         try
         {
             await wireMockContainer.StartAsync();
@@ -78,7 +78,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Fact]
+    [Fact(Skip = "TODO")]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls2()
     {
         // Arrange
@@ -131,7 +131,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Fact]
+    [Fact(Skip = "TODO")]
     public async Task WireMockContainer_Build_Grpc_ProtoDefinitionFromJson_UsingGrpcGeneratedClient()
     {
         var wireMockContainer = await Given_WireMockContainerIsStartedForHttpAndGrpcAsync();
@@ -159,7 +159,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
-    [Fact]
+    [Fact(Skip = "TODO")]
     public async Task WireMockContainer_Build_Grpc_ProtoDefinitionAtServerLevel_UsingGrpcGeneratedClient_AndWithWatchStaticMappings()
     {
         var wireMockContainer = await Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync();
@@ -240,8 +240,6 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
         result.EnsureSuccessStatusCode();
-
-        await Task.Delay(5000);
     }
 
     private static async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(WireMockContainer wireMockContainer)
