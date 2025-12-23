@@ -261,19 +261,11 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
         var builder = base.Init();
 
         var waitForContainerOS = _imageOS == OSPlatform.Windows ? Wait.ForWindowsContainer() : Wait.ForUnixContainer();
-        waitForContainerOS
-            .UntilMessageIsLogged("WireMock.Net server running")
-            .UntilHttpRequestIsSucceeded(request => request
-                .ForPort(WireMockContainer.ContainerPort)
-                .ForPath("/health")
-                .WithMethod(HttpMethod.Get)
-                .ForStatusCode(HttpStatusCode.OK)
-            );
 
         return builder
             .WithPortBinding(WireMockContainer.ContainerPort, true)
             .WithCommand($"--WireMockLogger {DefaultLogger}")
-            .WithWaitStrategy(waitForContainerOS);
+            .WithWaitStrategy(waitForContainerOS.UntilMessageIsLogged("WireMock.Net server running"));
     }
 
     /// <inheritdoc />
