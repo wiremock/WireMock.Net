@@ -227,7 +227,7 @@ public sealed class WireMockContainer : DockerContainer
 
     private async Task CallAdditionalActionsAfterStartedAsync()
     {
-        foreach (int i = 0; i < MaxHealthCheckRetries; i++)
+        for (int i = 0; i < MaxHealthCheckRetries; i++)
         {
             if (await IsHealthyAsync())
             {
