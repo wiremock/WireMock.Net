@@ -306,7 +306,7 @@ public sealed class WireMockContainer : DockerContainer
     {
         try
         {
-            var status = await adminApi.GetHealthAsync();
+            var status = await _adminApi.GetHealthAsync();
             return string.Equals(status, HealthStatusHealthy, StringComparison.OrdinalIgnoreCase);
         }
         catch
