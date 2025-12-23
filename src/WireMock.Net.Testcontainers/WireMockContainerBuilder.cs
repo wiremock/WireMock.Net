@@ -262,7 +262,7 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
         waitForContainerOS
             .UntilMessageIsLogged("WireMock.Net server running")
             .UntilHttpRequestIsSucceeded(request => request
-                .ForPort(ContainerPort)
+                .ForPort(WireMockContainer.ContainerPort)
                 .ForPath("/health")
                 .WithMethod(HttpMethod.Get)
                 .ForStatusCode(HttpStatusCode.OK)
