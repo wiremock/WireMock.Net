@@ -1,3 +1,10 @@
+# 1.20.0 (24 December 2025)
+- [#1399](https://github.com/wiremock/WireMock.Net/pull/1399) - Upgrade RamlToOpenApiConverter and YamlDotNet [feature] contributed by [StefH](https://github.com/StefH)
+- [#1400](https://github.com/wiremock/WireMock.Net/pull/1400) - Add WireMock.Net.NUnit project [feature] contributed by [StefH](https://github.com/StefH)
+- [#1405](https://github.com/wiremock/WireMock.Net/pull/1405) - Fix Testcontainers AddProtoDefinition [bug] contributed by [StefH](https://github.com/StefH)
+- [#1398](https://github.com/wiremock/WireMock.Net/issues/1398) - Upgrade YamlDotNet dependency [feature]
+- [#1404](https://github.com/wiremock/WireMock.Net/issues/1404) - An exception occurs when adding multiple proto definitions in the TestContainer. [bug]
+
 # 1.19.0 (12 December 2025)
 - [#1391](https://github.com/wiremock/WireMock.Net/pull/1391) - Update WireMockContainerBuilder (WithImage and WithCustomImage) [feature] contributed by [StefH](https://github.com/StefH)
 - [#1392](https://github.com/wiremock/WireMock.Net/pull/1392) - WireMockContainerBuilder: allow all docker images named wiremock [feature] contributed by [StefH](https://github.com/StefH)
