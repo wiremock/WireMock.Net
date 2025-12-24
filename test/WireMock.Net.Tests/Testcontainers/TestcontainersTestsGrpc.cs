@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.Testcontainers;
 
-//[Collection("Grpc")]
+[Collection("Grpc")]
 public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
     [Fact]
