@@ -97,8 +97,6 @@ public class ProtoBufMatcher : IProtoBufMatcher
 
         var protoDefinitions = ProtoDefinition().Texts;
 
-        Console.WriteLine("Proto Definitions as csv list: " + string.Join(",", protoDefinitions));
-
         var resolver = new WireMockProtoFileResolver(protoDefinitions);
         var request = new ConvertToObjectRequest(protoDefinitions[0], MessageType, input)
             .WithProtoFileResolver(resolver);
