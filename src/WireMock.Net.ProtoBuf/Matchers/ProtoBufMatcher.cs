@@ -96,14 +96,14 @@ public class ProtoBufMatcher : IProtoBufMatcher
         }
 
         var protoDefinitions = ProtoDefinition().Texts;
-       
+
         var resolver = new WireMockProtoFileResolver(protoDefinitions);
         var request = new ConvertToObjectRequest(protoDefinitions[0], MessageType, input)
             .WithProtoFileResolver(resolver);
 
         try
         {
-            return await ProtoBufToJsonConverter.ConvertAsync(request, cancellationToken).ConfigureAwait(false);
+            return await ProtoBufToJsonConverter.ConvertAsync(request, cancellationToken);
         }
         catch
         {
