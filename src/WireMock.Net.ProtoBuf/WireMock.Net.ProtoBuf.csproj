@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ProtoBufJsonConverter" Version="0.10.0.1" />
+        <PackageReference Include="ProtoBufJsonConverter" Version="0.11.0" />
     </ItemGroup>
 
     <ItemGroup>

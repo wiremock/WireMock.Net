@@ -31,6 +31,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Compile Include="..\..\src\WireMock.Net.Testcontainers\Utils\CombineUtils.cs" Link="Testcontainers\CombineUtils.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!-- https://stackoverflow.com/questions/59406201/filenesting-not-working-for-class-or-shared-library-projects -->
         <ProjectCapability Include="ConfigurableFileNesting" />
         <ProjectCapability Include="ConfigurableFileNestingFeatureEnabled" />
