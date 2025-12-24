@@ -194,7 +194,8 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
             testOutputHelper.WriteLine("Dumping WireMock.Net mappings:");
             using var httpClient = wireMockContainer.CreateClient();
             using var response = await httpClient.GetAsync("/__admin/mappings");
-            testOutputHelper.WriteLine("Mappings:\r\n{0}", response.Content.ReadAsStringAsync());
+            var mappings = await response.Content.ReadAsStringAsync();
+            testOutputHelper.WriteLine("Mappings:\r\n{0}", mappings);
             throw;
         }
     }
