@@ -100,7 +100,7 @@ jobs:
 - job: Windows_Build_Test
 
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2025'
 
   steps:
   - task: UseDotNet@2
@@ -141,7 +141,7 @@ jobs:
   dependsOn: Windows_Build_Test
 
   pool:
-    vmImage: 'windows-2022'
+    vmImage: 'windows-2025'
 
   steps:
   - script: |
