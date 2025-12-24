@@ -2,6 +2,8 @@
 
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using Docker.DotNet.Models;
 using DotNet.Testcontainers.Builders;
@@ -250,6 +252,23 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
 
         builder.Validate();
 
+        var waitForContainerOS = _imageOS == OSPlatform.Windows ? Wait.ForWindowsContainer() : Wait.ForUnixContainer();
+        builder
+            .WithWaitStrategy(waitForContainerOS
+                .UntilHttpRequestIsSucceeded(httpWaitStrategy => httpWaitStrategy
+                    .ForPort(WireMockContainer.ContainerPort)
+                    .WithMethod(HttpMethod.Get)
+                    .WithBasicAuthentication(DockerResourceConfiguration)
+                    .ForPath("/__admin/health")
+                    .ForStatusCode(HttpStatusCode.OK)
+                    .ForResponseMessageMatching(async httpResponseMessage =>
+                    {
+                        var content = await httpResponseMessage.Content.ReadAsStringAsync();
+                        return content?.Contains("Healthy") == true;
+                    })
+                )
+        );
+
         return new WireMockContainer(builder.DockerResourceConfiguration);
     }
 
@@ -262,7 +281,9 @@ public sealed class WireMockContainerBuilder : ContainerBuilder<WireMockContaine
         return builder
             .WithPortBinding(WireMockContainer.ContainerPort, true)
             .WithCommand($"--WireMockLogger {DefaultLogger}")
-            .WithWaitStrategy(waitForContainerOS.UntilMessageIsLogged("WireMock.Net server running"));
+            .WithWaitStrategy(waitForContainerOS
+                .UntilMessageIsLogged("WireMock.Net server running", waitStrategy => waitStrategy.WithTimeout(TimeSpan.FromSeconds(30)))
+            );
     }
 
     /// <inheritdoc />
