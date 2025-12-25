@@ -91,6 +91,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />
+        <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.21" />
     </ItemGroup>
 
     <ItemGroup>

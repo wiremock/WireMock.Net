@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Meziantou.Extensions.Logging.Xunit;
+using Microsoft.Extensions.Logging;
 using WireMock.Net.Testcontainers;
 using WireMock.Net.Testcontainers.Utils;
 using WireMock.Net.Tests.Facts;
@@ -17,6 +19,12 @@ namespace WireMock.Net.Tests.Testcontainers;
 
 public class TestcontainersTests(ITestOutputHelper testOutputHelper)
 {
+    private readonly ILogger _logger = new XUnitLogger(testOutputHelper, new LoggerExternalScopeProvider(), nameof(TestcontainersTests), new XUnitLoggerOptions
+    {
+        IncludeCategory = true,
+        TimestampFormat = "yyy-MM-dd HH:mm:ss.fff"
+    });
+
     [Fact]
     public async Task WireMockContainer_Build_And_StartAsync_and_StopAsync()
     {
@@ -24,6 +32,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         var adminUsername = $"username_{Guid.NewGuid()}";
         var adminPassword = $"password_{Guid.NewGuid()}";
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithAdminUserNameAndPassword(adminUsername, adminPassword)
             .WithAutoRemove(true)
             .WithCleanUp(true)
@@ -43,6 +52,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
             .Build();
 
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithNetwork(dummyNetwork)
             .WithWatchStaticMappings(true)
             .Build();
@@ -58,6 +68,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         var adminUsername = $"username_{Guid.NewGuid()}";
         var adminPassword = $"password_{Guid.NewGuid()}";
         var wireMockContainerBuilder = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithAdminUserNameAndPassword(adminUsername, adminPassword);
 
         var imageOS = await TestcontainersUtils.GetImageOSAsync.Value;
@@ -83,6 +94,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         var adminUsername = $"username_{Guid.NewGuid()}";
         var adminPassword = $"password_{Guid.NewGuid()}";
         var wireMockContainerBuilder = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithAdminUserNameAndPassword(adminUsername, adminPassword);
 
         var imageOS = await TestcontainersUtils.GetImageOSAsync.Value;
