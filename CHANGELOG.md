@@ -1,3 +1,6 @@
+# 1.21.0 (25 December 2025)
+- [#1408](https://github.com/wiremock/WireMock.Net/pull/1408) - Fix readyness-check for Testcontainers [bug] contributed by [StefH](https://github.com/StefH)
+
 # 1.20.0 (24 December 2025)
 - [#1399](https://github.com/wiremock/WireMock.Net/pull/1399) - Upgrade RamlToOpenApiConverter and YamlDotNet [feature] contributed by [StefH](https://github.com/StefH)
 - [#1400](https://github.com/wiremock/WireMock.Net/pull/1400) - Add WireMock.Net.NUnit project [feature] contributed by [StefH](https://github.com/StefH)
