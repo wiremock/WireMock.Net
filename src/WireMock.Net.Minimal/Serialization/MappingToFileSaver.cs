@@ -2,7 +2,8 @@
 
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Settings;
 
@@ -12,12 +13,15 @@ internal class MappingToFileSaver
 {
     private readonly WireMockServerSettings _settings;
     private readonly MappingConverter _mappingConverter;
+    private readonly IJsonConverter _jsonConverter;
     private readonly MappingFileNameSanitizer _fileNameSanitizer;
 
     public MappingToFileSaver(WireMockServerSettings settings, MappingConverter mappingConverter)
     {
         _settings = Guard.NotNull(settings);
         _mappingConverter = Guard.NotNull(mappingConverter);
+
+        _jsonConverter = settings.DefaultJsonSerializer ?? new NewtonsoftJsonConverter();
         _fileNameSanitizer = new MappingFileNameSanitizer(settings);
     }
 
@@ -56,6 +60,8 @@ internal class MappingToFileSaver
     {
         _settings.Logger.Info("Saving Mapping file {0}", path);
 
-        _settings.FileSystemHandler.WriteMappingFile(path, JsonConvert.SerializeObject(value, JsonSerializationConstants.JsonSerializerSettingsDefault));
+        var json = _jsonConverter.Serialize(value, JsonSerializationConstants.JsonConverterOptionsDefault);
+
+        _settings.FileSystemHandler.WriteMappingFile(path, json);
     }
 }
