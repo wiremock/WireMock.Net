@@ -24,27 +24,20 @@ namespace WireMock.Net.Testcontainers;
 /// <summary>
 /// A container for running WireMock in a docker environment.
 /// </summary>
-public sealed class WireMockContainer : DockerContainer
+/// <remarks>
+/// Initializes a new instance of the <see cref="WireMockContainer" /> class.
+/// </remarks>
+/// <param name="configuration">The container configuration.</param>
+public sealed class WireMockContainer(WireMockConfiguration configuration) : DockerContainer(configuration)
 {
     private const int EnhancedFileSystemWatcherTimeoutMs = 2000;
     internal const int ContainerPort = 80;
 
-    private readonly WireMockConfiguration _configuration;
+    private readonly WireMockConfiguration _configuration = Guard.NotNull(configuration);
 
     private IWireMockAdminApi? _adminApi;
     private EnhancedFileSystemWatcher? _enhancedFileSystemWatcher;
     private IDictionary<int, Uri>? _publicUris;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WireMockContainer" /> class.
-    /// </summary>
-    /// <param name="configuration">The container configuration.</param>
-    public WireMockContainer(WireMockConfiguration configuration) : base(configuration)
-    {
-        _configuration = Guard.NotNull(configuration);
-
-        Started += async (sender, eventArgs) => await WireMockContainerStartedAsync(sender, eventArgs);
-    }
 
     /// <summary>
     /// Gets the public Url.
@@ -165,6 +158,20 @@ public sealed class WireMockContainer : DockerContainer
         }
     }
 
+    /// <summary>
+    /// Performs additional actions after the container is ready.
+    /// </summary>
+    public Task CallAdditionalActionsAfterReadyAsync()
+    {
+        Logger.LogInformation("WireMock.Net -> Calling additional actions.");
+
+        _adminApi = CreateWireMockAdminClient();
+
+        RegisterEnhancedFileSystemWatcher();
+
+        return AddProtoDefinitionsAsync();
+    }
+
     /// <inheritdoc />
     protected override ValueTask DisposeAsyncCore()
     {
@@ -197,15 +204,6 @@ public sealed class WireMockContainer : DockerContainer
         }
     }
 
-    private async Task WireMockContainerStartedAsync(object sender, EventArgs e)
-    {
-        _adminApi = CreateWireMockAdminClient();
-
-        RegisterEnhancedFileSystemWatcher();
-
-        await CallAdditionalActionsAfterStartedAsync();
-    }
-
     private void RegisterEnhancedFileSystemWatcher()
     {
         if (!_configuration.WatchStaticMappings || string.IsNullOrEmpty(_configuration.StaticMappingsPath))
@@ -223,11 +221,11 @@ public sealed class WireMockContainer : DockerContainer
         _enhancedFileSystemWatcher.EnableRaisingEvents = true;
     }
 
-    private async Task CallAdditionalActionsAfterStartedAsync()
+    private async Task AddProtoDefinitionsAsync()
     {
         foreach (var kvp in _configuration.ProtoDefinitions)
         {
-            Logger.LogInformation("WireMock.Net -> Adding ProtoDefinition {Id}", kvp.Key);
+            Logger.LogInformation("WireMock.Net -> Adding ProtoDefinition '{Id}'", kvp.Key);
 
             foreach (var protoDefinition in kvp.Value)
             {
