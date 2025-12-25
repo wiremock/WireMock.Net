@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
+//#if PROTOBUF
 using System;
 using System.IO;
 using System.Net;
@@ -501,7 +501,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_WithWellKnownTypes_Empty_UsingGrpcGeneratedClient()
     {
         // Arrange
-        var definition = await File.ReadAllTextAsync("./Grpc/greet.proto");
+        var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
 
@@ -534,7 +534,7 @@ message Other {
         // Arrange
         const int seconds = 1722301323;
         const int nanos = 12300;
-        var definition = await File.ReadAllTextAsync("./Grpc/greet.proto");
+        var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
 
@@ -575,7 +575,7 @@ message Other {
         // Arrange
         const int seconds = 1722301323;
         const int nanos = 12300;
-        var definition = await File.ReadAllTextAsync("./Grpc/greet.proto");
+        var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
 
@@ -614,7 +614,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_Enum_UsingGrpcGeneratedClient()
     {
         // Arrange
-        var definition = await File.ReadAllTextAsync("./Grpc/greet.proto");
+        var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
 
@@ -655,7 +655,7 @@ message Other {
         const int nanos = 12300;
         const string version = "test";
         const string correlationId = "correlation";
-        var definition = await File.ReadAllTextAsync("./Grpc/policy.proto");
+        var definition = File.ReadAllText("./Grpc/policy.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
 
@@ -773,4 +773,4 @@ message Other {
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
     }
 }
-#endif
+//#endif

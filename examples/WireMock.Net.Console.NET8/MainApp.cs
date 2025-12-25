@@ -376,9 +376,9 @@ namespace WireMock.Net.ConsoleApplication
                 PreWireMockMiddlewareInit = app => { System.Console.WriteLine($"PreWireMockMiddlewareInit : {app.GetType()}"); },
                 PostWireMockMiddlewareInit = app => { System.Console.WriteLine($"PostWireMockMiddlewareInit : {app.GetType()}"); },
 
-#if USE_ASPNETCORE
+//#if USE_ASPNETCORE
                 AdditionalServiceRegistration = services => { System.Console.WriteLine($"AdditionalServiceRegistration : {services.GetType()}"); },
-#endif
+//#endif
                 Logger = new WireMockConsoleLogger(),
 
                 HandlebarsRegistrationCallback = (handlebarsContext, fileSystemHandler) =>
@@ -399,7 +399,7 @@ namespace WireMock.Net.ConsoleApplication
             //var response = await http.GetAsync($"{_wireMockServer.Url}/pricing");
             //var value = await response.Content.ReadAsStringAsync();
 
-#if PROTOBUF
+//#if PROTOBUF
             var protoBufJsonMatcher = new JsonPartialWildcardMatcher(new { name = "*" });
             server
                 .Given(Request.Create()
@@ -478,9 +478,9 @@ namespace WireMock.Net.ConsoleApplication
                     .WithTrailingHeader("grpc-status", "0")
                     .WithTransformer()
                 );
-#endif
+//#endif
 
-#if GRAPHQL
+//#if GRAPHQL
             var customScalars = new Dictionary<string, Type> { { "MyCustomScalar", typeof(int) } };
             server
                 .Given(Request.Create()
@@ -554,9 +554,9 @@ namespace WireMock.Net.ConsoleApplication
                         }
                         """)
                 );
-#endif
+//#endif
 
-#if MIMEKIT
+//#if MIMEKIT
             var textPlainContentTypeMatcher = new ContentTypeMatcher("text/plain");
             var textPlainContentMatcher = new ExactMatcher("This is some plain text");
             var textPlainMatcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, textPlainContentTypeMatcher, null, null, textPlainContentMatcher);
@@ -588,7 +588,7 @@ namespace WireMock.Net.ConsoleApplication
                 .RespondWith(Response.Create()
                     .WithBody("MultiPart is ok")
                 );
-#endif
+//#endif
             // 400 ms
             server
                 .Given(Request.Create()
