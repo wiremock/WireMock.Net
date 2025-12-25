@@ -157,11 +157,11 @@ public sealed class WireMockContainer : DockerContainer
         try
         {
             var result = await _adminApi.ReloadStaticMappingsAsync(cancellationToken);
-            Logger.LogInformation("ReloadStaticMappings result: {Result}", result);
+            Logger.LogInformation("WireMock.Net -> ReloadStaticMappings result: {Result}", result);
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, "Error calling /__admin/mappings/reloadStaticMappings");
+            Logger.LogWarning(ex, "WireMock.Net -> Error calling /__admin/mappings/reloadStaticMappings");
         }
     }
 
@@ -227,18 +227,18 @@ public sealed class WireMockContainer : DockerContainer
     {
         foreach (var kvp in _configuration.ProtoDefinitions)
         {
-            Logger.LogInformation("Adding ProtoDefinition {Id}", kvp.Key);
+            Logger.LogInformation("WireMock.Net -> Adding ProtoDefinition {Id}", kvp.Key);
 
             foreach (var protoDefinition in kvp.Value)
             {
                 try
                 {
                     var result = await _adminApi!.AddProtoDefinitionAsync(kvp.Key, protoDefinition);
-                    Logger.LogInformation("AddProtoDefinition '{Id}' result: {Result}", kvp.Key, result);
+                    Logger.LogInformation("WireMock.Net -> AddProtoDefinition '{Id}' result: {Result}", kvp.Key, result);
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", kvp.Key);
+                    Logger.LogWarning(ex, "WireMock.Net -> Error adding ProtoDefinition '{Id}'.", kvp.Key);
                 }
             }
         }
@@ -255,17 +255,17 @@ public sealed class WireMockContainer : DockerContainer
         try
         {
             await ReloadStaticMappingsAsync(args.FullPath);
-            Logger.LogInformation("ReloadStaticMappings triggered from file change: '{FullPath}'.", args.FullPath);
+            Logger.LogInformation("WireMock.Net -> ReloadStaticMappings triggered from file change: '{FullPath}'.", args.FullPath);
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, "Error reloading static mappings from '{FullPath}'.", args.FullPath);
+            Logger.LogWarning(ex, "WireMock.Net -> Error reloading static mappings from '{FullPath}'.", args.FullPath);
         }
     }
 
     private async Task ReloadStaticMappingsAsync(string path, CancellationToken cancellationToken = default)
     {
-        Logger.LogInformation("MappingFile created, changed or deleted: '{Path}'. Triggering ReloadStaticMappings.", path);
+        Logger.LogInformation("WireMock.Net -> MappingFile created, changed or deleted: '{Path}'. Triggering ReloadStaticMappings.", path);
         await ReloadStaticMappingsAsync(cancellationToken);
     }
 
