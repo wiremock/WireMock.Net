@@ -24,27 +24,20 @@ namespace WireMock.Net.Testcontainers;
 /// <summary>
 /// A container for running WireMock in a docker environment.
 /// </summary>
-public sealed class WireMockContainer : DockerContainer
+/// <remarks>
+/// Initializes a new instance of the <see cref="WireMockContainer" /> class.
+/// </remarks>
+/// <param name="configuration">The container configuration.</param>
+public sealed class WireMockContainer(WireMockConfiguration configuration) : DockerContainer(configuration)
 {
     private const int EnhancedFileSystemWatcherTimeoutMs = 2000;
     internal const int ContainerPort = 80;
 
-    private readonly WireMockConfiguration _configuration;
+    private readonly WireMockConfiguration _configuration = Guard.NotNull(configuration);
 
     private IWireMockAdminApi? _adminApi;
     private EnhancedFileSystemWatcher? _enhancedFileSystemWatcher;
     private IDictionary<int, Uri>? _publicUris;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WireMockContainer" /> class.
-    /// </summary>
-    /// <param name="configuration">The container configuration.</param>
-    public WireMockContainer(WireMockConfiguration configuration) : base(configuration)
-    {
-        _configuration = Guard.NotNull(configuration);
-
-        Started += async (sender, eventArgs) => await WireMockContainerStartedAsync(sender, eventArgs);
-    }
 
     /// <summary>
     /// Gets the public Url.
@@ -157,12 +150,26 @@ public sealed class WireMockContainer : DockerContainer
         try
         {
             var result = await _adminApi.ReloadStaticMappingsAsync(cancellationToken);
-            Logger.LogInformation("ReloadStaticMappings result: {Result}", result);
+            Logger.LogInformation("WireMock.Net -> ReloadStaticMappings result: {Result}", result);
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, "Error calling /__admin/mappings/reloadStaticMappings");
+            Logger.LogWarning(ex, "WireMock.Net -> Error calling /__admin/mappings/reloadStaticMappings");
         }
+    }
+
+    /// <summary>
+    /// Performs additional actions after the container is ready.
+    /// </summary>
+    public Task CallAdditionalActionsAfterReadyAsync()
+    {
+        Logger.LogInformation("WireMock.Net -> Calling additional actions.");
+
+        _adminApi = CreateWireMockAdminClient();
+
+        RegisterEnhancedFileSystemWatcher();
+
+        return AddProtoDefinitionsAsync();
     }
 
     /// <inheritdoc />
@@ -197,15 +204,6 @@ public sealed class WireMockContainer : DockerContainer
         }
     }
 
-    private async Task WireMockContainerStartedAsync(object sender, EventArgs e)
-    {
-        _adminApi = CreateWireMockAdminClient();
-
-        RegisterEnhancedFileSystemWatcher();
-
-        await CallAdditionalActionsAfterStartedAsync();
-    }
-
     private void RegisterEnhancedFileSystemWatcher()
     {
         if (!_configuration.WatchStaticMappings || string.IsNullOrEmpty(_configuration.StaticMappingsPath))
@@ -223,22 +221,22 @@ public sealed class WireMockContainer : DockerContainer
         _enhancedFileSystemWatcher.EnableRaisingEvents = true;
     }
 
-    private async Task CallAdditionalActionsAfterStartedAsync()
+    private async Task AddProtoDefinitionsAsync()
     {
         foreach (var kvp in _configuration.ProtoDefinitions)
         {
-            Logger.LogInformation("Adding ProtoDefinition {Id}", kvp.Key);
+            Logger.LogInformation("WireMock.Net -> Adding ProtoDefinition '{Id}'", kvp.Key);
 
             foreach (var protoDefinition in kvp.Value)
             {
                 try
                 {
                     var result = await _adminApi!.AddProtoDefinitionAsync(kvp.Key, protoDefinition);
-                    Logger.LogInformation("AddProtoDefinition '{Id}' result: {Result}", kvp.Key, result);
+                    Logger.LogInformation("WireMock.Net -> AddProtoDefinition '{Id}' result: {Result}", kvp.Key, result);
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogWarning(ex, "Error adding ProtoDefinition '{Id}'.", kvp.Key);
+                    Logger.LogWarning(ex, "WireMock.Net -> Error adding ProtoDefinition '{Id}'.", kvp.Key);
                 }
             }
         }
@@ -255,17 +253,17 @@ public sealed class WireMockContainer : DockerContainer
         try
         {
             await ReloadStaticMappingsAsync(args.FullPath);
-            Logger.LogInformation("ReloadStaticMappings triggered from file change: '{FullPath}'.", args.FullPath);
+            Logger.LogInformation("WireMock.Net -> ReloadStaticMappings triggered from file change: '{FullPath}'.", args.FullPath);
         }
         catch (Exception ex)
         {
-            Logger.LogWarning(ex, "Error reloading static mappings from '{FullPath}'.", args.FullPath);
+            Logger.LogWarning(ex, "WireMock.Net -> Error reloading static mappings from '{FullPath}'.", args.FullPath);
         }
     }
 
     private async Task ReloadStaticMappingsAsync(string path, CancellationToken cancellationToken = default)
     {
-        Logger.LogInformation("MappingFile created, changed or deleted: '{Path}'. Triggering ReloadStaticMappings.", path);
+        Logger.LogInformation("WireMock.Net -> MappingFile created, changed or deleted: '{Path}'. Triggering ReloadStaticMappings.", path);
         await ReloadStaticMappingsAsync(cancellationToken);
     }
 
