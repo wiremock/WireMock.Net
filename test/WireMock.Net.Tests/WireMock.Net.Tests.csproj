@@ -121,6 +121,7 @@
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
         <ProjectReference Include="..\..\src\WireMock.Net.Testcontainers\WireMock.Net.Testcontainers.csproj" />
+        <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.21" />
     </ItemGroup>
 
     <ItemGroup>
