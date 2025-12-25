@@ -11,6 +11,8 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Greet;
 using Grpc.Net.Client;
+using Meziantou.Extensions.Logging.Xunit;
+using Microsoft.Extensions.Logging;
 using WireMock.Constants;
 using WireMock.Net.Testcontainers;
 using WireMock.Util;
@@ -22,6 +24,12 @@ namespace WireMock.Net.Tests.Testcontainers;
 [Collection("Grpc")]
 public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
+    private readonly ILogger _logger = new XUnitLogger(testOutputHelper, new LoggerExternalScopeProvider(), nameof(TestcontainersTestsGrpc), new XUnitLoggerOptions
+    {
+        IncludeCategory = true,
+        TimestampFormat = "yyy-MM-dd HH:mm:ss.fff"
+    });
+
     [Fact]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls1()
     {
@@ -32,6 +40,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         // Act
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithAdminUserNameAndPassword(adminUsername, adminPassword)
             .WithCommand("--UseHttp2")
             .WithCommand("--Urls", $"http://*:80 grpc://*:{port}")
@@ -88,6 +97,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         // Act
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .WithAdminUserNameAndPassword(adminUsername, adminPassword)
             .AddUrl($"http://*:{ports[0]}")
             .AddUrl($"grpc://*:{ports[1]}")
@@ -222,10 +232,11 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         }
     }
 
-    private static async Task<WireMockContainer> Given_WireMockContainerIsStartedForHttpAndGrpcAsync()
+    private async Task<WireMockContainer> Given_WireMockContainerIsStartedForHttpAndGrpcAsync()
     {
         var port = PortUtils.FindFreeTcpPort();
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .AddUrl($"grpc://*:{port}")
             .Build();
 
@@ -234,10 +245,11 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         return wireMockContainer;
     }
 
-    private static async Task<WireMockContainer> Given_WireMockContainerWithProtoDefinitionAtServerLevelIsStartedForHttpAndGrpcAsync()
+    private async Task<WireMockContainer> Given_WireMockContainerWithProtoDefinitionAtServerLevelIsStartedForHttpAndGrpcAsync()
     {
         var port = PortUtils.FindFreeTcpPort();
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .AddUrl($"grpc://*:{port}")
             .AddProtoDefinition("my-greeter", ReadFile("greet.proto"))
             .Build();
@@ -247,10 +259,11 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         return wireMockContainer;
     }
 
-    private static async Task<WireMockContainer> Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync()
+    private async Task<WireMockContainer> Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync()
     {
         var port = PortUtils.FindFreeTcpPort();
         var wireMockContainer = new WireMockContainerBuilder()
+            .WithLogger(_logger)
             .AddUrl($"grpc://*:{port}")
             .AddProtoDefinition("my-greeter", ReadFile("greet.proto"))
             .WithMappings(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings"))
