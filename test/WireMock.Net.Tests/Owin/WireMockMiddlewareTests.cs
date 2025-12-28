@@ -100,7 +100,7 @@ public class WireMockMiddlewareTests
     public async Task WireMockMiddleware_Invoke_NoMatch()
     {
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -118,7 +118,7 @@ public class WireMockMiddlewareTests
         _optionsMock.Setup(o => o.SaveUnmatchedRequests).Returns(true);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert
         _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -145,7 +145,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -168,7 +168,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -184,7 +184,7 @@ public class WireMockMiddlewareTests
         _optionsMock.SetupGet(o => o.RequestLogExpirationDuration).Returns(1);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
     }
 
     [Fact]
@@ -228,7 +228,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         fileSystemHandlerMock.Verify(f => f.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
@@ -282,7 +282,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         fileSystemHandlerMock.Verify(f => f.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);

@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !NET451 && !NET452
-
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
@@ -49,12 +47,9 @@ public partial class WireMockServerTests
         httpMessageHandler.ClientCertificates.AddRange(certificates);
 
         // Act
-        var response = await new HttpClient(httpMessageHandler)
-            .GetAsync("https://localhost:" + server.Ports[0] + "/foo")
-            .ConfigureAwait(false);
+        var response = await new HttpClient(httpMessageHandler).GetAsync("https://localhost:" + server.Ports[0] + "/foo");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
-#endif

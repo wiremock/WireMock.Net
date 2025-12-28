@@ -62,7 +62,7 @@ public class MatcherMapperTests
         models.Should().HaveCount(2);
     }
 
-#if MIMEKIT
+//#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_Matcher_MimePartMatcher()
     {
@@ -94,7 +94,7 @@ public class MatcherMapperTests
         model.ContentMatcher!.Name.Should().Be(nameof(ExactObjectMatcher));
         model.ContentMatcher.Pattern.Should().Be(bytes);
     }
-#endif
+//#endif
 
     [Fact]
     public void MatcherMapper_Map_Matcher_IStringMatcher()
@@ -171,7 +171,7 @@ public class MatcherMapperTests
         model.XmlNamespaceMap.Should().BeEquivalentTo(xmlNamespaceMap);
     }
 
-#if GRAPHQL
+//#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_Matcher_GraphQLMatcher()
     {
@@ -199,9 +199,9 @@ public class MatcherMapperTests
         model.Pattern.Should().Be(testSchema);
         model.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-#endif
+//#endif
 
-#if PROTOBUF
+//#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_Matcher_ProtoBufMatcher()
     {
@@ -280,7 +280,7 @@ message HelloReply {
         model.ContentMatcher?.Name.Should().Be("JsonMatcher");
         model.ContentMatcher?.Pattern.Should().Be(jsonPattern);
     }
-#endif
+//#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_Null()
@@ -598,7 +598,7 @@ message HelloReply {
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
     }
 
-#if MIMEKIT
+//#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_MatcherModel_MimePartMatcher()
     {
@@ -638,7 +638,7 @@ message HelloReply {
         matcher.ContentTransferEncodingMatcher.Should().BeAssignableTo<RegexMatcher>().Which.GetPatterns().Should().ContainSingle("z");
         matcher.ContentTypeMatcher.Should().BeAssignableTo<ContentTypeMatcher>().Which.GetPatterns().Should().ContainSingle("text/json");
     }
-#endif
+//#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_XPathMatcher_WithXmlNamespaces_As_String()
@@ -1050,7 +1050,7 @@ message HelloReply {
         }
     }
 
-#if GRAPHQL
+//#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_MatcherModel_GraphQLMatcher()
     {
@@ -1083,9 +1083,9 @@ message HelloReply {
         matcher.Name.Should().Be(nameof(GraphQLMatcher));
         matcher.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-#endif
+//#endif
 
-#if PROTOBUF
+//#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_MatcherModel_ProtoBufMatcher()
     {
@@ -1132,5 +1132,5 @@ message HelloReply {
         matcher.MessageType.Should().Be(messageType);
         matcher.Matcher?.Value.Should().Be(jsonMatcherPattern);
     }
-#endif
+//#endif
 }

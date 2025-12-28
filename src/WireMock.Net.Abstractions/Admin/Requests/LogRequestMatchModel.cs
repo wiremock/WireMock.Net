@@ -47,5 +47,5 @@ public class LogRequestMatchModel
     /// <value>
     /// The match details.
     /// </value>
-    public IList<object> MatchDetails { get; set; }
+    public IList<object> MatchDetails { get; set; } = [];
 }

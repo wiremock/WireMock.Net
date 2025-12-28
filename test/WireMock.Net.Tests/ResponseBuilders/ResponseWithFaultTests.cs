@@ -32,7 +32,7 @@ public class ResponseWithFaultTests
 
         // Act
         var responseBuilder = Response.Create().WithFault(faultType);
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.FaultType.Should().Be(faultType);
@@ -48,7 +48,7 @@ public class ResponseWithFaultTests
 
         // Act
         var responseBuilder = Response.Create().WithFault(faultType, percentage);
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
         response.Message.FaultType.Should().Be(faultType);
