@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -34,11 +33,10 @@ public partial class WireMockServerTests
             Request.Create()
                 .WithPath("/a")
                 .WithBody(
-                    new IMatcher[]
-                    {
+                    [
                         new JmesPathMatcher("requestId == '1'"),
                         new JmesPathMatcher("value == 'A'")
-                    },
+                    ],
                     MatchOperator.And
                 )
                 .UsingPost()
@@ -49,11 +47,10 @@ public partial class WireMockServerTests
                 Request.Create()
                     .WithPath("/a")
                     .WithBody(
-                        new IMatcher[]
-                        {
+                        [
                             new JmesPathMatcher("requestId == '2'"),
                             new JmesPathMatcher("value == 'A'")
-                        },
+                        ],
                         MatchOperator.And
                     )
                     .UsingPost()
@@ -81,12 +78,11 @@ public partial class WireMockServerTests
                 Request.Create()
                     .WithPath("/a")
                     .WithBody(
-                        new IMatcher[]
-                        {
+                        [
                             new JmesPathMatcher("extra == 'X'"),
                             new JmesPathMatcher("requestId == '1'"),
                             new JmesPathMatcher("value == 'A'")
-                        },
+                        ],
                         MatchOperator.And
                     )
                     .UsingPost()
@@ -98,11 +94,10 @@ public partial class WireMockServerTests
                 Request.Create()
                     .WithPath("/a")
                     .WithBody(
-                        new IMatcher[]
-                        {
+                        [
                             new JmesPathMatcher("requestId == '1'"),
                             new JmesPathMatcher("value == 'A'")
-                        },
+                        ],
                         MatchOperator.And
                     )
                     .UsingPost()
@@ -199,15 +194,47 @@ public partial class WireMockServerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseText = await response.RequestMessage!.Content!.ReadAsStringAsync();
+        var responseText = await response.Content.ReadAsStringAsync();
         responseText.Should().Contain("ec475f56d4694b48bc737500ba575b35-1");
     }
+
+#if NET6_0_OR_GREATER
+    [Fact]
+    public async Task WireMockServer_WithBodyAsJson_Using_PostAsync_And_JsonPartialWildcardMatcher_And_SystemTextJson_ShouldMatch()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(x => x.DefaultJsonSerializer = new JsonConverter.System.Text.Json.SystemTextJsonConverter() );
+
+        var matcher = new JsonPartialWildcardMatcher(new { id = "^[a-f0-9]{32}-[0-9]$" }, ignoreCase: true, regex: true);
+        server.Given(Request.Create()
+            .WithHeader("Content-Type", "application/json*")
+            .UsingPost()
+            .WithPath("/system-text-json")
+            .WithBody(matcher)
+        )
+        .RespondWith(Response.Create()
+            .WithBody("OK")
+        );
+
+        // Act
+        var content = """{"id":"ec475f56d4694b48bc737500ba575b35-1"}""";
+        var response = await new HttpClient()
+            .PostAsync($"{server.Url}/system-text-json", new StringContent(content, Encoding.UTF8, "application/json"))
+            .ConfigureAwait(false);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseText = await response.Content.ReadAsStringAsync();
+        responseText.Should().Contain("OK");
+    }
+#endif
 
     [Fact]
     public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFunc()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start();
         server.Given(
             Request.Create()
                 .UsingPost()
@@ -219,7 +246,7 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var content = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("key1", "value1") });
+        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
         var response = await new HttpClient()
             .PostAsync($"{server.Url}/foo", content)
             .ConfigureAwait(false);
