@@ -32,7 +32,7 @@ public class ResponseModel
     public object? BodyAsJson { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether child objects to be indented according to the Newtonsoft.Json.JsonTextWriter.Indentation and Newtonsoft.Json.JsonTextWriter.IndentChar settings.
+    /// Gets or sets a value indicating whether the Json Body String needs to be indented.
     /// </summary>
     public bool? BodyAsJsonIndented { get; set; }
 
