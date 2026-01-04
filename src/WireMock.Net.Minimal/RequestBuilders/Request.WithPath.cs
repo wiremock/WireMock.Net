@@ -21,7 +21,7 @@ public partial class Request
     {
         Guard.NotNullOrEmpty(matchers);
 
-        _requestMatchers.Add(new RequestMessagePathMatcher(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, matchers));
+        _requestMatchers.Add(new RequestMessagePathMatcher(MatchBehaviour.AcceptOnMatch, matchOperator, matchers));
         return this;
     }
 
