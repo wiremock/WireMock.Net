@@ -7,7 +7,6 @@ using FluentAssertions;
 using HandlebarsDotNet;
 using HandlebarsDotNet.Helpers.Enums;
 using Moq;
-using NFluent;
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -50,7 +49,7 @@ public class HandlebarsSettingsTests
         Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
 
         // Assert
-        action.Should().ThrowAsync<HandlebarsRuntimeException>();
+        await action.Should().ThrowAsync<HandlebarsRuntimeException>();
     }
 
     [Fact]
@@ -63,7 +62,7 @@ public class HandlebarsSettingsTests
             HandlebarsSettings = new HandlebarsSettings
             {
                 AllowedHandlebarsHelpers = HandlebarsSettings.DefaultAllowedHandlebarsHelpers
-                    .Concat(new[] { Category.Environment })
+                    .Concat([Category.Environment])
                     .ToArray()
             }
         };
@@ -78,14 +77,17 @@ public class HandlebarsSettingsTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, settingsWithEnv).ConfigureAwait(false);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Not.Contains("{{Environment.GetEnvironmentVariable");
-        Check.That(response.Message.BodyData.BodyAsString).StartsWith("User: ");
+        response.Message?.BodyData?.BodyAsString.Should().NotContain("{{Environment.GetEnvironmentVariable");
+        response.Message?.BodyData?.BodyAsString.Should().StartWith("User: ");
     }
 
     [Fact]
-    public void DefaultAllowedHandlebarsHelpers_Should_Not_Include_Environment()
+    public void DefaultAllowedHandlebarsHelpers_Should_Not_Include_EnvironmentAndDynamicLinq()
     {
         // Assert
-        Check.That(HandlebarsSettings.DefaultAllowedHandlebarsHelpers).Not.Contains(Category.Environment);
+        HandlebarsSettings.DefaultAllowedHandlebarsHelpers.Should()
+            .NotContain(Category.Environment)
+            .And
+            .NotContain(Category.DynamicLinq);
     }
 }
