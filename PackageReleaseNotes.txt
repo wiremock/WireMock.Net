@@ -1,8 +1,7 @@
-# 1.20.0 (24 December 2025)
-- #1399 Upgrade RamlToOpenApiConverter and YamlDotNet [feature]
-- #1400 Add WireMock.Net.NUnit project [feature]
-- #1405 Fix Testcontainers AddProtoDefinition [bug]
-- #1398 Upgrade YamlDotNet dependency [feature]
-- #1404 An exception occurs when adding multiple proto definitions in the TestContainer. [bug]
+# 1.23.0 (05 January 2026)
+- #1414 Pass the parameter matchOperator in Request.WithPath to its inner calls [bug]
+- #1416 Fix: Pass AllowedHandlebarsHelpers configuration to Handlebars.Net.Helpers library
+- #1413 Parameter `matchOperator` is not respected in the method Request.WithPath [bug]
+- #1415 HandlebarsSettings AllowedHandlebarsHelpers Configuration Not Applied [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
