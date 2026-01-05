@@ -39,6 +39,8 @@ internal static class WireMockHandlebarsHelpers
 //#endif
             o.CustomHelperPaths = paths;
 
+            o.Categories = settings.HandlebarsSettings?.AllowedHandlebarsHelpers ?? HandlebarsSettings.DefaultAllowedHandlebarsHelpers;
+
             o.CustomHelpers = new Dictionary<string, IHelpers>();
             if (settings.HandlebarsSettings?.AllowedCustomHandlebarsHelpers.HasFlag(CustomHandlebarsHelpers.File) == true)
             {
