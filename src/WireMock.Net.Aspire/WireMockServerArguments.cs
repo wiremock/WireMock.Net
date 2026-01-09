@@ -80,6 +80,19 @@ public class WireMockServerArguments
     public Dictionary<string, string[]> ProtoDefinitions { get; set; } = [];
 
     /// <summary>
+    /// Gets or sets a value indicating whether OpenTelemetry tracing is enabled.
+    /// When enabled, WireMock.Net will emit distributed traces for request processing.
+    /// Default value is <c>false</c>.
+    /// </summary>
+    public bool OpenTelemetryEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the OTLP exporter endpoint URL for OpenTelemetry.
+    /// When set, traces will be exported to this endpoint.
+    /// </summary>
+    public string? OpenTelemetryOtlpExporterEndpoint { get; set; }
+
+    /// <summary>
     /// Add an additional Urls on which WireMock should listen.
     /// </summary>
     /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
@@ -136,6 +149,16 @@ public class WireMockServerArguments
             Add(args, "--ReadStaticMappings", "true");
             Add(args, "--WatchStaticMappings", "true");
             Add(args, "--WatchStaticMappingsInSubdirectories", "true");
+        }
+
+        if (OpenTelemetryEnabled)
+        {
+            Add(args, "--OpenTelemetryEnabled", "true");
+            
+            if (!string.IsNullOrEmpty(OpenTelemetryOtlpExporterEndpoint))
+            {
+                Add(args, "--OpenTelemetryOtlpExporterEndpoint", OpenTelemetryOtlpExporterEndpoint);
+            }
         }
 
         if (AdditionalUrls.Count > 0)

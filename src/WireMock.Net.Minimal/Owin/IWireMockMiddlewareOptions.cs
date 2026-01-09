@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 using System.Security.Cryptography.X509Certificates;
@@ -90,4 +91,9 @@ internal interface IWireMockMiddlewareOptions
     QueryParameterMultipleValueSupport? QueryParameterMultipleValueSupport { get; set; }
 
     public bool ProxyAll { get; set; }
+
+    /// <summary>
+    /// Gets or sets the OpenTelemetry tracing options.
+    /// </summary>
+    OpenTelemetryOptions? OpenTelemetryOptions { get; set; }
 }

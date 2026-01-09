@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Stef.Validation;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
+using WireMock.Owin.OpenTelemetry;
 using WireMock.Services;
 using WireMock.Util;
 
@@ -77,6 +78,10 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 #if NETCOREAPP3_1 || NET5_0_OR_GREATER
                 AddCors(services);
 #endif
+
+                // Configure OpenTelemetry tracing if enabled (throws on unsupported frameworks)
+                services.AddWireMockOpenTelemetry(_wireMockMiddlewareOptions);
+
                 _wireMockMiddlewareOptions.AdditionalServiceRegistration?.Invoke(services);
             })
             .Configure(appBuilder =>

@@ -78,6 +78,20 @@ public static class WireMockServerSettingsParser
         settings.CorsPolicyOptions = parser.GetEnumValue(nameof(WireMockServerSettings.CorsPolicyOptions), CorsPolicyOptions.None);
         settings.ClientCertificateMode = parser.GetEnumValue(nameof(WireMockServerSettings.ClientCertificateMode), ClientCertificateMode.NoCertificate);
         settings.AcceptAnyClientCertificate = parser.GetBoolValue(nameof(WireMockServerSettings.AcceptAnyClientCertificate));
+
+        // Parse OpenTelemetry settings
+        var otelEnabled = parser.GetBoolValue("OpenTelemetryEnabled");
+        if (otelEnabled)
+        {
+            settings.OpenTelemetryOptions = new OpenTelemetryOptions
+            {
+                Enabled = true,
+                ExcludeAdminRequests = parser.GetBoolValue("OpenTelemetryExcludeAdminRequests", defaultValue: true),
+                RecordRequestBody = parser.GetBoolValue("OpenTelemetryRecordRequestBody"),
+                RecordResponseBody = parser.GetBoolValue("OpenTelemetryRecordResponseBody"),
+                OtlpExporterEndpoint = parser.GetStringValue("OpenTelemetryOtlpExporterEndpoint")
+            };
+        }
 #endif
 
         ParseLoggerSettings(settings, logger, parser);

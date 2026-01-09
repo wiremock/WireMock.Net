@@ -33,6 +33,7 @@ internal static class WireMockMiddlewareOptionsHelper
         options.QueryParameterMultipleValueSupport = settings.QueryParameterMultipleValueSupport;
         options.RequestLogExpirationDuration = settings.RequestLogExpirationDuration;
         options.SaveUnmatchedRequests = settings.SaveUnmatchedRequests;
+        options.OpenTelemetryOptions = settings.OpenTelemetryOptions;
 
         if (settings.CustomCertificateDefined)
         {

@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 using System.Security.Cryptography.X509Certificates;
@@ -106,4 +107,7 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public bool ProxyAll { get; set; }
+
+    /// <inheritdoc />
+    public OpenTelemetryOptions? OpenTelemetryOptions { get; set; }
 }

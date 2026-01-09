@@ -338,4 +338,13 @@ public class WireMockServerSettings
     /// </summary>
     [PublicAPI]
     public HandlebarsSettings? HandlebarsSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the OpenTelemetry tracing options.
+    /// When set and enabled, WireMock.Net will emit distributed traces for request processing.
+    /// Default is <c>null</c> (tracing disabled).
+    /// </summary>
+    [PublicAPI]
+    [JsonIgnore]
+    public OpenTelemetryOptions? OpenTelemetryOptions { get; set; }
 }
