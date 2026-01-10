@@ -1,0 +1,79 @@
+{
+    "Guid": "b9c82182-e469-41da-bcaf-b6e3157fefdc",
+    "UpdatedAt": "2025-12-18T17:21:57.3879723Z",
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/multipart2",
+                    "IgnoreCase": false
+                }
+            ]
+        },
+        "Methods": [
+            "POST"
+        ],
+        "Body": {
+            "MatcherName": "MultiPartMatcher",
+            "Matchers": [
+                {
+                    "Name": "MimePartMatcher",
+                    "ContentTypeMatcher": {
+                        "Name": "ContentTypeMatcher",
+                        "Pattern": "text/plain",
+                        "IgnoreCase": false
+                    },
+                    "ContentMatcher": {
+                        "Name": "ExactMatcher",
+                        "Pattern": "This is some plain text",
+                        "IgnoreCase": false
+                    }
+                },
+                {
+                    "Name": "MimePartMatcher",
+                    "ContentTypeMatcher": {
+                        "Name": "ContentTypeMatcher",
+                        "Pattern": "application/json",
+                        "IgnoreCase": false
+                    },
+                    "ContentMatcher": {
+                        "Name": "JsonMatcher",
+                        "Pattern": {
+                            "Key": "Value"
+                        },
+                        "IgnoreCase": true,
+                        "Regex": false
+                    }
+                },
+                {
+                    "Name": "MimePartMatcher",
+                    "ContentTypeMatcher": {
+                        "Name": "ContentTypeMatcher",
+                        "Pattern": "image/png",
+                        "IgnoreCase": false
+                    },
+                    "ContentDispositionMatcher": {
+                        "Name": "ExactMatcher",
+                        "Pattern": "form-data; name=\"image\"; filename=\"image.png\"",
+                        "IgnoreCase": false
+                    },
+                    "ContentTransferEncodingMatcher": {
+                        "Name": "ExactMatcher",
+                        "Pattern": "default",
+                        "IgnoreCase": false
+                    },
+                    "ContentMatcher": {
+                        "Name": "ExactObjectMatcher",
+                        "Pattern": "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACAgMAAAAP2OW3AAAADFBMVEX/tID/vpH/pWX/sHidUyjlAAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC"
+                    }
+                }
+            ],
+            "MatchOperator": "Or"
+        }
+    },
+    "Response": {
+        "BodyDestination": "SameAsSource",
+        "Body": "MultiPart2 is ok"
+    }
+}

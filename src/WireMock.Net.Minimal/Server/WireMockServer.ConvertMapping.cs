@@ -6,6 +6,7 @@ using System.Linq;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers;
+using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Serialization;
@@ -253,7 +254,15 @@ public partial class WireMockServer
         else if (requestModel.Body?.Matchers != null)
         {
             var matchOperator = StringUtils.ParseMatchOperator(requestModel.Body.MatchOperator);
-            requestBuilder = requestBuilder.WithBody(_matcherMapper.Map(requestModel.Body.Matchers)!, matchOperator);
+
+            if (requestModel.Body.MatcherName == RequestMessageMultiPartMatcher.MatcherName)
+            {
+                requestBuilder = requestBuilder.WithMultiPart(_matcherMapper.Map(requestModel.Body.Matchers), matchOperator: matchOperator);
+            }
+            else
+            {
+                requestBuilder = requestBuilder.WithBody(_matcherMapper.Map(requestModel.Body.Matchers), matchOperator);
+            }
         }
 
         return requestBuilder;

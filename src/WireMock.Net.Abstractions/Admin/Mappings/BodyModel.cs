@@ -9,6 +9,12 @@ namespace WireMock.Admin.Mappings;
 public class BodyModel
 {
     /// <summary>
+    /// The name of the body matcher.
+    /// Currently only "MultiPartMatcher" is supported.
+    /// </summary>
+    public string? MatcherName { get; set; }
+
+    /// <summary>
     /// Gets or sets the matcher.
     /// </summary>
     public MatcherModel? Matcher { get; set; }

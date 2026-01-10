@@ -25,9 +25,9 @@ internal class MatcherMapper
         _settings = Guard.NotNull(settings);
     }
 
-    public IMatcher[]? Map(IEnumerable<MatcherModel>? matchers)
+    public IMatcher[] Map(IEnumerable<MatcherModel>? matchers)
     {
-        return matchers?.Select(Map).OfType<IMatcher>().ToArray();
+        return matchers?.Select(Map).OfType<IMatcher>().ToArray() ?? [];
     }
 
     public IMatcher? Map(MatcherModel? matcherModel)

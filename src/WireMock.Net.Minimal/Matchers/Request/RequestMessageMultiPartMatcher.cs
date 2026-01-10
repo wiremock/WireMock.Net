@@ -12,6 +12,11 @@ namespace WireMock.Matchers.Request;
 /// </summary>
 public class RequestMessageMultiPartMatcher : IRequestMatcher
 {
+    /// <summary>
+    /// The name of this matcher.
+    /// </summary>
+    public const string MatcherName = "MultiPartMatcher";
+
     private readonly IMimeKitUtils _mimeKitUtils = LoadMimeKitUtils();
 
     /// <summary>
@@ -22,7 +27,7 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
     /// <summary>
     /// The <see cref="MatchOperator"/>
     /// </summary>
-    public MatchOperator MatchOperator { get; } = MatchOperator.Or;
+    public MatchOperator MatchOperator { get; } = MatchOperator.And;
 
     /// <summary>
     /// The <see cref="MatchBehaviour"/>
