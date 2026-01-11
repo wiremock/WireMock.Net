@@ -27,7 +27,7 @@ public partial class WireMockServerTests
         var textPlainMatcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, textPlainContentTypeMatcher, null, null, textPlainContentMatcher);
 
         var textJson = "{ \"Key\" : \"Value\" }";
-        var textJsonContentType = "text/json";
+        var textJsonContentType = "applicatiom/json";
         var textJsonContentTypeMatcher = new ContentTypeMatcher(textJsonContentType);
         var textJsonContentMatcher = new JsonMatcher(new { Key = "Value" }, true);
         var jsonMatcher = new MimePartMatcher(MatchBehaviour.AcceptOnMatch, textJsonContentTypeMatcher, null, null, textJsonContentMatcher);

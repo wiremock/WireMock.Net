@@ -24,12 +24,17 @@ public class RequestMatchResult : IRequestMatchResult
     public double AverageTotalScore => TotalNumber == 0 ? MatchScores.Mismatch : TotalScore / TotalNumber;
 
     /// <inheritdoc />
-    public IList<MatchDetail> MatchDetails { get; } = new List<MatchDetail>();
+    public IList<MatchDetail> MatchDetails { get; } = [];
 
     /// <inheritdoc />
     public double AddScore(Type matcherType, double score, Exception? exception)
     {
-        MatchDetails.Add(new MatchDetail { MatcherType = matcherType, Score = score, Exception = exception });
+        MatchDetails.Add(new MatchDetail
+        {
+            MatcherType = matcherType,
+            Score = score,
+            Exception = exception
+        });
 
         return score;
     }

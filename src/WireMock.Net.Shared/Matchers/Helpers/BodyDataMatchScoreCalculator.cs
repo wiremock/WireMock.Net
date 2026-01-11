@@ -8,13 +8,15 @@ namespace WireMock.Matchers.Helpers;
 
 internal static class BodyDataMatchScoreCalculator
 {
+    private static string _name = nameof(BodyDataMatchScoreCalculator);
+
     internal static MatchResult CalculateMatchScore(IBodyData? bodyData, IMatcher matcher)
     {
         Guard.NotNull(matcher);
 
         if (bodyData == null)
         {
-            return default;
+            return MatchResult.From(_name);
         }
 
         if (matcher is NotNullOrEmptyMatcher notNullOrEmptyMatcher)
@@ -30,7 +32,7 @@ internal static class BodyDataMatchScoreCalculator
                     return notNullOrEmptyMatcher.IsMatch(bodyData.BodyAsBytes);
 
                 default:
-                    return default;
+                    return MatchResult.From(_name);
             }
         }
 
@@ -68,6 +70,6 @@ internal static class BodyDataMatchScoreCalculator
             return protoBufMatcher.IsMatchAsync(bodyData.BodyAsBytes).GetAwaiter().GetResult();
         }
 
-        return default;
+        return MatchResult.From(_name);
     }
 }

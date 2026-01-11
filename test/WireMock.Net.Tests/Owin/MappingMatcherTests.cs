@@ -243,7 +243,7 @@ public class MappingMatcherTests
             var requestMatchResult = new RequestMatchResult();
             foreach (var score in match.scores)
             {
-                requestMatchResult.AddScore(typeof(object), score, null);
+                requestMatchResult.AddMatchResult(typeof(object), score, null);
             }
 
             mappingMock.SetupGet(m => m.Probability).Returns(match.probability);

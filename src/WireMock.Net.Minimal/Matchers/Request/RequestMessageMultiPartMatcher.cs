@@ -62,7 +62,7 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
         var score = MatchScores.Mismatch;
         Exception? exception = null;
 
-        if (Matchers?.Any() != true)
+        if (Matchers == null)
         {
             return requestMatchResult.AddScore(GetType(), score, null);
         }

@@ -14,6 +14,8 @@ namespace WireMock.Matchers.Request;
 /// </summary>
 public class RequestMessageClientIPMatcher : IRequestMatcher
 {
+    private const string _name = nameof(RequestMessageClientIPMatcher);
+
     /// <summary>
     /// The matchers
     /// </summary>
@@ -86,15 +88,15 @@ public class RequestMessageClientIPMatcher : IRequestMatcher
         if (Matchers != null)
         {
             var results = Matchers.Select(m => m.IsMatch(requestMessage.ClientIP)).ToArray();
-            return MatchResult.From(results, MatchOperator);
+            return MatchResult.From(_name, results, MatchOperator);
         }
 
         if (Funcs != null)
         {
             var results = Funcs.Select(func => func(requestMessage.ClientIP)).ToArray();
-            return MatchScores.ToScore(results, MatchOperator);
+            return MatchResult.From(_name, MatchScores.ToScore(results, MatchOperator));
         }
 
-        return default;
+        return MatchResult.From(_name);
     }
 }

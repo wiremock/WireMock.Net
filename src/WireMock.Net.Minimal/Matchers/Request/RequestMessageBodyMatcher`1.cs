@@ -11,6 +11,8 @@ namespace WireMock.Matchers.Request;
 /// </summary>
 public class RequestMessageBodyMatcher<T> : IRequestMatcher
 {
+    private const string _name = nameof(RequestMessageBodyMatcher<T>);
+
     /// <summary>
     /// The body data function for type T
     /// </summary>
@@ -46,15 +48,15 @@ public class RequestMessageBodyMatcher<T> : IRequestMatcher
                 try
                 {
                     var bodyAsT = jsonObject.ToObject<T>();
-                    return MatchScores.ToScore(Func(bodyAsT));
+                    return MatchResult.From(_name, MatchScores.ToScore(Func(bodyAsT)));
                 }
                 catch (Exception ex)
                 {
-                    return new MatchResult(ex);
+                    return MatchResult.From(_name, ex);
                 }
             }
         }
 
-        return default;
+        return MatchResult.From(_name);
     }
 }

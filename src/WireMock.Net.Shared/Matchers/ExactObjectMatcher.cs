@@ -68,7 +68,7 @@ public class ExactObjectMatcher : IObjectMatcher
             equals = Equals(Value, input);
         }
 
-        return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(equals));
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(equals)));
     }
 
     /// <inheritdoc />

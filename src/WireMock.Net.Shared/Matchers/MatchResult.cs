@@ -11,7 +11,7 @@ namespace WireMock.Matchers;
 /// <summary>
 /// The MatchResult which contains the score (value between 0.0 - 1.0 of the similarity) and an optional error message.
 /// </summary>
-public struct MatchResult
+public class MatchResult
 {
     /// <summary>
     /// A value between 0.0 - 1.0 of the similarity.
@@ -25,33 +25,14 @@ public struct MatchResult
     public Exception? Exception { get; set; }
 
     /// <summary>
-    /// Create a MatchResult
+    /// The name or description of the matcher.
     /// </summary>
-    /// <param name="score">A value between 0.0 - 1.0 of the similarity.</param>
-    /// <param name="exception">The exception in case the matching fails. [Optional]</param>
-    public MatchResult(double score, Exception? exception = null)
-    {
-        Score = score;
-        Exception = exception;
-    }
+    public required string Name { get; set; }
 
     /// <summary>
-    /// Create a MatchResult
+    /// The sub MatchResults in case of multiple matchers.
     /// </summary>
-    /// <param name="exception">The exception in case the matching fails.</param>
-    public MatchResult(Exception exception)
-    {
-        Exception = Guard.NotNull(exception);
-    }
-
-    /// <summary>
-    /// Implicitly converts a double to a MatchResult.
-    /// </summary>
-    /// <param name="score">The score</param>
-    public static implicit operator MatchResult(double score)
-    {
-        return new MatchResult(score);
-    }
+    public MatchResult[]? MatchResults { get; set; }
 
     /// <summary>
     /// Is the value a perfect match?
@@ -59,12 +40,40 @@ public struct MatchResult
     public bool IsPerfect() => MatchScores.IsPerfect(Score);
 
     /// <summary>
+    /// Create a MatchResult.
+    /// </summary>
+    /// <param name="name">The name or description of the matcher.</param>
+    /// <param name="score">A value between 0.0 - 1.0 of the similarity.</param>
+    /// <param name="exception">The exception in case the matching fails. [Optional]</param>
+    public static MatchResult From(string name, double score = 0, Exception? exception = null)
+    {
+        return new MatchResult
+        {
+            Name = name,
+            Score = score,
+            Exception = exception
+        };
+    }
+
+    /// <summary>
+    /// Create a MatchResult from exception.
+    /// </summary>
+    /// <param name="name">The name or description of the matcher.</param>
+    /// <param name="exception">The exception in case the matching fails.</param>
+    /// <returns>MatchResult</returns>
+    public static MatchResult From(string name, Exception exception)
+    {
+        return From(name, MatchScores.Mismatch, exception);
+    }
+
+    /// <summary>
     /// Create a MatchResult from multiple MatchResults.
     /// </summary>
+    /// <param name="name">The name or description of the matcher.</param>
     /// <param name="matchResults">A list of MatchResults.</param>
     /// <param name="matchOperator">The MatchOperator</param>
     /// <returns>MatchResult</returns>
-    public static MatchResult From(IReadOnlyList<MatchResult> matchResults, MatchOperator matchOperator)
+    public static MatchResult From(string name, IReadOnlyList<MatchResult> matchResults, MatchOperator matchOperator)
     {
         Guard.NotNullOrEmpty(matchResults);
 
@@ -75,6 +84,8 @@ public struct MatchResult
 
         return new MatchResult
         {
+            Name = name,
+            MatchResults = matchResults.ToArray(),
             Score = MatchScores.ToScore(matchResults.Select(r => r.Score).ToArray(), matchOperator),
             Exception = matchResults.Select(m => m.Exception).OfType<Exception>().ToArray().ToException()
         };

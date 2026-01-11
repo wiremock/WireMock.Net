@@ -86,7 +86,7 @@ public class SimMetricsMatcher : IStringMatcher
         IStringMetric stringMetricType = GetStringMetricType();
 
         var score = MatchScores.ToScore(_patterns.Select(p => stringMetricType.GetSimilarity(p.GetPattern(), input)).ToArray(), MatchOperator);
-        return MatchBehaviourHelper.Convert(MatchBehaviour, score);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
     }
 
     /// <inheritdoc />

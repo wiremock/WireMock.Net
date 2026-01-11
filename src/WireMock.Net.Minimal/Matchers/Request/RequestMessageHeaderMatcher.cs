@@ -14,6 +14,8 @@ namespace WireMock.Matchers.Request;
 /// <inheritdoc cref="IRequestMatcher"/>
 public class RequestMessageHeaderMatcher : IRequestMatcher
 {
+    private const string _name = nameof(RequestMessageCookieMatcher);
+
     /// <summary>
     /// MatchBehaviour
     /// </summary>
@@ -117,7 +119,7 @@ public class RequestMessageHeaderMatcher : IRequestMatcher
     {
         if (requestMessage.Headers == null)
         {
-            return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+            return MatchResult.From(_name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
         }
 
         // Check if we want to use IgnoreCase to compare the Header-Name and Header-Value(s)
@@ -126,14 +128,14 @@ public class RequestMessageHeaderMatcher : IRequestMatcher
         if (Funcs != null)
         {
             var funcResults = Funcs.Select(f => f(headers.ToDictionary(entry => entry.Key, entry => entry.Value.ToArray()))).ToArray();
-            return MatchScores.ToScore(funcResults, MatchOperator);
+            return MatchResult.From(_name, MatchScores.ToScore(funcResults, MatchOperator));
         }
 
         if (Matchers != null)
         {
             if (!headers.ContainsKey(Name))
             {
-                return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+                return MatchResult.From(_name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
             }
 
             var results = new List<MatchResult>();
@@ -141,12 +143,12 @@ public class RequestMessageHeaderMatcher : IRequestMatcher
             {
                 var resultsPerMatcher = headers[Name].Select(matcher.IsMatch).ToArray();
 
-                results.Add(MatchResult.From(resultsPerMatcher, MatchOperator.And));
+                results.Add(MatchResult.From(_name, resultsPerMatcher, MatchOperator.And));
             }
 
-            return MatchResult.From(results, MatchOperator);
+            return MatchResult.From(_name, results, MatchOperator);
         }
 
-        return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+        return MatchResult.From(_name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
     }
 }
