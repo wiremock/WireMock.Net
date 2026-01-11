@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\WireMock.Net.OpenTelemetry\WireMock.Net.OpenTelemetry.csproj" />
     <ProjectReference Include="..\..\src\WireMock.Net\WireMock.Net.csproj" />
   </ItemGroup>
 
