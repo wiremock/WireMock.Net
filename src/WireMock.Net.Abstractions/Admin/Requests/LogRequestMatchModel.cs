@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Collections.Generic;
+using WireMock.Matchers.Request;
 
 namespace WireMock.Admin.Requests;
 
@@ -47,5 +48,5 @@ public class LogRequestMatchModel
     /// <value>
     /// The match details.
     /// </value>
-    public IList<object> MatchDetails { get; set; } = [];
+    public IList<MatchDetail> MatchDetails { get; set; } = [];
 }

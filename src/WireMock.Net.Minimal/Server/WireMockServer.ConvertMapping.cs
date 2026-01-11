@@ -255,7 +255,7 @@ public partial class WireMockServer
         {
             var matchOperator = StringUtils.ParseMatchOperator(requestModel.Body.MatchOperator);
 
-            if (requestModel.Body.MatcherName == RequestMessageMultiPartMatcher.MatcherName)
+            if (requestModel.Body.MatcherName == RequestMessageMultiPartMatcher.Name)
             {
                 requestBuilder = requestBuilder.WithMultiPart(_matcherMapper.Map(requestModel.Body.Matchers), matchOperator: matchOperator);
             }

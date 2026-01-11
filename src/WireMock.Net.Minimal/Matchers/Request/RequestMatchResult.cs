@@ -31,12 +31,21 @@ public class RequestMatchResult : IRequestMatchResult
     {
         MatchDetails.Add(new MatchDetail
         {
+            Name = matcherType.Name.Replace("RequestMessage", string.Empty),
             MatcherType = matcherType,
             Score = score,
             Exception = exception
         });
 
         return score;
+    }
+
+    /// <inheritdoc />
+    public double AddMatchDetail(MatchDetail matchDetail)
+    {
+        MatchDetails.Add(matchDetail);
+
+        return matchDetail.Score;
     }
 
     /// <summary>

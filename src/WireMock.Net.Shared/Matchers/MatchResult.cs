@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Stef.Validation;
 using WireMock.Extensions;
+using WireMock.Matchers.Request;
 
 namespace WireMock.Matchers;
 
@@ -30,7 +31,7 @@ public class MatchResult
     public required string Name { get; set; }
 
     /// <summary>
-    /// The sub MatchResults in case of multiple matchers.
+    /// The child MatchResults in case of multiple matchers.
     /// </summary>
     public MatchResult[]? MatchResults { get; set; }
 
@@ -98,5 +99,20 @@ public class MatchResult
     public (double Score, Exception? Exception) Expand()
     {
         return (Score, Exception);
+    }
+
+    /// <summary>
+    /// Convert to <see cref="MatchResult"/>.
+    /// </summary>
+    public MatchDetail ToMatchDetail()
+    {
+        return new MatchDetail
+        {
+            Name = Name,
+            MatcherType = typeof(MatchResult),
+            Score = Score,
+            Exception = Exception,
+            MatchDetails = MatchResults?.Select(mr => mr.ToMatchDetail()).ToArray()
+        };
     }
 }

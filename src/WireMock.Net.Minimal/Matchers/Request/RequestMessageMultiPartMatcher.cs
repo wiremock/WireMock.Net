@@ -15,7 +15,7 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
     /// <summary>
     /// The name of this matcher.
     /// </summary>
-    public const string MatcherName = "MultiPartMatcher";
+    public const string Name = "MultiPartMatcher";
 
     private readonly IMimeKitUtils _mimeKitUtils = LoadMimeKitUtils();
 
@@ -59,19 +59,20 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
     /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
-        var score = MatchScores.Mismatch;
+        var matchDetail = MatchResult.From(Name).ToMatchDetail();
         Exception? exception = null;
 
         if (Matchers == null)
         {
-            return requestMatchResult.AddScore(GetType(), score, null);
+            return requestMatchResult.AddMatchDetail(matchDetail);
         }
 
         if (!_mimeKitUtils.TryGetMimeMessage(requestMessage, out var message))
         {
-            return requestMatchResult.AddScore(GetType(), score, null);
+            return requestMatchResult.AddMatchDetail(matchDetail);
         }
 
+        double score = MatchScores.Mismatch;
         try
         {
             foreach (var mimePartMatcher in Matchers.OfType<IMimePartMatcher>().ToArray())
@@ -99,7 +100,7 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
             exception = ex;
         }
 
-        return requestMatchResult.AddScore(GetType(), score, exception);
+        return requestMatchResult.AddMatchDetail(MatchResult.From(Name, score, exception).ToMatchDetail());
     }
 
     private static IMimeKitUtils LoadMimeKitUtils()

@@ -79,8 +79,8 @@ public class RequestMessageClientIPMatcher : IRequestMatcher
     /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
-        var (score, exception) = GetMatchResult(requestMessage).Expand();
-        return requestMatchResult.AddScore(GetType(), score, exception);
+        var matchDetail = GetMatchResult(requestMessage).ToMatchDetail();
+        return requestMatchResult.AddMatchDetail(matchDetail);
     }
 
     private MatchResult GetMatchResult(IRequestMessage requestMessage)
