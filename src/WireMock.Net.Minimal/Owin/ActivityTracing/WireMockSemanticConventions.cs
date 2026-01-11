@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WireMock.Owin.OpenTelemetry;
+namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>
 /// Semantic convention constants for WireMock.Net tracing attributes.

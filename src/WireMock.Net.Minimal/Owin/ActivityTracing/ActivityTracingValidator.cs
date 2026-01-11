@@ -5,7 +5,7 @@ using System;
 #endif
 using WireMock.Settings;
 
-namespace WireMock.Owin.OpenTelemetry;
+namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>
 /// Validator for Activity Tracing configuration.

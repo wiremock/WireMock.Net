@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Owin.OpenTelemetry;
+using WireMock.Owin.ActivityTracing;
 using WireMock.Types;
 using WireMock.Util;
 using System.Security.Cryptography.X509Certificates;

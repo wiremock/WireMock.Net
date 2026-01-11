@@ -2,7 +2,7 @@
 
 using System;
 using Stef.Validation;
-using WireMock.Owin.OpenTelemetry;
+using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 
 namespace WireMock.Owin;
@@ -40,7 +40,7 @@ internal static class WireMockMiddlewareOptionsHelper
 #if OPENTELEMETRY_SUPPORTED
         if (settings.ActivityTracingOptions is not null)
         {
-            options.ActivityTracingOptions = new Owin.OpenTelemetry.ActivityTracingOptions
+            options.ActivityTracingOptions = new Owin.ActivityTracing.ActivityTracingOptions
             {
                 ExcludeAdminRequests = settings.ActivityTracingOptions.ExcludeAdminRequests,
                 RecordRequestBody = settings.ActivityTracingOptions.RecordRequestBody,

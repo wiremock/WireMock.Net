@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using WireMock.Logging;
 
-namespace WireMock.Owin.OpenTelemetry;
+namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>
 /// Provides an ActivitySource for WireMock.Net distributed tracing.

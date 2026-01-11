@@ -2,7 +2,7 @@
 
 #if OPENTELEMETRY_SUPPORTED
 
-namespace WireMock.Owin.OpenTelemetry;
+namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>
 /// Options for controlling activity tracing in WireMock.Net middleware.

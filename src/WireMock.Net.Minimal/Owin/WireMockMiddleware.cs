@@ -18,7 +18,7 @@ using WireMock.Exceptions;
 using WireMock.Util;
 #if OPENTELEMETRY_SUPPORTED
 using System.Diagnostics;
-using WireMock.Owin.OpenTelemetry;
+using WireMock.Owin.ActivityTracing;
 #endif
 #if !USE_ASPNETCORE
 using IContext = Microsoft.Owin.IOwinContext;
