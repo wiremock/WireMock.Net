@@ -102,9 +102,9 @@ namespace WireMock.Owin
             var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
 
 #if OPENTELEMETRY_SUPPORTED
-            // Start OpenTelemetry activity if OpenTelemetryOptions is configured
-            var tracingEnabled = _options.OpenTelemetryOptions is not null;
-            var excludeAdmin = _options.OpenTelemetryOptions?.ExcludeAdminRequests ?? true;
+            // Start activity if ActivityTracingOptions is configured
+            var tracingEnabled = _options.ActivityTracingOptions is not null;
+            var excludeAdmin = _options.ActivityTracingOptions?.ExcludeAdminRequests ?? true;
             Activity? activity = null;
             
             // Check if we should trace this request (optionally exclude admin requests)
@@ -113,7 +113,7 @@ namespace WireMock.Owin
             if (shouldTrace)
             {
                 activity = WireMockActivitySource.StartRequestActivity(request.Method, request.Path);
-                WireMockActivitySource.EnrichWithRequest(activity, request);
+                WireMockActivitySource.EnrichWithRequest(activity, request, _options.ActivityTracingOptions);
             }
 
             try
@@ -255,7 +255,7 @@ namespace WireMock.Owin
 
 #if OPENTELEMETRY_SUPPORTED
                 // Enrich activity with response and mapping info
-                WireMockActivitySource.EnrichWithLogEntry(activity, log);
+                WireMockActivitySource.EnrichWithLogEntry(activity, log, _options.ActivityTracingOptions);
 #endif
 
                 LogRequest(log, logRequest);

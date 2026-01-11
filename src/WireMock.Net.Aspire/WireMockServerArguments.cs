@@ -156,6 +156,10 @@ public class WireMockServerArguments
 
         if (OpenTelemetryEnabled)
         {
+            // Enable activity tracing (creates System.Diagnostics.Activity objects)
+            Add(args, "--ActivityTracingEnabled", "true");
+            
+            // Enable OpenTelemetry exporter
             Add(args, "--OpenTelemetryEnabled", "true");
             
             if (!string.IsNullOrEmpty(OpenTelemetryOtlpExporterEndpoint))

@@ -130,14 +130,6 @@
         <PackageReference Include="Scriban.Signed" Version="5.5.0" />
     </ItemGroup>
 
-    <!-- OpenTelemetry packages for .NET 5+ -->
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
-        <PackageReference Include="OpenTelemetry" Version="1.8.1" />
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
-        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
-    </ItemGroup>
-
     <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
         <PackageReference Include="System.ComponentModel" Version="4.3.0" />
     </ItemGroup>

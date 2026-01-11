@@ -29,4 +29,6 @@ internal static class WireMockSemanticConventions
     public const string PartialMappingGuid = "wiremock.partial_mapping.guid";
     public const string PartialMappingTitle = "wiremock.partial_mapping.title";
     public const string RequestGuid = "wiremock.request.guid";
+    public const string RequestBody = "wiremock.request.body";
+    public const string ResponseBody = "wiremock.response.body";
 }

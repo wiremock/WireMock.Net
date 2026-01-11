@@ -11,9 +11,23 @@ using WireMock.ResponseBuilders;
 
 Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 
-// Note: Each TracerProvider has its own set of sources/instrumentations it listens to.
-// WireMock.Net's internal TracerProvider (when OpenTelemetryOptions is configured) uses OTLP exporter.
-// To see traces in the console, we need to configure our own TracerProvider with the sources we want to capture.
+// WireMock.Net creates Activity objects using System.Diagnostics.Activity (built into .NET).
+// These activities are automatically created when ActivityTracingEnabled is set to true.
+//
+// To export these traces, you have two options:
+//
+// Option 1: Configure your own TracerProvider (shown below)
+//   - Full control over exporters (Console, OTLP, Jaeger, etc.)
+//   - Add additional instrumentation (HttpClient, database, etc.)
+//   - Recommended for most applications
+//
+// Option 2: Use WireMock.Net.OpenTelemetry package
+//   - Reference the WireMock.Net.OpenTelemetry NuGet package
+//   - Use services.AddWireMockOpenTelemetry(openTelemetryOptions)
+//   - Adds WireMock + ASP.NET Core instrumentation and OTLP exporter
+//   - Good for quick setup with all-in-one configuration
+
+// Option 1: Custom TracerProvider with Console exporter for this demo
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddSource("WireMock.Net")           // WireMock-specific traces with mapping info
     .AddAspNetCoreInstrumentation()      // ASP.NET Core HTTP server traces
@@ -26,11 +40,11 @@ Console.WriteLine("  - WireMock.Net traces (wiremock.* tags)");
 Console.WriteLine("  - ASP.NET Core server traces");
 Console.WriteLine("  - HTTP client traces\n");
 
-// Start WireMock server with OpenTelemetry enabled (presence of OpenTelemetryOptions enables tracing)
+// Start WireMock server with OpenTelemetry enabled (ActivityTracingOptions != null enables tracing)
 var server = WireMockServer.Start(new WireMockServerSettings
 {
     StartAdminInterface = true,
-    OpenTelemetryOptions = new OpenTelemetryOptions
+    ActivityTracingOptions = new ActivityTracingOptions
     {
         ExcludeAdminRequests = true
     }

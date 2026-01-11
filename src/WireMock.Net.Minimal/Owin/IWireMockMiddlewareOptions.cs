@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Settings;
+using WireMock.Owin.OpenTelemetry;
 using WireMock.Types;
 using WireMock.Util;
 using System.Security.Cryptography.X509Certificates;
@@ -92,8 +92,11 @@ internal interface IWireMockMiddlewareOptions
 
     public bool ProxyAll { get; set; }
 
+#if OPENTELEMETRY_SUPPORTED
     /// <summary>
-    /// Gets or sets the OpenTelemetry tracing options.
+    /// Gets or sets the activity tracing options.
+    /// When set, System.Diagnostics.Activity objects are created for request tracing.
     /// </summary>
-    OpenTelemetryOptions? OpenTelemetryOptions { get; set; }
+    ActivityTracingOptions? ActivityTracingOptions { get; set; }
+#endif
 }

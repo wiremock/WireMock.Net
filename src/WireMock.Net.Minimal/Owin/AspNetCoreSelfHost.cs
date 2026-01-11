@@ -79,9 +79,6 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 AddCors(services);
 #endif
 
-                // Configure OpenTelemetry tracing if enabled (throws on unsupported frameworks)
-                services.AddWireMockOpenTelemetry(_wireMockMiddlewareOptions);
-
                 _wireMockMiddlewareOptions.AdditionalServiceRegistration?.Invoke(services);
             })
             .Configure(appBuilder =>

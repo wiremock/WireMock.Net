@@ -52,7 +52,7 @@ public static class WireMockActivitySource
     /// <summary>
     /// Enriches an activity with request information.
     /// </summary>
-    internal static void EnrichWithRequest(Activity? activity, IRequestMessage request)
+    internal static void EnrichWithRequest(Activity? activity, IRequestMessage request, ActivityTracingOptions? options = null)
     {
         if (activity == null)
         {
@@ -68,12 +68,18 @@ public static class WireMockActivitySource
         {
             activity.SetTag(WireMockSemanticConventions.ClientAddress, request.ClientIP);
         }
+
+        // Record request body if enabled
+        if (options?.RecordRequestBody == true && request.Body != null)
+        {
+            activity.SetTag(WireMockSemanticConventions.RequestBody, request.Body);
+        }
     }
 
     /// <summary>
     /// Enriches an activity with response information.
     /// </summary>
-    internal static void EnrichWithResponse(Activity? activity, IResponseMessage? response)
+    internal static void EnrichWithResponse(Activity? activity, IResponseMessage? response, ActivityTracingOptions? options = null)
     {
         if (activity == null || response == null)
         {
@@ -104,6 +110,12 @@ public static class WireMockActivitySource
             {
                 activity.SetTag("otel.status_code", "OK");
             }
+        }
+
+        // Record response body if enabled
+        if (options?.RecordResponseBody == true && response.BodyData?.BodyAsString != null)
+        {
+            activity.SetTag(WireMockSemanticConventions.ResponseBody, response.BodyData.BodyAsString);
         }
     }
 
@@ -143,7 +155,7 @@ public static class WireMockActivitySource
     /// <summary>
     /// Enriches an activity with log entry information (includes response and mapping match info).
     /// </summary>
-    internal static void EnrichWithLogEntry(Activity? activity, ILogEntry logEntry)
+    internal static void EnrichWithLogEntry(Activity? activity, ILogEntry logEntry, ActivityTracingOptions? options = null)
     {
         if (activity == null)
         {
@@ -151,15 +163,18 @@ public static class WireMockActivitySource
         }
 
         // Enrich with response
-        EnrichWithResponse(activity, logEntry.ResponseMessage);
+        EnrichWithResponse(activity, logEntry.ResponseMessage, options);
 
-        // Enrich with mapping match
-        EnrichWithMappingMatch(
-            activity,
-            logEntry.MappingGuid,
-            logEntry.MappingTitle,
-            logEntry.RequestMatchResult?.IsPerfectMatch ?? false,
-            logEntry.RequestMatchResult?.TotalScore);
+        // Enrich with mapping match (if enabled)
+        if (options?.RecordMatchDetails != false)
+        {
+            EnrichWithMappingMatch(
+                activity,
+                logEntry.MappingGuid,
+                logEntry.MappingTitle,
+                logEntry.RequestMatchResult?.IsPerfectMatch ?? false,
+                logEntry.RequestMatchResult?.TotalScore);
+        }
 
         // Set request GUID
         activity.SetTag(WireMockSemanticConventions.RequestGuid, logEntry.Guid.ToString());

@@ -78,19 +78,6 @@ public static class WireMockServerSettingsParser
         settings.CorsPolicyOptions = parser.GetEnumValue(nameof(WireMockServerSettings.CorsPolicyOptions), CorsPolicyOptions.None);
         settings.ClientCertificateMode = parser.GetEnumValue(nameof(WireMockServerSettings.ClientCertificateMode), ClientCertificateMode.NoCertificate);
         settings.AcceptAnyClientCertificate = parser.GetBoolValue(nameof(WireMockServerSettings.AcceptAnyClientCertificate));
-
-        // Parse OpenTelemetry settings - when CLI flag is set, create the options object which enables tracing
-        var otelEnabled = parser.GetBoolValue("OpenTelemetryEnabled");
-        if (otelEnabled)
-        {
-            settings.OpenTelemetryOptions = new OpenTelemetryOptions
-            {
-                ExcludeAdminRequests = parser.GetBoolValue("OpenTelemetryExcludeAdminRequests", defaultValue: true),
-                RecordRequestBody = parser.GetBoolValue("OpenTelemetryRecordRequestBody"),
-                RecordResponseBody = parser.GetBoolValue("OpenTelemetryRecordResponseBody"),
-                OtlpExporterEndpoint = parser.GetStringValue("OpenTelemetryOtlpExporterEndpoint")
-            };
-        }
 #endif
 
         ParseLoggerSettings(settings, logger, parser);
@@ -98,6 +85,7 @@ public static class WireMockServerSettingsParser
         ParseProxyAndRecordSettings(settings, parser);
         ParseCertificateSettings(settings, parser);
         ParseHandlebarsSettings(settings, parser);
+        ParseActivityTracingSettings(settings, parser);
 
         return true;
     }
@@ -238,5 +226,35 @@ public static class WireMockServerSettingsParser
                 TransformerType = parser.GetEnumValue($"{prefix}TransformerType", TransformerType.Handlebars)
             };
         }
+    }
+
+    private static void ParseActivityTracingSettings(WireMockServerSettings settings, SimpleSettingsParser parser)
+    {
+        // Only create ActivityTracingOptions if tracing is enabled
+        if (parser.GetBoolValue("ActivityTracingEnabled") || parser.GetBoolValue("ActivityTracingOptions__Enabled"))
+        {
+            settings.ActivityTracingOptions = new ActivityTracingOptions
+            {
+                ExcludeAdminRequests = GetBoolWithDefault(parser, "ActivityTracingExcludeAdminRequests", "ActivityTracingOptions__ExcludeAdminRequests", defaultValue: true),
+                RecordRequestBody = parser.GetBoolValue("ActivityTracingRecordRequestBody") || parser.GetBoolValue("ActivityTracingOptions__RecordRequestBody"),
+                RecordResponseBody = parser.GetBoolValue("ActivityTracingRecordResponseBody") || parser.GetBoolValue("ActivityTracingOptions__RecordResponseBody"),
+                RecordMatchDetails = GetBoolWithDefault(parser, "ActivityTracingRecordMatchDetails", "ActivityTracingOptions__RecordMatchDetails", defaultValue: true)
+            };
+        }
+    }
+
+    private static bool GetBoolWithDefault(SimpleSettingsParser parser, string key1, string key2, bool defaultValue)
+    {
+        if (parser.Contains(key1))
+        {
+            return parser.GetBoolValue(key1);
+        }
+
+        if (parser.Contains(key2))
+        {
+            return parser.GetBoolValue(key2);
+        }
+
+        return defaultValue;
     }
 }
