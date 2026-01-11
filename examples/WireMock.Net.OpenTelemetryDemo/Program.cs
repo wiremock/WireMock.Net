@@ -12,7 +12,7 @@ using WireMock.ResponseBuilders;
 Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 
 // Note: Each TracerProvider has its own set of sources/instrumentations it listens to.
-// WireMock.Net's internal TracerProvider (when OpenTelemetryOptions.Enabled = true) uses OTLP exporter.
+// WireMock.Net's internal TracerProvider (when OpenTelemetryOptions is configured) uses OTLP exporter.
 // To see traces in the console, we need to configure our own TracerProvider with the sources we want to capture.
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddSource("WireMock.Net")           // WireMock-specific traces with mapping info
@@ -26,13 +26,12 @@ Console.WriteLine("  - WireMock.Net traces (wiremock.* tags)");
 Console.WriteLine("  - ASP.NET Core server traces");
 Console.WriteLine("  - HTTP client traces\n");
 
-// Start WireMock server with OpenTelemetry enabled
+// Start WireMock server with OpenTelemetry enabled (presence of OpenTelemetryOptions enables tracing)
 var server = WireMockServer.Start(new WireMockServerSettings
 {
     StartAdminInterface = true,
     OpenTelemetryOptions = new OpenTelemetryOptions
     {
-        Enabled = true,
         ExcludeAdminRequests = true
     }
 });

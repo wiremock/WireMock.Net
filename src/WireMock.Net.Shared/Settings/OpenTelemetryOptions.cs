@@ -6,16 +6,10 @@ namespace WireMock.Settings;
 
 /// <summary>
 /// OpenTelemetry configuration options for WireMock.Net.
+/// When this options object is provided to WireMockServerSettings, OpenTelemetry tracing is automatically enabled.
 /// </summary>
 public class OpenTelemetryOptions
 {
-    /// <summary>
-    /// Gets or sets a value indicating whether OpenTelemetry tracing is enabled.
-    /// Default is <c>false</c>.
-    /// </summary>
-    [PublicAPI]
-    public bool Enabled { get; set; }
-
     /// <summary>
     /// Gets or sets a value indicating whether to record request body in trace attributes.
     /// Default is <c>false</c> due to potential PII concerns.
@@ -46,10 +40,4 @@ public class OpenTelemetryOptions
     /// </summary>
     [PublicAPI]
     public string? OtlpExporterEndpoint { get; set; }
-
-    /// <summary>
-    /// Creates a new instance of <see cref="OpenTelemetryOptions"/> with tracing enabled.
-    /// </summary>
-    /// <returns>An <see cref="OpenTelemetryOptions"/> instance with tracing enabled.</returns>
-    public static OpenTelemetryOptions EnabledOptions() => new() { Enabled = true };
 }

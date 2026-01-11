@@ -18,7 +18,7 @@ internal static class OpenTelemetryServiceCollectionExtensions
     private const string ServiceName = "WireMock.Net";
 
     /// <summary>
-    /// Adds OpenTelemetry tracing to the WireMock server if enabled in options.
+    /// Adds OpenTelemetry tracing to the WireMock server if OpenTelemetryOptions is provided.
     /// This configures both the WireMock-specific ActivitySource and ASP.NET Core instrumentation.
     /// </summary>
     public static IServiceCollection AddWireMockOpenTelemetry(
@@ -26,7 +26,7 @@ internal static class OpenTelemetryServiceCollectionExtensions
         IWireMockMiddlewareOptions options)
     {
         var otelOptions = options.OpenTelemetryOptions;
-        if (otelOptions?.Enabled != true)
+        if (otelOptions is null)
         {
             return services;
         }
@@ -90,13 +90,13 @@ namespace WireMock.Owin.OpenTelemetry;
 internal static class OpenTelemetryServiceCollectionExtensions
 {
     /// <summary>
-    /// Throws an exception if OpenTelemetry is enabled, as it's not supported on this framework.
+    /// Throws an exception if OpenTelemetryOptions is provided, as OpenTelemetry is not supported on this framework.
     /// </summary>
     public static IServiceCollection AddWireMockOpenTelemetry(
         this IServiceCollection services,
         IWireMockMiddlewareOptions options)
     {
-        if (options.OpenTelemetryOptions?.Enabled == true)
+        if (options.OpenTelemetryOptions is not null)
         {
             throw new InvalidOperationException("OpenTelemetry is not supported on this target framework. It requires .NET 5.0 or higher.");
         }

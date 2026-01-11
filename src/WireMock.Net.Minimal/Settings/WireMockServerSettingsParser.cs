@@ -79,13 +79,12 @@ public static class WireMockServerSettingsParser
         settings.ClientCertificateMode = parser.GetEnumValue(nameof(WireMockServerSettings.ClientCertificateMode), ClientCertificateMode.NoCertificate);
         settings.AcceptAnyClientCertificate = parser.GetBoolValue(nameof(WireMockServerSettings.AcceptAnyClientCertificate));
 
-        // Parse OpenTelemetry settings
+        // Parse OpenTelemetry settings - when CLI flag is set, create the options object which enables tracing
         var otelEnabled = parser.GetBoolValue("OpenTelemetryEnabled");
         if (otelEnabled)
         {
             settings.OpenTelemetryOptions = new OpenTelemetryOptions
             {
-                Enabled = true,
                 ExcludeAdminRequests = parser.GetBoolValue("OpenTelemetryExcludeAdminRequests", defaultValue: true),
                 RecordRequestBody = parser.GetBoolValue("OpenTelemetryRecordRequestBody"),
                 RecordResponseBody = parser.GetBoolValue("OpenTelemetryRecordResponseBody"),

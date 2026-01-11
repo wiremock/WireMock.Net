@@ -102,8 +102,8 @@ namespace WireMock.Owin
             var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
 
 #if OPENTELEMETRY_SUPPORTED
-            // Start OpenTelemetry activity if tracing is enabled
-            var tracingEnabled = _options.OpenTelemetryOptions?.Enabled == true;
+            // Start OpenTelemetry activity if OpenTelemetryOptions is configured
+            var tracingEnabled = _options.OpenTelemetryOptions is not null;
             var excludeAdmin = _options.OpenTelemetryOptions?.ExcludeAdminRequests ?? true;
             Activity? activity = null;
             
