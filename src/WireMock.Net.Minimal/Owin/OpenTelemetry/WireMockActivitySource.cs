@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using WireMock.Logging;
 
 namespace WireMock.Owin.OpenTelemetry;
 
@@ -137,6 +138,31 @@ public static class WireMockActivitySource
         {
             activity.SetTag(WireMockSemanticConventions.MatchScore, matchScore.Value);
         }
+    }
+
+    /// <summary>
+    /// Enriches an activity with log entry information (includes response and mapping match info).
+    /// </summary>
+    internal static void EnrichWithLogEntry(Activity? activity, ILogEntry logEntry)
+    {
+        if (activity == null)
+        {
+            return;
+        }
+
+        // Enrich with response
+        EnrichWithResponse(activity, logEntry.ResponseMessage);
+
+        // Enrich with mapping match
+        EnrichWithMappingMatch(
+            activity,
+            logEntry.MappingGuid,
+            logEntry.MappingTitle,
+            logEntry.RequestMatchResult?.IsPerfectMatch ?? false,
+            logEntry.RequestMatchResult?.TotalScore);
+
+        // Set request GUID
+        activity.SetTag(WireMockSemanticConventions.RequestGuid, logEntry.Guid.ToString());
     }
 
     /// <summary>

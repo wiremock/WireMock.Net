@@ -255,18 +255,7 @@ namespace WireMock.Owin
 
 #if OPENTELEMETRY_SUPPORTED
                 // Enrich activity with response and mapping info
-                WireMockActivitySource.EnrichWithResponse(activity, response);
-                WireMockActivitySource.EnrichWithMappingMatch(
-                    activity,
-                    result.Match?.Mapping?.Guid,
-                    result.Match?.Mapping?.Title,
-                    result.Match?.RequestMatchResult?.IsPerfectMatch ?? false,
-                    result.Match?.RequestMatchResult?.TotalScore);
-                
-                if (activity != null)
-                {
-                    activity.SetTag(WireMockSemanticConventions.RequestGuid, log.Guid.ToString());
-                }
+                WireMockActivitySource.EnrichWithLogEntry(activity, log);
 #endif
 
                 LogRequest(log, logRequest);
