@@ -11,12 +11,5 @@
     <ProjectReference Include="..\..\src\WireMock.Net.OpenTelemetry\WireMock.Net.OpenTelemetry.csproj" />
     <ProjectReference Include="..\..\src\WireMock.Net\WireMock.Net.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OpenTelemetry" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.8.1" />
-  </ItemGroup>
-
+  
 </Project>

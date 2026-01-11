@@ -37,4 +37,9 @@
         <ProjectReference Include="../WireMock.Net.GraphQL/WireMock.Net.GraphQL.csproj" />
         <ProjectReference Include="../WireMock.Net.ProtoBuf/WireMock.Net.ProtoBuf.csproj" />
     </ItemGroup>
+
+    <!-- OpenTelemetry exporter for .NET 6+ -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+        <ProjectReference Include="..\WireMock.Net.OpenTelemetry\WireMock.Net.OpenTelemetry.csproj" />
+    </ItemGroup>
 </Project>
