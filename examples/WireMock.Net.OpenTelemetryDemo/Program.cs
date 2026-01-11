@@ -8,6 +8,7 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
+using WireMock.OpenTelemetry;
 
 Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 
@@ -29,8 +30,7 @@ Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 
 // Option 1: Custom TracerProvider with Console exporter for this demo
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddSource("WireMock.Net")           // WireMock-specific traces with mapping info
-    .AddAspNetCoreInstrumentation()      // ASP.NET Core HTTP server traces
+    .AddWireMockInstrumentation(new OpenTelemetryOptions() { ExcludeAdminRequests = true })
     .AddHttpClientInstrumentation()      // HTTP client traces (for our test requests)
     .AddConsoleExporter()                // Export traces to console for demo purposes
     .Build();
