@@ -345,6 +345,5 @@ public class WireMockServerSettings
     /// Default is <c>null</c> (tracing disabled).
     /// </summary>
     [PublicAPI]
-    [JsonIgnore]
     public OpenTelemetryOptions? OpenTelemetryOptions { get; set; }
 }

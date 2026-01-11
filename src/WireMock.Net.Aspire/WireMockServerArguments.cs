@@ -87,8 +87,11 @@ public class WireMockServerArguments
     public bool OpenTelemetryEnabled { get; set; }
 
     /// <summary>
-    /// Gets or sets the OTLP exporter endpoint URL for OpenTelemetry.
-    /// When set, traces will be exported to this endpoint.
+    /// Gets or sets the OTLP exporter endpoint URL.
+    /// When set, traces will be exported to this endpoint using the OTLP protocol.
+    /// Example: "http://localhost:4317" for gRPC or "http://localhost:4318" for HTTP.
+    /// If not set, the OTLP exporter will use the <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> environment variable,
+    /// or fall back to the default endpoint (<c>http://localhost:4317</c> for gRPC).
     /// </summary>
     public string? OpenTelemetryOtlpExporterEndpoint { get; set; }
 

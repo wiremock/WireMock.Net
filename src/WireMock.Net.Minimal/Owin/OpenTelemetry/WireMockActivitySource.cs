@@ -10,12 +10,12 @@ namespace WireMock.Owin.OpenTelemetry;
 /// <summary>
 /// Provides an ActivitySource for WireMock.Net distributed tracing.
 /// </summary>
-internal static class WireMockActivitySource
+public static class WireMockActivitySource
 {
     /// <summary>
     /// The name of the ActivitySource used by WireMock.Net.
     /// </summary>
-    public const string SourceName = "WireMock.Net";
+    internal const string SourceName = "WireMock.Net";
 
     /// <summary>
     /// The ActivitySource instance used for creating tracing activities.
@@ -33,7 +33,7 @@ internal static class WireMockActivitySource
     /// <param name="requestMethod">The HTTP method of the request.</param>
     /// <param name="requestPath">The path of the request.</param>
     /// <returns>The started activity, or null if tracing is not enabled.</returns>
-    public static Activity? StartRequestActivity(string requestMethod, string requestPath)
+    internal static Activity? StartRequestActivity(string requestMethod, string requestPath)
     {
         if (!Source.HasListeners())
         {
@@ -51,7 +51,7 @@ internal static class WireMockActivitySource
     /// <summary>
     /// Enriches an activity with request information.
     /// </summary>
-    public static void EnrichWithRequest(Activity? activity, IRequestMessage request)
+    internal static void EnrichWithRequest(Activity? activity, IRequestMessage request)
     {
         if (activity == null)
         {
@@ -72,7 +72,7 @@ internal static class WireMockActivitySource
     /// <summary>
     /// Enriches an activity with response information.
     /// </summary>
-    public static void EnrichWithResponse(Activity? activity, IResponseMessage? response)
+    internal static void EnrichWithResponse(Activity? activity, IResponseMessage? response)
     {
         if (activity == null || response == null)
         {
@@ -109,7 +109,7 @@ internal static class WireMockActivitySource
     /// <summary>
     /// Enriches an activity with mapping match information.
     /// </summary>
-    public static void EnrichWithMappingMatch(
+    internal static void EnrichWithMappingMatch(
         Activity? activity, 
         Guid? mappingGuid, 
         string? mappingTitle,
@@ -142,7 +142,7 @@ internal static class WireMockActivitySource
     /// <summary>
     /// Records an exception on the activity.
     /// </summary>
-    public static void RecordException(Activity? activity, Exception exception)
+    internal static void RecordException(Activity? activity, Exception exception)
     {
         if (activity == null)
         {
@@ -156,28 +156,5 @@ internal static class WireMockActivitySource
         activity.SetTag("exception.message", exception.Message);
         activity.SetTag("exception.stacktrace", exception.ToString());
     }
-}
-
-/// <summary>
-/// Semantic convention constants for WireMock.Net tracing attributes.
-/// </summary>
-internal static class WireMockSemanticConventions
-{
-    // Standard HTTP semantic conventions (OpenTelemetry)
-    public const string HttpMethod = "http.request.method";
-    public const string HttpUrl = "url.full";
-    public const string HttpPath = "url.path";
-    public const string HttpHost = "server.address";
-    public const string HttpStatusCode = "http.response.status_code";
-    public const string ClientAddress = "client.address";
-
-    // WireMock-specific attributes
-    public const string MappingMatched = "wiremock.mapping.matched";
-    public const string MappingGuid = "wiremock.mapping.guid";
-    public const string MappingTitle = "wiremock.mapping.title";
-    public const string MatchScore = "wiremock.match.score";
-    public const string PartialMappingGuid = "wiremock.partial_mapping.guid";
-    public const string PartialMappingTitle = "wiremock.partial_mapping.title";
-    public const string RequestGuid = "wiremock.request.guid";
 }
 #endif

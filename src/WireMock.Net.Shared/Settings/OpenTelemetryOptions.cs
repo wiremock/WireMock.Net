@@ -48,13 +48,6 @@ public class OpenTelemetryOptions
     public string? OtlpExporterEndpoint { get; set; }
 
     /// <summary>
-    /// Creates a new instance of <see cref="OpenTelemetryOptions"/> with default settings.
-    /// </summary>
-    public OpenTelemetryOptions()
-    {
-    }
-
-    /// <summary>
     /// Creates a new instance of <see cref="OpenTelemetryOptions"/> with tracing enabled.
     /// </summary>
     /// <returns>An <see cref="OpenTelemetryOptions"/> instance with tracing enabled.</returns>

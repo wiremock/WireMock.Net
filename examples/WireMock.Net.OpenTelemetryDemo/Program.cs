@@ -29,7 +29,7 @@ Console.WriteLine("  - HTTP client traces\n");
 // Start WireMock server with OpenTelemetry enabled
 var server = WireMockServer.Start(new WireMockServerSettings
 {
-    Port = 0, // Use random available port
+    StartAdminInterface = true,
     OpenTelemetryOptions = new OpenTelemetryOptions
     {
         Enabled = true,
@@ -72,7 +72,7 @@ Console.WriteLine("  GET /api/error     -> 500 Error");
 Console.WriteLine();
 
 // Make some test requests to generate traces
-using var httpClient = new HttpClient { BaseAddress = new Uri(server.Urls[0]) };
+using var httpClient = server.CreateClient();
 
 Console.WriteLine("Making test requests to generate traces...\n");
 Console.WriteLine("─────────────────────────────────────────────────────────────────");
@@ -107,6 +107,11 @@ var response4 = await httpClient.GetAsync("/api/notfound");
 Console.WriteLine($"<<< Response: {(int)response4.StatusCode} {response4.StatusCode}");
 
 await Task.Delay(500);
+
+// Request 5: Admin API request (should be excluded from tracing)
+Console.WriteLine("\n>>> Request 5: GET /__admin/health");
+var response5 = await httpClient.GetAsync("/__admin/health");
+Console.WriteLine($"<<< Admin Health Status: {response5.StatusCode}");
 
 Console.WriteLine("\n─────────────────────────────────────────────────────────────────");
 Console.WriteLine("\nTraces above show OpenTelemetry activities from WireMock.Net!");
