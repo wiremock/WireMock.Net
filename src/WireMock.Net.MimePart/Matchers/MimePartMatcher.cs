@@ -50,7 +50,7 @@ public class MimePartMatcher : IMimePartMatcher
         ContentTransferEncodingMatcher = contentTransferEncodingMatcher;
         ContentMatcher = contentMatcher;
 
-        _matcherFunctions = new List<(string Name, Func<IMimePartData, MatchResult> func)>();
+        _matcherFunctions = [];
         if (ContentTypeMatcher != null)
         {
             _matcherFunctions.Add((nameof(ContentTypeMatcher), mp => ContentTypeMatcher.IsMatch(GetContentTypeAsString(mp.ContentType))));

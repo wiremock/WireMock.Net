@@ -29,15 +29,13 @@ public class RequestMatchResult : IRequestMatchResult
     /// <inheritdoc />
     public double AddScore(Type matcherType, double score, Exception? exception)
     {
-        MatchDetails.Add(new MatchDetail
+        return AddMatchDetail(new MatchDetail
         {
             Name = matcherType.Name.Replace("RequestMessage", string.Empty),
             MatcherType = matcherType,
             Score = score,
             Exception = exception
         });
-
-        return score;
     }
 
     /// <inheritdoc />
