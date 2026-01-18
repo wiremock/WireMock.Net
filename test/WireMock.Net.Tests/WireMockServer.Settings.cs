@@ -194,4 +194,41 @@ public class WireMockServerSettingsTests
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
         Check.That(options.RequestLogExpirationDuration).IsEqualTo(1);
     }
+
+#if NET6_0_OR_GREATER
+    [Fact]
+    public void WireMockServer_WireMockServerSettings_ActivityTracingOptions_AreMappedToMiddlewareOptions()
+    {
+        // Assign and Act
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            ActivityTracingOptions = new ActivityTracingOptions
+            {
+                ExcludeAdminRequests = false,
+                RecordRequestBody = true,
+                RecordResponseBody = true,
+                RecordMatchDetails = false
+            }
+        });
+
+        // Assert
+        var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
+        options.ActivityTracingOptions.Should().NotBeNull();
+        options.ActivityTracingOptions!.ExcludeAdminRequests.Should().BeFalse();
+        options.ActivityTracingOptions.RecordRequestBody.Should().BeTrue();
+        options.ActivityTracingOptions.RecordResponseBody.Should().BeTrue();
+        options.ActivityTracingOptions.RecordMatchDetails.Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockServer_WireMockServerSettings_Without_ActivityTracingOptions_ShouldNotSetMiddlewareOptions()
+    {
+        // Assign and Act
+        var server = WireMockServer.Start(new WireMockServerSettings());
+
+        // Assert
+        var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
+        options.ActivityTracingOptions.Should().BeNull();
+    }
+#endif
 }
