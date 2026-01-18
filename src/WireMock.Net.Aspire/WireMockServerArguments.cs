@@ -80,6 +80,22 @@ public class WireMockServerArguments
     public Dictionary<string, string[]> ProtoDefinitions { get; set; } = [];
 
     /// <summary>
+    /// Gets or sets a value indicating whether OpenTelemetry tracing is enabled.
+    /// When enabled, WireMock.Net will emit distributed traces for request processing.
+    /// Default value is <c>false</c>.
+    /// </summary>
+    public bool OpenTelemetryEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the OTLP exporter endpoint URL.
+    /// When set, traces will be exported to this endpoint using the OTLP protocol.
+    /// Example: "http://localhost:4317" for gRPC or "http://localhost:4318" for HTTP.
+    /// If not set, the OTLP exporter will use the <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> environment variable,
+    /// or fall back to the default endpoint (<c>http://localhost:4317</c> for gRPC).
+    /// </summary>
+    public string? OpenTelemetryOtlpExporterEndpoint { get; set; }
+
+    /// <summary>
     /// Add an additional Urls on which WireMock should listen.
     /// </summary>
     /// <param name="additionalUrls">The additional urls which the WireMock Server should listen on.</param>
@@ -136,6 +152,20 @@ public class WireMockServerArguments
             Add(args, "--ReadStaticMappings", "true");
             Add(args, "--WatchStaticMappings", "true");
             Add(args, "--WatchStaticMappingsInSubdirectories", "true");
+        }
+
+        if (OpenTelemetryEnabled)
+        {
+            // Enable activity tracing (creates System.Diagnostics.Activity objects)
+            Add(args, "--ActivityTracingEnabled", "true");
+            
+            // Enable OpenTelemetry exporter
+            Add(args, "--OpenTelemetryEnabled", "true");
+            
+            if (!string.IsNullOrEmpty(OpenTelemetryOtlpExporterEndpoint))
+            {
+                Add(args, "--OpenTelemetryOtlpExporterEndpoint", OpenTelemetryOtlpExporterEndpoint);
+            }
         }
 
         if (AdditionalUrls.Count > 0)

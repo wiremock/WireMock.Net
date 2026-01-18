@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Owin.ActivityTracing;
 using WireMock.Types;
 using WireMock.Util;
 using System.Security.Cryptography.X509Certificates;
@@ -106,4 +107,9 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public bool ProxyAll { get; set; }
+
+#if ACTIVITY_TRACING_SUPPORTED
+    /// <inheritdoc />
+    public ActivityTracingOptions? ActivityTracingOptions { get; set; }
+#endif
 }

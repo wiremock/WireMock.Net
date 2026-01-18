@@ -1,3 +1,9 @@
+# 1.23.0 (05 January 2026)
+- [#1414](https://github.com/wiremock/WireMock.Net/pull/1414) - Pass the parameter matchOperator in Request.WithPath to its inner calls [bug] contributed by [gbamqzkdyg](https://github.com/gbamqzkdyg)
+- [#1416](https://github.com/wiremock/WireMock.Net/pull/1416) - Fix: Pass AllowedHandlebarsHelpers configuration to Handlebars.Net.Helpers library contributed by [samlatham](https://github.com/samlatham)
+- [#1413](https://github.com/wiremock/WireMock.Net/issues/1413) - Parameter `matchOperator` is not respected in the method Request.WithPath [bug]
+- [#1415](https://github.com/wiremock/WireMock.Net/issues/1415) - HandlebarsSettings AllowedHandlebarsHelpers Configuration Not Applied [bug]
+
 # 1.22.0 (02 January 2026)
 - [#1412](https://github.com/wiremock/WireMock.Net/pull/1412) - chore(testcontainers): bump up Testcontainers to version 4.10.0 [feature] contributed by [vhatsura](https://github.com/vhatsura)
 - [#1411](https://github.com/wiremock/WireMock.Net/issues/1411) - WireMock.Net.Testcontainers isn't compatible with Testcontainers 4.10.0 [bug]
