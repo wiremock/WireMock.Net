@@ -235,26 +235,11 @@ public static class WireMockServerSettingsParser
         {
             settings.ActivityTracingOptions = new ActivityTracingOptions
             {
-                ExcludeAdminRequests = GetBoolWithDefault(parser, "ActivityTracingExcludeAdminRequests", "ActivityTracingOptions__ExcludeAdminRequests", defaultValue: true),
+                ExcludeAdminRequests = parser.GetBoolWithDefault("ActivityTracingExcludeAdminRequests", "ActivityTracingOptions__ExcludeAdminRequests", defaultValue: true),
                 RecordRequestBody = parser.GetBoolValue("ActivityTracingRecordRequestBody") || parser.GetBoolValue("ActivityTracingOptions__RecordRequestBody"),
                 RecordResponseBody = parser.GetBoolValue("ActivityTracingRecordResponseBody") || parser.GetBoolValue("ActivityTracingOptions__RecordResponseBody"),
-                RecordMatchDetails = GetBoolWithDefault(parser, "ActivityTracingRecordMatchDetails", "ActivityTracingOptions__RecordMatchDetails", defaultValue: true)
+                RecordMatchDetails = parser.GetBoolWithDefault("ActivityTracingRecordMatchDetails", "ActivityTracingOptions__RecordMatchDetails", defaultValue: true)
             };
         }
-    }
-
-    private static bool GetBoolWithDefault(SimpleSettingsParser parser, string key1, string key2, bool defaultValue)
-    {
-        if (parser.Contains(key1))
-        {
-            return parser.GetBoolValue(key1);
-        }
-
-        if (parser.Contains(key2))
-        {
-            return parser.GetBoolValue(key2);
-        }
-
-        return defaultValue;
     }
 }

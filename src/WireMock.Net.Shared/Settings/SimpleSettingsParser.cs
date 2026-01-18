@@ -104,6 +104,21 @@ internal class SimpleSettingsParser
         }, defaultValue);
     }
 
+    public bool GetBoolWithDefault(string key1, string key2, bool defaultValue)
+    {
+        if (Contains(key1))
+        {
+            return GetBoolValue(key1);
+        }
+
+        if (Contains(key2))
+        {
+            return GetBoolValue(key2);
+        }
+
+        return defaultValue;
+    }
+
     public bool GetBoolSwitchValue(string name)
     {
         return Contains(name);
