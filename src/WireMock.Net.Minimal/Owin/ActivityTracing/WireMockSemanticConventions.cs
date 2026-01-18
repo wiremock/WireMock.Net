@@ -1,11 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>

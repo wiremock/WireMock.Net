@@ -2,7 +2,6 @@
 
 #if ACTIVITY_TRACING_SUPPORTED
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using WireMock.Logging;
 

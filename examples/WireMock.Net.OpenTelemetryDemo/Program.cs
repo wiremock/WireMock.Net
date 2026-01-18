@@ -4,11 +4,11 @@
 
 using OpenTelemetry;
 using OpenTelemetry.Trace;
+using WireMock.OpenTelemetry;
 using WireMock.Server;
 using WireMock.Settings;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
-using WireMock.OpenTelemetry;
 
 Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 
@@ -31,8 +31,9 @@ Console.WriteLine("=== WireMock.Net OpenTelemetry Tracing Demo ===\n");
 // Option 1: Custom TracerProvider with Console exporter for this demo
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
     .AddWireMockInstrumentation(new OpenTelemetryOptions() { ExcludeAdminRequests = true })
-    .AddHttpClientInstrumentation()      // HTTP client traces (for our test requests)
-    .AddConsoleExporter()                // Export traces to console for demo purposes
+    .AddHttpClientInstrumentation() // HTTP client traces (for our test requests)
+    .AddConsoleExporter()           // Export traces to console for demo purposes
+    .AddOtlpExporter()              // Export to real OTLP collector (e.g. Jaeger, Tempo, etc.)
     .Build();
 
 Console.WriteLine("Console Exporter configured to visualize:");
