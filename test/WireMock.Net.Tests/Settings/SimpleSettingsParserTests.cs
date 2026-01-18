@@ -113,6 +113,23 @@ public class SimpleSettingsParserTests
     }
 
     [Fact]
+    public void SimpleCommandLineParser_Parse_GetBoolWithDefault()
+    {
+        // Assign
+        _parser.Parse(new[] { "--test1", "true", "--test2", "false" });
+
+        // Act
+        bool value1 = _parser.GetBoolWithDefault("test1", "test1_fallback", defaultValue: false);
+        bool value2 = _parser.GetBoolWithDefault("missing", "test2", defaultValue: true);
+        bool value3 = _parser.GetBoolWithDefault("missing1", "missing2", defaultValue: true);
+
+        // Assert
+        Check.That(value1).IsEqualTo(true);
+        Check.That(value2).IsEqualTo(false);
+        Check.That(value3).IsEqualTo(true);
+    }
+
+    [Fact]
     public void SimpleCommandLineParser_Parse_Environment_GetBoolValue()
     {
         // Assign

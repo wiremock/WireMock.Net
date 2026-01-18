@@ -287,6 +287,40 @@ public static class WireMockServerBuilderExtensions
         return wiremock;
     }
 
+    /// <summary>
+    /// Configures OpenTelemetry distributed tracing for the WireMock.Net server.
+    /// This enables automatic trace export to the Aspire dashboard.
+    /// </summary>
+    /// <param name="wiremock">The <see cref="IResourceBuilder{WireMockServerResource}"/>.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{WireMockServerResource}"/>.</returns>
+    /// <remarks>
+    /// When enabled, WireMock.Net will emit distributed traces for each request processed,
+    /// including information about:
+    /// <list type="bullet">
+    ///   <item>HTTP method, URL, and status code</item>
+    ///   <item>Mapping match results and scores</item>
+    ///   <item>Request processing duration</item>
+    /// </list>
+    /// The traces will automatically appear in the Aspire dashboard.
+    /// </remarks>
+    public static IResourceBuilder<WireMockServerResource> WithOpenTelemetry(this IResourceBuilder<WireMockServerResource> wiremock)
+    {
+        Guard.NotNull(wiremock);
+
+        // Enable OpenTelemetry in WireMock server arguments
+        wiremock.Resource.Arguments.OpenTelemetryEnabled = true;
+
+        // Use Aspire's standard WithOtlpExporter to configure OTEL environment variables for the container
+        // This sets OTEL_EXPORTER_OTLP_ENDPOINT which the OTLP exporter reads automatically
+        var containerBuilder = wiremock as IResourceBuilder<ContainerResource>;
+        if (containerBuilder != null)
+        {
+            containerBuilder.WithOtlpExporter();
+        }
+
+        return wiremock;
+    }
+
     private static Task<ExecuteCommandResult> OnRunOpenInspectorCommandAsync(IResourceBuilder<WireMockServerResource> builder)
     {
         WireMockInspector.Inspect(builder.Resource.GetEndpoint().Url);

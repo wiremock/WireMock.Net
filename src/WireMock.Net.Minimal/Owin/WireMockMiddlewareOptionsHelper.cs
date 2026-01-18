@@ -2,6 +2,7 @@
 
 using System;
 using Stef.Validation;
+using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 
 namespace WireMock.Owin;
@@ -33,6 +34,27 @@ internal static class WireMockMiddlewareOptionsHelper
         options.QueryParameterMultipleValueSupport = settings.QueryParameterMultipleValueSupport;
         options.RequestLogExpirationDuration = settings.RequestLogExpirationDuration;
         options.SaveUnmatchedRequests = settings.SaveUnmatchedRequests;
+
+        // Validate and configure activity tracing
+        ActivityTracingValidator.ValidateActivityApiPresence(settings);
+#if ACTIVITY_TRACING_SUPPORTED
+        if (settings.ActivityTracingOptions is not null)
+        {
+            options.ActivityTracingOptions = new Owin.ActivityTracing.ActivityTracingOptions
+            {
+                ExcludeAdminRequests = settings.ActivityTracingOptions.ExcludeAdminRequests,
+                RecordRequestBody = settings.ActivityTracingOptions.RecordRequestBody,
+                RecordResponseBody = settings.ActivityTracingOptions.RecordResponseBody,
+                RecordMatchDetails = settings.ActivityTracingOptions.RecordMatchDetails
+            };
+        }
+#endif
+#if USE_ASPNETCORE
+        options.AdditionalServiceRegistration = settings.AdditionalServiceRegistration;
+        options.CorsPolicyOptions = settings.CorsPolicyOptions;
+        options.ClientCertificateMode = settings.ClientCertificateMode;
+        options.AcceptAnyClientCertificate = settings.AcceptAnyClientCertificate;
+#endif
 
         if (settings.CustomCertificateDefined)
         {

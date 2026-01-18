@@ -85,6 +85,7 @@ public static class WireMockServerSettingsParser
         ParseProxyAndRecordSettings(settings, parser);
         ParseCertificateSettings(settings, parser);
         ParseHandlebarsSettings(settings, parser);
+        ParseActivityTracingSettings(settings, parser);
 
         return true;
     }
@@ -223,6 +224,21 @@ public static class WireMockServerSettingsParser
             {
                 TransformTemplate = transformTemplate,
                 TransformerType = parser.GetEnumValue($"{prefix}TransformerType", TransformerType.Handlebars)
+            };
+        }
+    }
+
+    private static void ParseActivityTracingSettings(WireMockServerSettings settings, SimpleSettingsParser parser)
+    {
+        // Only create ActivityTracingOptions if tracing is enabled
+        if (parser.GetBoolValue("ActivityTracingEnabled") || parser.GetBoolValue("ActivityTracingOptions__Enabled"))
+        {
+            settings.ActivityTracingOptions = new ActivityTracingOptions
+            {
+                ExcludeAdminRequests = parser.GetBoolWithDefault("ActivityTracingExcludeAdminRequests", "ActivityTracingOptions__ExcludeAdminRequests", defaultValue: true),
+                RecordRequestBody = parser.GetBoolValue("ActivityTracingRecordRequestBody") || parser.GetBoolValue("ActivityTracingOptions__RecordRequestBody"),
+                RecordResponseBody = parser.GetBoolValue("ActivityTracingRecordResponseBody") || parser.GetBoolValue("ActivityTracingOptions__RecordResponseBody"),
+                RecordMatchDetails = parser.GetBoolWithDefault("ActivityTracingRecordMatchDetails", "ActivityTracingOptions__RecordMatchDetails", defaultValue: true)
             };
         }
     }
