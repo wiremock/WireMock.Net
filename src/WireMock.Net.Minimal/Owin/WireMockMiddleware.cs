@@ -17,19 +17,12 @@ using WireMock.ResponseBuilders;
 using WireMock.Serialization;
 using WireMock.Settings;
 using WireMock.Util;
-//#if !USE_ASPNETCORE
-//using IContext = Microsoft.Owin.IOwinContext;
-//using OwinMiddleware = Microsoft.Owin.OwinMiddleware;
-//using Next = Microsoft.Owin.OwinMiddleware;
-//#else
-//using OwinMiddleware = System.Object;
-//using IContext = Microsoft.AspNetCore.Http.HttpContext;
-//using Next = Microsoft.AspNetCore.Http.RequestDelegate;
-//#endif
+using System.Diagnostics;
+using WireMock.Owin.ActivityTracing;
 
 namespace WireMock.Owin;
 
-internal class WireMockMiddleware //: OwinMiddleware
+internal class WireMockMiddleware
 {
     private readonly object _lock = new();
     private static readonly Task CompletedTask = Task.FromResult(false);
@@ -41,24 +34,6 @@ internal class WireMockMiddleware //: OwinMiddleware
     private readonly LogEntryMapper _logEntryMapper;
     private readonly IGuidUtils _guidUtils;
 
-    //#if !USE_ASPNETCORE
-    //        public WireMockMiddleware(
-    //            Next next,
-    //            IWireMockMiddlewareOptions options,
-    //            IOwinRequestMapper requestMapper,
-    //            IOwinResponseMapper responseMapper,
-    //            IMappingMatcher mappingMatcher,
-    //            IGuidUtils guidUtils
-    //        ) : base(next)
-    //        {
-    //            _options = Guard.NotNull(options);
-    //            _requestMapper = Guard.NotNull(requestMapper);
-    //            _responseMapper = Guard.NotNull(responseMapper);
-    //            _mappingMatcher = Guard.NotNull(mappingMatcher);
-    //            _logEntryMapper = new LogEntryMapper(options);
-    //            _guidUtils = Guard.NotNull(guidUtils);
-    //        }
-    //#else
     public WireMockMiddleware(
         RequestDelegate next,
         IWireMockMiddlewareOptions options,
@@ -75,13 +50,8 @@ internal class WireMockMiddleware //: OwinMiddleware
         _logEntryMapper = new LogEntryMapper(options);
         _guidUtils = Guard.NotNull(guidUtils);
     }
-    //#endif
 
-    //#if !USE_ASPNETCORE
-    //        public override Task Invoke(IContext ctx)
-    //#else
     public Task Invoke(HttpContext ctx)
-    //#endif
     {
         if (_options.HandleRequestsSynchronously.GetValueOrDefault(false))
         {
@@ -101,6 +71,19 @@ internal class WireMockMiddleware //: OwinMiddleware
         var logRequest = false;
         IResponseMessage? response = null;
         (MappingMatcherResult? Match, MappingMatcherResult? Partial) result = (null, null);
+
+        var tracingEnabled = _options.ActivityTracingOptions is not null;
+        var excludeAdmin = _options.ActivityTracingOptions?.ExcludeAdminRequests ?? true;
+        Activity? activity = null;
+
+        // Check if we should trace this request (optionally exclude admin requests)
+        var shouldTrace = tracingEnabled && !(excludeAdmin && request.Path.StartsWith("/__admin/"));
+
+        if (shouldTrace)
+        {
+            activity = WireMockActivitySource.StartRequestActivity(request.Method, request.Path);
+            WireMockActivitySource.EnrichWithRequest(activity, request, _options.ActivityTracingOptions);
+        }
 
         try
         {
@@ -193,6 +176,8 @@ internal class WireMockMiddleware //: OwinMiddleware
         catch (Exception ex)
         {
             _options.Logger.Error($"Providing a Response for Mapping '{result.Match?.Mapping.Guid}' failed. HttpStatusCode set to 500. Exception: {ex}");
+            WireMockActivitySource.RecordException(activity, ex);
+
             response = ResponseMessageBuilder.Create(500, ex.Message);
         }
         finally
@@ -211,6 +196,9 @@ internal class WireMockMiddleware //: OwinMiddleware
                 PartialMappingTitle = result.Partial?.Mapping?.Title,
                 PartialMatchResult = result.Partial?.RequestMatchResult
             };
+
+            WireMockActivitySource.EnrichWithLogEntry(activity, log, _options.ActivityTracingOptions);
+            activity?.Dispose();
 
             LogRequest(log, logRequest);
 

@@ -13,6 +13,9 @@ using WireMock.Util;
 using WireMock.Logging;
 using WireMock.Matchers;
 using System.Collections.Generic;
+#if NET6_0_OR_GREATER
+using System.Diagnostics;
+#endif
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Requests;
 using WireMock.Settings;
@@ -21,13 +24,15 @@ using WireMock.Handlers;
 using WireMock.Matchers.Request;
 using WireMock.ResponseBuilders;
 using WireMock.RequestBuilders;
+#if NET6_0_OR_GREATER
+using WireMock.Owin.ActivityTracing;
+#endif
 #if NET452
 using Microsoft.Owin;
 using IContext = Microsoft.Owin.IOwinContext;
 using IRequest = Microsoft.Owin.IOwinRequest;
 using IResponse = Microsoft.Owin.IOwinResponse;
 #else
-using Microsoft.AspNetCore.Http;
 using IContext = Microsoft.AspNetCore.Http.HttpContext;
 using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
 using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
@@ -84,10 +89,10 @@ public class WireMockMiddlewareTests
 
         _requestMatchResultMock = new Mock<IRequestMatchResult>();
         _requestMatchResultMock.Setup(r => r.TotalNumber).Returns(1);
-        _requestMatchResultMock.Setup(r => r.MatchDetails).Returns(new List<MatchDetail>());
+        _requestMatchResultMock.Setup(r => r.MatchDetails).Returns([]);
 
         _sut = new WireMockMiddleware(
-            null,
+            _ => Task.CompletedTask,
             _optionsMock.Object,
             _requestMapperMock.Object,
             _responseMapperMock.Object,
@@ -278,7 +283,7 @@ public class WireMockMiddlewareTests
         var requestBuilder = Request.Create().UsingAnyMethod();
         _mappingMock.SetupGet(m => m.RequestMatcher).Returns(requestBuilder);
 
-        var result = new MappingMatcherResult (_mappingMock.Object, _requestMatchResultMock.Object);
+        var result = new MappingMatcherResult(_mappingMock.Object, _requestMatchResultMock.Object);
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
@@ -289,4 +294,90 @@ public class WireMockMiddlewareTests
 
         _mappings.Should().HaveCount(1);
     }
+
+#if NET6_0_OR_GREATER
+    [Fact]
+    public async Task WireMockMiddleware_Invoke_AdminPath_WithExcludeAdminRequests_ShouldNotStartActivity()
+    {
+        // Arrange
+        var request = new RequestMessage(new UrlDetails("http://localhost/__admin/health"), "GET", "::1");
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
+        {
+            ExcludeAdminRequests = true
+        });
+
+        var activityStarted = false;
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == WireMockActivitySource.SourceName,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStarted = _ => activityStarted = true
+        };
+
+        ActivitySource.AddActivityListener(listener);
+
+        // Act
+        await _sut.Invoke(_contextMock.Object);
+
+        // Assert
+        activityStarted.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task WireMockMiddleware_Invoke_NonAdminPath_WithTracingEnabled_ShouldStartActivity()
+    {
+        // Arrange
+        var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
+        {
+            ExcludeAdminRequests = true
+        });
+
+        var activityStarted = false;
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == WireMockActivitySource.SourceName,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStarted = _ => activityStarted = true
+        };
+
+        ActivitySource.AddActivityListener(listener);
+
+        // Act
+        await _sut.Invoke(_contextMock.Object);
+
+        // Assert
+        activityStarted.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task WireMockMiddleware_Invoke_NonAdminPath_WithoutTracingOptions_ShouldNotStartActivity()
+    {
+        // Arrange
+        var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns((ActivityTracingOptions?)null);
+
+        var activityStarted = false;
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == WireMockActivitySource.SourceName,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStarted = _ => activityStarted = true
+        };
+
+        ActivitySource.AddActivityListener(listener);
+
+        // Act
+        await _sut.Invoke(_contextMock.Object);
+
+        // Assert
+        activityStarted.Should().BeFalse();
+    }
+#endif
 }

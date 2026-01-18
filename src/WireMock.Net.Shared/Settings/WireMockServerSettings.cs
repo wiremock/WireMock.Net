@@ -335,4 +335,15 @@ public class WireMockServerSettings
     /// </summary>
     [PublicAPI]
     public HandlebarsSettings? HandlebarsSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the activity tracing options.
+    /// When set (not null), WireMock.Net will create System.Diagnostics.Activity objects for request processing.
+    /// </summary>
+    /// <remarks>
+    /// To export traces to an OpenTelemetry collector, install the WireMock.Net.OpenTelemetry package
+    /// and configure the exporter using the provided extension methods.
+    /// </remarks>
+    [PublicAPI]
+    public ActivityTracingOptions? ActivityTracingOptions { get; set; }
 }

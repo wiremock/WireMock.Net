@@ -8,16 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
-
-//#if !USE_ASPNETCORE
-//using Owin;
-//#else
-//using IAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
-//using Microsoft.Extensions.DependencyInjection;
-//#endif
 
 namespace WireMock.Owin;
 
@@ -45,7 +39,6 @@ internal interface IWireMockMiddlewareOptions
 
     Action<IApplicationBuilder>? PostWireMockMiddlewareInit { get; set; }
 
-//#if USE_ASPNETCORE
     Action<IServiceCollection>? AdditionalServiceRegistration { get; set; }
 
     CorsPolicyOptions? CorsPolicyOptions { get; set; }
@@ -53,7 +46,6 @@ internal interface IWireMockMiddlewareOptions
     ClientCertificateMode ClientCertificateMode { get; set; }
 
     bool AcceptAnyClientCertificate { get; set; }
-//#endif
 
     IFileSystemHandler? FileSystemHandler { get; set; }
 
@@ -91,4 +83,10 @@ internal interface IWireMockMiddlewareOptions
     QueryParameterMultipleValueSupport? QueryParameterMultipleValueSupport { get; set; }
 
     public bool ProxyAll { get; set; }
+
+    /// <summary>
+    /// Gets or sets the activity tracing options.
+    /// When set, System.Diagnostics.Activity objects are created for request tracing.
+    /// </summary>
+    ActivityTracingOptions? ActivityTracingOptions { get; set; }
 }

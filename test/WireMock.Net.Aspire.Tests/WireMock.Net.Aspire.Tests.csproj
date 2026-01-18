@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.Testing" Version="9.2.0" />
+        <PackageReference Include="Aspire.Hosting.Testing" Version="13.1.0" />
         <PackageReference Include="Codecov" Version="1.13.0" />
         <PackageReference Include="coverlet.msbuild" Version="6.0.2">
             <PrivateAssets>all</PrivateAssets>

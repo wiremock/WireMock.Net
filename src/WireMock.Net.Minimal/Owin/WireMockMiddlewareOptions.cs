@@ -2,23 +2,17 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Owin.ActivityTracing;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
-using Microsoft.Extensions.DependencyInjection;
 using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
-
-//#if !USE_ASPNETCORE
-//using Owin;
-//#else
-//using IAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
-//using Microsoft.Extensions.DependencyInjection;
-//#endif
 
 namespace WireMock.Owin;
 
@@ -110,4 +104,7 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public bool ProxyAll { get; set; }
+
+    /// <inheritdoc />
+    public ActivityTracingOptions? ActivityTracingOptions { get; set; }
 }

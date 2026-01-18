@@ -2,6 +2,7 @@
 
 using System;
 using Stef.Validation;
+using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 
 namespace WireMock.Owin;
@@ -18,6 +19,7 @@ internal static class WireMockMiddlewareOptionsHelper
 
         options ??= new WireMockMiddlewareOptions();
 
+        options.ActivityTracingOptions = settings.ActivityTracingOptions;
         options.AllowBodyForAllHttpMethods = settings.AllowBodyForAllHttpMethods;
         options.AllowOnlyDefinedHttpStatusCodeInResponse = settings.AllowOnlyDefinedHttpStatusCodeInResponse;
         options.AllowPartialMapping = settings.AllowPartialMapping;
@@ -33,6 +35,13 @@ internal static class WireMockMiddlewareOptionsHelper
         options.QueryParameterMultipleValueSupport = settings.QueryParameterMultipleValueSupport;
         options.RequestLogExpirationDuration = settings.RequestLogExpirationDuration;
         options.SaveUnmatchedRequests = settings.SaveUnmatchedRequests;
+
+#if USE_ASPNETCORE
+        options.AdditionalServiceRegistration = settings.AdditionalServiceRegistration;
+        options.CorsPolicyOptions = settings.CorsPolicyOptions;
+        options.ClientCertificateMode = settings.ClientCertificateMode;
+        options.AcceptAnyClientCertificate = settings.AcceptAnyClientCertificate;
+#endif
 
         if (settings.CustomCertificateDefined)
         {

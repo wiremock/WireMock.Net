@@ -28,6 +28,12 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+
+    <!-- Enable OpenTelemetry exporter support for .NET 6+ -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+        <DefineConstants>$(DefineConstants);OPENTELEMETRY_SUPPORTED</DefineConstants>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Nullable" Version="1.3.1">
             <PrivateAssets>all</PrivateAssets>
@@ -37,5 +43,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net\WireMock.Net.csproj" />
+    </ItemGroup>
+
+    <!-- OpenTelemetry exporter for .NET 6+ -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+        <ProjectReference Include="..\WireMock.Net.OpenTelemetry\WireMock.Net.OpenTelemetry.csproj" />
     </ItemGroup>
 </Project>

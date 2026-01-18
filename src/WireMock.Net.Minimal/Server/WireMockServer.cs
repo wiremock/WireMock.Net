@@ -411,16 +411,12 @@ public partial class WireMockServer : IWireMockServer
             _dateTimeUtils
         );
 
-        //#if USE_ASPNETCORE
         _options.AdditionalServiceRegistration = _settings.AdditionalServiceRegistration;
         _options.CorsPolicyOptions = _settings.CorsPolicyOptions;
         _options.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
         _options.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
 
         _httpServer = new AspNetCoreSelfHost(_options, urlOptions);
-        //#else
-        //        _httpServer = new OwinSelfHost(_options, urlOptions);
-        //#endif
         var startTask = _httpServer.StartAsync();
 
         using (var ctsStartTimeout = new CancellationTokenSource(settings.StartTimeout))

@@ -6,4 +6,4 @@ builder.AddProject<Projects.AspireApp1_Web>("webfrontend")
     .WithExternalHttpEndpoints()
     .WithReference(apiService);
 
-builder.Build().Run();
+await builder.Build().RunAsync();
