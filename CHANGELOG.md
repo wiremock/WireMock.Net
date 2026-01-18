@@ -1,3 +1,8 @@
+# 1.24.0 (18 January 2026)
+- [#1417](https://github.com/wiremock/WireMock.Net/pull/1417) - Update aspire to 13.1 (examples + code) [feature] contributed by [petrroll](https://github.com/petrroll)
+- [#1418](https://github.com/wiremock/WireMock.Net/pull/1418) - Add OTEL tracing support for Wiremock + automatic OTEL for Aspire integration [feature] contributed by [petrroll](https://github.com/petrroll)
+- [#1214](https://github.com/wiremock/WireMock.Net/issues/1214) - OpenTelemetry Support for .NET Aspire [feature]
+
 # 1.23.0 (05 January 2026)
 - [#1414](https://github.com/wiremock/WireMock.Net/pull/1414) - Pass the parameter matchOperator in Request.WithPath to its inner calls [bug] contributed by [gbamqzkdyg](https://github.com/gbamqzkdyg)
 - [#1416](https://github.com/wiremock/WireMock.Net/pull/1416) - Fix: Pass AllowedHandlebarsHelpers configuration to Handlebars.Net.Helpers library contributed by [samlatham](https://github.com/samlatham)
