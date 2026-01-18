@@ -37,7 +37,7 @@ internal static class WireMockMiddlewareOptionsHelper
 
         // Validate and configure activity tracing
         ActivityTracingValidator.ValidateActivityApiPresence(settings);
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
         if (settings.ActivityTracingOptions is not null)
         {
             options.ActivityTracingOptions = new Owin.ActivityTracing.ActivityTracingOptions

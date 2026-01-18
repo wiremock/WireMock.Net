@@ -52,9 +52,9 @@
         <DefineConstants>$(DefineConstants);TRAILINGHEADERS</DefineConstants>
     </PropertyGroup>
 
-    <!-- Enable OpenTelemetry support for .NET 5+ where ActivitySource is available -->
+    <!-- Enable Activity tracing support for .NET 5+ where ActivitySource is available -->
     <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
-        <DefineConstants>$(DefineConstants);OPENTELEMETRY_SUPPORTED</DefineConstants>
+        <DefineConstants>$(DefineConstants);ACTIVITY_TRACING_SUPPORTED</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

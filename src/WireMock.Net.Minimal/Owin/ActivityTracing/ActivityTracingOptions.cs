@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
 
 namespace WireMock.Owin.ActivityTracing;
 

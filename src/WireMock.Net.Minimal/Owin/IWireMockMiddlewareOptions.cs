@@ -92,7 +92,7 @@ internal interface IWireMockMiddlewareOptions
 
     public bool ProxyAll { get; set; }
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
     /// <summary>
     /// Gets or sets the activity tracing options.
     /// When set, System.Diagnostics.Activity objects are created for request tracing.

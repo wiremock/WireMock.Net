@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if !OPENTELEMETRY_SUPPORTED
+#if !ACTIVITY_TRACING_SUPPORTED
 using System;
 #endif
 using WireMock.Settings;
@@ -22,7 +22,7 @@ internal static class ActivityTracingValidator
     /// </exception>
     public static void ValidateActivityApiPresence(WireMockServerSettings settings)
     {
-#if !OPENTELEMETRY_SUPPORTED
+#if !ACTIVITY_TRACING_SUPPORTED
         if (settings.ActivityTracingOptions is not null)
         {
             throw new InvalidOperationException(

@@ -108,7 +108,7 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
     /// <inheritdoc />
     public bool ProxyAll { get; set; }
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
     /// <inheritdoc />
     public ActivityTracingOptions? ActivityTracingOptions { get; set; }
 #endif

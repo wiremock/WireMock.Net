@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using WireMock.Constants;
 using WireMock.Exceptions;
 using WireMock.Util;
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
 using System.Diagnostics;
 using WireMock.Owin.ActivityTracing;
 #endif
@@ -101,7 +101,7 @@ namespace WireMock.Owin
         {
             var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
             // Start activity if ActivityTracingOptions is configured
             var tracingEnabled = _options.ActivityTracingOptions is not null;
             var excludeAdmin = _options.ActivityTracingOptions?.ExcludeAdminRequests ?? true;
@@ -129,7 +129,7 @@ namespace WireMock.Owin
 #endif
         }
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
         private async Task InvokeInternalCoreAsync(IContext ctx, RequestMessage request, Activity? activity)
 #else
         private async Task InvokeInternalCoreAsync(IContext ctx, RequestMessage request)
@@ -232,7 +232,7 @@ namespace WireMock.Owin
                 _options.Logger.Error($"Providing a Response for Mapping '{result.Match?.Mapping.Guid}' failed. HttpStatusCode set to 500. Exception: {ex}");
                 response = ResponseMessageBuilder.Create(500, ex.Message);
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
                 WireMockActivitySource.RecordException(activity, ex);
 #endif
             }
@@ -253,7 +253,7 @@ namespace WireMock.Owin
                     PartialMatchResult = result.Partial?.RequestMatchResult
                 };
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
                 // Enrich activity with response and mapping info
                 WireMockActivitySource.EnrichWithLogEntry(activity, log, _options.ActivityTracingOptions);
 #endif

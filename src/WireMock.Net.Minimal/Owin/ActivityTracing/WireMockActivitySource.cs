@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if OPENTELEMETRY_SUPPORTED
+#if ACTIVITY_TRACING_SUPPORTED
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
