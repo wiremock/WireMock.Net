@@ -16,6 +16,10 @@ using System.Collections.Generic;
 using WireMock.Constants;
 using WireMock.Exceptions;
 using WireMock.Util;
+#if ACTIVITY_TRACING_SUPPORTED
+using System.Diagnostics;
+using WireMock.Owin.ActivityTracing;
+#endif
 #if !USE_ASPNETCORE
 using IContext = Microsoft.Owin.IOwinContext;
 using OwinMiddleware = Microsoft.Owin.OwinMiddleware;
@@ -97,6 +101,40 @@ namespace WireMock.Owin
         {
             var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
 
+#if ACTIVITY_TRACING_SUPPORTED
+            // Start activity if ActivityTracingOptions is configured
+            var tracingEnabled = _options.ActivityTracingOptions is not null;
+            var excludeAdmin = _options.ActivityTracingOptions?.ExcludeAdminRequests ?? true;
+            Activity? activity = null;
+            
+            // Check if we should trace this request (optionally exclude admin requests)
+            var shouldTrace = tracingEnabled && !(excludeAdmin && request.Path.StartsWith("/__admin/"));
+            
+            if (shouldTrace)
+            {
+                activity = WireMockActivitySource.StartRequestActivity(request.Method, request.Path);
+                WireMockActivitySource.EnrichWithRequest(activity, request, _options.ActivityTracingOptions);
+            }
+
+            try
+            {
+                await InvokeInternalCoreAsync(ctx, request, activity).ConfigureAwait(false);
+            }
+            finally
+            {
+                activity?.Dispose();
+            }
+#else
+            await InvokeInternalCoreAsync(ctx, request).ConfigureAwait(false);
+#endif
+        }
+
+#if ACTIVITY_TRACING_SUPPORTED
+        private async Task InvokeInternalCoreAsync(IContext ctx, RequestMessage request, Activity? activity)
+#else
+        private async Task InvokeInternalCoreAsync(IContext ctx, RequestMessage request)
+#endif
+        {
             var logRequest = false;
             IResponseMessage? response = null;
             (MappingMatcherResult? Match, MappingMatcherResult? Partial) result = (null, null);
@@ -193,6 +231,10 @@ namespace WireMock.Owin
             {
                 _options.Logger.Error($"Providing a Response for Mapping '{result.Match?.Mapping.Guid}' failed. HttpStatusCode set to 500. Exception: {ex}");
                 response = ResponseMessageBuilder.Create(500, ex.Message);
+
+#if ACTIVITY_TRACING_SUPPORTED
+                WireMockActivitySource.RecordException(activity, ex);
+#endif
             }
             finally
             {
@@ -210,6 +252,11 @@ namespace WireMock.Owin
                     PartialMappingTitle = result.Partial?.Mapping?.Title,
                     PartialMatchResult = result.Partial?.RequestMatchResult
                 };
+
+#if ACTIVITY_TRACING_SUPPORTED
+                // Enrich activity with response and mapping info
+                WireMockActivitySource.EnrichWithLogEntry(activity, log, _options.ActivityTracingOptions);
+#endif
 
                 LogRequest(log, logRequest);
 

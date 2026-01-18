@@ -24,7 +24,8 @@ IResourceBuilder<WireMockServerResource> apiService2 = builder
     .AsHttp2Service()
     .WithMappingsPath(mappingsPath)
     .WithWatchStaticMappings()
-    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync);
+    .WithApiMappingBuilder(WeatherForecastApiMock.BuildAsync)
+    .WithOpenTelemetry(); // Enable OpenTelemetry tracing for Aspire dashboard
 
 //var apiServiceUsedForDocs = builder
 //    .AddWireMock("apiservice1", WireMockServerArguments.DefaultPort)
