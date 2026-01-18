@@ -99,12 +99,12 @@ public static class WireMockActivitySource
         if (statusCodeInt.HasValue)
         {
             activity.SetTag(WireMockSemanticConventions.HttpStatusCode, statusCodeInt.Value);
+            activity.SetTag("otel.status_description", $"HTTP {statusCodeInt.Value}");
 
             // Set status based on HTTP status code (using standard otel.status_code tag)
             if (statusCodeInt.Value >= 400)
             {
                 activity.SetTag("otel.status_code", "ERROR");
-                activity.SetTag("otel.status_description", $"HTTP {statusCodeInt.Value}");
             }
             else
             {
