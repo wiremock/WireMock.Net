@@ -29,7 +29,7 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(1d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 1d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 
@@ -61,10 +61,10 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -102,10 +102,10 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -143,10 +143,10 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -175,11 +175,11 @@ public class RequestMessageBodyMatcherTests
         // Assign
         var body = new BodyData
         {
-            BodyAsBytes = new byte[] { 1 },
+            BodyAsBytes = [1],
             DetectedBodyType = BodyType.Bytes
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(0.5d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 0.5d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 
@@ -207,7 +207,7 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.Json
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(1.0d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 1.0d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 
@@ -235,7 +235,7 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.Json
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(1d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 1d));
         stringMatcherMock.SetupGet(m => m.MatchOperator).Returns(MatchOperator.Or);
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
@@ -263,7 +263,7 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.Json
         };
         var objectMatcherMock = new Mock<IObjectMatcher>();
-        objectMatcherMock.Setup(m => m.IsMatch(It.IsAny<object>())).Returns(1d);
+        objectMatcherMock.Setup(m => m.IsMatch(It.IsAny<object>())).Returns(MatchResult.From(nameof(IStringMatcher), 1d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 
@@ -387,7 +387,7 @@ public class RequestMessageBodyMatcherTests
             DetectedBodyType = BodyType.Bytes
         };
         var objectMatcherMock = new Mock<IObjectMatcher>();
-        objectMatcherMock.Setup(m => m.IsMatch(It.IsAny<object>())).Returns(1.0d);
+        objectMatcherMock.Setup(m => m.IsMatch(It.IsAny<object>())).Returns(MatchResult.From(nameof(IStringMatcher), 1.0d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 

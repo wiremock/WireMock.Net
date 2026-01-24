@@ -62,7 +62,7 @@ public class ContentTypeMatcher : WildcardMatcher
     {
         if (string.IsNullOrEmpty(input) || !MediaTypeHeaderValue.TryParse(input, out var contentType))
         {
-            return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+            return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
         }
 
         return base.IsMatch(contentType.MediaType);

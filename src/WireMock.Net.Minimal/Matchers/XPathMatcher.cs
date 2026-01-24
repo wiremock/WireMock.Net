@@ -114,7 +114,7 @@ public class XPathMatcher : IStringMatcher
 
     private MatchResult CreateMatchResult(double score, Exception? exception = null)
     {
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     private sealed class XPathEvaluator

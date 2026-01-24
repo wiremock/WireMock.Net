@@ -53,7 +53,7 @@ internal class AzureADAuthenticationMatcher : IStringMatcher
     {
         if (string.IsNullOrEmpty(input))
         {
-            return MatchScores.Mismatch;
+            return MatchResult.From(Name);
         }
 
         var token = Regex.Replace(input, BearerPrefix, string.Empty, RegexOptions.IgnoreCase, RegexConstants.DefaultTimeout);
@@ -82,11 +82,11 @@ internal class AzureADAuthenticationMatcher : IStringMatcher
             // Throws an Exception as the token is invalid (expired, invalid-formatted, tenant mismatch, etc.)
             _jwtSecurityTokenHandler.ValidateToken(token, validationParameters, out _);
 
-            return MatchScores.Perfect;
+            return MatchResult.From(Name, MatchScores.Perfect);
         }
         catch (Exception ex)
         {
-            return new MatchResult(MatchScores.Mismatch, ex);
+            return MatchResult.From(Name, ex);
         }
     }
 

@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
+using System.Collections.Generic;
 using WireMock.Matchers.Helpers;
 using WireMock.Models.Mime;
 using WireMock.Util;
@@ -12,7 +13,7 @@ namespace WireMock.Matchers;
 /// </summary>
 public class MimePartMatcher : IMimePartMatcher
 {
-    private readonly Func<IMimePartData, MatchResult>[] _funcs;
+    private readonly IList<(string Name, Func<IMimePartData, MatchResult> func)> _matcherFunctions;
 
     /// <inheritdoc />
     public string Name => nameof(MimePartMatcher);
@@ -49,34 +50,47 @@ public class MimePartMatcher : IMimePartMatcher
         ContentTransferEncodingMatcher = contentTransferEncodingMatcher;
         ContentMatcher = contentMatcher;
 
-        _funcs =
-        [
-            mp => ContentTypeMatcher?.IsMatch(GetContentTypeAsString(mp.ContentType)) ?? MatchScores.Perfect,
-            mp => ContentDispositionMatcher?.IsMatch(mp.ContentDisposition?.ToString()?.Replace("Content-Disposition: ", string.Empty)) ?? MatchScores.Perfect,
-            mp => ContentTransferEncodingMatcher?.IsMatch(mp.ContentTransferEncoding.ToLowerInvariant()) ?? MatchScores.Perfect,
-            MatchOnContent
-        ];
+        _matcherFunctions = [];
+        if (ContentTypeMatcher != null)
+        {
+            _matcherFunctions.Add((nameof(ContentTypeMatcher), mp => ContentTypeMatcher.IsMatch(GetContentTypeAsString(mp.ContentType))));
+        }
+
+        if (ContentDispositionMatcher != null)
+        {
+            _matcherFunctions.Add((nameof(ContentDispositionMatcher), mp => ContentDispositionMatcher.IsMatch(mp.ContentDisposition?.ToString()?.Replace("Content-Disposition: ", string.Empty))));
+        }
+
+        if (ContentTransferEncodingMatcher != null)
+        {
+            _matcherFunctions.Add((nameof(ContentTransferEncodingMatcher), mp => ContentTransferEncodingMatcher.IsMatch(mp.ContentTransferEncoding.ToLowerInvariant())));
+        }
+
+        if (ContentMatcher != null)
+        {
+            _matcherFunctions.Add((ContentMatcher.Name, MatchOnContent));
+        }
     }
 
     /// <inheritdoc />
     public MatchResult IsMatch(IMimePartData value)
     {
-        var score = MatchScores.Mismatch;
-        Exception? exception = null;
+        var results = new List<MatchResult>();
 
-        try
+        foreach (var matcherFunction in _matcherFunctions)
         {
-            if (Array.TrueForAll(_funcs, func => func(value).IsPerfect()))
+            try
             {
-                score = MatchScores.Perfect;
+                var matchResult = matcherFunction.func(value);
+                results.Add(MatchResult.From(matcherFunction.Name, matchResult.Score));
+            }
+            catch (Exception ex)
+            {
+                results.Add(MatchResult.From(matcherFunction.Name, MatchScores.Mismatch, ex));
             }
         }
-        catch (Exception ex)
-        {
-            exception = ex;
-        }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(nameof(MimePartMatcher), results, MatchOperator.And);
     }
 
     /// <inheritdoc />
@@ -87,11 +101,6 @@ public class MimePartMatcher : IMimePartMatcher
 
     private MatchResult MatchOnContent(IMimePartData mimePart)
     {
-        if (ContentMatcher == null)
-        {
-            return MatchScores.Perfect;
-        }
-
         var bodyParserSettings = new BodyParserSettings
         {
             Stream = mimePart.Open(),
@@ -102,7 +111,7 @@ public class MimePartMatcher : IMimePartMatcher
         };
 
         var bodyData = BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false).GetAwaiter().GetResult();
-        return BodyDataMatchScoreCalculator.CalculateMatchScore(bodyData, ContentMatcher);
+        return BodyDataMatchScoreCalculator.CalculateMatchScore(bodyData, ContentMatcher!);
     }
 
     private static string? GetContentTypeAsString(IContentTypeData? contentType)

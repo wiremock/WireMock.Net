@@ -166,11 +166,12 @@ internal class LogEntryMapper
             TotalScore = matchResult.TotalScore,
             TotalNumber = matchResult.TotalNumber,
             AverageTotalScore = matchResult.AverageTotalScore,
-            MatchDetails = matchResult.MatchDetails.Select(md => new
-            {
-                Name = md.MatcherType.Name.Replace("RequestMessage", string.Empty),
-                md.Score
-            } as object).ToList()
+            MatchDetails = matchResult.MatchDetails
+            //MatchDetails = matchResult.MatchDetails.Select(md => new
+            //{
+            //    Name = md.MatcherType.Name.Replace("RequestMessage", string.Empty),
+            //    md.Score
+            //} as object).ToList()
         };
     }
 }

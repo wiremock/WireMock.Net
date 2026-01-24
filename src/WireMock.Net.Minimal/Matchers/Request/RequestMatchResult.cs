@@ -24,14 +24,26 @@ public class RequestMatchResult : IRequestMatchResult
     public double AverageTotalScore => TotalNumber == 0 ? MatchScores.Mismatch : TotalScore / TotalNumber;
 
     /// <inheritdoc />
-    public IList<MatchDetail> MatchDetails { get; } = new List<MatchDetail>();
+    public IList<MatchDetail> MatchDetails { get; } = [];
 
     /// <inheritdoc />
     public double AddScore(Type matcherType, double score, Exception? exception)
     {
-        MatchDetails.Add(new MatchDetail { MatcherType = matcherType, Score = score, Exception = exception });
+        return AddMatchDetail(new MatchDetail
+        {
+            Name = matcherType.Name.Replace("RequestMessage", string.Empty),
+            MatcherType = matcherType,
+            Score = score,
+            Exception = exception
+        });
+    }
 
-        return score;
+    /// <inheritdoc />
+    public double AddMatchDetail(MatchDetail matchDetail)
+    {
+        MatchDetails.Add(matchDetail);
+
+        return matchDetail.Score;
     }
 
     /// <summary>

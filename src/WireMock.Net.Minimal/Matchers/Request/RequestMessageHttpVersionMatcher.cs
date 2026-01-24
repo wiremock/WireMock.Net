@@ -11,6 +11,8 @@ namespace WireMock.Matchers.Request;
 /// </summary>
 public class RequestMessageHttpVersionMatcher : IRequestMatcher
 {
+    private const string  _name = nameof(RequestMessageHttpVersionMatcher);
+
     /// <summary>
     /// The matcher.
     /// </summary>
@@ -19,7 +21,7 @@ public class RequestMessageHttpVersionMatcher : IRequestMatcher
     /// <summary>
     /// The func.
     /// </summary>
-    public Func<string, bool>? Func { get; }
+    public Func<string, bool>? MatcherOnStringFunc { get; }
 
     /// <summary>
     /// The <see cref="MatchBehaviour"/>
@@ -61,7 +63,7 @@ public class RequestMessageHttpVersionMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageHttpVersionMatcher(Func<string, bool> func)
     {
-        Func = Guard.NotNull(func);
+        MatcherOnStringFunc = Guard.NotNull(func);
     }
 
     /// <inheritdoc />
@@ -78,11 +80,11 @@ public class RequestMessageHttpVersionMatcher : IRequestMatcher
             return Matcher.IsMatch(requestMessage.HttpVersion);
         }
 
-        if (Func != null)
+        if (MatcherOnStringFunc != null)
         {
-            return MatchScores.ToScore(Func(requestMessage.HttpVersion));
+            return MatchResult.From($"{_name}:{nameof(MatcherOnStringFunc)}", MatchScores.ToScore(MatcherOnStringFunc(requestMessage.HttpVersion)));
         }
 
-        return default;
+        return MatchResult.From(_name);
     }
 }

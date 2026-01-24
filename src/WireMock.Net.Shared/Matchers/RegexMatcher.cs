@@ -111,7 +111,7 @@ public class RegexMatcher : IStringMatcher, IIgnoreCaseMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     /// <inheritdoc />

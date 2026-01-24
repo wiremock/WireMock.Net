@@ -153,6 +153,44 @@ AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
         score.Should().Be(MatchScores.Perfect);
     }
 
+    [Fact]
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyAsMultiPart_Issue1371()
+    {
+        var body = new BodyData
+        {
+            BodyAsString =
+                "--------------------------woli8b80pw4vBJtNpAMOKS\r\nContent-Disposition: form-data; name=\"metadata\"\r\nContent-Type: application/json\r\n\r\n{\"ID\": \"9858013b-e020-4ef9-b8a8-0bebc740e6a7\", \"DATE\": \"2025-08-15T13:45:30.0000000Z\", \"NAME\": \"32c9a8dd-e214-4afb-9611-9cde81f827c6\", \"NUMBER\": 10}\r\n--------------------------woli8b80pw4vBJtNpAMOKS--\r\n",
+            DetectedBodyType = BodyType.MultiPart
+        };
+
+        var headers = new Dictionary<string, string[]>
+        {
+            { "Content-Type", [@"multipart/form-data; boundary=------------------------woli8b80pw4vBJtNpAMOKS"] }
+        };
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body, headers);
+
+        var bodyMatcher = new MimePartMatcher(
+            MatchBehaviour.AcceptOnMatch,
+            new ContentTypeMatcher("application/json"),
+            null, // Content-Disposition
+            null, // Content-Transfer-Encoding
+            new JsonPartialMatcher(new { id = "9858013b-e020-4ef9-b8a8-0bebc740e6a7" }, true)
+        );
+
+        var matchers = new[] { bodyMatcher }
+            .OfType<IMatcher>()
+            .ToArray();
+
+        var matcher = new RequestMessageMultiPartMatcher(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, matchers!);
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(MatchScores.Perfect);
+    }
+
     private static double GetScore(IMatcher? matcher1, IMatcher? matcher2, IMatcher? matcher3, MatchOperator matchOperator = MatchOperator.And)
     {
         // Assign

@@ -23,7 +23,7 @@ public interface IMultiPartRequestBuilder : IHttpVersionBuilder
     /// <param name="matchBehaviour">The <see cref="MatchBehaviour"/> to use.</param>
     /// <param name="matchOperator">The <see cref="MatchOperator"/> to use.</param>
     /// <returns>The <see cref="IRequestBuilder"/>.</returns>
-    IRequestBuilder WithMultiPart(IMatcher[] matchers, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch, MatchOperator matchOperator = MatchOperator.Or);
+    IRequestBuilder WithMultiPart(IMatcher[] matchers, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch, MatchOperator matchOperator = MatchOperator.And);
 
     /// <summary>
     /// WithMultiPart: MatchBehaviour and IMatcher[]
