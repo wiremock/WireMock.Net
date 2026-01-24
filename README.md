@@ -70,7 +70,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 
 <br />
 
-🔺 **WireMock.Net.Minimal** does not include *WireMock.Net.MimePart*, *WireMock.Net.GraphQL* and *WireMock.Net.ProtoBuf*.
+🔺 **WireMock.Net.Minimal** does not include *WireMock.Net.MimePart*, *WireMock.Net.GraphQL*, *WireMock.Net.ProtoBuf* and *WireMock.Net.OpenTelemetry*.
 
 ---
 

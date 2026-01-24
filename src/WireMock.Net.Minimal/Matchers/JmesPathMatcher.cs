@@ -87,7 +87,7 @@ public class JmesPathMatcher : IStringMatcher, IObjectMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     /// <inheritdoc />
@@ -102,7 +102,7 @@ public class JmesPathMatcher : IStringMatcher, IObjectMatcher
             return IsMatch(inputAsString);
         }
 
-        return MatchBehaviourHelper.Convert(MatchBehaviour, score);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
     }
 
     /// <inheritdoc />

@@ -17,27 +17,27 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <summary>
     /// The body function
     /// </summary>
-    public Func<string?, bool>? Func { get; }
+    public Func<string?, bool>? MatchOnBodyAsStringFunc { get; }
 
     /// <summary>
     /// The body data function for byte[]
     /// </summary>
-    public Func<byte[]?, bool>? DataFunc { get; }
+    public Func<byte[]?, bool>? MatchOnBodyAsBytesFunc { get; }
 
     /// <summary>
     /// The body data function for json
     /// </summary>
-    public Func<object?, bool>? JsonFunc { get; }
+    public Func<object?, bool>? MatchOnBodyAsJsonFunc { get; }
 
     /// <summary>
     /// The body data function for BodyData
     /// </summary>
-    public Func<IBodyData?, bool>? BodyDataFunc { get; }
+    public Func<IBodyData?, bool>? MatchOnBodyAsBodyDataFunc { get; }
 
     /// <summary>
     /// The body data function for FormUrlEncoded
     /// </summary>
-    public Func<IDictionary<string, string>?, bool>? FormUrlEncodedFunc { get; }
+    public Func<IDictionary<string, string>?, bool>? MatchOnBodyAsFormUrlEncodedFunc { get; }
 
     /// <summary>
     /// The matchers.
@@ -85,7 +85,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageBodyMatcher(Func<string?, bool> func)
     {
-        Func = Guard.NotNull(func);
+        MatchOnBodyAsStringFunc = Guard.NotNull(func);
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageBodyMatcher(Func<byte[]?, bool> func)
     {
-        DataFunc = Guard.NotNull(func);
+        MatchOnBodyAsBytesFunc = Guard.NotNull(func);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageBodyMatcher(Func<object?, bool> func)
     {
-        JsonFunc = Guard.NotNull(func);
+        MatchOnBodyAsJsonFunc = Guard.NotNull(func);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageBodyMatcher(Func<IBodyData?, bool> func)
     {
-        BodyDataFunc = Guard.NotNull(func);
+        MatchOnBodyAsBodyDataFunc = Guard.NotNull(func);
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <param name="func">The function.</param>
     public RequestMessageBodyMatcher(Func<IDictionary<string, string>?, bool> func)
     {
-        FormUrlEncodedFunc = Guard.NotNull(func);
+        MatchOnBodyAsFormUrlEncodedFunc = Guard.NotNull(func);
     }
 
     /// <summary>
@@ -147,43 +147,43 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
-        var (score, exception) = CalculateMatchScore(requestMessage).Expand();
+        var (score, exception) = CalculateMatchResult(requestMessage).Expand();
         return requestMatchResult.AddScore(GetType(), score, exception);
     }
 
-    private MatchResult CalculateMatchScore(IRequestMessage requestMessage)
+    private MatchResult CalculateMatchResult(IRequestMessage requestMessage)
     {
         if (Matchers != null && Matchers.Any())
         {
             var results = Matchers.Select(matcher => BodyDataMatchScoreCalculator.CalculateMatchScore(requestMessage.BodyData, matcher)).ToArray();
-            return MatchResult.From(results, MatchOperator);
+            return MatchResult.From(nameof(RequestMessageBodyMatcher), results, MatchOperator);
         }
 
-        if (Func != null)
+        if (MatchOnBodyAsStringFunc != null)
         {
-            return MatchScores.ToScore(Func(requestMessage.BodyData?.BodyAsString));
+            return MatchResult.From($"{nameof(RequestMessageBodyMatcher)}:{nameof(MatchOnBodyAsStringFunc)}", MatchScores.ToScore(MatchOnBodyAsStringFunc(requestMessage.BodyData?.BodyAsString)));
         }
 
-        if (FormUrlEncodedFunc != null)
+        if (MatchOnBodyAsFormUrlEncodedFunc != null)
         {
-            return MatchScores.ToScore(FormUrlEncodedFunc(requestMessage.BodyData?.BodyAsFormUrlEncoded));
+            return MatchResult.From($"{nameof(RequestMessageBodyMatcher)}:{nameof(MatchOnBodyAsFormUrlEncodedFunc)}", MatchScores.ToScore(MatchOnBodyAsFormUrlEncodedFunc(requestMessage.BodyData?.BodyAsFormUrlEncoded)));
         }
 
-        if (JsonFunc != null)
+        if (MatchOnBodyAsJsonFunc != null)
         {
-            return MatchScores.ToScore(JsonFunc(requestMessage.BodyData?.BodyAsJson));
+            return MatchResult.From($"{nameof(RequestMessageBodyMatcher)}:{nameof(MatchOnBodyAsJsonFunc)}", MatchScores.ToScore(MatchOnBodyAsJsonFunc(requestMessage.BodyData?.BodyAsJson)));
         }
 
-        if (DataFunc != null)
+        if (MatchOnBodyAsBytesFunc != null)
         {
-            return MatchScores.ToScore(DataFunc(requestMessage.BodyData?.BodyAsBytes));
+            return MatchResult.From($"{nameof(RequestMessageBodyMatcher)}:{nameof(MatchOnBodyAsBytesFunc)}", MatchScores.ToScore(MatchOnBodyAsBytesFunc(requestMessage.BodyData?.BodyAsBytes)));
         }
 
-        if (BodyDataFunc != null)
+        if (MatchOnBodyAsBodyDataFunc != null)
         {
-            return MatchScores.ToScore(BodyDataFunc(requestMessage.BodyData));
+            return MatchResult.From($"{nameof(RequestMessageBodyMatcher)}:{nameof(MatchOnBodyAsBodyDataFunc)}", MatchScores.ToScore(MatchOnBodyAsBodyDataFunc(requestMessage.BodyData)));
         }
 
-        return default;
+        return MatchResult.From(nameof(RequestMessageBodyMatcher));
     }
 }

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Linq;
 using AnyOfTypes;
 using WireMock.Extensions;
@@ -53,7 +52,7 @@ public class NotNullOrEmptyMatcher : IObjectMatcher, IStringMatcher
                 break;
         }
 
-        return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(match));
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(match)));
     }
 
     /// <inheritdoc />
@@ -61,7 +60,7 @@ public class NotNullOrEmptyMatcher : IObjectMatcher, IStringMatcher
     {
         var match = !string.IsNullOrEmpty(input);
 
-        return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(match));
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.ToScore(match)));
     }
 
     /// <inheritdoc />

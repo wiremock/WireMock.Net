@@ -97,7 +97,7 @@ public class CSharpCodeMatcher : ICSharpCodeMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     private bool IsMatch(dynamic input, string pattern)

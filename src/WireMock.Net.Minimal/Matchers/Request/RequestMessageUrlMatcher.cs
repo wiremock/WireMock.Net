@@ -86,15 +86,16 @@ public class RequestMessageUrlMatcher : IRequestMatcher
         if (Matchers != null)
         {
             var results = Matchers.Select(m => m.IsMatch(requestMessage.Url)).ToArray();
-            return MatchResult.From(results, MatchOperator);
+            return MatchResult.From(nameof(RequestMessageUrlMatcher), results, MatchOperator);
         }
 
         if (Funcs != null)
         {
             var results = Funcs.Select(func => func(requestMessage.Url)).ToArray();
-            return MatchScores.ToScore(results, MatchOperator);
+            var score = MatchScores.ToScore(results, MatchOperator);
+            return MatchResult.From(nameof(RequestMessageUrlMatcher), score);
         }
 
-        return default;
+        return MatchResult.From(nameof(RequestMessageUrlMatcher));
     }
 }

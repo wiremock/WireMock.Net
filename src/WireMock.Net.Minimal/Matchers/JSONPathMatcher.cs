@@ -80,7 +80,7 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     /// <inheritdoc />
@@ -104,7 +104,7 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), exception);
     }
 
     /// <inheritdoc />

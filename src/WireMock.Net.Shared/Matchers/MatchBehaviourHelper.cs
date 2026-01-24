@@ -36,6 +36,6 @@ internal static class MatchBehaviourHelper
     /// <returns>match result</returns>
     internal static MatchResult Convert(MatchBehaviour matchBehaviour, MatchResult result)
     {
-        return matchBehaviour == MatchBehaviour.AcceptOnMatch ? result : new MatchResult(Convert(matchBehaviour, result.Score), result.Exception);
+        return matchBehaviour == MatchBehaviour.AcceptOnMatch ? result : MatchResult.From(result.Name, Convert(matchBehaviour, result.Score), result.Exception);
     }
 }

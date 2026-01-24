@@ -52,7 +52,7 @@ internal class MimeKitUtils : IMimeKitUtils
                     return false;
             }
 
-            var fixedBytes = FixBytes(bytes, contentTypeHeader[0]);
+            var fixedBytes = PrependContentTypeHeader(bytes, contentTypeHeader[0]);
 
             mimeMessageData = LoadFromStream(new MemoryStream(fixedBytes));
             return true;
@@ -68,7 +68,10 @@ internal class MimeKitUtils : IMimeKitUtils
         return contentTypeHeader.Any(ct => ct.TrimStart().StartsWith("multipart/", StringComparison.OrdinalIgnoreCase));
     }
 
-    private static byte[] FixBytes(byte[] bytes, WireMockList<string> contentType)
+    /// <summary>
+    /// Prepends the Content-Type header to the byte array to make it a valid MIME message for MimeKit.
+    /// </summary>
+    private static byte[] PrependContentTypeHeader(byte[] bytes, WireMockList<string> contentType)
     {
         var contentTypeBytes = Encoding.UTF8.GetBytes($"{HttpKnownHeaderNames.ContentType}: {contentType}\r\n\r\n");
 

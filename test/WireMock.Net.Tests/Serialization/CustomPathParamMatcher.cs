@@ -46,7 +46,7 @@ public class CustomPathParamMatcher : IStringMatcher
         var inputParts = GetPathParts(input);
         if (inputParts.Length != _pathParts.Length)
         {
-            return MatchScores.Mismatch;
+            return MatchResult.From(Name);
         }
 
         try
@@ -60,29 +60,29 @@ public class CustomPathParamMatcher : IStringMatcher
                     var pathParamName = pathPart.Trim('{').Trim('}');
                     if (!_pathParams.ContainsKey(pathParamName))
                     {
-                        return MatchScores.Mismatch;
+                        return MatchResult.From(Name);
                     }
 
                     if (!Regex.IsMatch(inputPart, _pathParams[pathParamName], RegexOptions.IgnoreCase))
                     {
-                        return MatchScores.Mismatch;
+                        return MatchResult.From(Name);
                     }
                 }
                 else
                 {
                     if (!inputPart.Equals(pathPart, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return MatchScores.Mismatch;
+                        return MatchResult.From(Name);
                     }
                 }
             }
         }
         catch
         {
-            return MatchScores.Mismatch;
+            return MatchResult.From(Name);
         }
 
-        return MatchScores.Perfect;
+        return MatchResult.From(Name, MatchScores.Perfect);
     }
 
     public AnyOf<string, StringPattern>[] GetPatterns()

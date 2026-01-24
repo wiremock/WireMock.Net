@@ -55,4 +55,11 @@ public interface IRequestMatchResult : IComparable
     /// <param name="exception">The exception [Optional].</param>
     /// <returns>The score.</returns>
     double AddScore(Type matcherType, double score, Exception? exception);
+
+    /// <summary>
+    /// Adds the score.
+    /// </summary>
+    /// <param name="matchDetail">The matchDetail.</param>
+    /// <returns>The score.</returns>
+    double AddMatchDetail(MatchDetail matchDetail);
 }

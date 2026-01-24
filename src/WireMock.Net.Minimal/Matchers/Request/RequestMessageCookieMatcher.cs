@@ -13,6 +13,8 @@ namespace WireMock.Matchers.Request;
 /// <inheritdoc cref="IRequestMatcher"/>
 public class RequestMessageCookieMatcher : IRequestMatcher
 {
+    private const string _name = nameof(RequestMessageCookieMatcher);
+
     /// <summary>
     /// MatchBehaviour
     /// </summary>
@@ -104,7 +106,7 @@ public class RequestMessageCookieMatcher : IRequestMatcher
     {
         if (requestMessage.Cookies == null)
         {
-            return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+            return MatchResult.From(_name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
         }
 
         // Check if we want to use IgnoreCase to compare the Cookie-Name and Cookie-Value
@@ -112,19 +114,19 @@ public class RequestMessageCookieMatcher : IRequestMatcher
 
         if (Funcs != null)
         {
-            return MatchScores.ToScore(Funcs.Any(f => f(cookies)));
+            return MatchResult.From(_name, MatchScores.ToScore(Funcs.Any(f => f(cookies))));
         }
 
         if (Matchers == null)
         {
-            return default;
+            return MatchResult.From(_name);
         }
 
         if (!cookies.ContainsKey(Name))
         {
-            return MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch);
+            return MatchResult.From(_name, MatchBehaviourHelper.Convert(MatchBehaviour, MatchScores.Mismatch));
         }
 
-        return Matchers.Max(m => m.IsMatch(cookies[Name]));
+        return MatchResult.From(_name, Matchers.Max(m => m.IsMatch(cookies[Name]))?.Score ?? MatchScores.Mismatch);
     }
 }

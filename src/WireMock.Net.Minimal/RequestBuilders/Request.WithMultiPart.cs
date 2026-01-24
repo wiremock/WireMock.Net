@@ -15,7 +15,7 @@ public partial class Request
     }
 
     /// <inheritdoc />
-    public IRequestBuilder WithMultiPart(IMatcher[] matchers, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch, MatchOperator matchOperator = MatchOperator.Or)
+    public IRequestBuilder WithMultiPart(IMatcher[] matchers, MatchBehaviour matchBehaviour = MatchBehaviour.AcceptOnMatch, MatchOperator matchOperator = MatchOperator.And)
     {
         _requestMatchers.Add(new RequestMessageMultiPartMatcher(matchBehaviour, matchOperator, matchers));
         return this;

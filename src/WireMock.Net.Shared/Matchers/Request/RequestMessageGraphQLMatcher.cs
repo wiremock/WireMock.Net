@@ -73,7 +73,7 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var results = CalculateMatchResults(requestMessage);
-        var (score, exception) = MatchResult.From(results, MatchOperator).Expand();
+        var (score, exception) = MatchResult.From(nameof(RequestMessageGraphQLMatcher), results, MatchOperator).Expand();
 
         return requestMatchResult.AddScore(GetType(), score, exception);
     }
@@ -86,12 +86,12 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
             return stringMatcher.IsMatch(requestMessage.BodyData.BodyAsString);
         }
 
-        return default;
+        return MatchResult.From(nameof(RequestMessageGraphQLMatcher));
     }
 
     private IReadOnlyList<MatchResult> CalculateMatchResults(IRequestMessage requestMessage)
     {
-        return Matchers == null ? [new MatchResult()] : Matchers.Select(matcher => CalculateMatchResult(requestMessage, matcher)).ToArray();
+        return Matchers == null ? [MatchResult.From(nameof(RequestMessageGraphQLMatcher))] : Matchers.Select(matcher => CalculateMatchResult(requestMessage, matcher)).ToArray();
     }
 
     private static IMatcher[] CreateMatcherArray(
