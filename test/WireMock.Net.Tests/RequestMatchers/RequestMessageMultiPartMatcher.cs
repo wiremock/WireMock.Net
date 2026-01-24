@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if MIMEKIT
+//#if MIMEKIT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -216,4 +216,4 @@ AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
         return matcher.GetMatchingScore(requestMessage, result);
     }
 }
-#endif
+//#endif

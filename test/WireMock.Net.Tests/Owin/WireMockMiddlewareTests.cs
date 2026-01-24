@@ -33,7 +33,6 @@ using IContext = Microsoft.Owin.IOwinContext;
 using IRequest = Microsoft.Owin.IOwinRequest;
 using IResponse = Microsoft.Owin.IOwinResponse;
 #else
-using Microsoft.AspNetCore.Http;
 using IContext = Microsoft.AspNetCore.Http.HttpContext;
 using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
 using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
@@ -90,10 +89,10 @@ public class WireMockMiddlewareTests
 
         _requestMatchResultMock = new Mock<IRequestMatchResult>();
         _requestMatchResultMock.Setup(r => r.TotalNumber).Returns(1);
-        _requestMatchResultMock.Setup(r => r.MatchDetails).Returns(new List<MatchDetail>());
+        _requestMatchResultMock.Setup(r => r.MatchDetails).Returns([]);
 
         _sut = new WireMockMiddleware(
-            null,
+            _ => Task.CompletedTask,
             _optionsMock.Object,
             _requestMapperMock.Object,
             _responseMapperMock.Object,
@@ -106,7 +105,7 @@ public class WireMockMiddlewareTests
     public async Task WireMockMiddleware_Invoke_NoMatch()
     {
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -124,7 +123,7 @@ public class WireMockMiddlewareTests
         _optionsMock.Setup(o => o.SaveUnmatchedRequests).Returns(true);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert
         _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -151,7 +150,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -174,7 +173,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -190,7 +189,7 @@ public class WireMockMiddlewareTests
         _optionsMock.SetupGet(o => o.RequestLogExpirationDuration).Returns(1);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
     }
 
     [Fact]
@@ -234,7 +233,7 @@ public class WireMockMiddlewareTests
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         fileSystemHandlerMock.Verify(f => f.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
@@ -284,11 +283,11 @@ public class WireMockMiddlewareTests
         var requestBuilder = Request.Create().UsingAnyMethod();
         _mappingMock.SetupGet(m => m.RequestMatcher).Returns(requestBuilder);
 
-        var result = new MappingMatcherResult (_mappingMock.Object, _requestMatchResultMock.Object);
+        var result = new MappingMatcherResult(_mappingMock.Object, _requestMatchResultMock.Object);
         _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((result, result));
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert and Verify
         fileSystemHandlerMock.Verify(f => f.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
@@ -304,7 +303,7 @@ public class WireMockMiddlewareTests
         var request = new RequestMessage(new UrlDetails("http://localhost/__admin/health"), "GET", "::1");
         _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
-        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new WireMock.Owin.ActivityTracing.ActivityTracingOptions
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
         {
             ExcludeAdminRequests = true
         });
@@ -320,7 +319,7 @@ public class WireMockMiddlewareTests
         ActivitySource.AddActivityListener(listener);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert
         activityStarted.Should().BeFalse();
@@ -333,7 +332,7 @@ public class WireMockMiddlewareTests
         var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
         _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
-        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new WireMock.Owin.ActivityTracing.ActivityTracingOptions
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
         {
             ExcludeAdminRequests = true
         });
@@ -349,7 +348,7 @@ public class WireMockMiddlewareTests
         ActivitySource.AddActivityListener(listener);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert
         activityStarted.Should().BeTrue();
@@ -362,7 +361,7 @@ public class WireMockMiddlewareTests
         var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
         _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
-        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns((WireMock.Owin.ActivityTracing.ActivityTracingOptions?)null);
+        _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns((ActivityTracingOptions?)null);
 
         var activityStarted = false;
         using var listener = new ActivityListener
@@ -375,7 +374,7 @@ public class WireMockMiddlewareTests
         ActivitySource.AddActivityListener(listener);
 
         // Act
-        await _sut.Invoke(_contextMock.Object).ConfigureAwait(false);
+        await _sut.Invoke(_contextMock.Object);
 
         // Assert
         activityStarted.Should().BeFalse();

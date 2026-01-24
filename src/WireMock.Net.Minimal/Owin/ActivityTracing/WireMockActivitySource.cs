@@ -1,9 +1,9 @@
 // Copyright © WireMock.Net
 
-#if ACTIVITY_TRACING_SUPPORTED
 using System;
 using System.Diagnostics;
 using WireMock.Logging;
+using WireMock.Settings;
 
 namespace WireMock.Owin.ActivityTracing;
 
@@ -197,4 +197,3 @@ public static class WireMockActivitySource
         activity.SetTag("exception.stacktrace", exception.ToString());
     }
 }
-#endif

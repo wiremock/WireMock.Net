@@ -1,15 +1,14 @@
 // Copyright © WireMock.Net
 
-#if NET6_0_OR_GREATER
 using System;
 using System.Diagnostics;
-using System.Linq;
 using FluentAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin.ActivityTracing;
+using WireMock.Settings;
 using WireMock.Util;
 using Xunit;
 
@@ -192,4 +191,3 @@ public class WireMockActivitySourceTests
         activity.GetTagItem("exception.stacktrace").Should().NotBeNull();
     }
 }
-#endif

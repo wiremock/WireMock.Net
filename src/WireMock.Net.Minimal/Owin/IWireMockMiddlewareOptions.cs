@@ -2,22 +2,16 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Owin.ActivityTracing;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using System.Security.Cryptography.X509Certificates;
-
-using JetBrains.Annotations;
-
-#if !USE_ASPNETCORE
-using Owin;
-#else
-using IAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
-using Microsoft.Extensions.DependencyInjection;
-#endif
+using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
 
 namespace WireMock.Owin;
 
@@ -41,11 +35,10 @@ internal interface IWireMockMiddlewareOptions
 
     int? MaxRequestLogCount { get; set; }
 
-    Action<IAppBuilder>? PreWireMockMiddlewareInit { get; set; }
+    Action<IApplicationBuilder>? PreWireMockMiddlewareInit { get; set; }
 
-    Action<IAppBuilder>? PostWireMockMiddlewareInit { get; set; }
+    Action<IApplicationBuilder>? PostWireMockMiddlewareInit { get; set; }
 
-#if USE_ASPNETCORE
     Action<IServiceCollection>? AdditionalServiceRegistration { get; set; }
 
     CorsPolicyOptions? CorsPolicyOptions { get; set; }
@@ -53,7 +46,6 @@ internal interface IWireMockMiddlewareOptions
     ClientCertificateMode ClientCertificateMode { get; set; }
 
     bool AcceptAnyClientCertificate { get; set; }
-#endif
 
     IFileSystemHandler? FileSystemHandler { get; set; }
 
@@ -92,11 +84,9 @@ internal interface IWireMockMiddlewareOptions
 
     public bool ProxyAll { get; set; }
 
-#if ACTIVITY_TRACING_SUPPORTED
     /// <summary>
     /// Gets or sets the activity tracing options.
     /// When set, System.Diagnostics.Activity objects are created for request tracing.
     /// </summary>
     ActivityTracingOptions? ActivityTracingOptions { get; set; }
-#endif
 }

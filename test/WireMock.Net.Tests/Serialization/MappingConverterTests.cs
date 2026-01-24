@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
+//#if !(NET452 || NET461 || NETCOREAPP3_1)
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -531,7 +531,7 @@ message HelloReply {
         return Verifier.Verify(model);
     }
 
-#if GRAPHQL
+//#if GRAPHQL
     [Fact]
     public Task ToMappingModel_Request_WithBodyAsGraphQLSchema_ReturnsCorrectModel()
     {
@@ -562,9 +562,9 @@ message HelloReply {
         // Verify
         return Verifier.Verify(model);
     }
-#endif
+//#endif
 
-#if PROTOBUF
+//#if PROTOBUF
     [Fact]
     public Task ToMappingModel_Request_WithBodyAsProtoBuf_ReturnsCorrectModel()
     {
@@ -651,6 +651,6 @@ message HelloReply {
         // Verify
         return Verifier.Verify(model);
     }
-#endif
+//#endif
 }
-#endif
+//#endif

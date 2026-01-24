@@ -108,72 +108,72 @@ public class CSharpCodeMatcher : ICSharpCodeMatcher
 
         object? result;
 
-#if (NET451 || NET452)
-        var compilerParams = new System.CodeDom.Compiler.CompilerParameters
-        {
-            GenerateInMemory = true,
-            GenerateExecutable = false,
-            ReferencedAssemblies =
-            {
-                "System.dll",
-                "System.Core.dll",
-                "Microsoft.CSharp.dll",
-                "Newtonsoft.Json.dll"
-            }
-        };
+        //#if (NET451 || NET452)
+        //        var compilerParams = new System.CodeDom.Compiler.CompilerParameters
+        //        {
+        //            GenerateInMemory = true,
+        //            GenerateExecutable = false,
+        //            ReferencedAssemblies =
+        //            {
+        //                "System.dll",
+        //                "System.Core.dll",
+        //                "Microsoft.CSharp.dll",
+        //                "Newtonsoft.Json.dll"
+        //            }
+        //        };
 
-        using (var codeProvider = new Microsoft.CSharp.CSharpCodeProvider())
-        {
-            var compilerResults = codeProvider.CompileAssemblyFromSource(compilerParams, source);
+        //        using (var codeProvider = new Microsoft.CSharp.CSharpCodeProvider())
+        //        {
+        //            var compilerResults = codeProvider.CompileAssemblyFromSource(compilerParams, source);
 
-            if (compilerResults.Errors.Count != 0)
-            {
-                var errors = from System.CodeDom.Compiler.CompilerError er in compilerResults.Errors select er.ToString();
-                throw new WireMockException(string.Join(", ", errors));
-            }
+        //            if (compilerResults.Errors.Count != 0)
+        //            {
+        //                var errors = from System.CodeDom.Compiler.CompilerError er in compilerResults.Errors select er.ToString();
+        //                throw new WireMockException(string.Join(", ", errors));
+        //            }
 
-            var helper = compilerResults.CompiledAssembly?.CreateInstance("CodeHelper");
-            if (helper == null)
-            {
-                throw new WireMockException("CSharpCodeMatcher: Unable to create instance from WireMock.CodeHelper");
-            }
+        //            var helper = compilerResults.CompiledAssembly?.CreateInstance("CodeHelper");
+        //            if (helper == null)
+        //            {
+        //                throw new WireMockException("CSharpCodeMatcher: Unable to create instance from WireMock.CodeHelper");
+        //            }
 
-            var methodInfo = helper.GetType().GetMethod("IsMatch");
-            if (methodInfo == null)
-            {
-                throw new WireMockException("CSharpCodeMatcher: Unable to find method 'IsMatch' in WireMock.CodeHelper");
-            }
+        //            var methodInfo = helper.GetType().GetMethod("IsMatch");
+        //            if (methodInfo == null)
+        //            {
+        //                throw new WireMockException("CSharpCodeMatcher: Unable to find method 'IsMatch' in WireMock.CodeHelper");
+        //            }
 
-            try
-            {
-                result = methodInfo.Invoke(helper, new[] { inputValue });
-            }
-            catch (Exception ex)
-            {
-                throw new WireMockException("CSharpCodeMatcher: Unable to call method 'IsMatch' in WireMock.CodeHelper", ex);
-            }
-        }
-#elif (NET46 || NET461)
-        dynamic script;
-        try
-        {
-            script = CSScriptLibrary.CSScript.Evaluator.CompileCode(source).CreateObject("*");
-        }
-        catch (Exception ex)
-        {
-            throw new WireMockException("CSharpCodeMatcher: Unable to create compiler for WireMock.CodeHelper", ex);
-        }
-        
-        try
-        {
-            result = script.IsMatch(inputValue);
-        }
-        catch (Exception ex)
-        {
-            throw new WireMockException("CSharpCodeMatcher: Problem calling method 'IsMatch' in WireMock.CodeHelper", ex);
-        }
+        //            try
+        //            {
+        //                result = methodInfo.Invoke(helper, new[] { inputValue });
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                throw new WireMockException("CSharpCodeMatcher: Unable to call method 'IsMatch' in WireMock.CodeHelper", ex);
+        //            }
+        //        }
+        //#elif (NET46 || NET461)
+        //        dynamic script;
+        //        try
+        //        {
+        //            script = CSScriptLibrary.CSScript.Evaluator.CompileCode(source).CreateObject("*");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new WireMockException("CSharpCodeMatcher: Unable to create compiler for WireMock.CodeHelper", ex);
+        //        }
 
-#elif (NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP3_1 || NET5_0_OR_GREATER)
+        //        try
+        //        {
+        //            result = script.IsMatch(inputValue);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new WireMockException("CSharpCodeMatcher: Problem calling method 'IsMatch' in WireMock.CodeHelper", ex);
+        //        }
+
+        //#elif (NETSTANDARD2_0 || NETSTANDARD2_1 || NETCOREAPP3_1 || NET5_0_OR_GREATER || NET48)
         Assembly assembly;
         try
         {
@@ -202,9 +202,9 @@ public class CSharpCodeMatcher : ICSharpCodeMatcher
         {
             throw new WireMockException("CSharpCodeMatcher: Problem calling method 'IsMatch' in WireMock.CodeHelper", ex);
         }
-#else
-        throw new NotSupportedException("The 'CSharpCodeMatcher' cannot be used in netstandard 1.3");
-#endif
+        //#else
+        //        throw new NotSupportedException("The 'CSharpCodeMatcher' cannot be used in netstandard 1.3");
+        //#endif
         try
         {
             return (bool)result;

@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if MIMEKIT
+//#if MIMEKIT
 using System;
 using FluentAssertions;
 using WireMock.Matchers;
@@ -99,4 +99,4 @@ public class MimePartMatcherTests
         result.Score.Should().Be(MatchScores.Perfect);
     }
 }
-#endif
+//#endif

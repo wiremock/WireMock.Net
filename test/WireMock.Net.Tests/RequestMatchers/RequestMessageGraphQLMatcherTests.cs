@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
+//#if GRAPHQL
 using System.Linq;
 using FluentAssertions;
 using Moq;
@@ -193,4 +193,4 @@ public class RequestMessageGraphQLMatcherTests
         stringMatcherMock.Verify(m => m.IsMatch(It.IsAny<string>()), Times.Never);
     }
 }
-#endif
+//#endif
