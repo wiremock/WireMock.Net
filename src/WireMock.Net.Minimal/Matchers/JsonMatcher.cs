@@ -96,7 +96,7 @@ public class JsonMatcher : IJsonMatcher
             }
         }
 
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score), error);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score), error);
     }
 
     /// <inheritdoc />

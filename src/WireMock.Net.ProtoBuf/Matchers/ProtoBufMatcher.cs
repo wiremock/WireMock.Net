@@ -57,7 +57,7 @@ public class ProtoBufMatcher : IProtoBufMatcher
     /// <inheritdoc />
     public async Task<MatchResult> IsMatchAsync(byte[]? input, CancellationToken cancellationToken = default)
     {
-        var result = new MatchResult();
+        var result = MatchResult.From(Name);
 
         if (input != null)
         {
@@ -65,11 +65,11 @@ public class ProtoBufMatcher : IProtoBufMatcher
             {
                 var instance = await DecodeAsync(input, true, cancellationToken).ConfigureAwait(false);
 
-                result = Matcher?.IsMatch(instance) ?? new MatchResult(MatchScores.Perfect);
+                result = Matcher?.IsMatch(instance) ?? MatchResult.From(Name, MatchScores.Perfect);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                result = new MatchResult(MatchScores.Mismatch, e);
+                result = MatchResult.From(Name, ex);
             }
         }
 

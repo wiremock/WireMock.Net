@@ -69,7 +69,7 @@ public class WireMockConsoleLogger : IWireMockLogger
     /// <see cref="IWireMockLogger.DebugRequestResponse"/>
     public void DebugRequestResponse(LogEntryModel logEntryModel, bool isAdminRequest)
     {
-        string message = JsonConvert.SerializeObject(logEntryModel, Formatting.Indented);
+        string message = JsonConvert.SerializeObject(logEntryModel, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
         Console.WriteLine(Format("DebugRequestResponse", "Admin[{0}] {1}", isAdminRequest, message));
     }
 

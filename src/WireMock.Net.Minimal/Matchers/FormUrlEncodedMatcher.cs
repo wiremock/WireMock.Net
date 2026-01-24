@@ -106,18 +106,18 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
         // Input is null or empty and if no patterns defined, return Perfect match.
         if (string.IsNullOrEmpty(input) && _patterns.Length == 0)
         {
-            return new MatchResult(MatchScores.Perfect);
+            return MatchResult.From(Name, MatchScores.Perfect);
         }
 
         if (!QueryStringParser.TryParse(input, IgnoreCase, out var inputNameValueCollection))
         {
-            return new MatchResult(MatchScores.Mismatch);
+            return MatchResult.From(Name, MatchScores.Mismatch);
         }
 
         var matches = GetMatches(inputNameValueCollection);
 
         var score = MatchScores.ToScore(matches, MatchOperator);
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score));
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
     }
 
     private bool[] GetMatches(IDictionary<string, string> inputNameValueCollection)

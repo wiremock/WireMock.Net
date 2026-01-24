@@ -75,7 +75,7 @@ public class ExactMatcher : IStringMatcher, IIgnoreCaseMatcher
             : pattern => pattern == input;
 
         var score = MatchScores.ToScore(_values.Select(v => equals(v)).ToArray(), MatchOperator);
-        return new MatchResult(MatchBehaviourHelper.Convert(MatchBehaviour, score));
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
     }
 
     /// <inheritdoc />

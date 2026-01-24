@@ -25,7 +25,7 @@ public class RequestMessageGraphQLMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(1d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 1d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 
@@ -57,10 +57,10 @@ public class RequestMessageGraphQLMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -98,10 +98,10 @@ public class RequestMessageGraphQLMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -139,10 +139,10 @@ public class RequestMessageGraphQLMatcherTests
             DetectedBodyType = BodyType.String
         };
         var stringMatcherMock1 = new Mock<IStringMatcher>();
-        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(one);
+        stringMatcherMock1.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), one));
 
         var stringMatcherMock2 = new Mock<IStringMatcher>();
-        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(two);
+        stringMatcherMock2.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), two));
 
         var matchers = new[] { stringMatcherMock1.Object, stringMatcherMock2.Object };
 
@@ -175,7 +175,7 @@ public class RequestMessageGraphQLMatcherTests
             DetectedBodyType = BodyType.Bytes
         };
         var stringMatcherMock = new Mock<IStringMatcher>();
-        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(0.5d);
+        stringMatcherMock.Setup(m => m.IsMatch(It.IsAny<string>())).Returns(MatchResult.From(nameof(IStringMatcher), 0.5d));
 
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), "GET", "127.0.0.1", body);
 

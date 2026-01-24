@@ -77,8 +77,8 @@ public class RequestMessagePathMatcher : IRequestMatcher
     /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
-        var (score, exception) = GetMatchResult(requestMessage).Expand();
-        return requestMatchResult.AddScore(GetType(), score, exception);
+        var matchDetail = GetMatchResult(requestMessage).ToMatchDetail();
+        return requestMatchResult.AddMatchDetail(matchDetail);
     }
 
     private MatchResult GetMatchResult(IRequestMessage requestMessage)
@@ -86,15 +86,16 @@ public class RequestMessagePathMatcher : IRequestMatcher
         if (Matchers != null)
         {
             var results = Matchers.Select(m => m.IsMatch(requestMessage.Path)).ToArray();
-            return MatchResult.From(results, MatchOperator);
+            return MatchResult.From(nameof(RequestMessagePathMatcher), results, MatchOperator);
         }
 
         if (Funcs != null)
         {
             var results = Funcs.Select(func => func(requestMessage.Path)).ToArray();
-            return MatchScores.ToScore(results, MatchOperator);
+            var score = MatchScores.ToScore(results, MatchOperator);
+            return MatchResult.From(nameof(RequestMessagePathMatcher), score);
         }
 
-        return default;
+        return MatchResult.From(nameof(RequestMessagePathMatcher));
     }
 }

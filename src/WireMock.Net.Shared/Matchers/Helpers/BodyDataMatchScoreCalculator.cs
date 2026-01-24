@@ -8,66 +8,68 @@ namespace WireMock.Matchers.Helpers;
 
 internal static class BodyDataMatchScoreCalculator
 {
-    internal static MatchResult CalculateMatchScore(IBodyData? requestMessage, IMatcher matcher)
+    private static string _name = nameof(BodyDataMatchScoreCalculator);
+
+    internal static MatchResult CalculateMatchScore(IBodyData? bodyData, IMatcher matcher)
     {
         Guard.NotNull(matcher);
 
-        if (requestMessage == null)
+        if (bodyData == null)
         {
-            return default;
+            return MatchResult.From(_name);
         }
 
         if (matcher is NotNullOrEmptyMatcher notNullOrEmptyMatcher)
         {
-            switch (requestMessage.DetectedBodyType)
+            switch (bodyData.DetectedBodyType)
             {
                 case BodyType.Json:
                 case BodyType.String:
                 case BodyType.FormUrlEncoded:
-                    return notNullOrEmptyMatcher.IsMatch(requestMessage.BodyAsString);
+                    return notNullOrEmptyMatcher.IsMatch(bodyData.BodyAsString);
 
                 case BodyType.Bytes:
-                    return notNullOrEmptyMatcher.IsMatch(requestMessage.BodyAsBytes);
+                    return notNullOrEmptyMatcher.IsMatch(bodyData.BodyAsBytes);
 
                 default:
-                    return default;
+                    return MatchResult.From(_name);
             }
         }
 
         if (matcher is ExactObjectMatcher { Value: byte[] } exactObjectMatcher)
         {
             // If the body is a byte array, try to match.
-            return exactObjectMatcher.IsMatch(requestMessage.BodyAsBytes);
+            return exactObjectMatcher.IsMatch(bodyData.BodyAsBytes);
         }
 
         // Check if the matcher is a IObjectMatcher
         if (matcher is IObjectMatcher objectMatcher)
         {
             // If the body is a JSON object, try to match.
-            if (requestMessage.DetectedBodyType == BodyType.Json)
+            if (bodyData.DetectedBodyType == BodyType.Json)
             {
-                return objectMatcher.IsMatch(requestMessage.BodyAsJson);
+                return objectMatcher.IsMatch(bodyData.BodyAsJson);
             }
 
             // If the body is a byte array, try to match.
-            if (requestMessage.DetectedBodyType == BodyType.Bytes)
+            if (bodyData.DetectedBodyType == BodyType.Bytes)
             {
-                return objectMatcher.IsMatch(requestMessage.BodyAsBytes);
+                return objectMatcher.IsMatch(bodyData.BodyAsBytes);
             }
         }
 
-        // In case the matcher is a IStringMatcher and If  body is a Json or a String, use the BodyAsString to match on.
-        if (matcher is IStringMatcher stringMatcher && requestMessage.DetectedBodyType is BodyType.Json or BodyType.String or BodyType.FormUrlEncoded)
+        // In case the matcher is a IStringMatcher and if body is a Json or a String, use the BodyAsString to match on.
+        if (matcher is IStringMatcher stringMatcher && bodyData.DetectedBodyType is BodyType.Json or BodyType.String or BodyType.FormUrlEncoded)
         {
-            return stringMatcher.IsMatch(requestMessage.BodyAsString);
+            return stringMatcher.IsMatch(bodyData.BodyAsString);
         }
 
         // In case the matcher is a IProtoBufMatcher, use the BodyAsBytes to match on.
         if (matcher is IProtoBufMatcher protoBufMatcher)
         {
-            return protoBufMatcher.IsMatchAsync(requestMessage.BodyAsBytes).GetAwaiter().GetResult();
+            return protoBufMatcher.IsMatchAsync(bodyData.BodyAsBytes).GetAwaiter().GetResult();
         }
 
-        return default;
+        return MatchResult.From(_name);
     }
 }
