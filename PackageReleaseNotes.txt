@@ -1,6 +1,5 @@
-# 1.24.0 (18 January 2026)
-- #1417 Update aspire to 13.1 (examples + code) [feature]
-- #1418 Add OTEL tracing support for Wiremock + automatic OTEL for Aspire integration [feature]
-- #1214 OpenTelemetry Support for .NET Aspire [feature]
+# 1.25.0 (25 January 2026)
+- #1389 Fix MimePartMatcher and add more tests [bug]
+- #1371 MimePartMatcher does not match multipart/form-data request body (possible bug?) [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
