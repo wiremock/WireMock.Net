@@ -1,3 +1,7 @@
+# 1.25.0 (25 January 2026)
+- [#1389](https://github.com/wiremock/WireMock.Net/pull/1389) - Fix MimePartMatcher and add more tests [bug] contributed by [StefH](https://github.com/StefH)
+- [#1371](https://github.com/wiremock/WireMock.Net/issues/1371) - MimePartMatcher does not match multipart/form-data request body (possible bug?) [bug]
+
 # 1.24.0 (18 January 2026)
 - [#1417](https://github.com/wiremock/WireMock.Net/pull/1417) - Update aspire to 13.1 (examples + code) [feature] contributed by [petrroll](https://github.com/petrroll)
 - [#1418](https://github.com/wiremock/WireMock.Net/pull/1418) - Add OTEL tracing support for Wiremock + automatic OTEL for Aspire integration [feature] contributed by [petrroll](https://github.com/petrroll)
