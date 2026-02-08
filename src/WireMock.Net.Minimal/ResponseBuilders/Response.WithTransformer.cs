@@ -20,7 +20,7 @@ public partial class Response
     }
 
     /// <inheritdoc />
-    public IResponseBuilder WithTransformer(TransformerType transformerType, bool transformContentFromBodyAsFile = false, ReplaceNodeOptions options = ReplaceNodeOptions.EvaluateAndTryToConvert)
+    public IResponseBuilder WithTransformer(TransformerType transformerType = TransformerType.Handlebars, bool transformContentFromBodyAsFile = false, ReplaceNodeOptions options = ReplaceNodeOptions.EvaluateAndTryToConvert)
     {
         if (_bodyFromFileSet)
         {
