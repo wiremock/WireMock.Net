@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -14,7 +15,7 @@ public partial class WireMockServer
     private static readonly Encoding[] FileBodyIsString = [Encoding.UTF8, Encoding.ASCII];
 
     #region ProtoDefinitions/{id}
-    private IResponseMessage ProtoDefinitionAdd(IRequestMessage requestMessage)
+    private IResponseMessage ProtoDefinitionAdd(HttpContext _, IRequestMessage requestMessage)
     {
         if (requestMessage.Body is null)
         {
@@ -30,7 +31,7 @@ public partial class WireMockServer
     #endregion
 
     #region Files/{filename}
-    private IResponseMessage FilePost(IRequestMessage requestMessage)
+    private IResponseMessage FilePost(HttpContext _, IRequestMessage requestMessage)
     {
         if (requestMessage.BodyAsBytes is null)
         {
@@ -50,7 +51,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(HttpStatusCode.OK, "File created");
     }
 
-    private IResponseMessage FilePut(IRequestMessage requestMessage)
+    private IResponseMessage FilePut(HttpContext _, IRequestMessage requestMessage)
     {
         if (requestMessage.BodyAsBytes is null)
         {
@@ -70,7 +71,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(HttpStatusCode.OK, "File updated");
     }
 
-    private IResponseMessage FileGet(IRequestMessage requestMessage)
+    private IResponseMessage FileGet(HttpContext _, IRequestMessage requestMessage)
     {
         var filename = GetFileNameFromRequestMessage(requestMessage);
 
@@ -106,7 +107,7 @@ public partial class WireMockServer
     /// Note: Response is returned with no body as a head request doesn't accept a body, only the status code.
     /// </summary>
     /// <param name="requestMessage">The request message.</param>
-    private IResponseMessage FileHead(IRequestMessage requestMessage)
+    private IResponseMessage FileHead(HttpContext _, IRequestMessage requestMessage)
     {
         var filename = GetFileNameFromRequestMessage(requestMessage);
 
@@ -119,7 +120,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(HttpStatusCode.NoContent);
     }
 
-    private IResponseMessage FileDelete(IRequestMessage requestMessage)
+    private IResponseMessage FileDelete(HttpContext _, IRequestMessage requestMessage)
     {
         var filename = GetFileNameFromRequestMessage(requestMessage);
 

@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using HandlebarsDotNet;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NFluent;
@@ -47,7 +48,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -77,7 +78,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -107,7 +108,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -137,7 +138,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -162,7 +163,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<ArgumentException>();
     }
 
     [Fact]
@@ -178,7 +179,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<HandlebarsException>();
     }
 
     [Fact]
@@ -202,7 +203,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings).ConfigureAwait(false);
 
         // Assert
         a.Should().ThrowAsync<HandlebarsException>();
@@ -229,7 +230,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings).ConfigureAwait(false);
 
         // Assert
         a.Should().ThrowAsync<HandlebarsException>();

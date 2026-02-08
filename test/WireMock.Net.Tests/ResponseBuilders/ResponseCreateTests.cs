@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Models;
@@ -25,7 +26,7 @@ public class ResponseCreateTests
         var responseBuilder = Response.Create(() => responseMessage);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(mapping, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(mapping, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message).Equals(responseMessage);

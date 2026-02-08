@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
@@ -254,7 +255,7 @@ public partial class WireMockServer
     #endregion
 
     #region Health
-    private static IResponseMessage HealthGet(IRequestMessage requestMessage)
+    private static IResponseMessage HealthGet(HttpContext _, IRequestMessage requestMessage)
     {
         return new ResponseMessage
         {
@@ -270,7 +271,7 @@ public partial class WireMockServer
     #endregion
 
     #region Settings
-    private IResponseMessage SettingsGet(IRequestMessage requestMessage)
+    private IResponseMessage SettingsGet(HttpContext _, IRequestMessage requestMessage)
     {
         var model = new SettingsModel
         {
@@ -305,7 +306,7 @@ public partial class WireMockServer
         return ToJson(model);
     }
 
-    private IResponseMessage SettingsUpdate(IRequestMessage requestMessage)
+    private IResponseMessage SettingsUpdate(HttpContext _, IRequestMessage requestMessage)
     {
         var settings = DeserializeObject<SettingsModel>(requestMessage);
 
@@ -357,9 +358,9 @@ public partial class WireMockServer
     #endregion Settings
 
     #region Mapping/{guid}
-    private IResponseMessage MappingGet(IRequestMessage requestMessage)
+    private IResponseMessage MappingGet(HttpContext context, IRequestMessage requestMessage)
     {
-        var mapping = FindMappingByGuid(requestMessage);
+        var mapping = FindMappingByGuid(context, requestMessage);
         if (mapping == null)
         {
             _settings.Logger.Warn("HttpStatusCode set to 404 : Mapping not found");
@@ -371,7 +372,7 @@ public partial class WireMockServer
         return ToJson(model);
     }
 
-    private IResponseMessage MappingCodeGet(IRequestMessage requestMessage)
+    private IResponseMessage MappingCodeGet(HttpContext context, IRequestMessage requestMessage)
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid))
         {
@@ -401,12 +402,12 @@ public partial class WireMockServer
         return defaultValue;
     }
 
-    private IMapping? FindMappingByGuid(IRequestMessage requestMessage)
+    private IMapping? FindMappingByGuid(HttpContext _, IRequestMessage requestMessage)
     {
         return TryParseGuidFromRequestMessage(requestMessage, out var guid) ? Mappings.FirstOrDefault(m => !m.IsAdminInterface && m.Guid == guid) : null;
     }
 
-    private IResponseMessage MappingPut(IRequestMessage requestMessage)
+    private IResponseMessage MappingPut(HttpContext _, IRequestMessage requestMessage)
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid))
         {
@@ -420,7 +421,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(HttpStatusCode.NotFound, "Mapping not found");
     }
 
-    private IResponseMessage MappingDelete(IRequestMessage requestMessage)
+    private IResponseMessage MappingDelete(HttpContext _, IRequestMessage requestMessage)
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid) && DeleteMapping(guid))
         {
@@ -439,7 +440,7 @@ public partial class WireMockServer
     #endregion Mapping/{guid}
 
     #region Mappings
-    private IResponseMessage SwaggerGet(IRequestMessage requestMessage)
+    private IResponseMessage SwaggerGet(HttpContext _, IRequestMessage requestMessage)
     {
         return new ResponseMessage
         {
@@ -453,7 +454,7 @@ public partial class WireMockServer
         };
     }
 
-    private IResponseMessage MappingsSave(IRequestMessage requestMessage)
+    private IResponseMessage MappingsSave(HttpContext _, IRequestMessage requestMessage)
     {
         SaveStaticMappings();
 
@@ -465,12 +466,12 @@ public partial class WireMockServer
         return _mappingBuilder.GetMappings();
     }
 
-    private IResponseMessage MappingsGet(IRequestMessage requestMessage)
+    private IResponseMessage MappingsGet(HttpContext _, IRequestMessage requestMessage)
     {
         return ToJson(ToMappingModels());
     }
 
-    private IResponseMessage MappingsCodeGet(IRequestMessage requestMessage)
+    private IResponseMessage MappingsCodeGet(HttpContext _, IRequestMessage requestMessage)
     {
         var converterType = GetEnumFromQuery(requestMessage, MappingConverterType.Server);
 
@@ -479,7 +480,7 @@ public partial class WireMockServer
         return ToResponseMessage(code);
     }
 
-    private IResponseMessage MappingsPost(IRequestMessage requestMessage)
+    private IResponseMessage MappingsPost(HttpContext _, IRequestMessage requestMessage)
     {
         try
         {
@@ -506,7 +507,7 @@ public partial class WireMockServer
         }
     }
 
-    private IResponseMessage MappingsDelete(IRequestMessage requestMessage)
+    private IResponseMessage MappingsDelete(HttpContext _, IRequestMessage requestMessage)
     {
         if (!string.IsNullOrEmpty(requestMessage.Body))
         {
@@ -560,7 +561,7 @@ public partial class WireMockServer
         return deletedGuids;
     }
 
-    private IResponseMessage MappingsReset(IRequestMessage requestMessage)
+    private IResponseMessage MappingsReset(HttpContext _, IRequestMessage requestMessage)
     {
         ResetMappings();
 
@@ -579,7 +580,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(200, message);
     }
 
-    private IResponseMessage ReloadStaticMappings(IRequestMessage _)
+    private IResponseMessage ReloadStaticMappings(HttpContext _, IRequestMessage __)
     {
         ReadStaticMappings();
 
@@ -588,7 +589,7 @@ public partial class WireMockServer
     #endregion Mappings
 
     #region Request/{guid}
-    private IResponseMessage RequestGet(IRequestMessage requestMessage)
+    private IResponseMessage RequestGet(HttpContext _, IRequestMessage requestMessage)
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid))
         {
@@ -604,7 +605,7 @@ public partial class WireMockServer
         return ResponseMessageBuilder.Create(HttpStatusCode.NotFound, "Request not found");
     }
 
-    private IResponseMessage RequestDelete(IRequestMessage requestMessage)
+    private IResponseMessage RequestDelete(HttpContext _, IRequestMessage requestMessage)
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid) && DeleteLogEntry(guid))
         {
@@ -617,7 +618,7 @@ public partial class WireMockServer
     #endregion Request/{guid}
 
     #region Requests
-    private IResponseMessage RequestsGet(IRequestMessage requestMessage)
+    private IResponseMessage RequestsGet(HttpContext _, IRequestMessage requestMessage)
     {
         var logEntryMapper = new LogEntryMapper(_options);
         var result = LogEntries
@@ -627,7 +628,7 @@ public partial class WireMockServer
         return ToJson(result);
     }
 
-    private IResponseMessage RequestsDelete(IRequestMessage requestMessage)
+    private IResponseMessage RequestsDelete(HttpContext _, IRequestMessage requestMessage)
     {
         ResetLogEntries();
 
@@ -636,7 +637,7 @@ public partial class WireMockServer
     #endregion Requests
 
     #region Requests/find
-    private IResponseMessage RequestsFind(IRequestMessage requestMessage)
+    private IResponseMessage RequestsFind(HttpContext _, IRequestMessage requestMessage)
     {
         var requestModel = DeserializeObject<RequestModel>(requestMessage);
 
@@ -658,7 +659,7 @@ public partial class WireMockServer
         return ToJson(result);
     }
 
-    private IResponseMessage RequestsFindByMappingGuid(IRequestMessage requestMessage)
+    private IResponseMessage RequestsFindByMappingGuid(HttpContext _, IRequestMessage requestMessage)
     {
         if (requestMessage.Query != null &&
             requestMessage.Query.TryGetValue("mappingGuid", out var value) &&
@@ -676,7 +677,7 @@ public partial class WireMockServer
     #endregion Requests/find
 
     #region Scenarios
-    private IResponseMessage ScenariosGet(IRequestMessage requestMessage)
+    private IResponseMessage ScenariosGet(HttpContext _, IRequestMessage requestMessage)
     {
         var scenariosStates = Scenarios.Values.Select(s => new ScenarioStateModel
         {
@@ -690,14 +691,14 @@ public partial class WireMockServer
         return ToJson(scenariosStates, true);
     }
 
-    private IResponseMessage ScenariosReset(IRequestMessage requestMessage)
+    private IResponseMessage ScenariosReset(HttpContext _, IRequestMessage requestMessage)
     {
         ResetScenarios();
 
         return ResponseMessageBuilder.Create(200, "Scenarios reset");
     }
 
-    private IResponseMessage ScenarioReset(IRequestMessage requestMessage)
+    private IResponseMessage ScenarioReset(HttpContext _, IRequestMessage requestMessage)
     {
         var name = string.Equals(HttpRequestMethod.DELETE, requestMessage.Method, StringComparison.OrdinalIgnoreCase) ?
             requestMessage.Path.Substring(_adminPaths!.Scenarios.Length + 1) :
@@ -708,7 +709,7 @@ public partial class WireMockServer
             ResponseMessageBuilder.Create(HttpStatusCode.NotFound, $"No scenario found by name '{name}'.");
     }
 
-    private IResponseMessage ScenariosSetState(IRequestMessage requestMessage)
+    private IResponseMessage ScenariosSetState(HttpContext _, IRequestMessage requestMessage)
     {
         var name = requestMessage.Path.Split('/').Reverse().Skip(1).First();
         if (!_options.Scenarios.ContainsKey(name))

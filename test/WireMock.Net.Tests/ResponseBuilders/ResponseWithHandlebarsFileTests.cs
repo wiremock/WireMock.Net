@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using HandlebarsDotNet;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NFluent;
@@ -55,7 +56,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -80,7 +81,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
@@ -105,7 +106,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<HandlebarsException>();
 
         // Verify
         _filesystemHandlerMock.Verify(fs => fs.ReadResponseBodyAsString(It.IsAny<string>()), Times.Never);
@@ -127,7 +128,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, settings);
+        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settings);
 
         action.Should().ThrowAsync<HandlebarsRuntimeException>();
 

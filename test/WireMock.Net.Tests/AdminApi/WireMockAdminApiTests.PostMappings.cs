@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using NFluent;
 using RestEase;
 using WireMock.Admin.Mappings;
@@ -116,7 +118,7 @@ public partial class WireMockAdminApiTests
         Check.That(mapping).IsNotNull();
         Check.That(mapping.Title).Equals("test");
 
-        var response = await mapping.ProvideResponseAsync(new RequestMessage(new UrlDetails("http://localhost/1"), "GET", ""));
+        var response = await mapping.ProvideResponseAsync(Mock.Of<HttpContext>(), new RequestMessage(new UrlDetails("http://localhost/1"), "GET", ""));
         Check.That(response.Message.StatusCode).Equals(expectedStatusCode);
 
         server.Stop();

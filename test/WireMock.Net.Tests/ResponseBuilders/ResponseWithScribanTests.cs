@@ -47,7 +47,7 @@ public class ResponseWithScribanTests
         var responseBuilder = Response.Create().WithTransformer(TransformerType.ScribanDotLiquid);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData.Should().BeNull();
@@ -69,7 +69,7 @@ public class ResponseWithScribanTests
             .WithTransformer(TransformerType.Scriban);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("test http://localhost/foo /foo POSt");

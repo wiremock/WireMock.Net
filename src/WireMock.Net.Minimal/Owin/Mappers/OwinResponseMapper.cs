@@ -18,13 +18,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
 
-//#if !USE_ASPNETCORE
-//using IResponse = Microsoft.Owin.IOwinResponse;
-//#else
-//using Microsoft.AspNetCore.Http;
-//using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
-//#endif
-
 namespace WireMock.Owin.Mappers
 {
     /// <summary>
@@ -260,11 +253,7 @@ namespace WireMock.Owin.Mappers
 
         private static void AppendResponseHeader(HttpResponse response, string headerName, string[] values)
         {
-            //#if !USE_ASPNETCORE
-            //            response.Headers.AppendValues(headerName, values);
-            //#else
             response.Headers.Append(headerName, values);
-            //#endif
         }
     }
 }

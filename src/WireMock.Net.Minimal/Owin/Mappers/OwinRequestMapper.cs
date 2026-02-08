@@ -9,12 +9,6 @@ using Microsoft.AspNetCore.Http.Extensions;
 using WireMock.Http;
 using WireMock.Models;
 using WireMock.Util;
-//#if !USE_ASPNETCORE
-//using IRequest = Microsoft.Owin.IOwinRequest;
-//#else
-//using Microsoft.AspNetCore.Http.Extensions;
-//using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
-//#endif
 
 namespace WireMock.Owin.Mappers;
 
@@ -76,10 +70,8 @@ internal class OwinRequestMapper : IOwinRequestMapper
             headers,
             cookies,
             httpVersion,
-//#if USE_ASPNETCORE
             await request.HttpContext.Connection.GetClientCertificateAsync()
-//#endif
-            )
+        )
         {
             DateTime = DateTime.UtcNow
         };
@@ -87,10 +79,6 @@ internal class OwinRequestMapper : IOwinRequestMapper
 
     private static (UrlDetails UrlDetails, string ClientIP) ParseRequest(HttpRequest request)
     {
-        //#if !USE_ASPNETCORE
-        //        var urlDetails = UrlUtils.Parse(request.Uri, request.PathBase);
-        //        var clientIP = request.RemoteIpAddress;
-        //#else
         var urlDetails = UrlUtils.Parse(new Uri(request.GetEncodedUrl()), request.PathBase);
 
         var connection = request.HttpContext.Connection;
@@ -107,7 +95,7 @@ internal class OwinRequestMapper : IOwinRequestMapper
         {
             clientIP = connection.RemoteIpAddress.ToString();
         }
-        //#endif
+
         return (urlDetails, clientIP);
     }
 }

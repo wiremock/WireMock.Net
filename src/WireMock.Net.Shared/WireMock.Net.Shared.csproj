@@ -28,6 +28,7 @@
 
     <ItemGroup>
         <!-- Keep at 6.14.0 -->
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.9" />
         <PackageReference Include="Polyfill" Version="6.14.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

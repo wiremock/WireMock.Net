@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Models;
@@ -35,7 +36,7 @@ public class ResponseWithHeadersTests
         IResponseBuilder builder = Response.Create().WithHeader(headerName, headerValue);
 
         // Act
-        var response = await builder.ProvideResponseAsync(_mappingMock.Object, requestMock, _settings);
+        var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMock, _settings);
 
         // Assert
         Check.That(response.Message.Headers[headerName].ToString()).Equals(headerValue);
@@ -51,7 +52,7 @@ public class ResponseWithHeadersTests
         IResponseBuilder builder = Response.Create().WithHeader(headerName, headerValues);
 
         // Act
-        var response = await builder.ProvideResponseAsync(_mappingMock.Object, requestMock, _settings);
+        var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMock, _settings);
 
         // Assert
         Check.That(response.Message.Headers[headerName].ToArray()).Equals(headerValues);
@@ -66,7 +67,7 @@ public class ResponseWithHeadersTests
         var response = Response.Create().WithHeaders(headers);
 
         // Act
-        var responseMessage = await response.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var responseMessage = await response.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(responseMessage.Message.Headers["h"]).ContainsExactly("x");
@@ -81,7 +82,7 @@ public class ResponseWithHeadersTests
         var responseBuilder = Response.Create().WithHeaders(headers);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.Headers["h"]).ContainsExactly("x");
@@ -96,7 +97,7 @@ public class ResponseWithHeadersTests
         var builder = Response.Create().WithHeaders(headers);
 
         // Act
-        var response = await builder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.Headers["h"]).ContainsExactly("x");

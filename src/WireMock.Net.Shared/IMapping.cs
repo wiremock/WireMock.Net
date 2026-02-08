@@ -2,6 +2,8 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Web;
+using Microsoft.AspNetCore.Http;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.ResponseProviders;
@@ -146,9 +148,10 @@ public interface IMapping
     /// <summary>
     /// ProvideResponseAsync
     /// </summary>
+    /// <param name="context">The HttpContext.</param>
     /// <param name="requestMessage">The request message.</param>
     /// <returns>The <see cref="IResponseMessage"/> including a new (optional) <see cref="IMapping"/>.</returns>
-    Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(IRequestMessage requestMessage);
+    Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(HttpContext context, IRequestMessage requestMessage);
 
     /// <summary>
     /// Gets the RequestMatchResult based on the RequestMessage.

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using HandlebarsDotNet;
 using HandlebarsDotNet.Helpers.Enums;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using WireMock.Handlers;
 using WireMock.Models;
@@ -46,7 +47,7 @@ public class HandlebarsSettingsTests
             .WithTransformer();
 
         // Act
-        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         await action.Should().ThrowAsync<HandlebarsRuntimeException>();
@@ -74,7 +75,7 @@ public class HandlebarsSettingsTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, settingsWithEnv).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settingsWithEnv).ConfigureAwait(false);
 
         // Assert
         response.Message?.BodyData?.BodyAsString.Should().NotContain("{{Environment.GetEnvironmentVariable");

@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using NFluent;
@@ -49,7 +50,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody(new byte[] { 48, 49 }, BodyDestinationFormat.String, Encoding.ASCII);
 
         // act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // then
         Check.That(response.Message.BodyData.BodyAsString).Equals("01");
@@ -71,7 +72,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody(new byte[] { 48, 49 }, BodyDestinationFormat.SameAsSource, Encoding.ASCII);
 
         // act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // then
         Check.That(response.Message.BodyData.BodyAsBytes).ContainsExactly(new byte[] { 48, 49 });
@@ -93,7 +94,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody("test", null, Encoding.ASCII);
 
         // act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // then
         Check.That(response.Message.BodyData.BodyAsString).Equals("test");
@@ -115,7 +116,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBodyAsJson(x, Encoding.ASCII);
 
         // act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // then
         Check.That(response.Message.BodyData.BodyAsJson).Equals(x);
@@ -131,7 +132,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody("r", BodyDestinationFormat.SameAsSource, Encoding.ASCII);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsBytes).IsNull();
@@ -149,7 +150,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody("r", BodyDestinationFormat.Bytes, Encoding.ASCII);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsNull();
@@ -167,7 +168,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody("{ \"value\": 42 }", BodyDestinationFormat.Json, Encoding.ASCII);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsNull();
@@ -191,7 +192,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBodyAsJson(x, true);
 
         // act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // then
         Check.That(response.Message.BodyData.BodyAsJson).Equals(x);
@@ -213,7 +214,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBodyAsJson(requestMessage => responseBody);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsJson.Should().BeEquivalentTo(responseBody);
@@ -234,7 +235,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBodyAsJson(requestMessage => Task.FromResult(responseBody));
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsJson.Should().BeEquivalentTo(responseBody);
@@ -256,8 +257,8 @@ public class ResponseWithBodyTests
             .WithTransformer();
 
         // Act
-        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request1, _settings);
-        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request2, _settings);
+        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request1, _settings);
+        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request2, _settings);
 
         // Assert
         Check.That(((JToken)response1.Message.BodyData.BodyAsJson).SelectToken("id")?.Value<int>()).IsEqualTo(request1Id);
@@ -281,7 +282,7 @@ public class ResponseWithBodyTests
 
         var responseBuilder = Response.Create().WithStatusCode(200).WithBody(fileContents);
 
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request1, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request1, _settings);
 
         Check.That(response.Message.StatusCode).IsEqualTo(200);
         Check.That(response.Message.BodyData.BodyAsString).Contains(fileContents);
@@ -297,7 +298,7 @@ public class ResponseWithBodyTests
 
         var responseBuilder = Response.Create().WithStatusCode(200).WithBody(fileContents);
 
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request1, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request1, _settings);
 
         Check.That(response.Message.StatusCode).IsEqualTo(200);
         Check.That(response.Message.BodyData.BodyAsString).Contains(fileContents);
@@ -313,7 +314,7 @@ public class ResponseWithBodyTests
 
         var responseBuilder = Response.Create().WithStatusCode(200).WithBody("File deleted.");
 
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request1, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request1, _settings);
 
         Check.That(response.Message.StatusCode).IsEqualTo(200);
         Check.That(response.Message.BodyData.BodyAsString).Contains("File deleted.");
@@ -334,7 +335,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody(new { foo = "bar", n = 42 }, new JsonConverter.System.Text.Json.SystemTextJsonConverter());
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be(@"{""foo"":""bar"",""n"":42}");

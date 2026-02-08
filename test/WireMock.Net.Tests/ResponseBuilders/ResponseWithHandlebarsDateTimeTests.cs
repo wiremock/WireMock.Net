@@ -3,6 +3,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using WireMock.Handlers;
@@ -47,7 +48,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -71,7 +72,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -94,7 +95,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -112,7 +113,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Contain($"DateTimeYear = \"{DateTime.Now.Year}\"");
@@ -137,7 +138,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);

@@ -141,7 +141,7 @@ internal class WireMockMiddleware
                 await Task.Delay(_options.RequestProcessingDelay.Value).ConfigureAwait(false);
             }
 
-            var (theResponse, theOptionalNewMapping) = await targetMapping.ProvideResponseAsync(request).ConfigureAwait(false);
+            var (theResponse, theOptionalNewMapping) = await targetMapping.ProvideResponseAsync(ctx, request).ConfigureAwait(false);
             response = theResponse;
 
             var responseBuilder = targetMapping.Provider as Response;

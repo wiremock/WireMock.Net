@@ -23,7 +23,6 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
     private readonly IWireMockLogger _logger;
     private readonly HostUrlOptions _urlOptions;
 
-    private Exception _runningException;
     private IWebHost _host;
 
     public bool IsStarted { get; private set; }
@@ -32,7 +31,7 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
     public List<int> Ports { get; } = new();
 
-    public Exception RunningException => _runningException;
+    public Exception? RunningException { get; private set; }
 
     public AspNetCoreSelfHost(IWireMockMiddlewareOptions wireMockMiddlewareOptions, HostUrlOptions urlOptions)
     {
@@ -136,7 +135,7 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
         }
         catch (Exception e)
         {
-            _runningException = e;
+            RunningException = e;
             _logger.Error(e.ToString());
 
             IsStarted = false;

@@ -12,6 +12,7 @@ using Xunit;
 using Moq;
 using WireMock.Handlers;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 //#if !NETSTANDARD1_3
 //using Wmhelp.XPath2;
 //#endif
@@ -57,7 +58,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>abc</response>");
@@ -85,7 +86,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("abc");
@@ -113,7 +114,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>abc,def,xyz</response>");
@@ -169,7 +170,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("<response>0000083256</response>");
@@ -197,7 +198,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualIgnoringCase("True");
@@ -225,7 +226,7 @@ public class ResponseWithHandlebarsXPathTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("a1");

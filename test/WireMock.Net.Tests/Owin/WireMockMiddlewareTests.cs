@@ -13,9 +13,6 @@ using WireMock.Util;
 using WireMock.Logging;
 using WireMock.Matchers;
 using System.Collections.Generic;
-#if NET6_0_OR_GREATER
-using System.Diagnostics;
-#endif
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Requests;
 using WireMock.Settings;
@@ -26,6 +23,7 @@ using WireMock.ResponseBuilders;
 using WireMock.RequestBuilders;
 #if NET6_0_OR_GREATER
 using WireMock.Owin.ActivityTracing;
+using System.Diagnostics;
 #endif
 #if NET452
 using Microsoft.Owin;
@@ -36,6 +34,7 @@ using IResponse = Microsoft.Owin.IOwinResponse;
 using IContext = Microsoft.AspNetCore.Http.HttpContext;
 using IRequest = Microsoft.AspNetCore.Http.HttpRequest;
 using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
+using Microsoft.AspNetCore.Http;
 #endif
 
 namespace WireMock.Net.Tests.Owin;
@@ -224,7 +223,7 @@ public class WireMockMiddlewareTests
         _mappingMock.SetupGet(m => m.Settings).Returns(settings);
 
         var newMappingFromProxy = new Mapping(NewGuid, UpdatedAt, string.Empty, string.Empty, null, settings, Request.Create(), Response.Create(), 0, null, null, null, null, null, false, null, null);
-        _mappingMock.Setup(m => m.ProvideResponseAsync(It.IsAny<RequestMessage>())).ReturnsAsync((new ResponseMessage(), newMappingFromProxy));
+        _mappingMock.Setup(m => m.ProvideResponseAsync(It.IsAny<HttpContext>(), It.IsAny<RequestMessage>())).ReturnsAsync((new ResponseMessage(), newMappingFromProxy));
 
         var requestBuilder = Request.Create().UsingAnyMethod();
         _mappingMock.SetupGet(m => m.RequestMatcher).Returns(requestBuilder);
@@ -278,7 +277,7 @@ public class WireMockMiddlewareTests
         _mappingMock.SetupGet(m => m.Settings).Returns(settings);
 
         var newMappingFromProxy = new Mapping(NewGuid, UpdatedAt, "my-title", "my-description", null, settings, Request.Create(), Response.Create(), 0, null, null, null, null, null, false, null, data: null);
-        _mappingMock.Setup(m => m.ProvideResponseAsync(It.IsAny<RequestMessage>())).ReturnsAsync((new ResponseMessage(), newMappingFromProxy));
+        _mappingMock.Setup(m => m.ProvideResponseAsync(It.IsAny<HttpContext>(), It.IsAny<RequestMessage>())).ReturnsAsync((new ResponseMessage(), newMappingFromProxy));
 
         var requestBuilder = Request.Create().UsingAnyMethod();
         _mappingMock.SetupGet(m => m.RequestMatcher).Returns(requestBuilder);

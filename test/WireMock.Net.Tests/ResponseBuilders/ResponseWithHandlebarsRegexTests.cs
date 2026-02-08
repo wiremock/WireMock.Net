@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Handlers;
@@ -44,7 +45,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("abc");
@@ -63,7 +64,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("");
@@ -82,7 +83,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("5000-https");
@@ -101,7 +102,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("");
@@ -120,6 +121,6 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act and Assert
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<ArgumentNullException>();
     }
 }
