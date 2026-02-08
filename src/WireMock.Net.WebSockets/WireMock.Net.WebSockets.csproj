@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>WebSocket support for WireMock.Net</Description>
+        <AssemblyTitle>WireMock.Net.WebSockets</AssemblyTitle>
+        <Authors>Stef Heyenrath</Authors>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageTags>wiremock;websocket;websockets;mock;test</PackageTags>
+        <RootNamespace>WireMock</RootNamespace>
+        <ProjectGuid>{F7D4E5C2-3A1B-4D8E-A2F0-8C6D9E2F1B3A}</ProjectGuid>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <CodeAnalysisRuleSet>../WireMock.Net/WireMock.Net.ruleset</CodeAnalysisRuleSet>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
+        <!--<DelaySign>true</DelaySign>-->
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WireMock.Net.Shared\WireMock.Net.Shared.csproj" />
+
+        <PackageReference Include="PolySharp" Version="1.15.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

@@ -168,5 +168,6 @@
 
     <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3' and '$(TargetFramework)' != 'net451' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net46'">
         <ProjectReference Include="..\WireMock.Net.OpenApiParser\WireMock.Net.OpenApiParser.csproj" />
+        <ProjectReference Include="..\WireMock.Net.WebSockets\WireMock.Net.WebSockets.csproj" />
     </ItemGroup>
 </Project>
