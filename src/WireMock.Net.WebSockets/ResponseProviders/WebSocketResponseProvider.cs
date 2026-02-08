@@ -16,7 +16,7 @@ namespace WireMock.WebSockets.ResponseProviders;
 /// <summary>
 /// Response provider for handling WebSocket connections.
 /// </summary>
-internal class WebSocketResponseProvider : IResponseProvider
+public class WebSocketResponseProvider : IResponseProvider
 {
     private readonly Func<WebSocketHandlerContext, Task>? _handler;
     private readonly Func<WebSocketMessage, Task<WebSocketMessage?>>? _messageHandler;

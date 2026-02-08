@@ -59,7 +59,7 @@ public class WebSocketTests
         // Act
         using var client = new ClientWebSocket();
         await client.ConnectAsync(
-            new Uri($"ws://localhost:{server.Port}/echo"),
+            new Uri($"ws://{server.Url}/echo"),
             CancellationToken.None);
 
         var message = Encoding.UTF8.GetBytes("Hello WebSocket!");

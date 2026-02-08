@@ -28,6 +28,8 @@ using Next = Microsoft.Owin.OwinMiddleware;
 using OwinMiddleware = System.Object;
 using IContext = Microsoft.AspNetCore.Http.HttpContext;
 using Next = Microsoft.AspNetCore.Http.RequestDelegate;
+using HandlebarsDotNet;
+using WireMock.Org.Abstractions;
 #endif
 
 namespace WireMock.Owin
@@ -168,6 +170,20 @@ namespace WireMock.Owin
                     response = ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound);
                     return;
                 }
+
+#if USE_ASPNETCORE && NET8_0_OR_GREATER
+                if (ctx.WebSockets.IsWebSocketRequest)
+                {
+                    // Accept WebSocket upgrade
+                    var webSocket = await ctx.WebSockets.AcceptWebSocketAsync();
+
+                    // Get and invoke handler
+                    var provider = targetMapping.Provider as WireMock.WebSockets.ResponseProviders.WebSocketResponseProvider;
+                    await provider.HandleWebSocketAsync(webSocket, request);
+
+                    return;  // Don't process as HTTP
+                }
+#endif
 
                 logRequest = targetMapping.LogMapping;
 
