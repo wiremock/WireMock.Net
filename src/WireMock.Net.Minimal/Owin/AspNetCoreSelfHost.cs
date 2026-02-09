@@ -80,6 +80,14 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
 #if NET8_0_OR_GREATER
                 UseCors(appBuilder);
+
+                var webSocketOptions = new WebSocketOptions();
+                if (_wireMockMiddlewareOptions.WebSocketSettings?.KeepAliveIntervalSeconds != null)
+                {
+                    webSocketOptions.KeepAliveInterval = TimeSpan.FromSeconds(_wireMockMiddlewareOptions.WebSocketSettings.KeepAliveIntervalSeconds);
+                }
+
+                appBuilder.UseWebSockets(webSocketOptions);
 #endif
                 _wireMockMiddlewareOptions.PreWireMockMiddlewareInit?.Invoke(appBuilder);
 

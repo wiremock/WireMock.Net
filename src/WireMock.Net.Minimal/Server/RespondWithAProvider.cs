@@ -37,7 +37,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
     private int _timesInSameState = 1;
     private bool? _useWebhookFireAndForget;
     private double? _probability;
-    private GraphQLSchemaDetails? _graphQLSchemaDetails;
+    private GraphQLSchemaDetails? _graphQLSchemaDetails; // Future Use.
 
     public Guid Guid { get; private set; }
 
@@ -79,6 +79,12 @@ internal class RespondWithAProvider : IRespondWithAProvider
     /// <inheritdoc />
     public void RespondWith(IResponseProvider provider)
     {
+        if (provider is Response response && response.WebSocketBuilder != null)
+        {
+            // If the provider is a Response with a WebSocketBuilder, we need to use a WebSocketResponseProvider instead.
+            provider = new WebSocketResponseProvider(response.WebSocketBuilder);
+        }
+
         var mapping = new Mapping
         (
             Guid,

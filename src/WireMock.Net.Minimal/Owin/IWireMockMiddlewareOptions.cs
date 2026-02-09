@@ -11,6 +11,7 @@ using WireMock.Matchers;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
+using WireMock.WebSockets;
 using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
 
 namespace WireMock.Owin;
@@ -82,11 +83,21 @@ internal interface IWireMockMiddlewareOptions
 
     QueryParameterMultipleValueSupport? QueryParameterMultipleValueSupport { get; set; }
 
-    public bool ProxyAll { get; set; }
+    bool ProxyAll { get; set; }
 
     /// <summary>
     /// Gets or sets the activity tracing options.
     /// When set, System.Diagnostics.Activity objects are created for request tracing.
     /// </summary>
     ActivityTracingOptions? ActivityTracingOptions { get; set; }
+
+    /// <summary>
+    /// The WebSocket connection registries per mapping (used for broadcast).
+    /// </summary>
+    ConcurrentDictionary<Guid, WebSocketConnectionRegistry> WebSocketRegistries { get; }
+
+    /// <summary>
+    /// WebSocket settings.
+    /// </summary>
+    WebSocketSettings? WebSocketSettings { get; set; }
 }

@@ -106,7 +106,6 @@ public partial class WireMockServer
     /// Checks if file exists.
     /// Note: Response is returned with no body as a head request doesn't accept a body, only the status code.
     /// </summary>
-    /// <param name="requestMessage">The request message.</param>
     private IResponseMessage FileHead(HttpContext _, IRequestMessage requestMessage)
     {
         var filename = GetFileNameFromRequestMessage(requestMessage);

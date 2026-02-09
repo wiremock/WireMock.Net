@@ -131,4 +131,9 @@ public class SettingsModel
     /// Whether to accept any client certificate
     /// </summary>
     public bool AcceptAnyClientCertificate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the WebSocket settings.
+    /// </summary>
+    public WebSocketSettingsModel? WebSocketSettings { get; set; }
 }

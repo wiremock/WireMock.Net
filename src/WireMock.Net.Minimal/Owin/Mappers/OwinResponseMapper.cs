@@ -15,6 +15,7 @@ using RandomDataGenerator.Randomizers;
 using Stef.Validation;
 using WireMock.Http;
 using WireMock.ResponseBuilders;
+using WireMock.ResponseProviders;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -58,7 +59,7 @@ namespace WireMock.Owin.Mappers
         /// <inheritdoc />
         public async Task MapAsync(IResponseMessage? responseMessage, HttpResponse response)
         {
-            if (responseMessage == null)
+            if (responseMessage == null || responseMessage is WebSocketHandledResponse)
             {
                 return;
             }

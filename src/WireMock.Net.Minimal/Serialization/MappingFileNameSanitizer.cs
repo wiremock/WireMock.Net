@@ -30,7 +30,7 @@ public class MappingFileNameSanitizer
         if (!string.IsNullOrEmpty(mapping.Title))
         {
             // remove 'Proxy Mapping for ' and an extra space character after the HTTP request method
-            name = mapping.Title.Replace(ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile, "").Replace(' '.ToString(), string.Empty);
+            name = mapping.Title!.Replace(ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile, "").Replace(' '.ToString(), string.Empty);
             if (_settings.ProxyAndRecordSettings?.AppendGuidToSavedMappingFile == true)
             {
                 name += $"{ReplaceChar}{mapping.Guid}";

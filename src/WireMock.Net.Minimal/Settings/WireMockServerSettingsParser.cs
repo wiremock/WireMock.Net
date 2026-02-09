@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using JetBrains.Annotations;
 using Stef.Validation;
+using WireMock.Constants;
 using WireMock.Logging;
 using WireMock.Models;
 using WireMock.Types;
@@ -86,6 +87,7 @@ public static class WireMockServerSettingsParser
         ParseCertificateSettings(settings, parser);
         ParseHandlebarsSettings(settings, parser);
         ParseActivityTracingSettings(settings, parser);
+        ParseWebSocketSettings(settings, parser);
 
         return true;
     }
@@ -239,6 +241,22 @@ public static class WireMockServerSettingsParser
                 RecordRequestBody = parser.GetBoolValue("ActivityTracingRecordRequestBody") || parser.GetBoolValue("ActivityTracingOptions__RecordRequestBody"),
                 RecordResponseBody = parser.GetBoolValue("ActivityTracingRecordResponseBody") || parser.GetBoolValue("ActivityTracingOptions__RecordResponseBody"),
                 RecordMatchDetails = parser.GetBoolWithDefault("ActivityTracingRecordMatchDetails", "ActivityTracingOptions__RecordMatchDetails", defaultValue: true)
+            };
+        }
+    }
+
+    private static void ParseWebSocketSettings(WireMockServerSettings settings, SimpleSettingsParser parser)
+    {
+        // Check if any WebSocket setting is present
+        if (parser.ContainsAny(
+            nameof(WebSocketSettings) + '.' + nameof(WebSocketSettings.MaxConnections),
+            nameof(WebSocketSettings) + '.' + nameof(WebSocketSettings.KeepAliveIntervalSeconds))
+        )
+        {
+            settings.WebSocketSettings = new WebSocketSettings
+            {
+                MaxConnections = parser.GetIntValue(nameof(WebSocketSettings) + '.' + nameof(WebSocketSettings.MaxConnections), 100),
+                KeepAliveIntervalSeconds = parser.GetIntValue(nameof(WebSocketSettings) + '.' + nameof(WebSocketSettings.KeepAliveIntervalSeconds), WebSocketConstants.DefaultKeepAliveIntervalSeconds),
             };
         }
     }
