@@ -83,6 +83,7 @@ public class WireMockMiddlewareTests
         // _matcherMock.Setup(m => m.FindBestMatch(It.IsAny<RequestMessage>())).Returns((new MappingMatcherResult(), new MappingMatcherResult()));
 
         _contextMock = new Mock<IContext>();
+        _contextMock.SetupGet(c => c.Items).Returns(new Dictionary<object, object?>());
 
         _mappingMock = new Mock<IMapping>();
 
