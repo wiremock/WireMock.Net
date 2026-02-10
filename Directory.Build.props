@@ -15,6 +15,7 @@
         <PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
         <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">

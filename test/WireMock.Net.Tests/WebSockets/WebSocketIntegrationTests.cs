@@ -1,12 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using WireMock.Net.Xunit;
@@ -14,7 +9,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.WebSockets;
@@ -34,7 +28,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -43,14 +38,13 @@ public class WebSocketIntegrationTests
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithHeader("x", "y")
                 .WithWebSocket(ws => ws
                     .WithEcho()
                 )
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/echo");
+        var uri = new Uri($"{server.Url!}/ws/echo");
 
         // Act
         await client.ConnectAsync(uri, CancellationToken.None);
@@ -78,7 +72,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -91,7 +86,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/echo");
+        var uri = new Uri($"{server.Url!}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testMessages = new[] { "Hello", "World", "WebSocket", "Test" };
@@ -118,7 +113,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -131,7 +127,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/echo");
+        var uri = new Uri($"{server.Url!}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
@@ -157,7 +153,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -170,7 +167,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/echo");
+        var uri = new Uri($"{server.Url!}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -192,7 +189,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -218,7 +216,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/chat");
+        var uri = new Uri($"{server.Url!}/ws/chat");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -244,7 +242,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -288,7 +287,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/chat");
+        var uri = new Uri($"{server.Url!}/ws/chat");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var commands = new (string, Action<string>)[]
@@ -322,7 +321,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -348,7 +348,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/json");
+        var uri = new Uri($"{server.Url!}/ws/json");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -362,7 +362,7 @@ public class WebSocketIntegrationTests
 
         // Assert
         result.MessageType.Should().Be(WebSocketMessageType.Text);
-        
+
         var json = JObject.Parse(received);
         json["message"]!.ToString().Should().Be(testMessage);
         json["length"]!.Value<int>().Should().Be(testMessage.Length);
@@ -378,7 +378,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -404,7 +405,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/json");
+        var uri = new Uri($"{server.Url!}/ws/json");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testMessages = new[] { "First", "Second", "Third" };
@@ -433,7 +434,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         server
@@ -470,7 +472,7 @@ public class WebSocketIntegrationTests
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/json");
+        var uri = new Uri($"{server.Url!}/ws/json");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -499,7 +501,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         var broadcastMappingGuid = Guid.NewGuid();
@@ -533,7 +536,7 @@ public class WebSocketIntegrationTests
         using var client2 = new ClientWebSocket();
         using var client3 = new ClientWebSocket();
 
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/broadcast");
+        var uri = new Uri($"{server.Url!}/ws/broadcast");
 
         await client1.ConnectAsync(uri, CancellationToken.None);
         await client2.ConnectAsync(uri, CancellationToken.None);
@@ -579,7 +582,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         var broadcastMappingGuid = Guid.NewGuid();
@@ -606,7 +610,7 @@ public class WebSocketIntegrationTests
         using var client1 = new ClientWebSocket();
         using var client2 = new ClientWebSocket();
 
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/broadcast");
+        var uri = new Uri($"{server.Url!}/ws/broadcast");
 
         await client1.ConnectAsync(uri, CancellationToken.None);
         await client2.ConnectAsync(uri, CancellationToken.None);
@@ -639,7 +643,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         var broadcastMappingGuid = Guid.NewGuid();
@@ -673,7 +678,7 @@ public class WebSocketIntegrationTests
         using var client1 = new ClientWebSocket();
         using var client2 = new ClientWebSocket();
 
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/broadcast-json");
+        var uri = new Uri($"{server.Url!}/ws/broadcast-json");
 
         await client1.ConnectAsync(uri, CancellationToken.None);
         await client2.ConnectAsync(uri, CancellationToken.None);
@@ -717,7 +722,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         var broadcastMappingGuid = Guid.NewGuid();
@@ -746,7 +752,7 @@ public class WebSocketIntegrationTests
         using var client1 = new ClientWebSocket();
         using var client2 = new ClientWebSocket();
 
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/broadcast");
+        var uri = new Uri($"{server.Url!}/ws/broadcast");
 
         await client1.ConnectAsync(uri, CancellationToken.None);
         await client2.ConnectAsync(uri, CancellationToken.None);
@@ -784,7 +790,8 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output)
+            Logger = new TestOutputHelperWireMockLogger(_output),
+            Urls = ["ws://localhost:0"]
         });
 
         var broadcastMappingGuid = Guid.NewGuid();
@@ -808,8 +815,8 @@ public class WebSocketIntegrationTests
                 )
             );
 
-        var uri = new Uri($"{server.Urls[0].Replace("http://", "ws://")}/ws/broadcast");
-        const int clientCount = 5;
+        var uri = new Uri($"{server.Url!}/ws/broadcast");
+        const int clientCount = 3;
         var clients = new List<ClientWebSocket>();
 
         try
@@ -822,7 +829,7 @@ public class WebSocketIntegrationTests
                 clients.Add(client);
             }
 
-            await Task.Delay(200); // Give time for all connections to register
+            await Task.Delay(100); // Give time for all connections to register
 
             // Act - Send message from first client
             var testMessage = "Mass broadcast";

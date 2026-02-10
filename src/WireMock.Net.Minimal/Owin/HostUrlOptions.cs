@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -23,20 +22,34 @@ internal class HostUrlOptions
         var list = new List<HostUrlDetails>();
         if (Urls == null)
         {
-            if (HostingScheme is HostingScheme.Http or HostingScheme.Https)
+            if (HostingScheme is not HostingScheme.None)
             {
-                var port = Port > 0 ? Port.Value : FindFreeTcpPort();
-                var scheme = HostingScheme == HostingScheme.Https ? "https" : "http";
-                list.Add(new HostUrlDetails { IsHttps = HostingScheme == HostingScheme.Https, IsHttp2 = UseHttp2 == true, Url = $"{scheme}://{Star}:{port}", Scheme = scheme, Host = Star, Port = port });
+                var scheme = GetSchemeAsString(HostingScheme);
+                var port = Port > 0 ? Port.Value : 0;
+                var isHttps = HostingScheme == HostingScheme.Https || HostingScheme == HostingScheme.Wss;
+                list.Add(new HostUrlDetails { IsHttps = isHttps, IsHttp2 = UseHttp2 == true, Url = $"{scheme}://{Star}:{port}", Scheme = scheme, Host = Star, Port = port });
             }
 
             if (HostingScheme == HostingScheme.HttpAndHttps)
             {
-                var httpPort = Port > 0 ? Port.Value : FindFreeTcpPort();
-                list.Add(new HostUrlDetails { IsHttps = false, IsHttp2 = UseHttp2 == true, Url = $"http://{Star}:{httpPort}", Scheme = "http", Host = Star, Port = httpPort });
+                var port = Port > 0 ? Port.Value : 0;
+                var scheme = GetSchemeAsString(HostingScheme.Http);
+                list.Add(new HostUrlDetails { IsHttps = false, IsHttp2 = UseHttp2 == true, Url = $"{scheme}://{Star}:{port}", Scheme = scheme, Host = Star, Port = port });
 
-                var httpsPort = FindFreeTcpPort(); // In this scenario, always get a free port for https.
-                list.Add(new HostUrlDetails { IsHttps = true, IsHttp2 = UseHttp2 == true, Url = $"https://{Star}:{httpsPort}", Scheme = "https", Host = Star, Port = httpsPort });
+                var securePort = 0; // In this scenario, always get a free port for https.
+                var secureScheme = GetSchemeAsString(HostingScheme.Https);
+                list.Add(new HostUrlDetails { IsHttps = true, IsHttp2 = UseHttp2 == true, Url = $"{secureScheme}://{Star}:{securePort}", Scheme = secureScheme, Host = Star, Port = securePort });
+            }
+
+            if (HostingScheme == HostingScheme.WsAndWss)
+            {
+                var port = Port > 0 ? Port.Value : 0;
+                var scheme = GetSchemeAsString(HostingScheme.Ws);
+                list.Add(new HostUrlDetails { IsHttps = false, IsHttp2 = UseHttp2 == true, Url = $"{scheme}://{Star}:{port}", Scheme = scheme, Host = Star, Port = port });
+
+                var securePort = 0; // In this scenario, always get a free port for https.
+                var secureScheme = GetSchemeAsString(HostingScheme.Wss);
+                list.Add(new HostUrlDetails { IsHttps = true, IsHttp2 = UseHttp2 == true, Url = $"{secureScheme}://{Star}:{securePort}", Scheme = secureScheme, Host = Star, Port = securePort });
             }
         }
         else
@@ -53,12 +66,19 @@ internal class HostUrlOptions
         return list;
     }
 
-    private static int FindFreeTcpPort()
+    private string GetSchemeAsString(HostingScheme scheme)
     {
-//#if USE_ASPNETCORE || NETSTANDARD2_0 || NETSTANDARD2_1
-        return 0;
-//#else
-        //return PortUtils.FindFreeTcpPort();
-//#endif
+        return scheme switch
+        {
+            HostingScheme.Http => "http",
+            HostingScheme.Https => "https",
+            HostingScheme.HttpAndHttps => "http", // Default to http when both are specified, since the https URL will be added separately with a free port.
+
+            HostingScheme.Ws => "ws",
+            HostingScheme.Wss => "wss",
+            HostingScheme.WsAndWss => "ws", // Default to ws when both are specified, since the wss URL will be added separately with a free port.
+
+            _ => throw new NotSupportedException($"Unsupported hosting scheme: {HostingScheme}")
+        };
     }
 }

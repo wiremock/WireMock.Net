@@ -64,16 +64,14 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return this;
     }
 
-    public IWebSocketBuilder WithMessageHandler(
-        Func<WebSocketMessage, IWebSocketContext, Task> handler)
+    public IWebSocketBuilder WithMessageHandler(Func<WebSocketMessage, IWebSocketContext, Task> handler)
     {
         MessageHandler = Guard.NotNull(handler);
         IsEcho = false; // Disable echo if custom handler is set
         return this;
     }
 
-    public IWebSocketBuilder WithMessageSequence(
-        Action<IWebSocketMessageSequenceBuilder> configure)
+    public IWebSocketBuilder WithMessageSequence(Action<IWebSocketMessageSequenceBuilder> configure)
     {
         var sequenceBuilder = new WebSocketMessageSequenceBuilder();
         configure(sequenceBuilder);
