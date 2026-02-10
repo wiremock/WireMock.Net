@@ -44,8 +44,47 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Hello, WebSocket!";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client.SendAsync(testMessage);
+
+        // Assert
+        var received = await client.ReceiveAsTextAsync();
+        received.Should().Be(testMessage);
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithText_Should_Send_Configured_Text()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseMessage = "This is a predefined response";
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/message")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithText(responseMessage)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/message");
+
+        // Act
+        await client.ConnectAsync(uri, CancellationToken.None);
+        client.State.Should().Be(WebSocketState.Open);
+
+        var testMessage = "Any message from client";
+        await client.SendAsync(testMessage);
 
         var receiveBuffer = new byte[1024];
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -54,7 +93,247 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         result.MessageType.Should().Be(WebSocketMessageType.Text);
         result.EndOfMessage.Should().BeTrue();
         var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-        received.Should().Be(testMessage);
+        received.Should().Be(responseMessage);
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithText_Should_Send_Same_Text_For_Multiple_Messages()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseMessage = "Fixed response";
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/message")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithText(responseMessage)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/message");
+        await client.ConnectAsync(uri, CancellationToken.None);
+
+        var testMessages = new[] { "First", "Second", "Third" };
+
+        // Act & Assert
+        foreach (var testMessage in testMessages)
+        {
+            await client.SendAsync(testMessage);
+
+            var receiveBuffer = new byte[1024];
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+
+            received.Should().Be(responseMessage, $"should always return the fixed response regardless of input message '{testMessage}'");
+        }
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithBytes_Should_Send_Configured_Bytes()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseBytes = new byte[] { 0xDE, 0xAD, 0xBE, 0xEF };
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/binary")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithBytes(responseBytes)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/binary");
+
+        // Act
+        await client.ConnectAsync(uri, CancellationToken.None);
+        client.State.Should().Be(WebSocketState.Open);
+
+        var testMessage = "Any message from client";
+        await client.SendAsync(testMessage);
+
+        var receiveBuffer = new byte[1024];
+        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+
+        // Assert
+        result.MessageType.Should().Be(WebSocketMessageType.Binary);
+        result.EndOfMessage.Should().BeTrue();
+        var receivedData = new byte[result.Count];
+        Array.Copy(receiveBuffer, receivedData, result.Count);
+        receivedData.Should().BeEquivalentTo(responseBytes);
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithBytes_Should_Send_Same_Bytes_For_Multiple_Messages()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseBytes = new byte[] { 0x01, 0x02, 0x03 };
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/binary")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithBytes(responseBytes)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/binary");
+        await client.ConnectAsync(uri, CancellationToken.None);
+
+        var testMessages = new[] { "First", "Second", "Third" };
+
+        // Act & Assert
+        foreach (var testMessage in testMessages)
+        {
+            await client.SendAsync(testMessage);
+
+            var receiveBuffer = new byte[1024];
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            
+            result.MessageType.Should().Be(WebSocketMessageType.Binary);
+            var receivedData = new byte[result.Count];
+            Array.Copy(receiveBuffer, receivedData, result.Count);
+            receivedData.Should().BeEquivalentTo(responseBytes, $"should always return the fixed bytes regardless of input message '{testMessage}'");
+        }
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithJson_Should_Send_Configured_Json()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseData = new
+        {
+            status = "ok",
+            message = "This is a predefined JSON response",
+            timestamp = new DateTime(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc)
+        };
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/json")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithJson(responseData)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/json");
+
+        // Act
+        await client.ConnectAsync(uri, CancellationToken.None);
+        client.State.Should().Be(WebSocketState.Open);
+
+        var testMessage = "Any message from client";
+        await client.SendAsync(testMessage);
+
+        var receiveBuffer = new byte[2048];
+        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+
+        // Assert
+        result.MessageType.Should().Be(WebSocketMessageType.Text);
+        result.EndOfMessage.Should().BeTrue();
+        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+        
+        var json = JObject.Parse(received);
+        json["status"]!.ToString().Should().Be("ok");
+        json["message"]!.ToString().Should().Be("This is a predefined JSON response");
+        json["timestamp"].Should().NotBeNull();
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task WithJson_Should_Send_Same_Json_For_Multiple_Messages()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var responseData = new
+        {
+            id = 42,
+            name = "Fixed JSON Response"
+        };
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/json")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithJson(responseData)
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url!}/ws/json");
+        await client.ConnectAsync(uri, CancellationToken.None);
+
+        var testMessages = new[] { "First", "Second", "Third" };
+
+        // Act & Assert
+        foreach (var testMessage in testMessages)
+        {
+            await client.SendAsync(testMessage);
+
+            var receiveBuffer = new byte[2048];
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+
+            var json = JObject.Parse(received);
+            json["id"]!.Value<int>().Should().Be(42);
+            json["name"]!.ToString().Should().Be("Fixed JSON Response", $"should always return the fixed JSON regardless of input message '{testMessage}'");
+        }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
     }
@@ -87,8 +366,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act & Assert
         foreach (var testMessage in testMessages)
         {
-            var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-            await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await client.SendAsync(testMessage);
 
             var receiveBuffer = new byte[1024];
             var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -164,8 +442,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
-        var sendBytes = Encoding.UTF8.GetBytes(string.Empty);
-        await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client.SendAsync(string.Empty);
 
         var receiveBuffer = new byte[1024];
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -201,7 +478,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
                             if (text.StartsWith("/help"))
                             {
-                                await context.SendTextAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
+                                await context.SendAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
                             }
                         }
                     })
@@ -213,8 +490,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
-        var sendBytes = Encoding.UTF8.GetBytes("/help");
-        await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client.SendAsync("/help");
 
         var receiveBuffer = new byte[1024];
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -254,25 +530,29 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
                             if (text.StartsWith("/help"))
                             {
-                                await context.SendTextAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
+                                await context.SendAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
                             }
                             else if (text.StartsWith("/time"))
                             {
-                                await context.SendTextAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                                await context.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
                             }
                             else if (text.StartsWith("/echo "))
                             {
-                                await context.SendTextAsync(text.Substring(6));
+                                await context.SendAsync(text.Substring(6));
                             }
                             else if (text.StartsWith("/upper "))
                             {
-                                await context.SendTextAsync(text.Substring(7).ToUpper());
+                                await context.SendAsync(text.Substring(7).ToUpper());
                             }
                             else if (text.StartsWith("/reverse "))
                             {
                                 var toReverse = text.Substring(9);
                                 var reversed = new string(toReverse.Reverse().ToArray());
-                                await context.SendTextAsync(reversed);
+                                await context.SendAsync(reversed);
+                            }
+                            else if (text.StartsWith("/close"))
+                            {
+                                await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing connection");
                             }
                         }
                     })
@@ -285,18 +565,17 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         var commands = new (string, Action<string>)[]
         {
-            ("/help", (string response) => response.Should().Contain("Available commands")),
-            ("/time", (string response) => response.Should().Contain("Server time")),
-            ("/echo Test", (string response) => response.Should().Be("Test")),
-            ("/upper test", (string response) => response.Should().Be("TEST")),
-            ("/reverse hello", (string response) => response.Should().Be("olleh"))
+            ("/help", response => response.Should().Contain("Available commands")),
+            ("/time", response => response.Should().Contain("Server time")),
+            ("/echo Test", response => response.Should().Be("Test")),
+            ("/upper test", response => response.Should().Be("TEST")),
+            ("/reverse hello", response => response.Should().Be("olleh"))
         };
 
         // Act & Assert
         foreach (var (command, assertion) in commands)
         {
-            var sendBytes = Encoding.UTF8.GetBytes(command);
-            await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await client.SendAsync(command);
 
             var receiveBuffer = new byte[1024];
             var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -304,6 +583,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
             assertion(received);
         }
+
+        await client.SendAsync("/close");
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
     }
@@ -335,7 +616,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
                             length = msg.Text?.Length ?? 0,
                             type = msg.MessageType.ToString()
                         };
-                        await ctx.SendJsonAsync(response);
+                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );
@@ -346,8 +627,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Act
         var testMessage = "Test JSON message";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client.SendAsync(testMessage);
 
         var receiveBuffer = new byte[2048];
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -392,7 +672,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
                             type = msg.MessageType.ToString(),
                             connectionId = ctx.ConnectionId.ToString()
                         };
-                        await ctx.SendJsonAsync(response);
+                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );
@@ -406,8 +686,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act & Assert
         foreach (var testMessage in testMessages)
         {
-            var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-            await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await client.SendAsync(testMessage);
 
             var receiveBuffer = new byte[2048];
             var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -459,7 +738,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
                                 new { id = 2, name = "Item2" }
                             }
                         };
-                        await ctx.SendJsonAsync(response);
+                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );
@@ -470,8 +749,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Act
         var testMessage = "Complex test";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client.SendAsync(testMessage);
 
         var receiveBuffer = new byte[2048];
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
@@ -540,8 +818,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Act - Send message from client1
         var testMessage = "Hello everyone!";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client1.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client1.SendAsync(testMessage);
 
         // Assert - All clients should receive the broadcast
         var receiveBuffer1 = new byte[1024];
@@ -616,8 +893,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Act - Send message from client1 (client2 is now closed)
         var testMessage = "Still here";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client1.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client1.SendAsync(testMessage);
 
         // Assert - Only client1 should receive
         var receiveBuffer1 = new byte[1024];
@@ -680,8 +956,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Act - Send message from client1
         var testMessage = "JSON broadcast test";
-        var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-        await client1.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+        await client1.SendAsync(testMessage);
 
         // Assert - Both clients should receive JSON
         var receiveBuffer1 = new byte[2048];
@@ -757,8 +1032,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act & Assert
         foreach (var msg in messages)
         {
-            var sendBytes = Encoding.UTF8.GetBytes(msg);
-            await client1.SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await client1.SendAsync(msg);
 
             var receiveBuffer1 = new byte[1024];
             var result1 = await client1.ReceiveAsync(new ArraySegment<byte>(receiveBuffer1), CancellationToken.None);
@@ -826,8 +1100,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
             // Act - Send message from first client
             var testMessage = "Mass broadcast";
-            var sendBytes = Encoding.UTF8.GetBytes(testMessage);
-            await clients[0].SendAsync(new ArraySegment<byte>(sendBytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await clients[0].SendAsync(testMessage);
 
             // Assert - All clients should receive
             var receiveTasks = clients.Select(async client =>

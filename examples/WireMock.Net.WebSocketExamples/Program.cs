@@ -136,34 +136,34 @@ public static class Program
                             // Handle different commands
                             if (text.StartsWith("/help"))
                             {
-                                await context.SendTextAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
+                                await context.SendAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
                             }
                             else if (text.StartsWith("/time"))
                             {
-                                await context.SendTextAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                                await context.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
                             }
                             else if (text.StartsWith("/echo "))
                             {
-                                await context.SendTextAsync(text.Substring(6));
+                                await context.SendAsync(text.Substring(6));
                             }
                             else if (text.StartsWith("/upper "))
                             {
-                                await context.SendTextAsync(text.Substring(7).ToUpper());
+                                await context.SendAsync(text.Substring(7).ToUpper());
                             }
                             else if (text.StartsWith("/reverse "))
                             {
                                 var toReverse = text.Substring(9);
                                 var reversed = new string(toReverse.Reverse().ToArray());
-                                await context.SendTextAsync(reversed);
+                                await context.SendAsync(reversed);
                             }
                             else if (text == "/quit")
                             {
-                                await context.SendTextAsync("Goodbye!");
+                                await context.SendAsync("Goodbye!");
                                 await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client requested disconnect");
                             }
                             else
                             {
-                                await context.SendTextAsync($"Unknown command: {text}. Type /help for available commands.");
+                                await context.SendAsync($"Unknown command: {text}. Type /help for available commands.");
                             }
                         }
                     })
@@ -263,7 +263,7 @@ public static class Program
                 .WithWebSocket(ws => ws
                     .WithMessageHandler(async (msg, ctx) =>
                     {
-                        await ctx.SendTextAsync("Welcome to the game lobby! Type 'ready' to start or 'quit' to leave.");
+                        await ctx.SendAsync("Welcome to the game lobby! Type 'ready' to start or 'quit' to leave.");
                     })
                 )
             );
@@ -285,16 +285,16 @@ public static class Program
                         if (text == "ready")
                         {
                             ctx.SetScenarioState("Playing");
-                            await ctx.SendTextAsync("Game started! Type 'attack' to attack, 'defend' to defend, or 'quit' to exit.");
+                            await ctx.SendAsync("Game started! Type 'attack' to attack, 'defend' to defend, or 'quit' to exit.");
                         }
                         else if (text == "quit")
                         {
-                            await ctx.SendTextAsync("You left the lobby. Goodbye!");
+                            await ctx.SendAsync("You left the lobby. Goodbye!");
                             await ctx.CloseAsync(WebSocketCloseStatus.NormalClosure, "Player quit");
                         }
                         else
                         {
-                            await ctx.SendTextAsync("In lobby. Type 'ready' to start or 'quit' to leave.");
+                            await ctx.SendAsync("In lobby. Type 'ready' to start or 'quit' to leave.");
                         }
                     })
                 )
@@ -316,21 +316,21 @@ public static class Program
                         
                         if (text == "attack")
                         {
-                            await ctx.SendTextAsync("You attacked! Critical hit! 💥");
+                            await ctx.SendAsync("You attacked! Critical hit! 💥");
                         }
                         else if (text == "defend")
                         {
-                            await ctx.SendTextAsync("You defended! Shield up! 🛡️");
+                            await ctx.SendAsync("You defended! Shield up! 🛡️");
                         }
                         else if (text == "quit")
                         {
                             ctx.SetScenarioState("GameOver");
-                            await ctx.SendTextAsync("Game over! Thanks for playing.");
+                            await ctx.SendAsync("Game over! Thanks for playing.");
                             await ctx.CloseAsync(WebSocketCloseStatus.NormalClosure, "Game ended");
                         }
                         else
                         {
-                            await ctx.SendTextAsync("Unknown action. Type 'attack', 'defend', or 'quit'.");
+                            await ctx.SendAsync("Unknown action. Type 'attack', 'defend', or 'quit'.");
                         }
                     })
                 )
@@ -418,7 +418,7 @@ public static class Program
                 .WithWebSocket(ws => ws
                     .WithMessageHandler(async (msg, ctx) =>
                     {
-                        await ctx.SendTextAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                        await ctx.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
                     })
                 )
             );
@@ -440,7 +440,7 @@ public static class Program
                             length = msg.Text?.Length ?? 0,
                             type = msg.MessageType.ToString()
                         };
-                        await ctx.SendJsonAsync(response);
+                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );
@@ -456,7 +456,7 @@ public static class Program
                     .WithAcceptProtocol("chat")
                     .WithMessageHandler(async (msg, ctx) =>
                     {
-                        await ctx.SendTextAsync($"Using protocol: chat. Message: {msg.Text}");
+                        await ctx.SendAsync($"Using protocol: chat. Message: {msg.Text}");
                     })
                 )
             );
@@ -546,7 +546,7 @@ public static class Program
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
                         {
-                            await context.SendTextAsync($"Echo: {message.Text}");
+                            await context.SendAsync($"Echo: {message.Text}");
                         }
                     })
                 )
@@ -586,7 +586,7 @@ public static class Program
                 .WithWebSocket(ws => ws
                     .WithMessageHandler(async (msg, ctx) =>
                     {
-                        await ctx.SendTextAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                        await ctx.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
                     })
                 )
             );
@@ -607,7 +607,7 @@ public static class Program
                             message = msg.Text,
                             connectionId = ctx.ConnectionId
                         };
-                        await ctx.SendJsonAsync(response);
+                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );
@@ -626,7 +626,7 @@ public static class Program
                 .WithWebSocket(ws => ws
                     .WithMessageHandler(async (msg, ctx) =>
                     {
-                        await ctx.SendTextAsync("Welcome! Type 'ready' to start.");
+                        await ctx.SendAsync("Welcome! Type 'ready' to start.");
                     })
                 )
             );
@@ -645,7 +645,7 @@ public static class Program
                         if (msg.Text?.ToLower() == "ready")
                         {
                             ctx.SetScenarioState("Playing");
-                            await ctx.SendTextAsync("Game started!");
+                            await ctx.SendAsync("Game started!");
                         }
                     })
                 )

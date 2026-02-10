@@ -53,7 +53,7 @@ internal class WebSocketConnectionRegistry
     {
         var tasks = _connections.Values
             .Where(c => c.WebSocket.State == WebSocketState.Open)
-            .Select(c => c.SendTextAsync(text, cancellationToken));
+            .Select(c => c.SendAsync(text, cancellationToken));
 
         await Task.WhenAll(tasks);
     }

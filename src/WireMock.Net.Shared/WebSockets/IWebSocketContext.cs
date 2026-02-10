@@ -41,17 +41,17 @@ public interface IWebSocketContext
     /// <summary>
     /// Send text message to the client
     /// </summary>
-    Task SendTextAsync(string text, CancellationToken cancellationToken = default);
+    Task SendAsync(string text, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Send binary message to the client
     /// </summary>
-    Task SendBytesAsync(byte[] bytes, CancellationToken cancellationToken = default);
+    Task SendAsync(byte[] bytes, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Send JSON message to the client
     /// </summary>
-    Task SendJsonAsync(object data, CancellationToken cancellationToken = default);
+    Task SendAsJsonAsync(object data, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Close the WebSocket connection

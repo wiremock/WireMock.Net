@@ -24,6 +24,27 @@ public interface IWebSocketBuilder
     IWebSocketBuilder WithEcho();
 
     /// <summary>
+    /// Send a specific text message in response to any received message
+    /// </summary>
+    /// <param name="text">The text message to send</param>
+    [PublicAPI]
+    IWebSocketBuilder WithText(string text);
+
+    /// <summary>
+    /// Send specific binary data in response to any received message
+    /// </summary>
+    /// <param name="bytes">The binary data to send</param>
+    [PublicAPI]
+    IWebSocketBuilder WithBytes(byte[] bytes);
+
+    /// <summary>
+    /// Send a JSON object in response to any received message
+    /// </summary>
+    /// <param name="data">The object to serialize and send as JSON</param>
+    [PublicAPI]
+    IWebSocketBuilder WithJson(object data);
+
+    /// <summary>
     /// Handle incoming WebSocket messages
     /// </summary>
     [PublicAPI]

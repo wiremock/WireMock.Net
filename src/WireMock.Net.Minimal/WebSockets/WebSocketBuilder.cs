@@ -64,6 +64,33 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return this;
     }
 
+    public IWebSocketBuilder WithText(string text)
+    {
+        Guard.NotNull(text);
+        return WithMessageHandler(async (message, context) =>
+        {
+            await context.SendAsync(text);
+        });
+    }
+
+    public IWebSocketBuilder WithBytes(byte[] bytes)
+    {
+        Guard.NotNull(bytes);
+        return WithMessageHandler(async (message, context) =>
+        {
+            await context.SendAsync(bytes);
+        });
+    }
+
+    public IWebSocketBuilder WithJson(object data)
+    {
+        Guard.NotNull(data);
+        return WithMessageHandler(async (message, context) =>
+        {
+            await context.SendAsJsonAsync(data);
+        });
+    }
+
     public IWebSocketBuilder WithMessageHandler(Func<WebSocketMessage, IWebSocketContext, Task> handler)
     {
         MessageHandler = Guard.NotNull(handler);

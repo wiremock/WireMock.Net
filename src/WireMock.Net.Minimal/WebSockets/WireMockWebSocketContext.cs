@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Net.WebSockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stef.Validation;
@@ -68,7 +65,7 @@ public class WireMockWebSocketContext : IWebSocketContext
     }
 
     /// <inheritdoc />
-    public Task SendTextAsync(string text, CancellationToken cancellationToken = default)
+    public Task SendAsync(string text, CancellationToken cancellationToken = default)
     {
         var bytes = Encoding.UTF8.GetBytes(text);
         return WebSocket.SendAsync(
@@ -80,7 +77,7 @@ public class WireMockWebSocketContext : IWebSocketContext
     }
 
     /// <inheritdoc />
-    public Task SendBytesAsync(byte[] bytes, CancellationToken cancellationToken = default)
+    public Task SendAsync(byte[] bytes, CancellationToken cancellationToken = default)
     {
         return WebSocket.SendAsync(
             new ArraySegment<byte>(bytes),
@@ -91,10 +88,10 @@ public class WireMockWebSocketContext : IWebSocketContext
     }
 
     /// <inheritdoc />
-    public Task SendJsonAsync(object data, CancellationToken cancellationToken = default)
+    public Task SendAsJsonAsync(object data, CancellationToken cancellationToken = default)
     {
         var json = JsonConvert.SerializeObject(data);
-        return SendTextAsync(json, cancellationToken);
+        return SendAsync(json, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -124,7 +121,7 @@ public class WireMockWebSocketContext : IWebSocketContext
             scenarioState.NextState = nextState;
             scenarioState.Started = true;
             scenarioState.Finished = nextState == null;
-            
+
             // Reset counter when manually setting state
             scenarioState.Counter = 0;
         }
