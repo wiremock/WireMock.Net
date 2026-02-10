@@ -11,7 +11,7 @@ using WireMock.Util;
 
 namespace WireMock.Owin;
 
-internal partial class AspNetCoreSelfHost : IOwinSelfHost
+internal partial class AspNetCoreSelfHost
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly IWireMockMiddlewareOptions _wireMockMiddlewareOptions;

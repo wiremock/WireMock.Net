@@ -39,7 +39,7 @@ public partial class WireMockServer : IWireMockServer
     private const int ServerStartDelayInMs = 100;
 
     private readonly WireMockServerSettings _settings;
-    private readonly IOwinSelfHost? _httpServer;
+    private readonly AspNetCoreSelfHost? _httpServer;
     private readonly IWireMockMiddlewareOptions _options = new WireMockMiddlewareOptions();
     private readonly MappingConverter _mappingConverter;
     private readonly MatcherMapper _matcherMapper;
