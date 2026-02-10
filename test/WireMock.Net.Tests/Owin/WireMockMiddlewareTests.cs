@@ -72,7 +72,7 @@ public class WireMockMiddlewareTests
         _requestMapperMock = new Mock<IOwinRequestMapper>();
         _requestMapperMock.SetupAllProperties();
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _responseMapperMock = new Mock<IOwinResponseMapper>();
         _responseMapperMock.SetupAllProperties();
@@ -141,7 +141,7 @@ public class WireMockMiddlewareTests
     {
         // Assign
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1", null, new Dictionary<string, string[]>());
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.AuthenticationMatcher).Returns(new ExactMatcher());
         _mappingMock.SetupGet(m => m.IsAdminInterface).Returns(true);
@@ -164,7 +164,7 @@ public class WireMockMiddlewareTests
     {
         // Assign
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1", null, new Dictionary<string, string[]> { { "h", new[] { "x" } } });
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.AuthenticationMatcher).Returns(new ExactMatcher());
         _mappingMock.SetupGet(m => m.IsAdminInterface).Returns(true);
@@ -197,7 +197,7 @@ public class WireMockMiddlewareTests
     {
         // Assign
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1", null, new Dictionary<string, string[]>());
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.AuthenticationMatcher).Returns(new ExactMatcher());
 
@@ -246,7 +246,7 @@ public class WireMockMiddlewareTests
     {
         // Assign
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1", null, new Dictionary<string, string[]>());
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.AuthenticationMatcher).Returns(new ExactMatcher());
 
@@ -301,7 +301,7 @@ public class WireMockMiddlewareTests
     {
         // Arrange
         var request = new RequestMessage(new UrlDetails("http://localhost/__admin/health"), "GET", "::1");
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
         {
@@ -330,7 +330,7 @@ public class WireMockMiddlewareTests
     {
         // Arrange
         var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns(new ActivityTracingOptions
         {
@@ -359,7 +359,7 @@ public class WireMockMiddlewareTests
     {
         // Arrange
         var request = new RequestMessage(new UrlDetails("http://localhost/api/orders"), "GET", "::1");
-        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<IRequest>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
+        _requestMapperMock.Setup(m => m.MapAsync(It.IsAny<HttpContext>(), It.IsAny<IWireMockMiddlewareOptions>())).ReturnsAsync(request);
 
         _optionsMock.SetupGet(o => o.ActivityTracingOptions).Returns((ActivityTracingOptions?)null);
 

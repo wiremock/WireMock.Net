@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Stef.Validation;
 using WireMock.Constants;
@@ -58,7 +55,7 @@ internal class WebSocketResponseProvider : IResponseProvider
                 throw new InvalidOperationException("WireMockMiddlewareOptions not found in HttpContext.Items");
             }
 
-            // Get or create registry from options (not from server)
+            // Get or create registry from options
             var registry = _builder.IsBroadcast 
                 ? options.WebSocketRegistries.GetOrAdd(mapping.Guid, _ => new WebSocketConnectionRegistry())
                 : null;
@@ -113,10 +110,7 @@ internal class WebSocketResponseProvider : IResponseProvider
             finally
             {
                 // Remove from registry
-                if (registry != null)
-                {
-                    registry.RemoveConnection(wsContext.ConnectionId);
-                }
+                registry?.RemoveConnection(wsContext.ConnectionId);
             }
 
             // Return special marker to indicate WebSocket was handled

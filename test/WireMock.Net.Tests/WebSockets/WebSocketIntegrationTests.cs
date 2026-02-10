@@ -35,6 +35,7 @@ public class WebSocketIntegrationTests
         server
             .Given(Request.Create()
                 .WithPath("/ws/echo")
+                //.WithBody("Hello, WebSocket!")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()

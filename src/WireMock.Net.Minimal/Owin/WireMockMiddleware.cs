@@ -68,7 +68,7 @@ internal class WireMockMiddleware
         // Store options in HttpContext for providers to access (e.g., WebSocketResponseProvider)
         ctx.Items[nameof(WireMockMiddlewareOptions)] = _options;
 
-        var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
+        var request = await _requestMapper.MapAsync(ctx, _options).ConfigureAwait(false);
 
         var logRequest = false;
         IResponseMessage? response = null;

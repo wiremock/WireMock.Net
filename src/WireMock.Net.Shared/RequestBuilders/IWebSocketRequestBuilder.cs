@@ -9,6 +9,11 @@ namespace WireMock.RequestBuilders;
 public interface IWebSocketRequestBuilder : IRequestMatcher
 {
     /// <summary>
+    /// Gets a value indicating whether the connection uses the WebSocket protocol.
+    /// </summary>
+    bool IsWebSocket { get; }
+
+    /// <summary>
     /// Match WebSocket upgrade with optional protocols.
     /// </summary>
     IRequestBuilder WithWebSocketUpgrade(params string[] protocols);

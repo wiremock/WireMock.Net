@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 
@@ -8,6 +7,9 @@ namespace WireMock.RequestBuilders;
 
 public partial class Request
 {
+    /// <inheritdoc />
+    public bool IsWebSocket { get; private set; }
+
     /// <inheritdoc />
     public IRequestBuilder WithWebSocketUpgrade(params string[] protocols)
     {
@@ -37,6 +39,8 @@ public partial class Request
                 protocols.Select(p => new ExactMatcher(true, p)).ToArray()
             ));
         }
+
+        IsWebSocket = true;
 
         return this;
     }
