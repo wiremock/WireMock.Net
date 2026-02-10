@@ -35,6 +35,7 @@ public class WireMockWebSocketContext : IWebSocketContext
     public IMapping Mapping { get; }
 
     internal WebSocketConnectionRegistry? Registry { get; }
+
     internal WebSocketBuilder Builder { get; }
 
     /// <summary>
@@ -56,7 +57,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         Builder = Guard.NotNull(builder);
 
         // Get options from HttpContext
-        if (httpContext.Items.TryGetValue("WireMockMiddlewareOptions", out var options))
+        if (httpContext.Items.TryGetValue(nameof(WireMockMiddlewareOptions), out var options))
         {
             _options = (IWireMockMiddlewareOptions)options!;
         }
