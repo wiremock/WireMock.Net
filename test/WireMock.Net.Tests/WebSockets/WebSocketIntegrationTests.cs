@@ -13,29 +13,21 @@ using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.WebSockets;
 
-public class WebSocketIntegrationTests
+public class WebSocketIntegrationTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public WebSocketIntegrationTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
-
     [Fact]
     public async Task EchoServer_Should_Echo_Text_Messages()
     {
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
         server
             .Given(Request.Create()
                 .WithPath("/ws/echo")
-                //.WithBody("Hello, WebSocket!")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
@@ -73,7 +65,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -114,7 +106,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -154,7 +146,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -190,7 +182,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -243,7 +235,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -322,7 +314,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -379,7 +371,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -435,7 +427,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -502,7 +494,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -583,7 +575,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -644,7 +636,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -723,7 +715,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
@@ -791,7 +783,7 @@ public class WebSocketIntegrationTests
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
-            Logger = new TestOutputHelperWireMockLogger(_output),
+            Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
