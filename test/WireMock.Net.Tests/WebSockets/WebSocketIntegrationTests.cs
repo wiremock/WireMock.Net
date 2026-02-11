@@ -1,5 +1,7 @@
 // Copyright © WireMock.Net
 
+using System.Net;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using FluentAssertions;
@@ -651,5 +653,69 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         // Verify the connection is CloseReceived
         client.State.Should().Be(WebSocketState.CloseReceived);
+    }
+
+    [Fact]
+    public async Task Server_With_Multiple_Urls_Should_Handle_Http_And_WebSocket_In_Parallel()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["http://localhost:0", "ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/api/test")
+                .UsingGet()
+            )
+            .RespondWith(Response.Create()
+                .WithStatusCode(200)
+                .WithBody("OK")
+            );
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/echo")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws.WithEcho())
+            );
+
+        // Act & Assert
+        var httpTask = Task.Run(async () =>
+        {
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync($"{server.Urls[0]}/api/test");
+
+            await Task.Delay(100);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().Be("OK");
+        });
+
+        var webSocketTask = Task.Run(async () =>
+        {
+            using var client = new ClientWebSocket();
+            var uri = new Uri($"{server.Urls[1]}/ws/echo");
+
+            await client.ConnectAsync(uri, default);
+            client.State.Should().Be(WebSocketState.Open);
+
+            var testMessage = "Hello from WebSocket";
+            await client.SendAsync(testMessage);
+
+            await Task.Delay(100);
+
+            var received = await client.ReceiveAsTextAsync();
+            received.Should().Be(testMessage);
+
+            await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", default);
+        });
+
+        await Task.WhenAll(httpTask, webSocketTask);
     }
 }
