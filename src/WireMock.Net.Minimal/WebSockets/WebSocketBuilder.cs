@@ -100,21 +100,17 @@ internal class WebSocketBuilder : IWebSocketBuilder
         });
     }
 
-    public IWebSocketMessageConditionBuilder WhenMessage(string condition)
+    public IWebSocketMessageConditionBuilder WhenMessage(string wildcardPattern)
     {
-        Guard.NotNull(condition);
-        // Use RegexMatcher for substring matching - escape special chars and wrap with wildcards
-        // Convert the string to a wildcard pattern that matches if it contains the condition
-        var pattern = $"*{condition}*";
-        var matcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, pattern);
+        Guard.NotNull(wildcardPattern);
+        var matcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, wildcardPattern);
         return new WebSocketMessageConditionBuilder(this, matcher);
     }
 
-    public IWebSocketMessageConditionBuilder WhenMessage(byte[] condition)
+    public IWebSocketMessageConditionBuilder WhenMessage(byte[] exactPattern)
     {
-        Guard.NotNull(condition);
-        // Use ExactObjectMatcher for byte matching
-        var matcher = new ExactObjectMatcher(MatchBehaviour.AcceptOnMatch, condition);
+        Guard.NotNull(exactPattern);
+        var matcher = new ExactObjectMatcher(MatchBehaviour.AcceptOnMatch, exactPattern);
         return new WebSocketMessageConditionBuilder(this, matcher);
     }
 
@@ -241,11 +237,21 @@ internal class WebSocketBuilder : IWebSocketBuilder
 
     private static async Task<bool> MatchMessageAsync(WebSocketMessage message, IMatcher matcher)
     {
-        if (message.MessageType == WebSocketMessageType.Text && matcher is IStringMatcher stringMatcher)
+        if (message.MessageType == WebSocketMessageType.Text)
         {
-            var result = stringMatcher.IsMatch(message.Text);
-            return result.IsPerfect();
+            if (matcher is IStringMatcher stringMatcher)
+            {
+                var result = stringMatcher.IsMatch(message.Text);
+                return result.IsPerfect();
+            }
+
+            if (matcher is IFuncMatcher funcMatcher)
+            {
+                var result = funcMatcher.IsMatch(message.Text);
+                return result.IsPerfect();
+            }
         }
+
 
         if (message.MessageType == WebSocketMessageType.Binary && matcher is IBytesMatcher bytesMatcher && message.Bytes != null)
         {

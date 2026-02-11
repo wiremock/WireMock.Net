@@ -6,6 +6,7 @@ using System.Net.WebSockets;
 using System.Text;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
+using WireMock.Matchers;
 using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -573,9 +574,11 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
                     .WithCloseTimeout(TimeSpan.FromSeconds(3))
-                    .WhenMessage("/help").SendMessage(m => m.WithText("Available commands: /help, /time, /echo <text>"))
+                    .WhenMessage("/help").SendMessage(m => m.WithText("Available commands"))
                     .WhenMessage("/time").SendMessage(m => m.WithText($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"))
-                    .WhenMessage("/echo ").SendMessage(m => m.WithText("echo response"))
+                    .WhenMessage("/echo *").SendMessage(m => m.WithText("echo response"))
+                    .WhenMessage(new ExactMatcher("/exact")).SendMessage(m => m.WithText("is exact"))
+                    .WhenMessage(new FuncMatcher(s => s == "/func")).SendMessage(m => m.WithText("is func"))
                 )
             );
 
@@ -587,7 +590,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             ("/help", "Available commands"),
             ("/time", "Server time"),
-            ("/echo test", "echo response")
+            ("/echo test", "echo response"),
+            ("/exact", "is exact"),
+            ("/func", "is func")
         };
 
         // Act & Assert
