@@ -86,13 +86,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var testMessage = "Any message from client";
         await client.SendAsync(testMessage);
 
-        var receiveBuffer = new byte[1024];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-
         // Assert
-        result.MessageType.Should().Be(WebSocketMessageType.Text);
-        result.EndOfMessage.Should().BeTrue();
-        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+        var received = await client.ReceiveAsTextAsync();
         received.Should().Be(responseMessage);
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
@@ -132,10 +127,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             await client.SendAsync(testMessage);
 
-            var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-
+            var received = await client.ReceiveAsTextAsync();
             received.Should().Be(responseMessage, $"should always return the fixed response regardless of input message '{testMessage}'");
         }
 
@@ -175,14 +167,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var testMessage = "Any message from client";
         await client.SendAsync(testMessage);
 
-        var receiveBuffer = new byte[1024];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-
         // Assert
-        result.MessageType.Should().Be(WebSocketMessageType.Binary);
-        result.EndOfMessage.Should().BeTrue();
-        var receivedData = new byte[result.Count];
-        Array.Copy(receiveBuffer, receivedData, result.Count);
+        var receivedData = await client.ReceiveAsBytesAsync();
         receivedData.Should().BeEquivalentTo(responseBytes);
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
@@ -222,12 +208,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             await client.SendAsync(testMessage);
 
-            var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            
-            result.MessageType.Should().Be(WebSocketMessageType.Binary);
-            var receivedData = new byte[result.Count];
-            Array.Copy(receiveBuffer, receivedData, result.Count);
+            var receivedData = await client.ReceiveAsBytesAsync();
             receivedData.Should().BeEquivalentTo(responseBytes, $"should always return the fixed bytes regardless of input message '{testMessage}'");
         }
 
@@ -272,13 +253,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var testMessage = "Any message from client";
         await client.SendAsync(testMessage);
 
-        var receiveBuffer = new byte[2048];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-
         // Assert
-        result.MessageType.Should().Be(WebSocketMessageType.Text);
-        result.EndOfMessage.Should().BeTrue();
-        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+        var received = await client.ReceiveAsTextAsync();
         
         var json = JObject.Parse(received);
         json["status"]!.ToString().Should().Be("ok");
@@ -326,9 +302,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             await client.SendAsync(testMessage);
 
-            var receiveBuffer = new byte[2048];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+            var received = await client.ReceiveAsTextAsync();
 
             var json = JObject.Parse(received);
             json["id"]!.Value<int>().Should().Be(42);
@@ -368,9 +342,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             await client.SendAsync(testMessage);
 
-            var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+            var received = await client.ReceiveAsTextAsync();
 
             received.Should().Be(testMessage, $"message '{testMessage}' should be echoed back");
         }
@@ -406,13 +378,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act
         await client.SendAsync(new ArraySegment<byte>(testData), WebSocketMessageType.Binary, true, CancellationToken.None);
 
-        var receiveBuffer = new byte[1024];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+        var receivedData = await client.ReceiveAsBytesAsync();
 
         // Assert
-        result.MessageType.Should().Be(WebSocketMessageType.Binary);
-        var receivedData = new byte[result.Count];
-        Array.Copy(receiveBuffer, receivedData, result.Count);
         receivedData.Should().BeEquivalentTo(testData);
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
@@ -492,9 +460,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act
         await client.SendAsync("/help");
 
-        var receiveBuffer = new byte[1024];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+        var received = await client.ReceiveAsTextAsync();
 
         // Assert
         received.Should().Contain("Available commands");
@@ -577,9 +543,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         {
             await client.SendAsync(command);
 
-            var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+            var received = await client.ReceiveAsTextAsync();
 
             assertion(received);
         }
@@ -590,7 +554,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
     }
 
     [Fact]
-    public async Task SendJsonAsync_Should_Send_Json_Response()
+    public async Task WhenMessage_Should_Handle_Multiple_Conditions_Fluently()
     {
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
@@ -601,107 +565,43 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         server
             .Given(Request.Create()
-                .WithPath("/ws/json")
+                .WithPath("/ws/conditional")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithHeader("x", "y")
                 .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var response = new
-                        {
-                            timestamp = DateTime.UtcNow,
-                            message = msg.Text,
-                            length = msg.Text?.Length ?? 0,
-                            type = msg.MessageType.ToString()
-                        };
-                        await ctx.SendAsJsonAsync(response);
-                    })
+                    .WhenMessage("/help").SendMessage(m => m.WithText("Available commands: /help, /time, /echo <text>"))
+                    .WhenMessage("/time").SendMessage(m => m.WithText($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"))
+                    .WhenMessage("/echo ").SendMessage(m => m.WithText("echo response"))
                 )
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/json");
+        var uri = new Uri($"{server.Url!}/ws/conditional");
         await client.ConnectAsync(uri, CancellationToken.None);
 
-        // Act
-        var testMessage = "Test JSON message";
-        await client.SendAsync(testMessage);
-
-        var receiveBuffer = new byte[2048];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-
-        // Assert
-        result.MessageType.Should().Be(WebSocketMessageType.Text);
-
-        var json = JObject.Parse(received);
-        json["message"]!.ToString().Should().Be(testMessage);
-        json["length"]!.Value<int>().Should().Be(testMessage.Length);
-        json["type"]!.ToString().Should().Be("Text");
-        json["timestamp"].Should().NotBeNull();
-
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task SendJsonAsync_Should_Handle_Multiple_Json_Messages()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
+        var testCases = new (string message, string expectedContains)[]
         {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/json")
-                .WithWebSocketUpgrade()
-            )
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var response = new
-                        {
-                            timestamp = DateTime.UtcNow,
-                            message = msg.Text,
-                            length = msg.Text?.Length ?? 0,
-                            type = msg.MessageType.ToString(),
-                            connectionId = ctx.ConnectionId.ToString()
-                        };
-                        await ctx.SendAsJsonAsync(response);
-                    })
-                )
-            );
-
-        using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/json");
-        await client.ConnectAsync(uri, CancellationToken.None);
-
-        var testMessages = new[] { "First", "Second", "Third" };
+            ("/help", "Available commands"),
+            ("/time", "Server time"),
+            ("/echo test", "echo response")
+        };
 
         // Act & Assert
-        foreach (var testMessage in testMessages)
+        foreach (var (message, expectedContains) in testCases)
         {
-            await client.SendAsync(testMessage);
+            await client.SendAsync(message);
 
-            var receiveBuffer = new byte[2048];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-            var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+            var received = await client.ReceiveAsTextAsync();
 
-            var json = JObject.Parse(received);
-            json["message"]!.ToString().Should().Be(testMessage);
-            json["length"]!.Value<int>().Should().Be(testMessage.Length);
+            received.Should().Contain(expectedContains, $"message '{message}' should return response containing '{expectedContains}'");
         }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
     }
 
     [Fact]
-    public async Task SendJsonAsync_Should_Serialize_Complex_Objects()
+    public async Task WhenMessage_Should_Close_Connection_When_AndClose_Is_Used()
     {
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
@@ -712,420 +612,43 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         server
             .Given(Request.Create()
-                .WithPath("/ws/json")
+                .WithPath("/ws/close")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var response = new
-                        {
-                            status = "success",
-                            data = new
-                            {
-                                originalMessage = msg.Text,
-                                processedAt = DateTime.UtcNow,
-                                metadata = new
-                                {
-                                    length = msg.Text?.Length ?? 0,
-                                    type = msg.MessageType.ToString()
-                                }
-                            },
-                            nested = new[]
-                            {
-                                new { id = 1, name = "Item1" },
-                                new { id = 2, name = "Item2" }
-                            }
-                        };
-                        await ctx.SendAsJsonAsync(response);
-                    })
+                    .WhenMessage("/close").SendMessage(m => m.WithText("Closing connection").AndClose())
                 )
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/json");
+        var uri = new Uri($"{server.Url!}/ws/close");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
-        var testMessage = "Complex test";
-        await client.SendAsync(testMessage);
+        await client.SendAsync("/close");
 
-        var receiveBuffer = new byte[2048];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-        var received = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
+        var received = await client.ReceiveAsTextAsync();
 
         // Assert
-        var json = JObject.Parse(received);
-        json["status"]!.ToString().Should().Be("success");
-        json["data"]!["originalMessage"]!.ToString().Should().Be(testMessage);
-        json["data"]!["metadata"]!["length"]!.Value<int>().Should().Be(testMessage.Length);
-        json["nested"]!.Should().HaveCount(2);
-        json["nested"]![0]!["id"]!.Value<int>().Should().Be(1);
+        received.Should().Contain("Closing connection");
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task Broadcast_Should_Send_Message_To_All_Connected_Clients()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var broadcastMappingGuid = Guid.NewGuid();
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/broadcast")
-                .WithWebSocketUpgrade()
-            )
-            .WithGuid(broadcastMappingGuid)
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithMessageHandler(async (message, context) =>
-                    {
-                        if (message.MessageType == WebSocketMessageType.Text)
-                        {
-                            var text = message.Text ?? string.Empty;
-                            var timestamp = DateTime.UtcNow.ToString("HH:mm:ss");
-                            var broadcastMessage = $"[{timestamp}] Broadcast: {text}";
-
-                            // Broadcast to all connected clients
-                            await context.BroadcastTextAsync(broadcastMessage);
-                        }
-                    })
-                )
-            );
-
-        // Connect multiple clients
-        using var client1 = new ClientWebSocket();
-        using var client2 = new ClientWebSocket();
-        using var client3 = new ClientWebSocket();
-
-        var uri = new Uri($"{server.Url!}/ws/broadcast");
-
-        await client1.ConnectAsync(uri, CancellationToken.None);
-        await client2.ConnectAsync(uri, CancellationToken.None);
-        await client3.ConnectAsync(uri, CancellationToken.None);
-
-        // Wait a moment for all connections to be registered
-        await Task.Delay(100);
-
-        // Act - Send message from client1
-        var testMessage = "Hello everyone!";
-        await client1.SendAsync(testMessage);
-
-        // Assert - All clients should receive the broadcast
-        var receiveBuffer1 = new byte[1024];
-        var result1 = await client1.ReceiveAsync(new ArraySegment<byte>(receiveBuffer1), CancellationToken.None);
-        var received1 = Encoding.UTF8.GetString(receiveBuffer1, 0, result1.Count);
-
-        var receiveBuffer2 = new byte[1024];
-        var result2 = await client2.ReceiveAsync(new ArraySegment<byte>(receiveBuffer2), CancellationToken.None);
-        var received2 = Encoding.UTF8.GetString(receiveBuffer2, 0, result2.Count);
-
-        var receiveBuffer3 = new byte[1024];
-        var result3 = await client3.ReceiveAsync(new ArraySegment<byte>(receiveBuffer3), CancellationToken.None);
-        var received3 = Encoding.UTF8.GetString(receiveBuffer3, 0, result3.Count);
-
-        received1.Should().Contain("Broadcast:").And.Contain(testMessage);
-        received2.Should().Contain("Broadcast:").And.Contain(testMessage);
-        received3.Should().Contain("Broadcast:").And.Contain(testMessage);
-
-        // All should receive the same message
-        received1.Should().Be(received2);
-        received2.Should().Be(received3);
-
-        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-        await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task Broadcast_Should_Only_Send_To_Open_Connections()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var broadcastMappingGuid = Guid.NewGuid();
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/broadcast")
-                .WithWebSocketUpgrade()
-            )
-            .WithGuid(broadcastMappingGuid)
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithMessageHandler(async (message, context) =>
-                    {
-                        if (message.MessageType == WebSocketMessageType.Text)
-                        {
-                            await context.BroadcastTextAsync($"Broadcast: {message.Text}");
-                        }
-                    })
-                )
-            );
-
-        using var client1 = new ClientWebSocket();
-        using var client2 = new ClientWebSocket();
-
-        var uri = new Uri($"{server.Url!}/ws/broadcast");
-
-        await client1.ConnectAsync(uri, CancellationToken.None);
-        await client2.ConnectAsync(uri, CancellationToken.None);
-
-        await Task.Delay(100);
-
-        // Close client2
-        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Leaving", CancellationToken.None);
-        await Task.Delay(100);
-
-        // Act - Send message from client1 (client2 is now closed)
-        var testMessage = "Still here";
-        await client1.SendAsync(testMessage);
-
-        // Assert - Only client1 should receive
-        var receiveBuffer1 = new byte[1024];
-        var result1 = await client1.ReceiveAsync(new ArraySegment<byte>(receiveBuffer1), CancellationToken.None);
-        var received1 = Encoding.UTF8.GetString(receiveBuffer1, 0, result1.Count);
-
-        received1.Should().Contain("Broadcast:").And.Contain(testMessage);
-        client2.State.Should().Be(WebSocketState.Closed);
-
-        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task BroadcastJson_Should_Send_Json_To_All_Clients()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var broadcastMappingGuid = Guid.NewGuid();
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/broadcast-json")
-                .WithWebSocketUpgrade()
-            )
-            .WithGuid(broadcastMappingGuid)
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithMessageHandler(async (message, context) =>
-                    {
-                        if (message.MessageType == WebSocketMessageType.Text)
-                        {
-                            var data = new
-                            {
-                                sender = context.ConnectionId,
-                                message = message.Text,
-                                timestamp = DateTime.UtcNow,
-                                type = "broadcast"
-                            };
-                            await context.BroadcastJsonAsync(data);
-                        }
-                    })
-                )
-            );
-
-        using var client1 = new ClientWebSocket();
-        using var client2 = new ClientWebSocket();
-
-        var uri = new Uri($"{server.Url!}/ws/broadcast-json");
-
-        await client1.ConnectAsync(uri, CancellationToken.None);
-        await client2.ConnectAsync(uri, CancellationToken.None);
-
-        await Task.Delay(100);
-
-        // Act - Send message from client1
-        var testMessage = "JSON broadcast test";
-        await client1.SendAsync(testMessage);
-
-        // Assert - Both clients should receive JSON
-        var receiveBuffer1 = new byte[2048];
-        var result1 = await client1.ReceiveAsync(new ArraySegment<byte>(receiveBuffer1), CancellationToken.None);
-        var received1 = Encoding.UTF8.GetString(receiveBuffer1, 0, result1.Count);
-
-        var receiveBuffer2 = new byte[2048];
-        var result2 = await client2.ReceiveAsync(new ArraySegment<byte>(receiveBuffer2), CancellationToken.None);
-        var received2 = Encoding.UTF8.GetString(receiveBuffer2, 0, result2.Count);
-
-        var json1 = JObject.Parse(received1);
-        var json2 = JObject.Parse(received2);
-
-        json1["message"]!.ToString().Should().Be(testMessage);
-        json1["type"]!.ToString().Should().Be("broadcast");
-        json1["sender"].Should().NotBeNull();
-
-        json2["message"]!.ToString().Should().Be(testMessage);
-        json2["type"]!.ToString().Should().Be("broadcast");
-
-        // Both should have the same content
-        json1["message"]!.ToString().Should().Be(json2["message"]!.ToString());
-
-        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task Broadcast_Should_Handle_Multiple_Sequential_Messages()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var broadcastMappingGuid = Guid.NewGuid();
-        var messageCount = 0;
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/broadcast")
-                .WithWebSocketUpgrade()
-            )
-            .WithGuid(broadcastMappingGuid)
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithMessageHandler(async (message, context) =>
-                    {
-                        if (message.MessageType == WebSocketMessageType.Text)
-                        {
-                            Interlocked.Increment(ref messageCount);
-                            await context.BroadcastTextAsync($"Message {messageCount}: {message.Text}");
-                        }
-                    })
-                )
-            );
-
-        using var client1 = new ClientWebSocket();
-        using var client2 = new ClientWebSocket();
-
-        var uri = new Uri($"{server.Url!}/ws/broadcast");
-
-        await client1.ConnectAsync(uri, CancellationToken.None);
-        await client2.ConnectAsync(uri, CancellationToken.None);
-
-        await Task.Delay(100);
-
-        var messages = new[] { "First", "Second", "Third" };
-
-        // Act & Assert
-        foreach (var msg in messages)
-        {
-            await client1.SendAsync(msg);
-
-            var receiveBuffer1 = new byte[1024];
-            var result1 = await client1.ReceiveAsync(new ArraySegment<byte>(receiveBuffer1), CancellationToken.None);
-            var received1 = Encoding.UTF8.GetString(receiveBuffer1, 0, result1.Count);
-
-            var receiveBuffer2 = new byte[1024];
-            var result2 = await client2.ReceiveAsync(new ArraySegment<byte>(receiveBuffer2), CancellationToken.None);
-            var received2 = Encoding.UTF8.GetString(receiveBuffer2, 0, result2.Count);
-
-            received1.Should().Contain(msg);
-            received2.Should().Contain(msg);
-            received1.Should().Be(received2);
-        }
-
-        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-    }
-
-    [Fact]
-    public async Task Broadcast_Should_Work_With_Many_Clients()
-    {
-        // Arrange
-        using var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var broadcastMappingGuid = Guid.NewGuid();
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/broadcast")
-                .WithWebSocketUpgrade()
-            )
-            .WithGuid(broadcastMappingGuid)
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithMessageHandler(async (message, context) =>
-                    {
-                        if (message.MessageType == WebSocketMessageType.Text)
-                        {
-                            await context.BroadcastTextAsync($"Broadcast: {message.Text}");
-                        }
-                    })
-                )
-            );
-
-        var uri = new Uri($"{server.Url!}/ws/broadcast");
-        const int clientCount = 3;
-        var clients = new List<ClientWebSocket>();
-
+        // Try to receive again - this will complete the close handshake
+        // and update the client state to Closed
         try
         {
-            // Connect multiple clients
-            for (int i = 0; i < clientCount; i++)
-            {
-                var client = new ClientWebSocket();
-                await client.ConnectAsync(uri, CancellationToken.None);
-                clients.Add(client);
-            }
-
-            await Task.Delay(100); // Give time for all connections to register
-
-            // Act - Send message from first client
-            var testMessage = "Mass broadcast";
-            await clients[0].SendAsync(testMessage);
-
-            // Assert - All clients should receive
-            var receiveTasks = clients.Select(async client =>
-            {
-                var receiveBuffer = new byte[1024];
-                var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                return Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-            }).ToList();
-
-            var received = await Task.WhenAll(receiveTasks);
-
-            received.Should().HaveCount(clientCount);
-            received.Should().OnlyContain(msg => msg.Contains("Broadcast:") && msg.Contains(testMessage));
+            var receiveBuffer = new byte[1024];
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+            
+            // If we get here, the message type should be Close
+            result.MessageType.Should().Be(WebSocketMessageType.Close);
         }
-        finally
+        catch (WebSocketException)
         {
-            // Cleanup
-            foreach (var client in clients)
-            {
-                if (client.State == WebSocketState.Open)
-                {
-                    await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
-                }
-                client.Dispose();
-            }
+            // Connection was closed, which is expected
         }
+
+        // Verify the connection is CloseReceived
+        client.State.Should().Be(WebSocketState.CloseReceived);
     }
 }

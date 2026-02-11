@@ -1,8 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
+using System.Net.WebSockets;
 using Stef.Validation;
+using WireMock.Matchers;
 using WireMock.Settings;
 using WireMock.Types;
 
@@ -10,6 +10,8 @@ namespace WireMock.WebSockets;
 
 internal class WebSocketBuilder : IWebSocketBuilder
 {
+    private readonly List<(IMatcher matcher, List<WebSocketMessageBuilder> messages)> _conditionalMessages = [];
+
     /// <inheritdoc />
     public string? AcceptProtocol { get; private set; }
 
@@ -98,10 +100,34 @@ internal class WebSocketBuilder : IWebSocketBuilder
         });
     }
 
+    public IWebSocketMessageConditionBuilder WhenMessage(string condition)
+    {
+        Guard.NotNull(condition);
+        // Use RegexMatcher for substring matching - escape special chars and wrap with wildcards
+        // Convert the string to a wildcard pattern that matches if it contains the condition
+        var pattern = $"*{condition}*";
+        var matcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, pattern);
+        return new WebSocketMessageConditionBuilder(this, matcher);
+    }
+
+    public IWebSocketMessageConditionBuilder WhenMessage(byte[] condition)
+    {
+        Guard.NotNull(condition);
+        // Use ExactObjectMatcher for byte matching
+        var matcher = new ExactObjectMatcher(MatchBehaviour.AcceptOnMatch, condition);
+        return new WebSocketMessageConditionBuilder(this, matcher);
+    }
+
+    public IWebSocketMessageConditionBuilder WhenMessage(IMatcher matcher)
+    {
+        Guard.NotNull(matcher);
+        return new WebSocketMessageConditionBuilder(this, matcher);
+    }
+
     public IWebSocketBuilder WithMessageHandler(Func<WebSocketMessage, IWebSocketContext, Task> handler)
     {
         MessageHandler = Guard.NotNull(handler);
-        IsEcho = false; // Disable echo if custom handler is set
+        IsEcho = false;
         return this;
     }
 
@@ -152,6 +178,82 @@ internal class WebSocketBuilder : IWebSocketBuilder
         UseTransformerForBodyAsFile = useTransformerForBodyAsFile;
         TransformerReplaceNodeOptions = transformerReplaceNodeOptions;
         return this;
+    }
+
+    internal IWebSocketBuilder AddConditionalMessage(IMatcher matcher, WebSocketMessageBuilder messageBuilder)
+    {
+        _conditionalMessages.Add((matcher, new List<WebSocketMessageBuilder> { messageBuilder }));
+        SetupConditionalHandler();
+        return this;
+    }
+
+    internal IWebSocketBuilder AddConditionalMessages(IMatcher matcher, List<WebSocketMessageBuilder> messages)
+    {
+        _conditionalMessages.Add((matcher, messages));
+        SetupConditionalHandler();
+        return this;
+    }
+
+    private void SetupConditionalHandler()
+    {
+        if (_conditionalMessages.Count == 0)
+        {
+            return;
+        }
+
+        WithMessageHandler(async (message, context) =>
+        {
+            // Check each condition in order
+            foreach (var (matcher, messages) in _conditionalMessages)
+            {
+                // Try to match the message
+                if (await MatchMessageAsync(message, matcher)   )
+                {
+                    // Execute the corresponding messages
+                    foreach (var messageBuilder in messages)
+                    {
+                        if (messageBuilder.Delay.HasValue)
+                        {
+                            await Task.Delay(messageBuilder.Delay.Value);
+                        }
+
+                        await SendMessageAsync(context, messageBuilder);
+
+                        // If this message should close the connection, do it after sending
+                        if (messageBuilder.ShouldClose)
+                        {
+                            try
+                            {
+                                await Task.Delay(100); // Small delay to ensure message is sent
+                                await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by handler");
+                            }
+                            catch
+                            {
+                                // Ignore errors during close
+                            }
+                        }
+                    }
+                    return; // Stop after first match
+                }
+            }
+        });
+    }
+
+    private static async Task<bool> MatchMessageAsync(WebSocketMessage message, IMatcher matcher)
+    {
+        if (message.MessageType == WebSocketMessageType.Text && matcher is IStringMatcher stringMatcher)
+        {
+            var result = stringMatcher.IsMatch(message.Text);
+            return result.IsPerfect();
+        }
+
+        if (message.MessageType == WebSocketMessageType.Binary && matcher is IBytesMatcher bytesMatcher && message.Bytes != null)
+        {
+            var result = await bytesMatcher.IsMatchAsync(message.Bytes);
+            return result.IsPerfect();
+        }
+
+        return false;
     }
 
     private static async Task SendMessageAsync(IWebSocketContext context, WebSocketMessageBuilder messageBuilder)

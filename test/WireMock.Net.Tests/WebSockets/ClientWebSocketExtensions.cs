@@ -29,4 +29,24 @@ internal static class ClientWebSocketExtensions
 
         return Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
     }
+
+    internal static async Task<byte[]> ReceiveAsBytesAsync(this ClientWebSocket client, int bufferSize = 1024, CancellationToken cancellationToken = default)
+    {
+        var receiveBuffer = new byte[bufferSize];
+        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
+
+        if (result.MessageType != WebSocketMessageType.Binary)
+        {
+            throw new InvalidOperationException($"Expected a binary message but received a {result.MessageType} message.");
+        }
+
+        if (!result.EndOfMessage)
+        {
+            throw new InvalidOperationException("Received message is too large for the buffer. Consider increasing the buffer size.");
+        }
+
+        var receivedData = new byte[result.Count];
+        Array.Copy(receiveBuffer, receivedData, result.Count);
+        return receivedData;
+    }
 }

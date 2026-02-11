@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using JetBrains.Annotations;
+using WireMock.Matchers;
 using WireMock.Settings;
 using WireMock.Types;
 
@@ -36,6 +37,27 @@ public interface IWebSocketBuilder
     /// <param name="configure">Action to configure the messages</param>
     [PublicAPI]
     IWebSocketBuilder SendMessages(Action<IWebSocketMessagesBuilder> configure);
+
+    /// <summary>
+    /// Configure message sending based on message content matching
+    /// </summary>
+    /// <param name="condition">String to match in message text</param>
+    [PublicAPI]
+    IWebSocketMessageConditionBuilder WhenMessage(string condition);
+
+    /// <summary>
+    /// Configure message sending based on message content matching
+    /// </summary>
+    /// <param name="condition">Bytes to match in message</param>
+    [PublicAPI]
+    IWebSocketMessageConditionBuilder WhenMessage(byte[] condition);
+
+    /// <summary>
+    /// Configure message sending based on IMatcher
+    /// </summary>
+    /// <param name="matcher">IMatcher to match the message</param>
+    [PublicAPI]
+    IWebSocketMessageConditionBuilder WhenMessage(IMatcher matcher);
 
     /// <summary>
     /// Handle incoming WebSocket messages

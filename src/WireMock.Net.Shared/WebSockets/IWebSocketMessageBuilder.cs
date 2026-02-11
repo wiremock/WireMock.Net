@@ -43,4 +43,10 @@ public interface IWebSocketMessageBuilder
     /// <param name="delayInMilliseconds">The delay in milliseconds before sending the message</param>
     [PublicAPI]
     IWebSocketMessageBuilder WithDelay(int delayInMilliseconds);
+
+    /// <summary>
+    /// Close the WebSocket connection after this message
+    /// </summary>
+    [PublicAPI]
+    IWebSocketMessageBuilder AndClose();
 }

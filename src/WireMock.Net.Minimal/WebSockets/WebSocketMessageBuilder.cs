@@ -16,6 +16,8 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
 
     public MessageType Type { get; private set; }
 
+    public bool ShouldClose { get; private set; }
+
     public IWebSocketMessageBuilder WithText(string text)
     {
         MessageText = Guard.NotNull(text);
@@ -47,6 +49,12 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
     {
         Guard.Condition(delayInMilliseconds, d => d >= 0, nameof(delayInMilliseconds));
         Delay = TimeSpan.FromMilliseconds(delayInMilliseconds);
+        return this;
+    }
+
+    public IWebSocketMessageBuilder AndClose()
+    {
+        ShouldClose = true;
         return this;
     }
 
