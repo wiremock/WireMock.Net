@@ -570,6 +570,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(3))
                     .WhenMessage("/help").SendMessage(m => m.WithText("Available commands: /help, /time, /echo <text>"))
                     .WhenMessage("/time").SendMessage(m => m.WithText($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"))
                     .WhenMessage("/echo ").SendMessage(m => m.WithText("echo response"))

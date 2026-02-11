@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Net.WebSockets;
 
 namespace WireMock.WebSockets;

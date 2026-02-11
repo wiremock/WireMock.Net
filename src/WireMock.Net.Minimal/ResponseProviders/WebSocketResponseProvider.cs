@@ -12,14 +12,9 @@ using WireMock.WebSockets;
 
 namespace WireMock.ResponseProviders;
 
-internal class WebSocketResponseProvider : IResponseProvider
+internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponseProvider
 {
-    private readonly WebSocketBuilder _builder;
-
-    public WebSocketResponseProvider(WebSocketBuilder builder)
-    {
-        _builder = Guard.NotNull(builder);
-    }
+    private readonly WebSocketBuilder _builder = Guard.NotNull(builder);
 
     public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(
         IMapping mapping,
@@ -127,7 +122,7 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
     }
 
-    private async Task HandleEchoAsync(WireMockWebSocketContext context)
+    private static async Task HandleEchoAsync(WireMockWebSocketContext context)
     {
         var bufferSize = context.Builder.MaxMessageSize ?? WebSocketConstants.DefaultReceiveBufferSize;
         var buffer = new byte[bufferSize];
@@ -170,7 +165,7 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
     }
 
-    private async Task HandleCustomAsync(
+    private static async Task HandleCustomAsync(
         WireMockWebSocketContext context,
         Func<WebSocketMessage, IWebSocketContext, Task> handler)
     {
@@ -212,7 +207,7 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
     }
 
-    private async Task HandleProxyAsync(WireMockWebSocketContext context, ProxyAndRecordSettings settings)
+    private static async Task HandleProxyAsync(WireMockWebSocketContext context, ProxyAndRecordSettings settings)
     {
         using var clientWebSocket = new ClientWebSocket();
         
@@ -236,7 +231,7 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
     }
 
-    private async Task ForwardMessagesAsync(WebSocket source, WebSocket destination)
+    private static async Task ForwardMessagesAsync(WebSocket source, WebSocket destination)
     {
         var buffer = new byte[WebSocketConstants.ProxyForwardBufferSize];
         
@@ -263,7 +258,7 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
     }
 
-    private async Task WaitForCloseAsync(WireMockWebSocketContext context)
+    private static async Task WaitForCloseAsync(WireMockWebSocketContext context)
     {
         var buffer = new byte[WebSocketConstants.MinimumBufferSize];
         var timeout = context.Builder.CloseTimeout ?? TimeSpan.FromMinutes(WebSocketConstants.DefaultCloseTimeoutMinutes);
@@ -314,17 +309,5 @@ internal class WebSocketResponseProvider : IResponseProvider
         }
 
         return message;
-    }
-}
-
-/// <summary>
-/// Special response marker to indicate WebSocket has been handled
-/// </summary>
-internal class WebSocketHandledResponse : ResponseMessage
-{
-    public WebSocketHandledResponse()
-    {
-        // 101 Switching Protocols
-        StatusCode = (int)HttpStatusCode.SwitchingProtocols;
     }
 }
