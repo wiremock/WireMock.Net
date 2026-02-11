@@ -72,7 +72,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithText(responseMessage)
+                    .WithMessage(m => m.WithText(responseMessage))
                 )
             );
 
@@ -117,7 +117,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithText(responseMessage)
+                    .WithMessage(m => m.WithText(responseMessage))
                 )
             );
 
@@ -161,7 +161,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBytes(responseBytes)
+                    .WithMessage(m => m.WithBytes(responseBytes))
                 )
             );
 
@@ -207,7 +207,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBytes(responseBytes)
+                    .WithMessage(m => m.WithBytes(responseBytes))
                 )
             );
 
@@ -258,7 +258,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithJson(responseData)
+                    .WithMessage(m => m.WithJson(responseData))
                 )
             );
 
@@ -311,7 +311,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithJson(responseData)
+                    .WithMessage(m => m.WithJson(responseData))
                 )
             );
 

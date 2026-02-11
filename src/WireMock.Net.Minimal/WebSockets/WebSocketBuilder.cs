@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Settings;
@@ -64,30 +65,40 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return this;
     }
 
-    public IWebSocketBuilder WithText(string text)
+    public IWebSocketBuilder WithMessage(Action<IWebSocketMessageBuilder> configure)
     {
-        Guard.NotNull(text);
+        Guard.NotNull(configure);
+        var messageBuilder = new WebSocketMessageBuilder();
+        configure(messageBuilder);
+        
         return WithMessageHandler(async (message, context) =>
         {
-            await context.SendAsync(text);
+            if (messageBuilder.Delay.HasValue)
+            {
+                await Task.Delay(messageBuilder.Delay.Value);
+            }
+
+            await SendMessageAsync(context, messageBuilder);
         });
     }
 
-    public IWebSocketBuilder WithBytes(byte[] bytes)
+    public IWebSocketBuilder WithMessages(Action<IWebSocketMessagesBuilder> configure)
     {
-        Guard.NotNull(bytes);
-        return WithMessageHandler(async (message, context) =>
-        {
-            await context.SendAsync(bytes);
-        });
-    }
+        Guard.NotNull(configure);
+        var messagesBuilder = new WebSocketMessagesBuilder();
+        configure(messagesBuilder);
 
-    public IWebSocketBuilder WithJson(object data)
-    {
-        Guard.NotNull(data);
         return WithMessageHandler(async (message, context) =>
         {
-            await context.SendAsJsonAsync(data);
+            foreach (var messageBuilder in messagesBuilder.Messages)
+            {
+                if (messageBuilder.Delay.HasValue)
+                {
+                    await Task.Delay(messageBuilder.Delay.Value);
+                }
+
+                await SendMessageAsync(context, messageBuilder);
+            }
         });
     }
 
@@ -154,5 +165,21 @@ internal class WebSocketBuilder : IWebSocketBuilder
         UseTransformerForBodyAsFile = useTransformerForBodyAsFile;
         TransformerReplaceNodeOptions = transformerReplaceNodeOptions;
         return this;
+    }
+
+    private static async Task SendMessageAsync(IWebSocketContext context, WebSocketMessageBuilder messageBuilder)
+    {
+        switch (messageBuilder.Type)
+        {
+            case WebSocketMessageBuilder.MessageType.Text:
+                await context.SendAsync(messageBuilder.MessageText!);
+                break;
+            case WebSocketMessageBuilder.MessageType.Bytes:
+                await context.SendAsync(messageBuilder.MessageBytes!);
+                break;
+            case WebSocketMessageBuilder.MessageType.Json:
+                await context.SendAsJsonAsync(messageBuilder.MessageData!);
+                break;
+        }
     }
 }
