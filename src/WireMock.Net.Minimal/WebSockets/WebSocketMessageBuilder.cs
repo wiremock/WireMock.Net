@@ -58,6 +58,12 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
         return this;
     }
 
+    public IWebSocketMessageBuilder Close()
+    {
+        ShouldClose = true;
+        return this;
+    }
+
     internal enum MessageType
     {
         Text,

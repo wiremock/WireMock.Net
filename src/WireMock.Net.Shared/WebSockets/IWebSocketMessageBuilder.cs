@@ -49,4 +49,10 @@ public interface IWebSocketMessageBuilder
     /// </summary>
     [PublicAPI]
     IWebSocketMessageBuilder AndClose();
+
+    /// <summary>
+    /// Close the WebSocket connection.
+    /// </summary>
+    [PublicAPI]
+    IWebSocketMessageBuilder Close();
 }

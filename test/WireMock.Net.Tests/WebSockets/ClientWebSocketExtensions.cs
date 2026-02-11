@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Buffers;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -12,9 +13,9 @@ internal static class ClientWebSocketExtensions
         return client.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(text)), WebSocketMessageType.Text, endOfMessage, cancellationToken);
     }
 
-    internal static async Task<string> ReceiveAsTextAsync(this ClientWebSocket client, CancellationToken cancellationToken = default)
+    internal static async Task<string> ReceiveAsTextAsync(this ClientWebSocket client, int bufferSize = 1024, CancellationToken cancellationToken = default)
     {
-        var receiveBuffer = new byte[1024];
+        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(1024);
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
 
         if (result.MessageType != WebSocketMessageType.Text)
@@ -32,7 +33,7 @@ internal static class ClientWebSocketExtensions
 
     internal static async Task<byte[]> ReceiveAsBytesAsync(this ClientWebSocket client, int bufferSize = 1024, CancellationToken cancellationToken = default)
     {
-        var receiveBuffer = new byte[bufferSize];
+        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(1024);
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
 
         if (result.MessageType != WebSocketMessageType.Binary)
