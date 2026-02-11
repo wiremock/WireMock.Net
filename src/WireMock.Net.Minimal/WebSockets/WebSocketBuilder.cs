@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Settings;
@@ -22,9 +21,6 @@ internal class WebSocketBuilder : IWebSocketBuilder
 
     /// <inheritdoc />
     public Func<WebSocketMessage, IWebSocketContext, Task>? MessageHandler { get; private set; }
-
-    /// <inheritdoc />
-    public WebSocketMessageSequence? MessageSequence { get; private set; }
 
     /// <inheritdoc />
     public ProxyAndRecordSettings? ProxySettings { get; private set; }
@@ -65,7 +61,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return this;
     }
 
-    public IWebSocketBuilder WithMessage(Action<IWebSocketMessageBuilder> configure)
+    public IWebSocketBuilder SendMessage(Action<IWebSocketMessageBuilder> configure)
     {
         Guard.NotNull(configure);
         var messageBuilder = new WebSocketMessageBuilder();
@@ -82,7 +78,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
         });
     }
 
-    public IWebSocketBuilder WithMessages(Action<IWebSocketMessagesBuilder> configure)
+    public IWebSocketBuilder SendMessages(Action<IWebSocketMessagesBuilder> configure)
     {
         Guard.NotNull(configure);
         var messagesBuilder = new WebSocketMessagesBuilder();
@@ -106,15 +102,6 @@ internal class WebSocketBuilder : IWebSocketBuilder
     {
         MessageHandler = Guard.NotNull(handler);
         IsEcho = false; // Disable echo if custom handler is set
-        return this;
-    }
-
-    public IWebSocketBuilder WithMessageSequence(Action<IWebSocketMessageSequenceBuilder> configure)
-    {
-        var sequenceBuilder = new WebSocketMessageSequenceBuilder();
-        configure(sequenceBuilder);
-        MessageSequence = sequenceBuilder.Build();
-        IsEcho = false;
         return this;
     }
 

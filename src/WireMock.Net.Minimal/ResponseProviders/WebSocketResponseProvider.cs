@@ -97,10 +97,6 @@ internal class WebSocketResponseProvider : IResponseProvider
                 {
                     await HandleCustomAsync(wsContext, _builder.MessageHandler).ConfigureAwait(false);
                 }
-                else if (_builder.MessageSequence != null)
-                {
-                    await HandleSequenceAsync(wsContext, _builder.MessageSequence).ConfigureAwait(false);
-                }
                 else
                 {
                     // Default: keep connection open until client closes
@@ -214,11 +210,6 @@ internal class WebSocketResponseProvider : IResponseProvider
                 await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Timeout");
             }
         }
-    }
-
-    private async Task HandleSequenceAsync(WireMockWebSocketContext context, WebSocketMessageSequence sequence)
-    {
-        await sequence.ExecuteAsync(context).ConfigureAwait(false);
     }
 
     private async Task HandleProxyAsync(WireMockWebSocketContext context, ProxyAndRecordSettings settings)

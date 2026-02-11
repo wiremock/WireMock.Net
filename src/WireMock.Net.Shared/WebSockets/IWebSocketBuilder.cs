@@ -28,26 +28,20 @@ public interface IWebSocketBuilder
     /// </summary>
     /// <param name="configure">Action to configure the message</param>
     [PublicAPI]
-    IWebSocketBuilder WithMessage(Action<IWebSocketMessageBuilder> configure);
+    IWebSocketBuilder SendMessage(Action<IWebSocketMessageBuilder> configure);
 
     /// <summary>
     /// Configure and send multiple messages in response to any received message
     /// </summary>
     /// <param name="configure">Action to configure the messages</param>
     [PublicAPI]
-    IWebSocketBuilder WithMessages(Action<IWebSocketMessagesBuilder> configure);
+    IWebSocketBuilder SendMessages(Action<IWebSocketMessagesBuilder> configure);
 
     /// <summary>
     /// Handle incoming WebSocket messages
     /// </summary>
     [PublicAPI]
     IWebSocketBuilder WithMessageHandler(Func<WebSocketMessage, IWebSocketContext, Task> handler);
-
-    /// <summary>
-    /// Define a sequence of messages to send
-    /// </summary>
-    [PublicAPI]
-    IWebSocketBuilder WithMessageSequence(Action<IWebSocketMessageSequenceBuilder> configure);
 
     /// <summary>
     /// Enable broadcast mode for this mapping
