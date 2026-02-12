@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using FluentAssertions;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -232,7 +230,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<string?, bool> func = s => s == "test";
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act & Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
@@ -243,7 +241,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<byte[]?, bool> func = b => b != null;
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act & Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
@@ -260,9 +258,7 @@ public class FuncMatcherTests
         var code = matcher.GetCSharpCodeArguments();
 
         // Assert
-        code.Should().Contain("FuncMatcher");
-        code.Should().Contain("Func<string?, bool>");
-        code.Should().Contain("AcceptOnMatch");
+        code.Should().Be("new FuncMatcher(/* Func<string?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
     }
 
     [Fact]
@@ -276,9 +272,7 @@ public class FuncMatcherTests
         var code = matcher.GetCSharpCodeArguments();
 
         // Assert
-        code.Should().Contain("FuncMatcher");
-        code.Should().Contain("Func<byte[]?, bool>");
-        code.Should().Contain("AcceptOnMatch");
+        code.Should().Be("new FuncMatcher(/* Func<byte[]?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
     }
 
     [Fact]
@@ -286,7 +280,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<string?, bool> func = s => s == "test";
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act
         var result = matcher.IsMatch("test");
@@ -300,7 +294,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<string?, bool> func = s => s == "test";
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act
         var result = matcher.IsMatch("other");
@@ -314,7 +308,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<byte[]?, bool> func = b => b != null && b.Length > 0;
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act
         var result = matcher.IsMatch(new byte[] { 1, 2, 3 });
@@ -328,7 +322,7 @@ public class FuncMatcherTests
     {
         // Arrange
         Func<byte[]?, bool> func = b => b != null && b.Length > 0;
-        var matcher = new FuncMatcher(MatchBehaviour.RejectOnMatch, func);
+        var matcher = new FuncMatcher(func, MatchBehaviour.RejectOnMatch);
 
         // Act
         var result = matcher.IsMatch(new byte[0]);
