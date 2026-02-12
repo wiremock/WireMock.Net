@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Description>An OpenApi (swagger) parser to generate MappingModel or mapping.json file.</Description>
         <!--<TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>-->
-        <TargetFrameworks>net48;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>wiremock;openapi;OAS;raml;converter;parser;openapiparser</PackageTags>
         <ProjectGuid>{E5B03EEF-822C-4295-952B-4479AD30082B}</ProjectGuid>
@@ -24,14 +24,16 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+        <!-- Keep at 6.14.0 -->
+        <!--<PackageReference Include="Polyfill" Version="6.14.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>-->
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-
-        <!-- Keep at 6.14.0 -->
-        <PackageReference Include="Polyfill" Version="6.14.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
         <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.11.0" />
         <PackageReference Include="YamlDotNet" Version="16.3.0" />
         <PackageReference Include="RandomDataGenerator.Net" Version="1.0.19" />

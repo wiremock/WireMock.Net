@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Description>WireMock.Net.Routing extends WireMock.Net with modern, minimal-API-style routing for .NET</Description>
         <Authors>Gennadii Saltyshchak</Authors>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>tdd;mock;http;wiremock;test;server;unittest;routing;minimalapi</PackageTags>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

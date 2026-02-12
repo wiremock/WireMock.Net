@@ -4,8 +4,8 @@
         <Description>Commonly used interfaces, models, enumerations and types.</Description>
         <AssemblyTitle>WireMock.Net.Abstractions</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net45;net451;net461;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>-->
-        <TargetFrameworks>net48;net8.0</TargetFrameworks>
+        <!--<TargetFrameworks>net45;net451;net462;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>-->
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591;8603</NoWarn>
         <AssemblyName>WireMock.Net.Abstractions</AssemblyName>
@@ -39,17 +39,31 @@
         <PackageReference Include="System.Net.Http" Version="4.3.4" />
     </ItemGroup>
 
+    <!--<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+        <PackageReference Include="Required" Version="1.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="IsExternalInit" Version="1.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Nullable" Version="1.3.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>-->
+
     <ItemGroup>
         <PackageReference Include="FluentBuilder" Version="0.13.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-
-        <!-- Keep at 6.14.0 -->
-        <PackageReference Include="Polyfill" Version="6.14.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        
+        <!--<PackageReference Include="Polyfill" Version="9.8.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>-->        
     </ItemGroup>
 
 </Project>

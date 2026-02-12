@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
+using WireMock.Extensions;
 using WireMock.Settings;
 using WireMock.Transformers;
 

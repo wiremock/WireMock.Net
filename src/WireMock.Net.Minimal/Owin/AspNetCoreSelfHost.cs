@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Stef.Validation;
+using WireMock.Extensions;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
 using WireMock.Services;
@@ -158,8 +159,8 @@ internal partial class AspNetCoreSelfHost
 
 #if NET8_0
             _logger.Info("Server using .NET 8.0");
-#elif NET48
-            _logger.Info("Server using .NET Framework 4.8");
+#else
+            _logger.Info("Server using .NET Standard 2.0");
 #endif
 
             return _host.RunAsync(token);

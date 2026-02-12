@@ -153,7 +153,7 @@ public class CSharpCodeMatcher : ICSharpCodeMatcher
         //                throw new WireMockException("CSharpCodeMatcher: Unable to call method 'IsMatch' in WireMock.CodeHelper", ex);
         //            }
         //        }
-        //#elif (NET46 || NET461)
+        //#elif (NET46 || net462)
         //        dynamic script;
         //        try
         //        {

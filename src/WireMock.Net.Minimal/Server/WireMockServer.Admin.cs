@@ -702,7 +702,7 @@ public partial class WireMockServer
     {
         var name = string.Equals(HttpRequestMethod.DELETE, requestMessage.Method, StringComparison.OrdinalIgnoreCase) ?
             requestMessage.Path.Substring(_adminPaths!.Scenarios.Length + 1) :
-            requestMessage.Path.Split('/').Reverse().Skip(1).First();
+            requestMessage.Path.Split('/').ReverseEx().Skip(1).First();
 
         return ResetScenario(name) ?
             ResponseMessageBuilder.Create(200, "Scenario reset") :
@@ -711,7 +711,7 @@ public partial class WireMockServer
 
     private IResponseMessage ScenariosSetState(HttpContext _, IRequestMessage requestMessage)
     {
-        var name = requestMessage.Path.Split('/').Reverse().Skip(1).First();
+        var name = requestMessage.Path.Split('/').ReverseEx().Skip(1).First();
         if (!_options.Scenarios.ContainsKey(name))
         {
             ResponseMessageBuilder.Create(HttpStatusCode.NotFound, $"No scenario found by name '{name}'.");

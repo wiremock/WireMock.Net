@@ -5,7 +5,7 @@
         <Description>OpenTelemetry exporter support for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.OpenTelemetry</AssemblyTitle>
         <Authors>Petr Houška</Authors>
-        <TargetFrameworks>net4.8;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <RootNamespace>WireMock.OpenTelemetry</RootNamespace>
         <PackageTags>wiremock;opentelemetry;otel;tracing;telemetry</PackageTags>

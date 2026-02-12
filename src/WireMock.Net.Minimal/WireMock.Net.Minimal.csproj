@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Minimal version from the lightweight Http Mocking Server for .NET</Description>
         <AssemblyTitle>WireMock.Net.Minimal</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net451;net452;net46;net461;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
-        <TargetFrameworks>net48;net8.0</TargetFrameworks>
+        <!--<TargetFrameworks>net451;net452;net46;net462;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.Minimal</AssemblyName>
         <PackageId>WireMock.Net.Minimal</PackageId>
@@ -51,10 +51,21 @@
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net48'">
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.3.9" />
+
+        <!-- Keep at 6.14.0 -->
+        <!--<PackageReference Include="Polyfill" Version="6.14.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>-->
+    </ItemGroup>
+
+    <!--<ItemGroup Condition=" '$(TargetFramework)' == 'net48'">
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.9" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    </ItemGroup>
+    </ItemGroup>-->
 
     <ItemGroup>
         <Compile Update="Server\WireMockServer.*.cs">

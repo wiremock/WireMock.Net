@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Some extensions for xUnit (ITestOutputHelper)</Description>
         <AssemblyTitle>WireMock.Net.xUnit.v3</AssemblyTitle>
