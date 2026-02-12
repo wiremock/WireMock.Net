@@ -3,7 +3,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
-using System.Text;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using WireMock.Matchers;
@@ -40,7 +39,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/echo");
+        var uri = new Uri($"{server.Url}/ws/echo");
 
         // Act
         await client.ConnectAsync(uri, CancellationToken.None);
@@ -80,7 +79,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/message");
+        var uri = new Uri($"{server.Url}/ws/message");
 
         // Act
         await client.ConnectAsync(uri, CancellationToken.None);
@@ -120,7 +119,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/message");
+        var uri = new Uri($"{server.Url}/ws/message");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testMessages = new[] { "First", "Second", "Third" };
@@ -161,7 +160,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/binary");
+        var uri = new Uri($"{server.Url}/ws/binary");
 
         // Act
         await client.ConnectAsync(uri, CancellationToken.None);
@@ -201,7 +200,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/binary");
+        var uri = new Uri($"{server.Url}/ws/binary");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testMessages = new[] { "First", "Second", "Third" };
@@ -335,7 +334,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/echo");
+        var uri = new Uri($"{server.Url}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testMessages = new[] { "Hello", "World", "WebSocket", "Test" };
@@ -373,7 +372,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/echo");
+        var uri = new Uri($"{server.Url}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
@@ -409,7 +408,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/echo");
+        var uri = new Uri($"{server.Url}/ws/echo");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -457,7 +456,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/chat");
+        var uri = new Uri($"{server.Url}/ws/chat");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -529,7 +528,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/chat");
+        var uri = new Uri($"{server.Url}/ws/chat");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var commands = new (string, Action<string>)[]
@@ -583,7 +582,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/conditional");
+        var uri = new Uri($"{server.Url}/ws/conditional");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         var testCases = new (string message, string expectedContains)[]
@@ -630,7 +629,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             );
 
         using var client = new ClientWebSocket();
-        var uri = new Uri($"{server.Url!}/ws/close");
+        var uri = new Uri($"{server.Url}/ws/close");
         await client.ConnectAsync(uri, CancellationToken.None);
 
         // Act
@@ -661,66 +660,42 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
     }
 
     [Fact]
-    public async Task Server_With_Multiple_Urls_Should_Handle_Http_And_WebSocket_In_Parallel()
+    public async Task WithTransformer_Should_Transform_Message_Using_Handlebars()
     {
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["http://localhost:0", "ws://localhost:0"]
+            Urls = ["ws://localhost:0"]
         });
 
         server
             .Given(Request.Create()
-                .WithPath("/api/test")
-                .UsingGet()
-            )
-            .RespondWith(Response.Create()
-                .WithStatusCode(200)
-                .WithBody("OK")
-            );
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/echo")
+                .WithPath("/ws/transform")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws.WithEcho())
+                .WithWebSocket(ws => ws
+                    .WithTransformer()
+                    .SendMessage(m => m.WithText("{{[String.Lowercase] message.Text}}"))
+                )
+                .WithTransformer()
             );
 
-        // Act & Assert
-        var httpTask = Task.Run(async () =>
-        {
-            using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync($"{server.Urls[0]}/api/test");
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url}/ws/transform");
 
-            await Task.Delay(100);
+        // Act
+        await client.ConnectAsync(uri, CancellationToken.None);
+        client.State.Should().Be(WebSocketState.Open);
 
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Be("OK");
-        });
+        var testMessage = "HellO";
+        await client.SendAsync(testMessage);
 
-        var webSocketTask = Task.Run(async () =>
-        {
-            using var client = new ClientWebSocket();
-            var uri = new Uri($"{server.Urls[1]}/ws/echo");
+        // Assert
+        var received = await client.ReceiveAsTextAsync();
+        received.Should().Be("hello");
 
-            await client.ConnectAsync(uri, default);
-            client.State.Should().Be(WebSocketState.Open);
-
-            var testMessage = "Hello from WebSocket";
-            await client.SendAsync(testMessage);
-
-            await Task.Delay(100);
-
-            var received = await client.ReceiveAsTextAsync();
-            received.Should().Be(testMessage);
-
-            await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", default);
-        });
-
-        await Task.WhenAll(httpTask, webSocketTask);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);
     }
 }

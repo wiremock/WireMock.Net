@@ -1,9 +1,11 @@
 // Copyright © WireMock.Net
 
 using System.Net.WebSockets;
+using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Matchers;
 using WireMock.Settings;
+using WireMock.Transformers;
 using WireMock.Types;
 
 namespace WireMock.WebSockets;
@@ -76,7 +78,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                 await Task.Delay(messageBuilder.Delay.Value);
             }
 
-            await SendMessageAsync(context, messageBuilder);
+            await SendMessageAsync(this, context, messageBuilder, message);
         });
     }
 
@@ -95,7 +97,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                     await Task.Delay(messageBuilder.Delay.Value);
                 }
 
-                await SendMessageAsync(context, messageBuilder);
+                await SendMessageAsync(this, context, messageBuilder, message);
             }
         });
     }
@@ -213,7 +215,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                             await Task.Delay(messageBuilder.Delay.Value);
                         }
 
-                        await SendMessageAsync(context, messageBuilder);
+                        await SendMessageAsync(this, context, messageBuilder, message);
 
                         // If this message should close the connection, do it after sending
                         if (messageBuilder.ShouldClose)
@@ -262,19 +264,60 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return false;
     }
 
-    private static async Task SendMessageAsync(IWebSocketContext context, WebSocketMessageBuilder messageBuilder)
+    private static async Task SendMessageAsync(WebSocketBuilder builder, IWebSocketContext context, WebSocketMessageBuilder messageBuilder, WebSocketMessage incomingMessage)
     {
         switch (messageBuilder.Type)
         {
             case WebSocketMessageBuilder.MessageType.Text:
-                await context.SendAsync(messageBuilder.MessageText!);
+                var text = messageBuilder.MessageText!;
+                if (builder.UseTransformer)
+                {
+                    text = ApplyTransformer(builder, context, incomingMessage, text);
+                }
+                await context.SendAsync(text);
                 break;
             case WebSocketMessageBuilder.MessageType.Bytes:
                 await context.SendAsync(messageBuilder.MessageBytes!);
                 break;
             case WebSocketMessageBuilder.MessageType.Json:
-                await context.SendAsJsonAsync(messageBuilder.MessageData!);
+                var jsonData = messageBuilder.MessageData!;
+                if (builder.UseTransformer)
+                {
+                    var jsonString = JsonConvert.SerializeObject(jsonData);
+                    jsonString = ApplyTransformer(builder, context, incomingMessage, jsonString);
+                    jsonData = JsonConvert.DeserializeObject(jsonString) ?? jsonData;
+                }
+                await context.SendAsJsonAsync(jsonData);
                 break;
+        }
+    }
+
+    private static string ApplyTransformer(WebSocketBuilder builder, IWebSocketContext context, WebSocketMessage incomingMessage, string text)
+    {
+        try
+        {
+            if (incomingMessage == null)
+            {
+                // No incoming message, can't apply transformer
+                return text;
+            }
+
+            var transformer = TransformerFactory.Create(builder.TransformerType, context.Mapping.Settings);
+            
+            var model = new WebSocketTransformModel
+            {
+                Mapping = context.Mapping,
+                Request = context.RequestMessage,
+                Message = incomingMessage,
+                Data = incomingMessage.MessageType == WebSocketMessageType.Text ? incomingMessage.Text : null
+            };
+            
+            return transformer.Transform(text, model);
+        }
+        catch
+        {
+            // If transformation fails, return original text
+            return text;
         }
     }
 }
