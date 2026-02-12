@@ -20,7 +20,7 @@ public static class Program
         Console.WriteLine("Choose an example to run:");
         Console.WriteLine("1. Echo Server");
         Console.WriteLine("2. Custom Message Handler");
-        Console.WriteLine("3. Broadcast Server");
+        Console.WriteLine("3. ...");
         Console.WriteLine("4. Scenario/State Machine");
         Console.WriteLine("5. WebSocket Proxy");
         Console.WriteLine("6. Multiple WebSocket Endpoints");
@@ -419,28 +419,6 @@ public static class Program
                 )
             );
 
-        // Endpoint 3: JSON service
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/json")
-                .WithWebSocketUpgrade()
-            )
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var response = new
-                        {
-                            timestamp = DateTime.UtcNow,
-                            message = msg.Text,
-                            length = msg.Text?.Length ?? 0,
-                            type = msg.MessageType.ToString()
-                        };
-                        await ctx.SendAsJsonAsync(response);
-                    })
-                )
-            );
-
         // Endpoint 4: Protocol-specific
         server
             .Given(Request.Create()
@@ -583,27 +561,6 @@ public static class Program
                     .WithMessageHandler(async (msg, ctx) =>
                     {
                         await ctx.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
-                    })
-                )
-            );
-
-        // JSON endpoint
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/json")
-                .WithWebSocketUpgrade()
-            )
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var response = new
-                        {
-                            timestamp = DateTime.UtcNow,
-                            message = msg.Text,
-                            connectionId = ctx.ConnectionId
-                        };
-                        await ctx.SendAsJsonAsync(response);
                     })
                 )
             );

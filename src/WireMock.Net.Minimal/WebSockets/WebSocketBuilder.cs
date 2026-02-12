@@ -1,16 +1,15 @@
 // Copyright © WireMock.Net
 
 using System.Net.WebSockets;
-using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Matchers;
+using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Transformers;
-using WireMock.Types;
 
 namespace WireMock.WebSockets;
 
-internal class WebSocketBuilder : IWebSocketBuilder
+internal class WebSocketBuilder(Response response) : IWebSocketBuilder
 {
     private readonly List<(IMatcher matcher, List<WebSocketMessageBuilder> messages)> _conditionalMessages = [];
 
@@ -42,17 +41,6 @@ internal class WebSocketBuilder : IWebSocketBuilder
     public TimeSpan? KeepAliveIntervalSeconds { get; private set; }
 
     /// <inheritdoc />
-    public bool UseTransformer { get; private set; }
-
-    /// <inheritdoc />
-    public TransformerType TransformerType { get; private set; }
-
-    /// <inheritdoc />
-    public bool UseTransformerForBodyAsFile { get; private set; }
-
-    /// <inheritdoc />
-    public ReplaceNodeOptions TransformerReplaceNodeOptions { get; private set; }
-
     public IWebSocketBuilder WithAcceptProtocol(string protocol)
     {
         AcceptProtocol = Guard.NotNull(protocol);
@@ -70,7 +58,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
         Guard.NotNull(configure);
         var messageBuilder = new WebSocketMessageBuilder();
         configure(messageBuilder);
-        
+
         return WithMessageHandler(async (message, context) =>
         {
             if (messageBuilder.Delay.HasValue)
@@ -78,7 +66,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                 await Task.Delay(messageBuilder.Delay.Value);
             }
 
-            await SendMessageAsync(this, context, messageBuilder, message);
+            await SendMessageAsync(context, messageBuilder, message);
         });
     }
 
@@ -97,7 +85,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                     await Task.Delay(messageBuilder.Delay.Value);
                 }
 
-                await SendMessageAsync(this, context, messageBuilder, message);
+                await SendMessageAsync(context, messageBuilder, message);
             }
         });
     }
@@ -166,18 +154,6 @@ internal class WebSocketBuilder : IWebSocketBuilder
         return this;
     }
 
-    public IWebSocketBuilder WithTransformer(
-        TransformerType transformerType = TransformerType.Handlebars,
-        bool useTransformerForBodyAsFile = false,
-        ReplaceNodeOptions transformerReplaceNodeOptions = ReplaceNodeOptions.EvaluateAndTryToConvert)
-    {
-        UseTransformer = true;
-        TransformerType = transformerType;
-        UseTransformerForBodyAsFile = useTransformerForBodyAsFile;
-        TransformerReplaceNodeOptions = transformerReplaceNodeOptions;
-        return this;
-    }
-
     internal IWebSocketBuilder AddConditionalMessage(IMatcher matcher, WebSocketMessageBuilder messageBuilder)
     {
         _conditionalMessages.Add((matcher, new List<WebSocketMessageBuilder> { messageBuilder }));
@@ -205,7 +181,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
             foreach (var (matcher, messages) in _conditionalMessages)
             {
                 // Try to match the message
-                if (await MatchMessageAsync(message, matcher)   )
+                if (await MatchMessageAsync(message, matcher))
                 {
                     // Execute the corresponding messages
                     foreach (var messageBuilder in messages)
@@ -215,7 +191,7 @@ internal class WebSocketBuilder : IWebSocketBuilder
                             await Task.Delay(messageBuilder.Delay.Value);
                         }
 
-                        await SendMessageAsync(this, context, messageBuilder, message);
+                        await SendMessageAsync(context, messageBuilder, message);
 
                         // If this message should close the connection, do it after sending
                         if (messageBuilder.ShouldClose)
@@ -235,6 +211,54 @@ internal class WebSocketBuilder : IWebSocketBuilder
                 }
             }
         });
+    }
+
+    private async Task SendMessageAsync(IWebSocketContext context, WebSocketMessageBuilder messageBuilder, WebSocketMessage incomingMessage)
+    {
+        switch (messageBuilder.Type)
+        {
+            case WebSocketMessageType.Text:
+                var text = messageBuilder.MessageText!;
+                if (response.UseTransformer)
+                {
+                    text = ApplyTransformer(context, incomingMessage, text);
+                }
+                await context.SendAsync(text);
+                break;
+
+            case WebSocketMessageType.Binary:
+                await context.SendAsync(messageBuilder.MessageBytes!);
+                break;
+        }
+    }
+
+    private string ApplyTransformer(IWebSocketContext context, WebSocketMessage incomingMessage, string text)
+    {
+        try
+        {
+            if (incomingMessage == null)
+            {
+                // No incoming message, can't apply transformer
+                return text;
+            }
+
+            var transformer = TransformerFactory.Create(response.TransformerType, context.Mapping.Settings);
+
+            var model = new WebSocketTransformModel
+            {
+                Mapping = context.Mapping,
+                Request = context.RequestMessage,
+                Message = incomingMessage,
+                Data = incomingMessage.MessageType == WebSocketMessageType.Text ? incomingMessage.Text : null
+            };
+
+            return transformer.Transform(text, model);
+        }
+        catch
+        {
+            // If transformation fails, return original text
+            return text;
+        }
     }
 
     private static async Task<bool> MatchMessageAsync(WebSocketMessage message, IMatcher matcher)
@@ -262,62 +286,5 @@ internal class WebSocketBuilder : IWebSocketBuilder
         }
 
         return false;
-    }
-
-    private static async Task SendMessageAsync(WebSocketBuilder builder, IWebSocketContext context, WebSocketMessageBuilder messageBuilder, WebSocketMessage incomingMessage)
-    {
-        switch (messageBuilder.Type)
-        {
-            case WebSocketMessageBuilder.MessageType.Text:
-                var text = messageBuilder.MessageText!;
-                if (builder.UseTransformer)
-                {
-                    text = ApplyTransformer(builder, context, incomingMessage, text);
-                }
-                await context.SendAsync(text);
-                break;
-            case WebSocketMessageBuilder.MessageType.Bytes:
-                await context.SendAsync(messageBuilder.MessageBytes!);
-                break;
-            case WebSocketMessageBuilder.MessageType.Json:
-                var jsonData = messageBuilder.MessageData!;
-                if (builder.UseTransformer)
-                {
-                    var jsonString = JsonConvert.SerializeObject(jsonData);
-                    jsonString = ApplyTransformer(builder, context, incomingMessage, jsonString);
-                    jsonData = JsonConvert.DeserializeObject(jsonString) ?? jsonData;
-                }
-                await context.SendAsJsonAsync(jsonData);
-                break;
-        }
-    }
-
-    private static string ApplyTransformer(WebSocketBuilder builder, IWebSocketContext context, WebSocketMessage incomingMessage, string text)
-    {
-        try
-        {
-            if (incomingMessage == null)
-            {
-                // No incoming message, can't apply transformer
-                return text;
-            }
-
-            var transformer = TransformerFactory.Create(builder.TransformerType, context.Mapping.Settings);
-            
-            var model = new WebSocketTransformModel
-            {
-                Mapping = context.Mapping,
-                Request = context.RequestMessage,
-                Message = incomingMessage,
-                Data = incomingMessage.MessageType == WebSocketMessageType.Text ? incomingMessage.Text : null
-            };
-            
-            return transformer.Transform(text, model);
-        }
-        catch
-        {
-            // If transformation fails, return original text
-            return text;
-        }
     }
 }

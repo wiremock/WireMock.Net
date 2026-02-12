@@ -3,7 +3,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
-using Newtonsoft.Json;
 
 namespace WireMock.WebSockets;
 
@@ -56,14 +55,5 @@ internal class WebSocketConnectionRegistry
             .Select(c => c.SendAsync(text, cancellationToken));
 
         await Task.WhenAll(tasks);
-    }
-
-    /// <summary>
-    /// Broadcast JSON to all connections
-    /// </summary>
-    public async Task BroadcastJsonAsync(object data, CancellationToken cancellationToken = default)
-    {
-        var json = JsonConvert.SerializeObject(data);
-        await BroadcastTextAsync(json, cancellationToken);
     }
 }

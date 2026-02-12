@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Net.WebSockets;
 using Stef.Validation;
 
 namespace WireMock.WebSockets;
@@ -14,28 +15,21 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
 
     public TimeSpan? Delay { get; private set; }
 
-    public MessageType Type { get; private set; }
+    public WebSocketMessageType Type { get; private set; }
 
     public bool ShouldClose { get; private set; }
 
     public IWebSocketMessageBuilder WithText(string text)
     {
         MessageText = Guard.NotNull(text);
-        Type = MessageType.Text;
+        Type = WebSocketMessageType.Text;
         return this;
     }
 
-    public IWebSocketMessageBuilder WithBytes(byte[] bytes)
+    public IWebSocketMessageBuilder WithBinary(byte[] bytes)
     {
         MessageBytes = Guard.NotNull(bytes);
-        Type = MessageType.Bytes;
-        return this;
-    }
-
-    public IWebSocketMessageBuilder WithJson(object data)
-    {
-        MessageData = Guard.NotNull(data);
-        Type = MessageType.Json;
+        Type = WebSocketMessageType.Binary;
         return this;
     }
 
@@ -52,22 +46,11 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
         return this;
     }
 
-    public IWebSocketMessageBuilder AndClose()
-    {
-        ShouldClose = true;
-        return this;
-    }
-
     public IWebSocketMessageBuilder Close()
     {
         ShouldClose = true;
         return this;
     }
 
-    internal enum MessageType
-    {
-        Text,
-        Bytes,
-        Json
-    }
+    public IWebSocketMessageBuilder AndClose() => Close();
 }

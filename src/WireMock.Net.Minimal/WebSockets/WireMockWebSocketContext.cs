@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stef.Validation;
+using WireMock.Extensions;
 using WireMock.Owin;
 
 namespace WireMock.WebSockets;
@@ -54,9 +55,9 @@ public class WireMockWebSocketContext : IWebSocketContext
         Builder = Guard.NotNull(builder);
 
         // Get options from HttpContext
-        if (httpContext.Items.TryGetValue(nameof(WireMockMiddlewareOptions), out var options))
+        if (httpContext.Items.TryGetValue<IWireMockMiddlewareOptions>(nameof(WireMockMiddlewareOptions), out var options))
         {
-            _options = (IWireMockMiddlewareOptions)options!;
+            _options = options;
         }
         else
         {
@@ -85,13 +86,6 @@ public class WireMockWebSocketContext : IWebSocketContext
             true,
             cancellationToken
         );
-    }
-
-    /// <inheritdoc />
-    public Task SendAsJsonAsync(object data, CancellationToken cancellationToken = default)
-    {
-        var json = JsonConvert.SerializeObject(data);
-        return SendAsync(json, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -179,15 +173,6 @@ public class WireMockWebSocketContext : IWebSocketContext
         if (Registry != null)
         {
             await Registry.BroadcastTextAsync(text, cancellationToken);
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task BroadcastJsonAsync(object data, CancellationToken cancellationToken = default)
-    {
-        if (Registry != null)
-        {
-            await Registry.BroadcastJsonAsync(data, cancellationToken);
         }
     }
 }

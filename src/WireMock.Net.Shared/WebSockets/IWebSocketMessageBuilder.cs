@@ -21,14 +21,7 @@ public interface IWebSocketMessageBuilder
     /// </summary>
     /// <param name="bytes">The binary data to send</param>
     [PublicAPI]
-    IWebSocketMessageBuilder WithBytes(byte[] bytes);
-
-    /// <summary>
-    /// Send a JSON object
-    /// </summary>
-    /// <param name="data">The object to serialize and send as JSON</param>
-    [PublicAPI]
-    IWebSocketMessageBuilder WithJson(object data);
+    IWebSocketMessageBuilder WithBinary(byte[] bytes);
 
     /// <summary>
     /// Set a delay before sending the message (using TimeSpan)

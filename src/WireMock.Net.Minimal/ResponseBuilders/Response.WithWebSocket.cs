@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Settings;
 using WireMock.WebSockets;
 
@@ -18,7 +17,7 @@ public partial class Response
     /// </summary>
     public IResponseBuilder WithWebSocket(Action<IWebSocketBuilder> configure)
     {
-        var builder = new WebSocketBuilder();
+        var builder = new WebSocketBuilder(this);
         configure(builder);
 
         WebSocketBuilder = builder;
@@ -39,7 +38,7 @@ public partial class Response
     /// </summary>
     public IResponseBuilder WithWebSocketProxy(ProxyAndRecordSettings settings)
     {
-        var builder = new WebSocketBuilder();
+        var builder = new WebSocketBuilder(this);
         builder.WithProxy(settings);
 
         WebSocketBuilder = builder;

@@ -1,12 +1,10 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-
 namespace WireMock.WebSockets;
 
 internal class WebSocketMessagesBuilder : IWebSocketMessagesBuilder
 {
-    internal List<WebSocketMessageBuilder> Messages { get; } = new();
+    internal List<WebSocketMessageBuilder> Messages { get; } = [];
 
     public IWebSocketMessagesBuilder AddMessage(Action<IWebSocketMessageBuilder> configure)
     {

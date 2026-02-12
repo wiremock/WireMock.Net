@@ -46,11 +46,6 @@ public interface IWebSocketContext
     Task SendAsync(byte[] bytes, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Send JSON message to the client
-    /// </summary>
-    Task SendAsJsonAsync(object data, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Close the WebSocket connection
     /// </summary>
     Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription);
@@ -74,9 +69,4 @@ public interface IWebSocketContext
     /// Broadcast text message to all connections in this mapping
     /// </summary>
     Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Broadcast JSON message to all connections in this mapping
-    /// </summary>
-    Task BroadcastJsonAsync(object data, CancellationToken cancellationToken = default);
 }

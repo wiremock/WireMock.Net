@@ -100,13 +100,4 @@ public interface IWebSocketBuilder
     /// </summary>
     [PublicAPI]
     IWebSocketBuilder WithKeepAliveInterval(TimeSpan interval);
-
-    /// <summary>
-    /// Enable transformer support (Handlebars/Scriban)
-    /// </summary>
-    [PublicAPI]
-    IWebSocketBuilder WithTransformer(
-        TransformerType transformerType = TransformerType.Handlebars,
-        bool useTransformerForBodyAsFile = false,
-        ReplaceNodeOptions transformerReplaceNodeOptions = ReplaceNodeOptions.EvaluateAndTryToConvert);
 }
