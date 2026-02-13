@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Authors>Gennadii Saltyshchak</Authors>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <DebugType>full</DebugType>
@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\WireMock.Net.Extensions.Routing\WireMock.Net.Extensions.Routing.csproj" />
+        <ProjectReference Include="..\..\src\WireMock.Net.Extensions.Routing\WireMock.Net.Extensions.Routing.csproj" />
     </ItemGroup>
 
     <ItemGroup>

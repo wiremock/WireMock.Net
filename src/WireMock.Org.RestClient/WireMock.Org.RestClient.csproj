@@ -4,7 +4,6 @@
         <Description>A WireMock.org RestClient using RestEase to access the admin interface.</Description>
         <AssemblyTitle>WireMock.Org.RestClient</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net45;netstandard1.1;netstandard2.0;netstandard2.1</TargetFrameworks>-->
         <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Org.RestClient</AssemblyName>

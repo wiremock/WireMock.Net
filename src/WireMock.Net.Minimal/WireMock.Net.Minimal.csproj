@@ -1,9 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Minimal version from the lightweight Http Mocking Server for .NET</Description>
         <AssemblyTitle>WireMock.Net.Minimal</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net451;net452;net46;net462;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
         <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.Minimal</AssemblyName>
@@ -38,7 +37,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />
+        <!--<PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />-->
+        <PackageReference Include="JmesPath.Net" Version="1.0.330" />
         <PackageReference Include="NJsonSchema.Extensions" Version="0.1.0" />
         <PackageReference Include="NSwag.Core" Version="13.16.1" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
@@ -52,20 +52,20 @@
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <!--<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />-->
         <PackageReference Include="Microsoft.AspNetCore" Version="2.3.9" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.9" />
-
-        <!-- Keep at 6.14.0 -->
-        <!--<PackageReference Include="Polyfill" Version="6.14.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>-->
     </ItemGroup>
 
-    <!--<ItemGroup Condition=" '$(TargetFramework)' == 'net48'">
-        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.9" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PropertyGroup>
+        <!-- Suppress warnings from JmesPath source-only package -->
+        <!--<NoWarn>$(NoWarn);CS8600;CS8602;CS8603;CS8604;CS8619;CS8625;CS0649</NoWarn>-->
+    </PropertyGroup>
+
+    <!--<ItemGroup>
+        --><!-- Disable all warnings for JmesPath source-only package files --><!--
+        <Compile Update="**\jmespath.net.sourceonly\**\*.cs">
+            <NoWarn>$(NoWarn);CS0001-CS9999</NoWarn>
+        </Compile>
     </ItemGroup>-->
 
     <ItemGroup>
