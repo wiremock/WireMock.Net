@@ -4,11 +4,10 @@ using System.Net.Http.Json;
 using AwesomeAssertions;
 using Projects;
 using WireMock.Net.Aspire.Tests.Facts;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Aspire.Tests;
 
-public class IntegrationTests(ITestOutputHelper output)
+public class IntegrationTests
 {
     private record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary);
 

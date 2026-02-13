@@ -135,7 +135,7 @@ internal partial class AspNetCoreSelfHost
                 }
                 else
                 {
-                    var urlOptions = _urlOptions?.Urls?.ToArray() ?? [];
+                    var urlOptions = _urlOptions.Urls?.ToArray() ?? [];
 
                     for (int i = 0; i < urlOptions.Length; i++)
                     {
