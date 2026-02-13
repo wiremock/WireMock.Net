@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System;
 using System.Net.WebSockets;
 using Stef.Validation;
 using WireMock.Matchers;

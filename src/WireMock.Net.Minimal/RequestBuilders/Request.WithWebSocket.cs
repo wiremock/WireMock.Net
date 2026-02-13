@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Linq;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 

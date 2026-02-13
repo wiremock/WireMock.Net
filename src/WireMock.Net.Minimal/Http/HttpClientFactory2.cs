@@ -28,7 +28,7 @@ internal static class HttpClientFactory2
 
         var next = handler;
 
-        foreach (var delegatingHandler in delegatingHandlers.ReverseEx())
+        foreach (var delegatingHandler in Enumerable.Reverse(delegatingHandlers))
         {
             delegatingHandler.InnerHandler = next;
             next = delegatingHandler;

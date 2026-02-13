@@ -1,6 +1,8 @@
 // Copyright © WireMock.Net
 
 using System.Globalization;
+using System.Text.RegularExpressions;
+using WireMock.Constants;
 
 namespace System;
 
@@ -32,51 +34,10 @@ internal static class StringExtensions
     }
 
 #if !NET8_0_OR_GREATER
-    public static string Replace(
-            this string source,
-            string oldValue,
-            string? newValue,
-            StringComparison comparisonType)
+    public static string Replace(this string text, string oldValue, string newValue, StringComparison stringComparison)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (string.IsNullOrEmpty(oldValue))
-        {
-            throw new ArgumentException("oldValue cannot be null or empty.", nameof(oldValue));
-        }
-
-        newValue ??= string.Empty;
-
-        int pos = 0;
-        int index = source.IndexOf(oldValue, pos, comparisonType);
-
-        if (index < 0)
-        {
-            return source; // nothing to replace
-        }
-
-        var result = new System.Text.StringBuilder(source.Length);
-
-        while (index >= 0)
-        {
-            // append unchanged part
-            result.Append(source, pos, index - pos);
-
-            // append replacement
-            result.Append(newValue);
-
-            pos = index + oldValue.Length;
-
-            index = source.IndexOf(oldValue, pos, comparisonType);
-        }
-
-        // append remainder
-        result.Append(source, pos, source.Length - pos);
-
-        return result.ToString();
+        var options = stringComparison == StringComparison.OrdinalIgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+        return Regex.Replace(text, oldValue, newValue, options, RegexConstants.DefaultTimeout);
     }
 #endif
 }

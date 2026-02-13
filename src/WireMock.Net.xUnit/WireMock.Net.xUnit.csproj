@@ -26,7 +26,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
         <PackageReference Include="xUnit.abstractions" Version="2.0.3" />
     </ItemGroup>

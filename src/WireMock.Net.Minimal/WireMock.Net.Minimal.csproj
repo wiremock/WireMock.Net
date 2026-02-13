@@ -38,10 +38,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />
         <PackageReference Include="NJsonSchema.Extensions" Version="0.1.0" />
         <PackageReference Include="NSwag.Core" Version="13.16.1" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
-        <PackageReference Include="JmesPath.Net" Version="1.0.330" />
         <PackageReference Include="TinyMapper.Signed" Version="4.0.0" />
         <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.34.0" />
         <PackageReference Include="Scriban.Signed" Version="5.5.0" />
@@ -52,8 +52,9 @@
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+        <!--<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />-->
         <PackageReference Include="Microsoft.AspNetCore" Version="2.3.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.9" />
 
         <!-- Keep at 6.14.0 -->
         <!--<PackageReference Include="Polyfill" Version="6.14.0">
