@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Minimal version from the lightweight Http Mocking Server for .NET</Description>
         <AssemblyTitle>WireMock.Net.Minimal</AssemblyTitle>
@@ -62,8 +62,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JsonConverter.Abstractions" Version="0.7.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <!--<PackageReference Include="JsonConverter.Abstractions" Version="0.8.0" />-->
+        <!--<PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />-->
         <PackageReference Include="NJsonSchema.Extensions" Version="0.1.0" />
         <PackageReference Include="NSwag.Core" Version="13.16.1" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
@@ -123,11 +123,13 @@
 
         <!-- https://github.com/wiremock/WireMock.Net/issues/507 -->
         <PackageReference Include="Microsoft.AspNetCore.Server.IIS" Version="2.2.6" />
+        <PackageReference Include="JsonConverter.System.Text.Json" Version="0.8.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Scriban.Signed" Version="5.5.0" />
+        <PackageReference Include="JsonConverter.System.Text.Json" Version="0.8.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">

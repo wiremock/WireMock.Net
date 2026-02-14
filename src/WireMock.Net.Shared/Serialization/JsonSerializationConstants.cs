@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using JsonConverter.Abstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -7,24 +8,30 @@ namespace WireMock.Serialization;
 
 internal static class JsonSerializationConstants
 {
-    public static readonly JsonSerializerSettings JsonSerializerSettingsDefault = new()
+    internal static readonly JsonConverterOptions JsonConverterOptionsDefault = new()
     {
-        Formatting = Formatting.Indented,
-        NullValueHandling = NullValueHandling.Ignore
+        WriteIndented = true,
+        IgnoreNullValues = true
     };
 
-    public static readonly JsonSerializerSettings JsonSerializerSettingsIncludeNullValues = new()
+    //internal static readonly JsonSerializerSettings JsonSerializerSettingsDefault = new()
+    //{
+    //    Formatting = Formatting.Indented,
+    //    NullValueHandling = NullValueHandling.Ignore
+    //};
+
+    internal static readonly JsonSerializerSettings JsonSerializerSettingsIncludeNullValues = new()
     {
         Formatting = Formatting.Indented,
         NullValueHandling = NullValueHandling.Include
     };
 
-    public static readonly JsonSerializerSettings JsonDeserializerSettingsWithDateParsingNone = new()
+    internal static readonly JsonSerializerSettings JsonDeserializerSettingsWithDateParsingNone = new()
     {
         DateParseHandling = DateParseHandling.None
     };
 
-    public static readonly JsonSerializerSettings JsonSerializerSettingsPact = new()
+    internal static readonly JsonSerializerSettings JsonSerializerSettingsPact = new()
     {
         Formatting = Formatting.Indented,
         NullValueHandling = NullValueHandling.Ignore,

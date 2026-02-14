@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Shared interfaces, models, enumerations and types.</Description>
         <Authors>Stef Heyenrath</Authors>
@@ -48,9 +48,10 @@
         </PackageReference>
         <PackageReference Include="Stef.Validation" Version="0.1.1" />
         <PackageReference Include="AnyOf" Version="0.4.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />-->
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
-        <PackageReference Include="JsonConverter.Abstractions" Version="0.7.0" />
+        <!--<PackageReference Include="JsonConverter.Abstractions" Version="0.8.0" />-->
+        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
     </ItemGroup>
 
     <ItemGroup>
