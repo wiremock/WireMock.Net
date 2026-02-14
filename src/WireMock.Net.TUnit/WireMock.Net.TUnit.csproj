@@ -4,7 +4,7 @@
         <Description>Some extensions for TUnit (TUnitLogger)</Description>
         <AssemblyTitle>WireMock.Net.TUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net8.0</TargetFrameworks>
+        <TargetFramework>net8.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.TUnit</AssemblyName>
         <RootNamespace>WireMock.Net.Tunit</RootNamespace>
@@ -26,7 +26,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
         <PackageReference Include="TUnit.Core" Version="0.57.1" />
     </ItemGroup>

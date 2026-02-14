@@ -1,9 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using WireMock.Http;
@@ -18,8 +15,9 @@ namespace WireMock.Owin.Mappers;
 internal class OwinRequestMapper : IOwinRequestMapper
 {
     /// <inheritdoc />
-    public async Task<RequestMessage> MapAsync(HttpRequest request, IWireMockMiddlewareOptions options)
+    public async Task<RequestMessage> MapAsync(HttpContext context, IWireMockMiddlewareOptions options)
     {
+        var request = context.Request;
         var (urlDetails, clientIP) = ParseRequest(request);
 
         var method = request.Method;

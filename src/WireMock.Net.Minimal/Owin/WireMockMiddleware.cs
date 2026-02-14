@@ -25,7 +25,6 @@ namespace WireMock.Owin;
 internal class WireMockMiddleware
 {
     private readonly object _lock = new();
-    private static readonly Task CompletedTask = Task.FromResult(false);
 
     private readonly IWireMockMiddlewareOptions _options;
     private readonly IOwinRequestMapper _requestMapper;
@@ -66,7 +65,10 @@ internal class WireMockMiddleware
 
     private async Task InvokeInternalAsync(HttpContext ctx)
     {
-        var request = await _requestMapper.MapAsync(ctx.Request, _options).ConfigureAwait(false);
+        // Store options in HttpContext for providers to access (e.g., WebSocketResponseProvider)
+        ctx.Items[nameof(WireMockMiddlewareOptions)] = _options;
+
+        var request = await _requestMapper.MapAsync(ctx, _options).ConfigureAwait(false);
 
         var logRequest = false;
         IResponseMessage? response = null;
@@ -144,9 +146,7 @@ internal class WireMockMiddleware
             var (theResponse, theOptionalNewMapping) = await targetMapping.ProvideResponseAsync(ctx, request).ConfigureAwait(false);
             response = theResponse;
 
-            var responseBuilder = targetMapping.Provider as Response;
-
-            if (!targetMapping.IsAdminInterface && theOptionalNewMapping != null)
+            if (targetMapping.Provider is Response responseBuilder && !targetMapping.IsAdminInterface && theOptionalNewMapping != null)
             {
                 if (responseBuilder?.ProxyAndRecordSettings?.SaveMapping == true || targetMapping.Settings.ProxyAndRecordSettings?.SaveMapping == true)
                 {
@@ -227,8 +227,6 @@ internal class WireMockMiddleware
                 await _responseMapper.MapAsync(notFoundResponse, ctx.Response).ConfigureAwait(false);
             }
         }
-
-        await CompletedTask.ConfigureAwait(false);
     }
 
     private async Task SendToWebhooksAsync(IMapping mapping, IRequestMessage request, IResponseMessage response)

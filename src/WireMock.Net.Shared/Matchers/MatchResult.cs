@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Stef.Validation;
 using WireMock.Extensions;
@@ -39,6 +37,18 @@ public class MatchResult
     /// Is the value a perfect match?
     /// </summary>
     public bool IsPerfect() => MatchScores.IsPerfect(Score);
+
+    /// <summary>
+    /// Create a MatchResult.
+    /// </summary>
+    /// <param name="name">The name or description of the matcher.</param>
+    /// <param name="matchBehaviour">The match behaviour.</param>
+    /// <param name="isMatch">Is this a match?</param>
+    /// <param name="exception">The exception in case the matching fails. [Optional]</param>
+    public static MatchResult From(string name, MatchBehaviour matchBehaviour, bool isMatch, Exception? exception = null)
+    {
+        return From(name, MatchBehaviourHelper.Convert(matchBehaviour, MatchScores.ToScore(isMatch)), exception);
+    }
 
     /// <summary>
     /// Create a MatchResult.

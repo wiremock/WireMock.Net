@@ -13,8 +13,9 @@
         <RepositoryUrl>https://github.com/wiremock/WireMock.Net</RepositoryUrl>
         <ApplicationIcon>../../resources/WireMock.Net-Logo.ico</ApplicationIcon>
         <PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
-        <LangVersion>12</LangVersion>
+        <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
@@ -45,14 +46,11 @@
 
     <PropertyGroup>
         <NuGetAudit>true</NuGetAudit>
-        <!--<NuGetAuditLevel>low</NuGetAuditLevel>-->
+        <NuGetAuditLevel>low</NuGetAuditLevel>
         <NuGetAuditMode>all</NuGetAuditMode>
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- CVE-2019-0820 -->
-        <!--<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />-->
-
         <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
     </ItemGroup>

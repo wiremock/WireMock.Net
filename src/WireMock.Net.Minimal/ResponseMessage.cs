@@ -8,6 +8,7 @@ using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
 using Stef.Validation;
+using WireMock.WebSockets;
 
 namespace WireMock;
 

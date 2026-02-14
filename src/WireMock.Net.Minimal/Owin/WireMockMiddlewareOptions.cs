@@ -8,10 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
+using WireMock.WebSockets;
 using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
 
 namespace WireMock.Owin;
@@ -40,7 +40,6 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     public Action<IApplicationBuilder>? PostWireMockMiddlewareInit { get; set; }
 
-//#if USE_ASPNETCORE
     public Action<IServiceCollection>? AdditionalServiceRegistration { get; set; }
 
     public CorsPolicyOptions? CorsPolicyOptions { get; set; }
@@ -49,7 +48,6 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public bool AcceptAnyClientCertificate { get; set; }
-    //#endif
 
     /// <inheritdoc cref="IWireMockMiddlewareOptions.FileSystemHandler"/>
     public IFileSystemHandler? FileSystemHandler { get; set; }
@@ -107,4 +105,9 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public ActivityTracingOptions? ActivityTracingOptions { get; set; }
+
+    /// <inheritdoc />
+    public ConcurrentDictionary<Guid, WebSocketConnectionRegistry> WebSocketRegistries { get; } = new();
+
+    public WebSocketSettings? WebSocketSettings { get; set; }
 }

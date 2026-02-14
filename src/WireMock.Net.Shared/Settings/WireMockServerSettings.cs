@@ -346,4 +346,10 @@ public class WireMockServerSettings
     /// </remarks>
     [PublicAPI]
     public ActivityTracingOptions? ActivityTracingOptions { get; set; }
+
+    /// <summary>
+    /// WebSocket settings.
+    /// </summary>
+    [PublicAPI]
+    public WebSocketSettings? WebSocketSettings { get; set; }
 }

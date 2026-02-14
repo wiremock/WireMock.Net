@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Lightweight StandAlone Http Mocking Server for .Net.</Description>
         <AssemblyTitle>WireMock.Net.StandAlone</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net451;net452;net46;net461;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
-        <TargetFrameworks>net48;net8.0</TargetFrameworks>
+        <!--<TargetFrameworks>net451;net452;net46;net462;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
+        <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.StandAlone</AssemblyName>
         <PackageId>WireMock.Net.StandAlone</PackageId>

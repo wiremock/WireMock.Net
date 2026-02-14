@@ -1,14 +1,12 @@
 // Copyright © WireMock.Net
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Stef.Validation;
+using WireMock.Extensions;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
 using WireMock.Services;
@@ -16,7 +14,7 @@ using WireMock.Util;
 
 namespace WireMock.Owin;
 
-internal partial class AspNetCoreSelfHost : IOwinSelfHost
+internal partial class AspNetCoreSelfHost
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly IWireMockMiddlewareOptions _wireMockMiddlewareOptions;
@@ -27,9 +25,9 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
     public bool IsStarted { get; private set; }
 
-    public List<string> Urls { get; } = new();
+    public List<string> Urls { get; } = [];
 
-    public List<int> Ports { get; } = new();
+    public List<int> Ports { get; } = [];
 
     public Exception? RunningException { get; private set; }
 
@@ -80,6 +78,14 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
 #if NET8_0_OR_GREATER
                 UseCors(appBuilder);
+
+                var webSocketOptions = new WebSocketOptions();
+                if (_wireMockMiddlewareOptions.WebSocketSettings?.KeepAliveIntervalSeconds != null)
+                {
+                    webSocketOptions.KeepAliveInterval = TimeSpan.FromSeconds(_wireMockMiddlewareOptions.WebSocketSettings.KeepAliveIntervalSeconds);
+                }
+
+                appBuilder.UseWebSockets(webSocketOptions);
 #endif
                 _wireMockMiddlewareOptions.PreWireMockMiddlewareInit?.Invoke(appBuilder);
 
@@ -112,14 +118,42 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             {
                 var addresses = _host.ServerFeatures
                     .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
-                    .Addresses;
+                    .Addresses
+                    .ToArray();
 
-                foreach (var address in addresses)
+                if (_urlOptions.Urls == null)
                 {
-                    Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
+                    foreach (var address in addresses)
+                    {
+                        PortUtils.TryExtract(address, out _, out _, out var scheme, out var host, out var port);
 
-                    PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
-                    Ports.Add(port);
+                        var replacedHost = ReplaceHostWithLocalhost(host!);
+                        var newUrl = $"{scheme}://{replacedHost}:{port}";
+                        Urls.Add(newUrl);
+                        Ports.Add(port);
+                    }
+                }
+                else
+                {
+                    var urlOptions = _urlOptions.Urls?.ToArray() ?? [];
+
+                    for (int i = 0; i < urlOptions.Length; i++)
+                    {
+                        PortUtils.TryExtract(urlOptions[i], out _, out _, out var originalScheme, out _, out _);
+                        if (originalScheme!.StartsWith("grpc", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Always replace "grpc" with "http" in the scheme because GrpcChannel needs http or https.
+                            originalScheme = originalScheme.Replace("grpc", "http", StringComparison.OrdinalIgnoreCase);
+                        }
+
+                        PortUtils.TryExtract(addresses[i], out _, out _, out _, out var realHost, out var realPort);
+
+                        var replacedHost = ReplaceHostWithLocalhost(realHost!);
+                        var newUrl = $"{originalScheme}://{replacedHost}:{realPort}";
+
+                        Urls.Add(newUrl);
+                        Ports.Add(realPort);
+                    }
                 }
 
                 IsStarted = true;
@@ -127,8 +161,8 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
 #if NET8_0
             _logger.Info("Server using .NET 8.0");
-#elif NET48
-            _logger.Info("Server using .NET Framework 4.8");
+#else
+            _logger.Info("Server using .NET Standard 2.0");
 #endif
 
             return _host.RunAsync(token);
@@ -150,5 +184,10 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
 
         IsStarted = false;
         return _host.StopAsync();
+    }
+
+    private static string ReplaceHostWithLocalhost(string host)
+    {
+        return host.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost");
     }
 }

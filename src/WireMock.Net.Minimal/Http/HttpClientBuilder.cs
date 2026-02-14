@@ -56,7 +56,11 @@ internal static class HttpClientBuilder
             }
         }
 
+#if NET8_0_OR_GREATER
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+#else
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+#endif
         ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
 
         return HttpClientFactory2.Create(handler);

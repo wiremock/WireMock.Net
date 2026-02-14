@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
@@ -16,7 +14,7 @@ namespace WireMock.Util;
 /// </summary>
 internal static class PortUtils
 {
-    private static readonly Regex UrlDetailsRegex = new(@"^((?<proto>\w+)://)(?<host>[^/]+?):(?<port>\d+)\/?$", RegexOptions.Compiled, RegexConstants.DefaultTimeout);
+    private static readonly Regex UrlDetailsRegex = new(@"^((?<scheme>\w+)://)(?<host>[^/]+?):(?<port>\d+)\/?$", RegexOptions.Compiled, RegexConstants.DefaultTimeout);
 
     /// <summary>
     /// Finds a random, free port to be listened on.
@@ -37,9 +35,7 @@ internal static class PortUtils
         }
         finally
         {
-//#if !NETSTANDARD1_3
             portSocket.Close();
-//#endif
             portSocket.Dispose();
         }
     }
@@ -75,9 +71,7 @@ internal static class PortUtils
         {
             foreach (var socket in sockets)
             {
-//#if !NETSTANDARD1_3
                 socket.Close();
-//#endif
                 socket.Dispose();
             }
         }
@@ -97,8 +91,8 @@ internal static class PortUtils
         var match = UrlDetailsRegex.Match(url);
         if (match.Success)
         {
-            scheme = match.Groups["proto"].Value;
-            isHttps = scheme.StartsWith("https", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("grpcs", StringComparison.OrdinalIgnoreCase);
+            scheme = match.Groups["scheme"].Value;
+            isHttps = scheme.StartsWith("https", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("grpcs", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("wss", StringComparison.OrdinalIgnoreCase);
             isHttp2 = scheme.StartsWith("grpc", StringComparison.OrdinalIgnoreCase);
             host = match.Groups["host"].Value;
 
