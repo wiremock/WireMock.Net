@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using AnyOfTypes;
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Matchers;
 using WireMock.Models;

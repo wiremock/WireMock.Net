@@ -2,7 +2,7 @@
 
 using System.Net;
 using System.Net.Http;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -65,7 +65,8 @@ namespace WireMock.Net.Tests.ResponseBuilders
                 );
 
             // Act
-            var response = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + "/v1/content");
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetStringAsync("http://localhost:" + server.Ports[0] + "/v1/content");
 
             // Assert
             response.Should().Contain("<hello>world</hello>");

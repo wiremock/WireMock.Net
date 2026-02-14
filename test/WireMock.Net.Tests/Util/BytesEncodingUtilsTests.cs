@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Util;
 
 namespace WireMock.Net.Tests.Util;

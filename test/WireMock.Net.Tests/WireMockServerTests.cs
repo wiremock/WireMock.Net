@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using NFluent;
 using WireMock.Admin.Mappings;
@@ -333,7 +333,7 @@ public partial class WireMockServerTests
         watch.Stop();
 
         // Assert
-        watch.ElapsedMilliseconds.Should().BeGreaterOrEqualTo(0);
+        watch.ElapsedMilliseconds.Should().BeGreaterThanOrEqualTo(0);
 
         server.Stop();
     }
@@ -387,7 +387,7 @@ public partial class WireMockServerTests
         watch.Stop();
 
         // Assert
-        watch.ElapsedMilliseconds.Should().BeGreaterOrEqualTo(0);
+        watch.ElapsedMilliseconds.Should().BeGreaterThanOrEqualTo(0);
 
         server.Stop();
     }

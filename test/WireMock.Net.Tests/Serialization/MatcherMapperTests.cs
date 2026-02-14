@@ -1,8 +1,8 @@
 // Copyright © WireMock.Net
 
 using AnyOfTypes;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Moq;
 using Newtonsoft.Json;
 using NFluent;

@@ -12,7 +12,7 @@ using WireMock.Matchers;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Requests;
 using WireMock.Settings;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Handlers;
 using WireMock.Matchers.Request;
 using WireMock.ResponseBuilders;

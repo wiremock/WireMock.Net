@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using WireMock.Handlers;
 using WireMock.Server;

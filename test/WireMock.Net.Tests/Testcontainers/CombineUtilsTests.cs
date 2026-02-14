@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Net.Testcontainers.Utils;
 
 namespace WireMock.Net.Tests.Testcontainers;

@@ -10,7 +10,8 @@ namespace WireMock.Net.Tests.Facts;
 [ExcludeFromCodeCoverage]
 public sealed class RunOnDockerPlatformFact : FactAttribute
 {
-    public RunOnDockerPlatformFact(string platform,
+    public RunOnDockerPlatformFact(
+        string platform,
         [CallerFilePath] string? sourceFilePath = null,
         [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
     {

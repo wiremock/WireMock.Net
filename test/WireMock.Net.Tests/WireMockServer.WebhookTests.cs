@@ -2,7 +2,7 @@
 
 using System.Net;
 using System.Net.Http;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Models;

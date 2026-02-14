@@ -2,7 +2,7 @@
 
 using System.Net;
 using System.Net.Http;
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;

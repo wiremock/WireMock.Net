@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using Moq;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Handlers;
 using WireMock.Owin.Mappers;
 using WireMock.ResponseBuilders;

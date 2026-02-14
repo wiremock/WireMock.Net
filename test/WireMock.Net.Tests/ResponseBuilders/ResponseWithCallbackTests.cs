@@ -2,7 +2,7 @@
 
 using System.Net;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;

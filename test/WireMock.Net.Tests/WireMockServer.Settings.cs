@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using NFluent;
 using WireMock.Authentication;

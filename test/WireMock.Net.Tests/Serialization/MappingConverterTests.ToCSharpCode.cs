@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;

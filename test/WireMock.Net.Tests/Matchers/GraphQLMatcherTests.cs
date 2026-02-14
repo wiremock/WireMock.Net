@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using GraphQLParser.Exceptions;
 using WireMock.Exceptions;
 using WireMock.Matchers;

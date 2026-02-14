@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NFluent;

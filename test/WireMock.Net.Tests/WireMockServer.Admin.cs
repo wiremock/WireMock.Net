@@ -3,7 +3,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NFluent;

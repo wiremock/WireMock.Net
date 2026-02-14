@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NFluent;

@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using JsonConverter.Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using Moq;

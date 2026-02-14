@@ -4,7 +4,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;

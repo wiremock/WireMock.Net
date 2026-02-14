@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Net;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.Server;

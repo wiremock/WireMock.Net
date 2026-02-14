@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Net.WebSockets;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;

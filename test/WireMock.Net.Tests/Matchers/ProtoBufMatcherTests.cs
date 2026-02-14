@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using ProtoBuf;
 using WireMock.Matchers;
 using WireMock.Models;

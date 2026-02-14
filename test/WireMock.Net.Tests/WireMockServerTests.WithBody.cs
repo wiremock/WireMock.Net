@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;

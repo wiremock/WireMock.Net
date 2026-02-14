@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using FluentAssertions;
-using WireMock.FluentAssertions;
+using AwesomeAssertions;
+using WireMock.AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -33,7 +33,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedNoCalls_AtAbsoluteUrl_WhenACallWasNotMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("xxx");
+        await _httpClient.GetAsync("xxx", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedNoCalls()
@@ -43,7 +43,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived0Calls_AtAbsoluteUrl_WhenACallWasNotMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("xxx");
+        await _httpClient.GetAsync("xxx", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(0).Calls()
@@ -53,7 +53,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived1Calls_AtAbsoluteUrl_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(1).Calls()
@@ -63,17 +63,17 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived1Calls_AtAbsoluteUrl2_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(1).Calls()
-            .AtAbsoluteUrl2($"http://localhost:{_portUsed}/anyurl");
+            .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
 
     [Fact]
     public async Task HaveReceived1Calls_AtAbsoluteUrlUsingPost_WhenAPostCallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.PostAsync("anyurl", new StringContent(""));
+        await _httpClient.PostAsync("anyurl", new StringContent(""), TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(1).Calls()
@@ -85,9 +85,9 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived2Calls_AtAbsoluteUrl_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(2).Calls()
@@ -97,7 +97,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsoluteUrl_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -107,7 +107,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsoluteUrlWildcardMatcher_WhenACallWasMadeToAbsoluteUrl_Should_BeOK()
     {
-        await _httpClient.GetAsync("anyurl");
+        await _httpClient.GetAsync("anyurl", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -129,7 +129,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsoluteUrl_Should_ThrowWhenNoCallsMatchingTheAbsoluteUrlWereMade()
     {
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         Action act = () => _server.Should()
             .HaveReceivedACall()
@@ -143,7 +143,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedNoCalls_AtAbsolutePath_WhenACallWasNotMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("xxx");
+        await _httpClient.GetAsync("xxx", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedNoCalls()
@@ -153,7 +153,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived0Calls_AtAbsolutePath_WhenACallWasNotMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("xxx");
+        await _httpClient.GetAsync("xxx", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(0).Calls()
@@ -163,7 +163,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived1Calls_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("anypath");
+        await _httpClient.GetAsync("anypath", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(1).Calls()
@@ -173,7 +173,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived1Calls_AtAbsolutePathUsingPost_WhenAPostCallWasMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.PostAsync("anypath", new StringContent(""));
+        await _httpClient.PostAsync("anypath", new StringContent(""), TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(1).Calls()
@@ -185,9 +185,9 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceived2Calls_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("anypath");
+        await _httpClient.GetAsync("anypath", TestContext.Current.CancellationToken);
 
-        await _httpClient.GetAsync("anypath");
+        await _httpClient.GetAsync("anypath", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceived(2).Calls()
@@ -197,7 +197,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsolutePath_WhenACallWasMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("anypath");
+        await _httpClient.GetAsync("anypath", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -207,7 +207,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsolutePathWildcardMatcher_WhenACallWasMadeToAbsolutePath_Should_BeOK()
     {
-        await _httpClient.GetAsync("anypath");
+        await _httpClient.GetAsync("anypath", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -229,7 +229,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_AtAbsolutePath_Should_ThrowWhenNoCallsMatchingTheAbsolutePathWereMade()
     {
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         Action act = () => _server.Should()
             .HaveReceivedACall()
@@ -244,7 +244,7 @@ public class WireMockAssertionsTests : IDisposable
     public async Task HaveReceivedACall_WithHeader_WhenACallWasMadeWithExpectedHeader_Should_BeOK()
     {
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer a");
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -255,7 +255,7 @@ public class WireMockAssertionsTests : IDisposable
     public async Task HaveReceivedACall_WithHeader_WhenACallWasMadeWithExpectedHeaderWithValue_Should_BeOK()
     {
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer a");
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -267,10 +267,10 @@ public class WireMockAssertionsTests : IDisposable
     {
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        await _httpClient.GetAsync("1");
+        await _httpClient.GetAsync("1", TestContext.Current.CancellationToken);
 
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("EN"));
-        await _httpClient.GetAsync("2");
+        await _httpClient.GetAsync("2", TestContext.Current.CancellationToken);
 
         _server.Should()
             .HaveReceivedACall()
@@ -282,7 +282,7 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public async Task HaveReceivedACall_WithHeader_Should_ThrowWhenNoCallsMatchingTheHeaderNameWereMade()
     {
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         Action act = () => _server.Should()
             .HaveReceivedACall()
@@ -298,7 +298,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        await _httpClient.GetAsync("");
+        await _httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         Action act = () => _server.Should()
             .HaveReceivedACall()
@@ -316,7 +316,7 @@ public class WireMockAssertionsTests : IDisposable
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        await httpClient.GetAsync("");
+        await httpClient.GetAsync("", TestContext.Current.CancellationToken);
 
         Action act = () => _server.Should()
             .HaveReceivedACall()
@@ -331,6 +331,7 @@ public class WireMockAssertionsTests : IDisposable
     public async Task HaveReceivedACall_WithHeader_ShouldCheckAllRequests()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start();
         using var client1 = server.CreateClient();
 
@@ -344,7 +345,7 @@ public class WireMockAssertionsTests : IDisposable
             {
                 Authorization = new AuthenticationHeaderValue("Bearer", "invalidToken")
             }
-        });
+        }, cancellationToken);
 
         // Act 2
         var task2 = client2.SendAsync(new HttpRequestMessage(HttpMethod.Get, "/")
@@ -353,7 +354,7 @@ public class WireMockAssertionsTests : IDisposable
             {
                 Authorization = new AuthenticationHeaderValue("Bearer", "validToken")
             }
-        });
+        }, cancellationToken);
 
         await Task.WhenAll(task1, task2);
 

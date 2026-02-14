@@ -48,7 +48,7 @@
     </ItemGroup>-->
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\WireMock.Net.FluentAssertions\WireMock.Net.FluentAssertions.csproj" />
+        <ProjectReference Include="..\..\src\WireMock.Net.AwesomeAssertions\WireMock.Net.AwesomeAssertions.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.Matchers.CSharpCode\WireMock.Net.Matchers.CSharpCode.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.RestClient\WireMock.Net.RestClient.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.xUnit.v3\WireMock.Net.xUnit.v3.csproj" />

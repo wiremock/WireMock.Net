@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using GraphQL.Types;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;

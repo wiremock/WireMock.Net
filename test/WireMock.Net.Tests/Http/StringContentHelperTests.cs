@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Net.Http.Headers;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Http;
 
 namespace WireMock.Net.Tests.Http;

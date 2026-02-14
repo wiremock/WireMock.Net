@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using HandlebarsDotNet;
 using HandlebarsDotNet.Helpers.Enums;
 using Microsoft.AspNetCore.Http;

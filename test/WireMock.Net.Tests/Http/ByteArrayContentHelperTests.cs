@@ -2,7 +2,7 @@
 
 using System.Net.Http.Headers;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Http;
 
 namespace WireMock.Net.Tests.Http;

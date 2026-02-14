@@ -2,7 +2,7 @@
 
 using System.Net.Http;
 using AnyOfTypes;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.Models;
 

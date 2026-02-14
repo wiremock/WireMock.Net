@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.OpenTelemetry;
 
 namespace WireMock.Net.Tests.OpenTelemetry;

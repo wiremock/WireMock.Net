@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using ExampleIntegrationTest.Lookup;
-using FluentAssertions;
+using AwesomeAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
 using Grpc.Net.Client;

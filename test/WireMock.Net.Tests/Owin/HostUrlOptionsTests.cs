@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Owin;
 using WireMock.Types;
 

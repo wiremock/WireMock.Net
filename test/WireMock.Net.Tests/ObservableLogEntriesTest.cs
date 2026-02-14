@@ -3,7 +3,7 @@
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using NFluent;
 using WireMock.Logging;

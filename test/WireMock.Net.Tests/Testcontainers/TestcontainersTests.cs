@@ -2,9 +2,9 @@
 
 #if NET6_0_OR_GREATER
 using System.Runtime.InteropServices;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using DotNet.Testcontainers.Builders;
-using FluentAssertions;
-using FluentAssertions.Execution;
 using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.Logging;
 using WireMock.Net.Testcontainers;

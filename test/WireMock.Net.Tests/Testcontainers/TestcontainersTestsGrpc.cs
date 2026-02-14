@@ -2,8 +2,8 @@
 
 #if NET6_0_OR_GREATER
 using System.Text;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Greet;
 using Grpc.Net.Client;
 using Meziantou.Extensions.Logging.Xunit.v3;
