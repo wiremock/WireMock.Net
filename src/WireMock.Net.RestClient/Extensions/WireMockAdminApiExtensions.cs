@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Client.Builders;
 
