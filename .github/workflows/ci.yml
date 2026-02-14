@@ -52,19 +52,19 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: 'WireMock.Net.TUnitTests'
-      run: dotnet test './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
+      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
 
     - name: 'WireMock.Net.Tests'
-      run: dotnet test './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
 
     - name: 'WireMock.Net.Tests.UsingNuGet'
-      run: dotnet test './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
+      run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
       
     - name: 'WireMock.Net.Middleware.Tests'
-      run: dotnet test './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
+      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
 
     - name: Install .NET Aspire workload
       run: dotnet workload install aspire
 
     - name: 'WireMock.Net.Aspire.Tests'
-      run: dotnet test './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release
+      run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release
