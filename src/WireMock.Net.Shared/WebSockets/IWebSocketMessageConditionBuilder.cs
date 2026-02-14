@@ -14,7 +14,7 @@ public interface IWebSocketMessageConditionBuilder
     /// </summary>
     /// <param name="configure">Action to configure the message</param>
     [PublicAPI]
-    IWebSocketBuilder SendMessage(Action<IWebSocketMessageBuilder> configure);
+    IWebSocketBuilder ThenSendMessage(Action<IWebSocketMessageBuilder> configure);
 
     /// <summary>
     /// Configure and send multiple messages when the condition matches

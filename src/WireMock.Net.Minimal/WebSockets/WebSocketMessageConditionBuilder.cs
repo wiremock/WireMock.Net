@@ -16,7 +16,7 @@ internal class WebSocketMessageConditionBuilder : IWebSocketMessageConditionBuil
         _matcher = Guard.NotNull(matcher);
     }
 
-    public IWebSocketBuilder SendMessage(Action<IWebSocketMessageBuilder> configure)
+    public IWebSocketBuilder ThenSendMessage(Action<IWebSocketMessageBuilder> configure)
     {
         Guard.NotNull(configure);
         var messageBuilder = new WebSocketMessageBuilder();

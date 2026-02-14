@@ -474,11 +474,11 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
                     .WithCloseTimeout(TimeSpan.FromSeconds(3))
-                    .WhenMessage("/help").SendMessage(m => m.WithText("Available commands"))
-                    .WhenMessage("/time").SendMessage(m => m.WithText($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"))
-                    .WhenMessage("/echo *").SendMessage(m => m.WithText("echo response"))
-                    .WhenMessage(new ExactMatcher("/exact")).SendMessage(m => m.WithText("is exact"))
-                    .WhenMessage(new FuncMatcher(s => s == "/func")).SendMessage(m => m.WithText("is func"))
+                    .WhenMessage("/help").ThenSendMessage(m => m.WithText("Available commands"))
+                    .WhenMessage("/time").ThenSendMessage(m => m.WithText($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC"))
+                    .WhenMessage("/echo *").ThenSendMessage(m => m.WithText("echo response"))
+                    .WhenMessage(new ExactMatcher("/exact")).ThenSendMessage(m => m.WithText("is exact"))
+                    .WhenMessage(new FuncMatcher(s => s == "/func")).ThenSendMessage(m => m.WithText("is func"))
                 )
             );
 
@@ -509,6 +509,60 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
     }
 
     [Fact]
+    public async Task WhenMessage_NoMatch_Should_Return404()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/test")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WhenMessage("/close")
+                    .ThenSendMessage(m => m.WithText("Closing connection")
+                    .AndClose()
+                ))
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url}/ws/test");
+        await client.ConnectAsync(uri, CancellationToken.None);
+
+        // Act
+        await client.SendAsync("/close");
+
+        var received = await client.ReceiveAsTextAsync();
+
+        // Assert
+        received.Should().Contain("Closing connection");
+
+        // Try to receive again - this will complete the close handshake
+        // and update the client state to Closed
+        try
+        {
+            var receiveBuffer = new byte[1024];
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+
+            // If we get here, the message type should be Close
+            result.MessageType.Should().Be(WebSocketMessageType.Close);
+        }
+        catch (WebSocketException)
+        {
+            // Connection was closed, which is expected
+        }
+
+        // Verify the connection is CloseReceived
+        client.State.Should().Be(WebSocketState.CloseReceived);
+    }
+
+    [Fact]
     public async Task WhenMessage_Should_Close_Connection_When_AndClose_Is_Used()
     {
         // Arrange
@@ -525,8 +579,10 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WhenMessage("/close").SendMessage(m => m.WithText("Closing connection").AndClose())
-                )
+                    .WhenMessage("/close")
+                    .ThenSendMessage(m => m.WithText("Closing connection")
+                    .AndClose()
+                ))
             );
 
         using var client = new ClientWebSocket();
