@@ -1,21 +1,13 @@
 // Copyright © WireMock.Net
 
-//#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NFluent;
 using RestEase;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Scenarios;
 using WireMock.Admin.Settings;
@@ -31,7 +23,6 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
@@ -200,7 +191,8 @@ public partial class WireMockAdminApiTests
             .RespondWith(Response.Create());
 
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo");
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo");
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
@@ -270,7 +262,8 @@ public partial class WireMockAdminApiTests
             .RespondWith(Response.Create());
 
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo");
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo");
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
@@ -307,7 +300,8 @@ public partial class WireMockAdminApiTests
             Logger = new WireMockNullLogger()
         });
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo");
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo");
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
@@ -341,7 +335,8 @@ public partial class WireMockAdminApiTests
         request.Content = new StringContent(data);
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(jsonApiContentType);
 
-        var response = await new HttpClient().SendAsync(request);
+        using var client = new HttpClient();
+        var response = await client.SendAsync(request);
         Check.That(response).IsNotNull();
 
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
@@ -394,7 +389,7 @@ public partial class WireMockAdminApiTests
 
         var getMappingResult = await api.GetMappingAsync(guid);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -445,7 +440,7 @@ public partial class WireMockAdminApiTests
 
         var getMappingResult = await api.GetMappingAsync(guid);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -494,7 +489,7 @@ public partial class WireMockAdminApiTests
 
         var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -518,7 +513,8 @@ public partial class WireMockAdminApiTests
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(jsonAcceptHeader));
         request.Content = new StringContent(data);
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(jsonApiContentType);
-        var response = await new HttpClient().SendAsync(request);
+        using var client = new HttpClient();
+        var response = await client.SendAsync(request);
         Check.That(response).IsNotNull();
 
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
@@ -872,7 +868,7 @@ public partial class WireMockAdminApiTests
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
         mapping.Should().NotBeNull();
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -907,7 +903,7 @@ public partial class WireMockAdminApiTests
         var code = await api.GetMappingCodeAsync(guid);
 
         // Assert
-        await Verifier.Verify(code).DontScrubDateTimes().DontScrubGuids();
+        await Verify(code).DontScrubDateTimes().DontScrubGuids();
 
         server.Stop();
     }
@@ -1029,7 +1025,7 @@ text
         var code = await api.GetMappingsCodeAsync();
 
         // Assert
-        await Verifier.Verify(code).DontScrubDateTimes().DontScrubGuids();
+        await Verify(code).DontScrubDateTimes().DontScrubGuids();
 
         server.Stop();
     }
@@ -1129,4 +1125,3 @@ text
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings", filename));
     }
 }
-//#endif
