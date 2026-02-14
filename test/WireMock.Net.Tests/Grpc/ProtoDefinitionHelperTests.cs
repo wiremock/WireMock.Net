@@ -13,12 +13,13 @@ public class ProtoDefinitionHelperTests
     public async Task FromDirectory_Greet_ShouldReturnModifiedProtoFiles()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var directory = Path.Combine(Directory.GetCurrentDirectory(), "Grpc", "Test");
         var expectedFilename = "SubFolder/request.proto";
         var expectedComment = $"// {expectedFilename}";
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory, cancellationToken);
         var protoDefinitions = protoDefinitionData.ToList("greet");
 
         // Assert
@@ -47,7 +48,7 @@ public class ProtoDefinitionHelperTests
         var directory = Path.Combine(Directory.GetCurrentDirectory(), "Grpc", "ot");
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory, TestContext.Current.CancellationToken);
         var protoDefinitions = protoDefinitionData.ToList("trace_service");
 
         // Assert
