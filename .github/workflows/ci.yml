@@ -31,7 +31,7 @@ jobs:
       run: dotnet test './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
 
     - name: 'WireMock.Net.TUnitTests'
-      run: dotnet test './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net8.0
+      run: dotnet test './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net8.0 -p:UseVSTest=false
 
     - name: 'WireMock.Net.Middleware.Tests'
       run: dotnet test './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0

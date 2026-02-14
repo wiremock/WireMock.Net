@@ -58,9 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actions", "Actions", "{1DAE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure Pipelines", "Azure Pipelines", "{5B64F6CA-BF6B-4F67-BB2A-9C47E441703E}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines-ci-linux.yml = azure-pipelines-ci-linux.yml
 		azure-pipelines-ci.yml = azure-pipelines-ci.yml
-		azure-pipelines-linux.yml = azure-pipelines-linux.yml
 		azure-pipelines-nuget.yml = azure-pipelines-nuget.yml
 	EndProjectSection
 EndProject

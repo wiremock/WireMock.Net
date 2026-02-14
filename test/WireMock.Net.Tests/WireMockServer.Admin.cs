@@ -244,6 +244,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Mapping_WithoutPathOrUrl()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.StartWithAdminInterface();
 
         // Act
@@ -257,16 +258,16 @@ public class WireMockServerAdminTests
         pathMatcher.Should().BeNull();
 
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var mappingModels = await api.GetMappingsAsync();
+        var mappingModels = await api.GetMappingsAsync(cancellationToken);
         var mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
 
-        await api.DeleteMappingsAsync();
+        await api.DeleteMappingsAsync(cancellationToken);
 
-        await api.PostMappingAsync(mappingModel);
-        await api.GetMappingsAsync();
-        mappingModels = await api.GetMappingsAsync();
+        await api.PostMappingAsync(mappingModel, cancellationToken);
+        await api.GetMappingsAsync(cancellationToken);
+        mappingModels = await api.GetMappingsAsync(cancellationToken);
         mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
@@ -351,7 +352,7 @@ public class WireMockServerAdminTests
         Check.That(mappings).HasSize(2);
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1");
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1", TestContext.Current.CancellationToken);
 
         // then
         Check.That((int)response.StatusCode).IsEqualTo(400);
@@ -366,7 +367,7 @@ public class WireMockServerAdminTests
         var server = WireMockServer.Start();
 
         // when
-        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo");
+        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo", TestContext.Current.CancellationToken);
 
         // then
         Check.That(server.LogEntries).HasSize(1);
@@ -381,14 +382,15 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var client = new HttpClient();
         // Act
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(2);
 
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1");
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2");
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3");
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3", cancellationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(2);
@@ -406,15 +408,16 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount_To_0_Should_Not_AddLogging()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var client = new HttpClient();
 
         // Act
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(0);
 
-        await client.GetAsync("http://localhost:" + server.Port + "/foo1");
-        await client.GetAsync("http://localhost:" + server.Port + "/foo2");
-        await client.GetAsync("http://localhost:" + server.Port + "/foo3");
+        await client.GetAsync("http://localhost:" + server.Port + "/foo1", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo2", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo3", cancellationToken);
 
         // Assert
         server.LogEntries.Should().BeEmpty();
@@ -426,6 +429,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_FindLogEntries()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var client = new HttpClient();
 
         // Act
@@ -433,9 +437,9 @@ public class WireMockServerAdminTests
 
         var tasks = new[]
         {
-            client.GetAsync($"{server.Url}/foo1"),
-            client.PostAsync($"{server.Url}/foo2", new StringContent("test")),
-            client.GetAsync($"{server.Url}/foo3")
+            client.GetAsync($"{server.Url}/foo1", cancellationToken),
+            client.PostAsync($"{server.Url}/foo2", new StringContent("test"), cancellationToken),
+            client.GetAsync($"{server.Url}/foo3", cancellationToken)
         };
 
         await Task.WhenAll(tasks);
@@ -585,11 +589,12 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateClient_And_CallEndpoint()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         var client = server.CreateClient();
 
         // Act
-        await client.GetAsync($"{server.Url}/foo");
+        await client.GetAsync($"{server.Url}/foo", cancellationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);
@@ -606,6 +611,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateClient_And_CallAdminSettingsEndpoint()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(w =>
         {
             w.StartAdminInterface = true;
@@ -614,7 +620,7 @@ public class WireMockServerAdminTests
         var client = server.CreateClient();
 
         // Act
-        var settings = await client.GetStringAsync($"{server.Url}/adm/settings");
+        var settings = await client.GetStringAsync($"{server.Url}/adm/settings", cancellationToken);
 
         // Assert
         settings.Should().NotBeNull();
