@@ -28,13 +28,13 @@ jobs:
     #   run: dotnet test './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
 
     - name: 'WireMock.Net.Tests'
-      run: dotnet test './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
 
     - name: 'WireMock.Net.Tests.UsingNuGet'
-      run: dotnet test './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
+      run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
 
     - name: 'WireMock.Net.Middleware.Tests'
-      run: dotnet test './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
+      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release
 
   linux-build-and-run:
     name: Run Tests on Linux
@@ -61,7 +61,7 @@ jobs:
       run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
       
     - name: 'WireMock.Net.Middleware.Tests'
-      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
+      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release
 
     - name: Install .NET Aspire workload
       run: dotnet workload install aspire

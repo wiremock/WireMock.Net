@@ -47,25 +47,25 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-xunit.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-xunit.xml"
     displayName: 'WireMock.Net.Tests with Coverage'
-
-  # - task: CmdLine@2
-  #   inputs:
-  #     script: |
-  #         dotnet-coverage collect "dotnet test ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-tunit.xml"
-  #   displayName: 'WireMock.Net.TUnitTests with Coverage'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-middleware.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-tunit.xml"
+    displayName: 'WireMock.Net.TUnitTests with Coverage'
+
+  - task: CmdLine@2
+    inputs:
+      script: |
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-middleware.xml"
     displayName: 'WireMock.Net.Middleware.Tests with Coverage'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-aspire.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-aspire.xml"
     displayName: 'WireMock.Net.Aspire.Tests with Coverage'
 
   - task: CmdLine@2
