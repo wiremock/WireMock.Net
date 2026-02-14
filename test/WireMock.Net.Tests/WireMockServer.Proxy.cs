@@ -46,7 +46,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(server.Mappings).HasSize(2);
@@ -57,6 +57,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_AdminFalse_With_SaveMapping_Is_True_And_SaveMappingToFile_Is_False_Should_AddInternalMappingOnly()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var settings = new WireMockServerSettings
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
@@ -79,7 +80,7 @@ public class WireMockServerProxyTests
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(server.Url!)
             };
-            await client.SendAsync(requestMessage);
+            await client.SendAsync(requestMessage, cancellationToken);
         }
 
         // Assert
@@ -90,6 +91,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_AdminTrue_With_SaveMapping_Is_True_And_SaveMappingToFile_Is_False_Should_AddInternalMappingOnly()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var settings = new WireMockServerSettings
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
@@ -113,7 +115,7 @@ public class WireMockServerProxyTests
             };
             var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
             using var httpClient = new HttpClient(httpClientHandler);
-            await httpClient.SendAsync(requestMessage);
+            await httpClient.SendAsync(requestMessage, cancellationToken);
         }
 
         // Assert
@@ -168,7 +170,7 @@ public class WireMockServerProxyTests
             Content = new StringContent(stringBody)
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
-        await new HttpClient(httpClientHandler).SendAsync(requestMessage);
+        await new HttpClient(httpClientHandler).SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         server.Mappings.Should().HaveCount(2);
@@ -204,7 +206,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -241,7 +243,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -281,7 +283,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         server.Mappings.Should().HaveCount(1);
@@ -313,7 +315,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         server.Mappings.Should().HaveCount(2);
@@ -324,6 +326,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_proxy_responses()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/prx_{Guid.NewGuid()}";
         var server = WireMockServer.Start();
         server
@@ -338,8 +341,8 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        var response = await httpClient.SendAsync(requestMessage);
-        string content = await response.Content.ReadAsStringAsync();
+        var response = await httpClient.SendAsync(requestMessage, cancellationToken);
+        string content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         // Assert
         Check.That(server.Mappings).HasSize(1);
@@ -380,7 +383,7 @@ public class WireMockServerProxyTests
         requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
         requestMessage.Content.Headers.Add("bbb", "test");
         using var httpClient = new HttpClient();
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -397,6 +400,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_preserve_Authorization_header_in_proxied_request()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/prx_{Guid.NewGuid()}";
         var serverForProxyForwarding = WireMockServer.Start();
         serverForProxyForwarding
@@ -429,10 +433,10 @@ public class WireMockServerProxyTests
             Content = new StringContent("stringContent", Encoding.ASCII)
         };
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("BASIC", "test-A");
-        var result = await new HttpClient().SendAsync(requestMessage);
+        var result = await new HttpClient().SendAsync(requestMessage, cancellationToken);
 
         // Assert
-        (await result.Content.ReadAsStringAsync()).Should().Be("BASIC test-A");
+        (await result.Content.ReadAsStringAsync(cancellationToken)).Should().Be("BASIC test-A");
 
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
         receivedRequest.Headers!["Authorization"].ToString().Should().Be("BASIC test-A");
@@ -476,7 +480,7 @@ public class WireMockServerProxyTests
         requestMessage.Headers.Add("foobar", "exact_match");
         requestMessage.Headers.Add("ok", "ok-value");
         using var httpClient = new HttpClient();
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -524,7 +528,7 @@ public class WireMockServerProxyTests
 
         var handler = new HttpClientHandler { CookieContainer = cookieContainer };
         using var httpClient = new HttpClient(handler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -569,7 +573,7 @@ public class WireMockServerProxyTests
             Content = new StringContent("stringContent"),
         };
         using var httpClient = new HttpClient();
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -617,7 +621,7 @@ public class WireMockServerProxyTests
 
         var handler = new HttpClientHandler();
         using var httpClient = new HttpClient(handler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var mapping = serverForProxyForwarding.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
@@ -650,7 +654,7 @@ public class WireMockServerProxyTests
         };
         requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
         using var httpClient = new HttpClient();
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -663,6 +667,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_preserve_content_header_in_proxied_response()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/prx_{Guid.NewGuid()}";
         var serverForProxyForwarding = WireMockServer.Start();
         serverForProxyForwarding
@@ -683,10 +688,11 @@ public class WireMockServerProxyTests
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
         using var httpClient = new HttpClient();
-        var response = await httpClient.SendAsync(requestMessage);
+        var response = await httpClient.SendAsync(requestMessage, cancellationToken);
 
         // Assert
-        Check.That(await response.Content.ReadAsStringAsync()).IsEqualTo("body");
+        string content = await response.Content.ReadAsStringAsync(cancellationToken);
+        Check.That(content).IsEqualTo("body");
         Check.That(response.Content.Headers.Contains("Content-Type")).IsTrue();
         Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("text/plain");
     }
@@ -718,7 +724,7 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        var response = await httpClient.SendAsync(requestMessage);
+        var response = await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(response.Headers.Contains("Location")).IsTrue();
@@ -750,7 +756,7 @@ public class WireMockServerProxyTests
         var clientHandler = new HttpClientHandler();
         clientHandler.CookieContainer.Add(requestUri, new Cookie("name", "value"));
         using var httpClient = new HttpClient(clientHandler);
-        await httpClient.SendAsync(requestMessage);
+        await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // then
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
@@ -790,7 +796,7 @@ public class WireMockServerProxyTests
 
         // act
         using var httpClient = new HttpClient();
-        var response = await httpClient.PostAsync(server.Urls[0], new ByteArrayContent(jpegHeader));
+        var response = await httpClient.PostAsync(server.Urls[0], new ByteArrayContent(jpegHeader), TestContext.Current.CancellationToken);
 
         // assert
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
@@ -800,6 +806,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_set_BodyAsJson_in_proxied_response()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/prx_{Guid.NewGuid()}";
         var serverForProxyForwarding = WireMockServer.Start();
         serverForProxyForwarding
@@ -820,10 +827,10 @@ public class WireMockServerProxyTests
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
         using var httpClient = new HttpClient();
-        var response = await httpClient.SendAsync(requestMessage);
+        var response = await httpClient.SendAsync(requestMessage, cancellationToken);
 
         // Assert
-        string content = await response.Content.ReadAsStringAsync();
+        string content = await response.Content.ReadAsStringAsync(cancellationToken);
         Check.That(content).IsEqualTo("{\"i\":42}");
         Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
     }

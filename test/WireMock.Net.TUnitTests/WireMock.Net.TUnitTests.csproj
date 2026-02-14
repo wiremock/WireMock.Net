@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <IsTestProject>true</IsTestProject>
         <SonarQubeExclude>true</SonarQubeExclude>
+        <UseVSTest>false</UseVSTest>
     </PropertyGroup>
 
     <ItemGroup>

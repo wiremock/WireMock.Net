@@ -70,7 +70,7 @@ public partial class WireMockAdminApiTests
             Title = "test 2",
             Description = "description 2"
         };
-        var result = await api.PostMappingsAsync(new[] { model1, model2 });
+        var result = await api.PostMappingsAsync([model1, model2], TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(result).IsNotNull();
@@ -89,7 +89,7 @@ public partial class WireMockAdminApiTests
     [InlineData(0, 0)]
     [InlineData(200, 200)]
     [InlineData("200", "200")]
-    public async Task IWireMockAdminApi_PostMappingAsync_WithStatusCode(object statusCode, object expectedStatusCode)
+    public async Task IWireMockAdminApi_PostMappingAsync_WithStatusCode(object? statusCode, object? expectedStatusCode)
     {
         // Arrange
         var server = WireMockServer.StartWithAdminInterface();
@@ -103,7 +103,7 @@ public partial class WireMockAdminApiTests
             Priority = 500,
             Title = "test"
         };
-        var result = await api.PostMappingAsync(model);
+        var result = await api.PostMappingAsync(model, TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(result).IsNotNull();
