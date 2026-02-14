@@ -58,7 +58,7 @@ public static class WireMockAdminApiExtensions
         var waitTime = InitialWaitingTimeInMilliSeconds;
         var totalWaitTime = waitTime;
         var isHealthy = await IsHealthyAsync(adminApi, cancellationToken);
-        while (!isHealthy && retries < MaxRetries && !cancellationToken.IsCancellationRequested)
+        while (!isHealthy && retries < maxRetries && !cancellationToken.IsCancellationRequested)
         {
             waitTime = (int)(InitialWaitingTimeInMilliSeconds * Math.Pow(2, retries));
             await Task.Delay(waitTime, cancellationToken);
@@ -67,7 +67,7 @@ public static class WireMockAdminApiExtensions
             totalWaitTime += waitTime;
         }
 
-        if (retries >= MaxRetries)
+        if (retries >= maxRetries)
         {
             throw new InvalidOperationException($"The /__admin/health endpoint did not return '{HealthStatusHealthy}' after {MaxRetries} retries and {totalWaitTime / 1000.0:0.0} seconds.");
         }
