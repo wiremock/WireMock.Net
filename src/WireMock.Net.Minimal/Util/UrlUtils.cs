@@ -1,14 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
 using Microsoft.AspNetCore.Http;
 using WireMock.Models;
 using Stef.Validation;
-//#if !USE_ASPNETCORE
-//using Microsoft.Owin;
-//#else
-//using Microsoft.AspNetCore.Http;
-//#endif
 
 namespace WireMock.Util;
 

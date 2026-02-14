@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using AnyOfTypes;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -14,7 +12,6 @@ using WireMock.Matchers;
 using WireMock.Models;
 using WireMock.Serialization;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
@@ -56,13 +53,12 @@ public class MatcherMapperTests
         var matcherMock2 = new Mock<IStringMatcher>();
 
         // Act
-        var models = _sut.Map(new[] { matcherMock1.Object, matcherMock2.Object });
+        var models = _sut.Map([matcherMock1.Object, matcherMock2.Object]);
 
         // Assert
         models.Should().HaveCount(2);
     }
 
-//#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_Matcher_MimePartMatcher()
     {
@@ -94,7 +90,6 @@ public class MatcherMapperTests
         model.ContentMatcher!.Name.Should().Be(nameof(ExactObjectMatcher));
         model.ContentMatcher.Pattern.Should().Be(bytes);
     }
-//#endif
 
     [Fact]
     public void MatcherMapper_Map_Matcher_IStringMatcher()
@@ -124,7 +119,7 @@ public class MatcherMapperTests
 
         var matcherMock = new Mock<IStringMatcher>();
         matcherMock.Setup(m => m.Name).Returns("test");
-        matcherMock.Setup(m => m.GetPatterns()).Returns(new AnyOf<string, StringPattern>[] { pattern });
+        matcherMock.Setup(m => m.GetPatterns()).Returns([pattern]);
 
         // Act
         var model = _sut.Map(matcherMock.Object)!;
@@ -171,7 +166,6 @@ public class MatcherMapperTests
         model.XmlNamespaceMap.Should().BeEquivalentTo(xmlNamespaceMap);
     }
 
-//#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_Matcher_GraphQLMatcher()
     {
@@ -199,9 +193,7 @@ public class MatcherMapperTests
         model.Pattern.Should().Be(testSchema);
         model.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-//#endif
 
-//#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_Matcher_ProtoBufMatcher()
     {
@@ -280,7 +272,6 @@ message HelloReply {
         model.ContentMatcher?.Name.Should().Be("JsonMatcher");
         model.ContentMatcher?.Pattern.Should().Be(jsonPattern);
     }
-//#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_Null()
@@ -598,7 +589,6 @@ message HelloReply {
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
     }
 
-//#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_MatcherModel_MimePartMatcher()
     {
@@ -638,7 +628,6 @@ message HelloReply {
         matcher.ContentTransferEncodingMatcher.Should().BeAssignableTo<RegexMatcher>().Which.GetPatterns().Should().ContainSingle("z");
         matcher.ContentTypeMatcher.Should().BeAssignableTo<ContentTypeMatcher>().Which.GetPatterns().Should().ContainSingle("text/json");
     }
-//#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_XPathMatcher_WithXmlNamespaces_As_String()
@@ -649,10 +638,10 @@ message HelloReply {
         {
             Name = "XPathMatcher",
             Pattern = pattern,
-            XmlNamespaceMap = new[]
-            {
+            XmlNamespaceMap =
+            [
                 new XmlNamespace { Prefix = "s", Uri = "http://schemas.xmlsoap.org/soap/envelope/" }
-            }
+            ]
         };
 
         // Act
@@ -812,7 +801,7 @@ message HelloReply {
         var model = new MatcherModel
         {
             Name = "ExactObjectMatcher",
-            Patterns = new object[] { "c3RlZg==" }
+            Patterns = ["c3RlZg=="]
         };
 
         // Act
@@ -829,7 +818,7 @@ message HelloReply {
         var model = new MatcherModel
         {
             Name = "ExactObjectMatcher",
-            Patterns = new object[] { "_" }
+            Patterns = ["_"]
         };
 
         // Act & Assert
@@ -1050,7 +1039,6 @@ message HelloReply {
         }
     }
 
-//#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_MatcherModel_GraphQLMatcher()
     {
@@ -1083,9 +1071,7 @@ message HelloReply {
         matcher.Name.Should().Be(nameof(GraphQLMatcher));
         matcher.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-//#endif
 
-//#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_MatcherModel_ProtoBufMatcher()
     {
@@ -1132,5 +1118,4 @@ message HelloReply {
         matcher.MessageType.Should().Be(messageType);
         matcher.Matcher?.Value.Should().Be(jsonMatcherPattern);
     }
-//#endif
 }

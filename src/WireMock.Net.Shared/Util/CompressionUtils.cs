@@ -22,10 +22,7 @@ internal static class CompressionUtils
         using var compressedStream = new MemoryStream();
         using var zipStream = Create(contentEncoding, compressedStream, CompressionMode.Compress);
         zipStream.Write(data, 0, data.Length);
-
-//#if !NETSTANDARD1_3
         zipStream.Close();
-//#endif
         return compressedStream.ToArray();
     }
 

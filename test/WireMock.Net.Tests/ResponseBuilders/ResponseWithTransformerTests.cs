@@ -1,10 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,14 +14,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
-using System.Globalization;
-using CultureAwareTesting.xUnit;
-#if NET452
-using Microsoft.Owin;
-#else
-using Microsoft.AspNetCore.Http;
-#endif
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -442,7 +433,7 @@ public class ResponseWithTransformerTests
         Check.That(JsonConvert.SerializeObject(response.Message.BodyData!.BodyAsJson)).Equals("{\"x\":\"test /foo_object\"}");
     }
 
-    [CulturedTheory("en-US")]
+    [CulturedTheory(["en-US"])]
     [InlineData(TransformerType.Handlebars, "{ \"id\": 42 }", "{\"x\":\"test 42\",\"y\":42}")]
     [InlineData(TransformerType.Scriban, "{ \"id\": 42 }", "{\"x\":\"test 42\",\"y\":42}")]
     [InlineData(TransformerType.ScribanDotLiquid, "{ \"id\": 42 }", "{\"x\":\"test 42\",\"y\":42}")]
@@ -779,7 +770,6 @@ public class ResponseWithTransformerTests
         response.Message.BodyData.Encoding.Should().Be(enc);
     }
 
-//#if MIMEKIT
     [Theory]
     [InlineData(TransformerType.Handlebars)]
     // [InlineData(TransformerType.Scriban)]
@@ -830,7 +820,6 @@ AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("text/plain text/json image.png");
     }
-//#endif
 
     [Theory]
     [InlineData("/wiremock-data/1", "one")]

@@ -1,12 +1,8 @@
 // Copyright © WireMock.Net
 
 #if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using Moq;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
@@ -18,11 +14,9 @@ using WireMock.Serialization;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
-[UsesVerify]
 public class MappingBuilderTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -158,7 +152,7 @@ public class MappingBuilderTests
         var mappings = _sut.GetMappings();
 
         // Verify
-        return Verifier.Verify(mappings, VerifySettings).DontScrubGuids();
+        return Verify(mappings, VerifySettings).DontScrubGuids();
     }
 
     [Fact]
@@ -168,7 +162,7 @@ public class MappingBuilderTests
         var json = _sut.ToJson();
 
         // Verify
-        return Verifier.VerifyJson(json, VerifySettings).DontScrubGuids();
+        return VerifyJson(json, VerifySettings).DontScrubGuids();
     }
 
     [Fact]
@@ -178,7 +172,7 @@ public class MappingBuilderTests
         var code = _sut.ToCSharpCode(MappingConverterType.Server);
 
         // Verify
-        return Verifier.Verify(code, VerifySettings).DontScrubGuids();
+        return Verify(code, VerifySettings).DontScrubGuids();
     }
 
     [Fact]
@@ -188,7 +182,7 @@ public class MappingBuilderTests
         var code = _sut.ToCSharpCode(MappingConverterType.Builder);
 
         // Verify
-        return Verifier.Verify(code, VerifySettings).DontScrubGuids();
+        return Verify(code, VerifySettings).DontScrubGuids();
     }
 
     [Fact]

@@ -178,7 +178,7 @@ public class WireMockServerProxyTests
         server.Mappings.Should().HaveCount(2);
 
         // Verify
-        fileSystemHandlerMock.Verify(f => f.WriteMappingFile($"m{System.IO.Path.DirectorySeparatorChar}Proxy Mapping for _{title}.json", It.IsRegex(stringBody)), Times.Once);
+        fileSystemHandlerMock.Verify(f => f.WriteMappingFile($"m{Path.DirectorySeparatorChar}Proxy Mapping for _{title}.json", It.IsRegex(stringBody)), Times.Once);
     }
 
     [Fact]

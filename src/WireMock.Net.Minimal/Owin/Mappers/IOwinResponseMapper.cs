@@ -1,13 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-
-//#if !USE_ASPNETCORE
-//using IResponse = Microsoft.Owin.IOwinResponse;
-//#else
-//using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
-//#endif
 
 namespace WireMock.Owin.Mappers;
 

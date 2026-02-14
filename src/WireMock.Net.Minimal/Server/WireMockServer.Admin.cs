@@ -330,12 +330,10 @@ public partial class WireMockServer
 
         InitSettings(_settings);
 
-//#if USE_ASPNETCORE
         if (Enum.TryParse<CorsPolicyOptions>(settings.CorsPolicyOptions, true, out var corsPolicyOptions))
         {
             _settings.CorsPolicyOptions = corsPolicyOptions;
         }
-//#endif
 
         WireMockMiddlewareOptionsHelper.InitFromSettings(_settings, _options, o =>
         {
@@ -344,11 +342,9 @@ public partial class WireMockServer
                 o.RequestProcessingDelay = TimeSpan.FromMilliseconds(settings.GlobalProcessingDelay.Value);
             }
 
-//#if USE_ASPNETCORE
             o.CorsPolicyOptions = corsPolicyOptions;
             o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode) _settings.ClientCertificateMode;
             o.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
-//#endif
         });
 
         return ResponseMessageBuilder.Create(200, "Settings updated");

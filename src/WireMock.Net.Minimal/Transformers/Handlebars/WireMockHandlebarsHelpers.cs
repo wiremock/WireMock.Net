@@ -24,7 +24,6 @@ internal static class WireMockHandlebarsHelpers
                 GetBaseDirectory(),
             };
 
-//#if !NETSTANDARD1_3_OR_GREATER
             void Add(string? path, ICollection<string> customHelperPaths)
             {
                 if (!string.IsNullOrEmpty(path))
@@ -36,7 +35,7 @@ internal static class WireMockHandlebarsHelpers
             Add(Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location), paths);
             Add(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), paths);
             Add(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName), paths);
-//#endif
+
             o.CustomHelperPaths = paths;
 
             o.Categories = settings.HandlebarsSettings?.AllowedHandlebarsHelpers ?? HandlebarsSettings.DefaultAllowedHandlebarsHelpers;

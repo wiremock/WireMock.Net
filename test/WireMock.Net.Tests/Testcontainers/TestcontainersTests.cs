@@ -1,19 +1,15 @@
 // Copyright © WireMock.Net
 
 #if NET6_0_OR_GREATER
-using System;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Meziantou.Extensions.Logging.Xunit;
+using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.Logging;
 using WireMock.Net.Testcontainers;
 using WireMock.Net.Testcontainers.Utils;
 using WireMock.Net.Tests.Facts;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.Testcontainers;
 

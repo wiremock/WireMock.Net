@@ -26,7 +26,6 @@ using WireMock.Util;
 
 namespace WireMock.Net.Tests.AdminApi;
 
-[UsesVerify]
 public partial class WireMockAdminApiTests
 {
     private static readonly VerifySettings VerifySettings = new();

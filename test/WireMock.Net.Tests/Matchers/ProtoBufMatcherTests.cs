@@ -1,13 +1,9 @@
 // Copyright © WireMock.Net
 
-//#if PROTOBUF
-using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using ProtoBuf;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -108,4 +104,3 @@ message HelloReply {
         result.Exception.Should().BeOfType<ArgumentException>();
     }
 }
-//#endif

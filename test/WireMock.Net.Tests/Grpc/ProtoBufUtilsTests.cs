@@ -1,12 +1,7 @@
 // Copyright © WireMock.Net
 
-//#if PROTOBUF
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using FluentAssertions;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Grpc;
 
@@ -24,11 +19,11 @@ public class ProtoBufUtilsTests
         // Act
         var responseBytes = await ProtoBufUtils.GetProtoBufMessageWithHeaderAsync(
             [greet, request],
-            "greet.HelloRequest",
-            new
+            "greet.HelloRequest", new
             {
                 name = "hello"
-            }
+            },
+            cancellationToken: TestContext.Current.CancellationToken
         );
 
         // Assert
@@ -40,4 +35,3 @@ public class ProtoBufUtilsTests
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
     }
 }
-//#endif

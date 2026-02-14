@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <Authors>Stef Heyenrath</Authors>
+        <OutputType>Exe</OutputType>
         <TargetFrameworks>net48;net8.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
@@ -50,7 +51,7 @@
         <ProjectReference Include="..\..\src\WireMock.Net.FluentAssertions\WireMock.Net.FluentAssertions.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.Matchers.CSharpCode\WireMock.Net.Matchers.CSharpCode.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net.RestClient\WireMock.Net.RestClient.csproj" />
-        <ProjectReference Include="..\..\src\WireMock.Net.xUnit\WireMock.Net.xUnit.csproj" />
+        <ProjectReference Include="..\..\src\WireMock.Net.xUnit.v3\WireMock.Net.xUnit.v3.csproj" />
         <ProjectReference Include="..\..\src\WireMock.Net\WireMock.Net.csproj" />
     </ItemGroup>
 
@@ -60,15 +61,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Meziantou.Extensions.Logging.Xunit" Version="1.0.23" />
-        <PackageReference Include="Verify.Xunit" Version="19.6.0" />
-        <PackageReference Include="xunit" Version="2.9.3" />
-        <PackageReference Include="xunit.core" Version="2.9.3" />
+        <PackageReference Include="Meziantou.Extensions.Logging.Xunit.v3" Version="1.1.23" />
+        <PackageReference Include="Verify.XunitV3" Version="31.12.5" />
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="CultureAwareTesting.xUnit" Version="0.0.1.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
         <PackageReference Include="coverlet.collector" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
@@ -84,6 +82,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="xunit.v3" Version="3.2.2" />
 
         <Protobuf Include="Grpc\greet.proto" GrpcServices="Client" />
         <Protobuf Include="Grpc\policy.proto" GrpcServices="Client" />

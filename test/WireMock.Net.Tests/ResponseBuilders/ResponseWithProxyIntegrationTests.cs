@@ -1,14 +1,9 @@
 // Copyright © WireMock.Net
 
 #if NET8_0_OR_GREATER
-using System;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,8 +17,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -95,10 +88,10 @@ public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
         {
             var started = new TaskCompletionSource();
             var host = app.Services.GetRequiredService<IHostApplicationLifetime>();
-            host.ApplicationStarted.Register(() => started.SetResult());
+            host.ApplicationStarted.Register(started.SetResult);
             _ = Task.Run(() => app.RunAsync());
             await started.Task;
-            _disposable = new(() => host.StopApplication());
+            _disposable = new(host.StopApplication);
             return this;
         }
 

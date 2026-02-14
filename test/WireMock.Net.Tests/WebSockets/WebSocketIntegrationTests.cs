@@ -8,7 +8,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.WebSockets;
 
@@ -18,6 +17,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
     public async Task EchoServer_Should_Echo_Text_Messages()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -43,10 +43,10 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Hello, WebSocket!";
-        await client.SendAsync(testMessage);
+        await client.SendAsync(testMessage, cancellationToken: cancelationToken);
 
         // Assert
-        var received = await client.ReceiveAsTextAsync();
+        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
         received.Should().Be(testMessage);
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", CancellationToken.None);

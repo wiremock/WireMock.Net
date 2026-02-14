@@ -1,14 +1,10 @@
 // Copyright © WireMock.Net
 
-//#if GRAPHQL
-using System;
-using System.Collections.Generic;
 using FluentAssertions;
 using GraphQLParser.Exceptions;
 using WireMock.Exceptions;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -233,4 +229,3 @@ public class GraphQLMatcherTests
         action.Should().Throw<GraphQLSyntaxErrorException>();
     }
 }
-//#endif

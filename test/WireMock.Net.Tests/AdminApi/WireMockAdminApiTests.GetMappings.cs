@@ -43,7 +43,7 @@ message HelloReply {
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
         var getMappingsResult = await api.GetMappingsAsync();
 
-        await Verifier.Verify(getMappingsResult, VerifySettings);
+        await Verify(getMappingsResult, VerifySettings);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ message HelloReply {
         var client = server.CreateClient();
         var getMappingsResult = await client.GetStringAsync("/__admin/mappings");
 
-        await Verifier.VerifyJson(getMappingsResult, VerifySettings);
+        await VerifyJson(getMappingsResult, VerifySettings);
     }
 
     public WireMockServer Given_WithBodyAsProtoBuf_AddedToServer()

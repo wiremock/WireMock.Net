@@ -1,12 +1,7 @@
 // Copyright © WireMock.Net
 
-//#if PROTOBUF
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using FluentAssertions;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Grpc;
 
@@ -65,11 +60,11 @@ public class ProtoDefinitionHelperTests
             {
                 rejected_spans = 1,
                 error_message = "abc"
-            }
+            },
+            cancellationToken: TestContext.Current.CancellationToken
         );
 
         // Assert
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcIARIDYWJj");
     }
 }
-//#endif

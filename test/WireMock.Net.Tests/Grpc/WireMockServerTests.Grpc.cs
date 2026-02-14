@@ -1,18 +1,14 @@
 // Copyright © WireMock.Net
 
-//#if PROTOBUF
-using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
+using ExampleIntegrationTest.Lookup;
 using FluentAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
 using Grpc.Net.Client;
-using ExampleIntegrationTest.Lookup;
 using WireMock.Constants;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
@@ -20,7 +16,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Util;
-using Xunit;
 
 // ReSharper disable once CheckNamespace
 namespace WireMock.Net.Tests;
@@ -140,7 +135,7 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf);
+        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf, TestContext.Current.CancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -178,7 +173,7 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf);
+        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf, TestContext.Current.CancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -773,4 +768,3 @@ message Other {
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
     }
 }
-//#endif

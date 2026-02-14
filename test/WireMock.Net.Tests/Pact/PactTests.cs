@@ -1,23 +1,17 @@
-#if !(NET452 || NET461 || NETCOREAPP3_1)
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using VerifyXunit;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.Pact;
 
-[UsesVerify]
 public class PactTests
 {
     [Fact]
@@ -56,7 +50,7 @@ public class PactTests
         server.SavePact(folder, file);
 
         // Assert
-        await Verifier.VerifyFile(path);
+        await VerifyFile(path);
     }
 
     [Fact]
@@ -77,7 +71,7 @@ public class PactTests
         server.SavePact(folder, file);
 
         // Assert
-        await Verifier.VerifyFile(path);
+        await VerifyFile(path);
     }
 
     [Fact]
@@ -246,4 +240,3 @@ public class PactTests
         File.ReadAllBytes(Path.Combine(folder, file)).Length.Should().BeGreaterThan(1);
     }
 }
-#endif

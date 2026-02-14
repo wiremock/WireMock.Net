@@ -1,16 +1,11 @@
 // Copyright © WireMock.Net
 
-//#if MIMEKIT
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -216,4 +211,3 @@ AAAADElEQVR4XmMQYNgAAADkAMHebX3mAAAAAElFTkSuQmCC
         return matcher.GetMatchingScore(requestMessage, result);
     }
 }
-//#endif

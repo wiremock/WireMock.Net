@@ -18,11 +18,11 @@ public class IntegrationTests
         using var client = factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync(requestUri);
+        var response = await client.GetAsync(requestUri, TestContext.Current.CancellationToken);
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var stringResponse = await response.Content.ReadAsStringAsync();
+        var stringResponse = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         stringResponse.Should().Be(expectedResponse);
     }
 
@@ -40,11 +40,11 @@ public class IntegrationTests
         request.Headers.Add("X-WireMock-Response-Delay", "10");
 
         // Act
-        var response = await client.SendAsync(request);
+        var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var stringResponse = await response.Content.ReadAsStringAsync();
+        var stringResponse = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         stringResponse.Should().Be(expectedResponse);
     }
 }

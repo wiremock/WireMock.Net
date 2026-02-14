@@ -1,21 +1,15 @@
 // Copyright © WireMock.Net
 
-using System.Threading.Tasks;
-//using System.Xml;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using NFluent;
+using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
-using Moq;
-using WireMock.Handlers;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-//#if !NETSTANDARD1_3
-//using Wmhelp.XPath2;
-//#endif
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 

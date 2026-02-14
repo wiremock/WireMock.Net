@@ -15,7 +15,7 @@ internal static class ClientWebSocketExtensions
 
     internal static async Task<string> ReceiveAsTextAsync(this ClientWebSocket client, int bufferSize = 1024, CancellationToken cancellationToken = default)
     {
-        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(1024);
+        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(bufferSize);
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
 
         if (result.MessageType != WebSocketMessageType.Text)
@@ -33,7 +33,7 @@ internal static class ClientWebSocketExtensions
 
     internal static async Task<byte[]> ReceiveAsBytesAsync(this ClientWebSocket client, int bufferSize = 1024, CancellationToken cancellationToken = default)
     {
-        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(1024);
+        using var receiveBuffer = ArrayPool<byte>.Shared.Lease(bufferSize);
         var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
 
         if (result.MessageType != WebSocketMessageType.Binary)

@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using CultureAwareTesting.xUnit;
 using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 
@@ -86,7 +83,7 @@ public class StringUtilsTests
         }
     }
 
-    [CulturedTheory("en-US")]
+    [CulturedTheory(["en-US"])]
     [InlineData("123.1", 123.1, true)]
     [InlineData("-456.1", -456.1, true)]
     [InlineData("not a double", 0.0, false)] // Invalid case
