@@ -109,33 +109,25 @@ jobs:
       packageType: 'sdk'
       version: '8.0.x'
 
-  - task: DotNetCoreCLI@2
+  - task: CmdLine@2
     displayName: 'WireMock.Net.Tests.UsingNuGet'
     inputs:
-      command: 'test'
-      projects: './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj'
-      arguments: '--configuration Release'
+      script: 'dotnet test --project ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
 
-  - task: DotNetCoreCLI@2
+  - task: CmdLine@2
     displayName: 'WireMock.Net.Tests with Coverage'
     inputs:
-      command: 'test'
-      projects: './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj'
-      arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+      script: 'dotnet test --project  ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
-  # - task: DotNetCoreCLI@2
-  #   displayName: 'WireMock.Net.TUnitTests with Coverage'
-  #   inputs:
-  #     command: 'test'
-  #     projects: './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj'
-  #     arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+  - task: CmdLine@2
+    displayName: 'WireMock.Net.TUnitTests with Coverage'
+    inputs:
+      script: 'dotnet test --project  ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
-  - task: DotNetCoreCLI@2
+  - task: CmdLine@2
     displayName: 'WireMock.Net.Middleware.Tests with Coverage'
     inputs:
-      command: 'test'
-      projects: './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj'
-      arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+      script: 'dotnet test --project  ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
 - job: Windows_Release_to_MyGet
   dependsOn: Windows_Build_Test
