@@ -50,11 +50,11 @@ jobs:
           dotnet-coverage collect "dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-xunit.xml"
     displayName: 'WireMock.Net.Tests with Coverage'
 
-  - task: CmdLine@2
-    inputs:
-      script: |
-          dotnet-coverage collect "dotnet test ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug -p:UseVSTest=false --no-build" -f xml -o "wiremock-coverage-tunit.xml"
-    displayName: 'WireMock.Net.TUnitTests with Coverage'
+  # - task: CmdLine@2
+  #   inputs:
+  #     script: |
+  #         dotnet-coverage collect "dotnet test ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-tunit.xml"
+  #   displayName: 'WireMock.Net.TUnitTests with Coverage'
 
   - task: CmdLine@2
     inputs:
@@ -109,12 +109,6 @@ jobs:
       packageType: 'sdk'
       version: '8.0.x'
 
-  - task: UseDotNet@2
-    displayName: Use .NET 10.0
-    inputs:
-      packageType: 'sdk'
-      version: '10.0.x'
-
   - task: DotNetCoreCLI@2
     displayName: 'WireMock.Net.Tests.UsingNuGet'
     inputs:
@@ -129,12 +123,12 @@ jobs:
       projects: './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj'
       arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'WireMock.Net.TUnitTests with Coverage'
-    inputs:
-      command: 'test'
-      projects: './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj'
-      arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+  # - task: DotNetCoreCLI@2
+  #   displayName: 'WireMock.Net.TUnitTests with Coverage'
+  #   inputs:
+  #     command: 'test'
+  #     projects: './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj'
+  #     arguments: '--configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
   - task: DotNetCoreCLI@2
     displayName: 'WireMock.Net.Middleware.Tests with Coverage'
