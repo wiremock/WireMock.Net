@@ -215,9 +215,8 @@ public partial class WireMockServerTests
 
         // Act
         var content = """{"id":"ec475f56d4694b48bc737500ba575b35-1"}""";
-        var response = await new HttpClient()
-            .PostAsync($"{server.Url}/system-text-json", new StringContent(content, Encoding.UTF8, "application/json"))
-            .ConfigureAwait(false);
+        using var httpClient = new HttpClient();
+        var response = await httpClient.PostAsync($"{server.Url}/system-text-json", new StringContent(content, Encoding.UTF8, "application/json"));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

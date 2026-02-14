@@ -53,7 +53,7 @@ jobs:
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug -p:UseVSTest=false --no-build --framework net8.0" -f xml -o "wiremock-coverage-tunit.xml"
+          dotnet-coverage collect "dotnet test ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug -p:UseVSTest=false --no-build" -f xml -o "wiremock-coverage-tunit.xml"
     displayName: 'WireMock.Net.TUnitTests with Coverage'
 
   - task: CmdLine@2
@@ -108,6 +108,12 @@ jobs:
     inputs:
       packageType: 'sdk'
       version: '8.0.x'
+
+  - task: UseDotNet@2
+    displayName: Use .NET 10.0
+    inputs:
+      packageType: 'sdk'
+      version: '10.0.x'
 
   - task: DotNetCoreCLI@2
     displayName: 'WireMock.Net.Tests.UsingNuGet'

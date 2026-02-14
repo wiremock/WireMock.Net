@@ -220,7 +220,7 @@ public partial class WireMockServerTests
         foreach (var address in IPv4)
         {
             // Act
-            var response = await new HttpClient().GetStringAsync("http://" + address + ":" + server.Ports[0] + "/foo").ConfigureAwait(false);
+            var response = await new HttpClient().GetStringAsync("http://" + address + ":" + server.Ports[0] + "/foo");
 
             // Assert
             response.Should().Be("x");
@@ -245,7 +245,7 @@ public partial class WireMockServerTests
         foreach (var address in IPv6)
         {
             // Act
-            var response = await new HttpClient().GetStringAsync("http://[" + address + "]:" + server.Ports[0] + "/foo").ConfigureAwait(false);
+            var response = await new HttpClient().GetStringAsync("http://[" + address + "]:" + server.Ports[0] + "/foo");
 
             // Assert
             response.Should().Be("x");
@@ -358,7 +358,7 @@ public partial class WireMockServerTests
         async Task<long> ExecuteTimedRequestAsync()
         {
             watch.Reset();
-            await httClient.GetStringAsync("http://localhost:" + server.Ports[0] + "/foo").ConfigureAwait(false);
+            await httClient.GetStringAsync("http://localhost:" + server.Ports[0] + "/foo");
             return watch.ElapsedMilliseconds;
         }
 

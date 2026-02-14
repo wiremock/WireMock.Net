@@ -123,7 +123,7 @@ public class ResponseWithCallbackTests
             .WithHeader("H2", "X2")
             .WithBody(async req =>
             {
-                await Task.Delay(1).ConfigureAwait(false);
+                await Task.Delay(1);
                 return $"path: {req.Path}";
             });
 

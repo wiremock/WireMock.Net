@@ -469,7 +469,7 @@ public class ResponseWithTransformerTests
             .WithTransformer(transformerType);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settings);
 
         // Assert
         JsonConvert.SerializeObject(response.Message.BodyData!.BodyAsJson).Should().Be(expected);

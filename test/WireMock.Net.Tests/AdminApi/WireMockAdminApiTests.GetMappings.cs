@@ -50,7 +50,7 @@ message HelloReply {
 
         // Act
         var client = server.CreateClient();
-        var getMappingsResult = await client.GetStringAsync("/__admin/mappings", TestContext.Current.CancellationToken);
+        var getMappingsResult = await client.GetStringAsync("/__admin/mappings");
 
         await VerifyJson(getMappingsResult, VerifySettings);
     }

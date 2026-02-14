@@ -71,7 +71,7 @@ public class HandlebarsSettingsTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settingsWithEnv).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settingsWithEnv);
 
         // Assert
         response.Message?.BodyData?.BodyAsString.Should().NotContain("{{Environment.GetEnvironmentVariable");

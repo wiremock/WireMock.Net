@@ -332,7 +332,7 @@ public class ResponseWithBodyTests
         var responseBuilder = Response.Create().WithBody(new { foo = "< > & ' 😀 👍 ❤️", n = 42 }, new NewtonsoftJsonConverter());
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Be("""{"foo":"< > & ' 😀 👍 ❤️","n":42}""");

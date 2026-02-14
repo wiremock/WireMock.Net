@@ -112,7 +112,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
     private static async Task StartTestAsync(WireMockContainer wireMockContainer)
     {
         // Start
-        await wireMockContainer.StartAsync().ConfigureAwait(false);
+        await wireMockContainer.StartAsync();
 
         // Assert
         using (new AssertionScope())

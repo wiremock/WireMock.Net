@@ -200,7 +200,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings).ConfigureAwait(false);
+        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         a.Should().ThrowAsync<HandlebarsException>();
@@ -227,7 +227,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings).ConfigureAwait(false);
+        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         a.Should().ThrowAsync<HandlebarsException>();
