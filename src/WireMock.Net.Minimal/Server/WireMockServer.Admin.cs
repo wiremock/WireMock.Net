@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using JetBrains.Annotations;
+using JsonConverter.Abstractions;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
@@ -235,7 +235,7 @@ public partial class WireMockServer
 
         if (FileHelper.TryReadMappingFileWithRetryAndDelay(_settings.FileSystemHandler, path, out var value))
         {
-            var mappingModels = DeserializeJsonToArray<MappingModel>(value);
+            var mappingModels = _mappingSerializer.DeserializeJsonToArray<MappingModel>(value);
             if (mappingModels.Length == 1 && Guid.TryParse(filenameWithoutExtension, out var guidFromFilename))
             {
                 ConvertMappingAndRegisterAsRespondProvider(mappingModels[0], guidFromFilename, path);
@@ -823,23 +823,29 @@ public partial class WireMockServer
         }
     }
 
-    private static Encoding? ToEncoding(EncodingModel? encodingModel)
+    private ResponseMessage ToJson<T>(T result, bool keepNullValues = false, object? statusCode = null)
     {
-        return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
-    }
+        var jsonOptions = new JsonConverterOptions
+        {
+            WriteIndented = true,
+            IgnoreNullValues = !keepNullValues
+        };
 
-    private static ResponseMessage ToJson<T>(T result, bool keepNullValues = false, object? statusCode = null)
-    {
         return new ResponseMessage
         {
             BodyData = new BodyData
             {
                 DetectedBodyType = BodyType.String,
-                BodyAsString = JsonConvert.SerializeObject(result, keepNullValues ? JsonSerializationConstants.JsonSerializerSettingsIncludeNullValues : JsonSerializationConstants.JsonSerializerSettingsDefault)
+                BodyAsString = _settings.DefaultJsonSerializer.Serialize(result!, jsonOptions)
             },
             StatusCode = statusCode ?? (int)HttpStatusCode.OK,
             Headers = new Dictionary<string, WireMockList<string>> { { HttpKnownHeaderNames.ContentType, new WireMockList<string>(WireMockConstants.ContentTypeJson) } }
         };
+    }
+
+    private static Encoding? ToEncoding(EncodingModel? encodingModel)
+    {
+        return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
     }
 
     private static ResponseMessage ToResponseMessage(string text)
@@ -856,6 +862,18 @@ public partial class WireMockServer
         };
     }
 
+    private static T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
+    {
+        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
+        {
+            var bodyAsJson = requestMessage.BodyData.BodyAsJson!;
+
+            return MappingSerializer.DeserializeObjectToArray<T>(bodyAsJson);
+        }
+
+        throw new NotSupportedException();
+    }
+
     private static T DeserializeObject<T>(IRequestMessage requestMessage) where T : new()
     {
         switch (requestMessage.BodyData?.DetectedBodyType)
@@ -870,33 +888,5 @@ public partial class WireMockServer
             default:
                 throw new NotSupportedException();
         }
-    }
-
-    private static T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
-    {
-        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
-        {
-            var bodyAsJson = requestMessage.BodyData.BodyAsJson;
-
-            return DeserializeObjectToArray<T>(bodyAsJson);
-        }
-
-        throw new NotSupportedException();
-    }
-
-    private static T[] DeserializeJsonToArray<T>(string value)
-    {
-        return DeserializeObjectToArray<T>(JsonUtils.DeserializeObject(value));
-    }
-
-    private static T[] DeserializeObjectToArray<T>(object value)
-    {
-        if (value is JArray jArray)
-        {
-            return jArray.ToObject<T[]>()!;
-        }
-
-        var singleResult = ((JObject)value).ToObject<T>();
-        return [singleResult!];
     }
 }

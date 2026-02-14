@@ -33,7 +33,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.7.2" />
+        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
         <PackageReference Include="RestEase" Version="1.6.4" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>

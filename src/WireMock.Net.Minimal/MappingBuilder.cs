@@ -1,9 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers.Request;
@@ -164,8 +161,8 @@ public class MappingBuilder : IMappingBuilder
         }
     }
 
-    private static string ToJson(object value)
+    private string ToJson(object value)
     {
-        return JsonConvert.SerializeObject(value, JsonSerializationConstants.JsonSerializerSettingsDefault);
+        return _settings.DefaultJsonSerializer.Serialize(value, JsonSerializationConstants.JsonConverterOptionsDefault);
     }
 }

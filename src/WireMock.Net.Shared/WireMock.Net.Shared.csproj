@@ -2,7 +2,6 @@
     <PropertyGroup>
         <Description>Shared interfaces, models, enumerations and types.</Description>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net451;net452;net46;net462;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
         <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>tdd;mock;http;wiremock;test;server;shared</PackageTags>
@@ -30,9 +29,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.9" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
         <PackageReference Include="AnyOf" Version="0.5.0.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-        <PackageReference Include="JsonConverter.Abstractions" Version="0.7.2" />
+        <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
     </ItemGroup>
 
     <ItemGroup>

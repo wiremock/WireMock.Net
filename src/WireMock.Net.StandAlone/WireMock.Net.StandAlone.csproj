@@ -3,7 +3,6 @@
         <Description>Lightweight StandAlone Http Mocking Server for .Net.</Description>
         <AssemblyTitle>WireMock.Net.StandAlone</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net451;net452;net46;net462;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>-->
         <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.StandAlone</AssemblyName>
@@ -29,8 +28,8 @@
     </PropertyGroup>
 
 
-    <!-- Enable OpenTelemetry exporter support for .NET 6+ -->
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+    <!-- Enable OpenTelemetry exporter support for .NET 8+ -->
+    <PropertyGroup Condition="' $(TargetFramework)' == 'net8.0' ">
         <DefineConstants>$(DefineConstants);OPENTELEMETRY_SUPPORTED</DefineConstants>
     </PropertyGroup>
 
@@ -45,8 +44,8 @@
         <ProjectReference Include="..\WireMock.Net\WireMock.Net.csproj" />
     </ItemGroup>
 
-    <!-- OpenTelemetry exporter for .NET 6+ -->
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
+    <!-- OpenTelemetry exporter for .NET 8+ -->
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
         <ProjectReference Include="..\WireMock.Net.OpenTelemetry\WireMock.Net.OpenTelemetry.csproj" />
     </ItemGroup>
 </Project>

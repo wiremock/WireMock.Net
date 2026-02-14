@@ -4,7 +4,6 @@
         <Description>Commonly used interfaces, models, enumerations and types.</Description>
         <AssemblyTitle>WireMock.Net.Abstractions</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <!--<TargetFrameworks>net45;net451;net462;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>-->
         <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591;8603</NoWarn>

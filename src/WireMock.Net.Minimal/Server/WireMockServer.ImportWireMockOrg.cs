@@ -32,7 +32,7 @@ public partial class WireMockServer
 
         if (FileHelper.TryReadMappingFileWithRetryAndDelay(_settings.FileSystemHandler, path, out var value))
         {
-            var mappings = DeserializeJsonToArray<OrgMapping>(value);
+            var mappings = _mappingSerializer.DeserializeJsonToArray<OrgMapping>(value);
             foreach (var mapping in mappings)
             {
                 if (mappings.Length == 1 && Guid.TryParse(filenameWithoutExtension, out var guidFromFilename))
