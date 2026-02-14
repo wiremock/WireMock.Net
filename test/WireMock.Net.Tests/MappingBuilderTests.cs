@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
 using System.Net;
 using Moq;
 using WireMock.Handlers;
@@ -254,4 +253,3 @@ public class MappingBuilderTests
         _fileSystemHandlerMock.VerifyNoOtherCalls();
     }
 }
-#endif

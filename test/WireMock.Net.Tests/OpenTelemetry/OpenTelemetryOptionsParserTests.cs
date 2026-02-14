@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using FluentAssertions;
 using WireMock.OpenTelemetry;
-using Xunit;
 
 namespace WireMock.Net.Tests.OpenTelemetry;
 

@@ -1,12 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Xunit;
 using Moq;
-using System.Threading.Tasks;
-using System.Threading;
 using FluentAssertions;
 using WireMock.Handlers;
 using WireMock.Owin.Mappers;

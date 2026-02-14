@@ -2,10 +2,8 @@
 
 using FluentAssertions;
 using Moq;
-using System;
 using WireMock.Handlers;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 

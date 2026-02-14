@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
 #if !(NET452 || NET461)
-using VerifyTests;
-
 namespace WireMock.Net.Tests.VerifyExtensions;
 
 internal static class VerifySettingsExtensions

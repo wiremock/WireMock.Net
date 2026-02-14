@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Collections.Concurrent;
 using FluentAssertions;
 using Moq;
@@ -9,7 +8,6 @@ using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Services;
-using Xunit;
 
 namespace WireMock.Net.Tests.Owin;
 

@@ -1,6 +1,5 @@
 using FluentAssertions;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 

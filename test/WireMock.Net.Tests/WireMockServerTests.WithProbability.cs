@@ -1,13 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -17,6 +13,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithProbability()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         server
             .Given(Request.Create().UsingGet().WithPath("/foo"))
@@ -29,7 +26,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo");
-        var response = await server.CreateClient().GetAsync(requestUri);
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
 
         // Assert
         Assert.Contains(response.StatusCode, new HashSet<HttpStatusCode> { HttpStatusCode.OK, HttpStatusCode.InternalServerError });

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using FluentAssertions;
 using Moq;
 using NFluent;
@@ -10,7 +9,6 @@ using WireMock.Logging;
 using WireMock.Owin;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 

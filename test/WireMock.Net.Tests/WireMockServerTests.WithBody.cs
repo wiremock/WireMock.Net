@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !NET452
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -183,15 +182,16 @@ public partial class WireMockServerTests
         );
 
         // Act
+        var cancelationToken = TestContext.Current.CancellationToken;
         var content = "{\"jsonrpc\":\"2.0\",\"id\":\"ec475f56d4694b48bc737500ba575b35-1\",\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"clientInfo\":{\"name\":\"GitHub Test\",\"version\":\"1.0.0\"}}}";
         var response = await new HttpClient()
-            .PostAsync($"{server.Url}/foo", new StringContent(content, Encoding.UTF8, "application/json"))
+            .PostAsync($"{server.Url}/foo", new StringContent(content, Encoding.UTF8, "application/json"), cancelationToken)
 ;
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var responseText = await response.Content.ReadAsStringAsync();
+        var responseText = await response.Content.ReadAsStringAsync(cancelationToken);
         responseText.Should().Contain("ec475f56d4694b48bc737500ba575b35-1");
     }
 
@@ -231,6 +231,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFunc()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start();
         server.Given(
             Request.Create()
@@ -245,7 +246,7 @@ public partial class WireMockServerTests
         // Act
         var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
         var response = await new HttpClient()
-            .PostAsync($"{server.Url}/foo", content)
+            .PostAsync($"{server.Url}/foo", content, cancelationToken)
 ;
 
         // Assert
@@ -291,6 +292,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFormUrlEncodedMatcher()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var matcher = new FormUrlEncodedMatcher(["email=johndoe@example.com", "name=John Doe"]);
         var server = WireMockServer.Start();
         server.Given(
@@ -322,7 +324,7 @@ public partial class WireMockServerTests
             new KeyValuePair<string, string>("email", "johndoe@example.com")
         });
         var responseOrdered = await new HttpClient()
-            .PostAsync($"{server.Url}/foo", contentOrdered)
+            .PostAsync($"{server.Url}/foo", contentOrdered, cancelationToken)
 ;
 
         // Assert 1
@@ -336,7 +338,7 @@ public partial class WireMockServerTests
             new KeyValuePair<string, string>("name", "John Doe"),
         });
         var responseUnordered = await new HttpClient()
-            .PostAsync($"{server.Url}/bar", contentUnordered)
+            .PostAsync($"{server.Url}/bar", contentUnordered, cancelationToken)
 ;
 
         // Assert 2
@@ -402,4 +404,3 @@ public partial class WireMockServerTests
         data.Should().Be("x 1;x 2;x 3;");
     }
 }
-#endif

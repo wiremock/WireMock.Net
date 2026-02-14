@@ -1,12 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
@@ -20,7 +16,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -505,6 +500,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_DeleteMappings()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -549,7 +545,7 @@ public class WireMockServerAdminTests
             Content = new StringContent(guidsJsonBody, Encoding.UTF8, "application/json")
         };
 
-        var response = await new HttpClient().SendAsync(request);
+        var response = await new HttpClient().SendAsync(request, cancelationToken);
 
         // Assert
         var guids = server.MappingModels.Select(mapping => mapping.Guid!.Value).ToArray();
@@ -557,7 +553,7 @@ public class WireMockServerAdminTests
         Check.That(guids.Contains(guid2.Value)).IsFalse();
         Check.That(guids.Contains(guid3.Value)).IsTrue();
         Check.That(response.StatusCode).Equals(HttpStatusCode.OK);
-        Check.That(await response.Content.ReadAsStringAsync()).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
+        Check.That(await response.Content.ReadAsStringAsync(cancelationToken)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
     }
 
 #if NET5_0_OR_GREATER
@@ -565,12 +561,13 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateHttpClientFactory_And_CallEndpoint()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         var factory = server.CreateHttpClientFactory();
         var client = factory.CreateClient("any name");
 
         // Act
-        await client.GetAsync($"{server.Url}/foo");
+        await client.GetAsync($"{server.Url}/foo", cancelationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);

@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
 using FluentAssertions;
 using WireMock.Net.OpenApiParser.Utils;
-using Xunit;
 
 namespace WireMock.Net.Tests.OpenApiParser;
 
@@ -37,4 +35,3 @@ public class PathUtilsTests
         result.Should().Be("/path1/path2");
     }
 }
-#endif

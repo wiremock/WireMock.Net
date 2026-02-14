@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using FluentAssertions;
 using WireMock.Owin;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Owin;
 

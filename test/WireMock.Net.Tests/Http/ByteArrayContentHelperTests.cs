@@ -2,10 +2,8 @@
 
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using WireMock.Http;
-using Xunit;
 
 namespace WireMock.Net.Tests.Http;
 

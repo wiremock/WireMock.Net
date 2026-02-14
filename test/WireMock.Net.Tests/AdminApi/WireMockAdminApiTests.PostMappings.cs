@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -16,7 +12,6 @@ using WireMock.Client;
 using WireMock.Constants;
 using WireMock.Models;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
@@ -37,17 +32,18 @@ public partial class WireMockAdminApiTests
     public async Task HttpClient_PostMappingsAsync_ForProtoBufMapping(string mappingFile, string guid)
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var mappingsJson = ReadMappingFile(mappingFile);
 
         using var server = WireMockServer.StartWithAdminInterface();
         var httpClient = server.CreateClient();
 
         // Act
-        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
+        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson), cancelationToken);
         result.EnsureSuccessStatusCode();
 
         // Assert
-        var mapping = await httpClient.GetStringAsync($"/__admin/mappings/{guid}");
+        var mapping = await httpClient.GetStringAsync($"/__admin/mappings/{guid}", cancelationToken);
         mapping = RemoveLineContainingUpdatedAt(mapping);
         mapping.Should().Be(mappingsJson);
     }
@@ -175,4 +171,3 @@ public partial class WireMockAdminApiTests
         server.Stop();
     }
 }
-#endif

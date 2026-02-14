@@ -1,15 +1,11 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System.Threading.Tasks;
 using RestEase;
-using VerifyXunit;
 using WireMock.Client;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
@@ -150,4 +146,3 @@ message HelloReply {
         return server;
     }
 }
-#endif

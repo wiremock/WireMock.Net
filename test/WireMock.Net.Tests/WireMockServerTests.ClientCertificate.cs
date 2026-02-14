@@ -3,7 +3,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using FluentAssertions;
 using WireMock.Net.Tests.Facts;
 using WireMock.RequestBuilders;

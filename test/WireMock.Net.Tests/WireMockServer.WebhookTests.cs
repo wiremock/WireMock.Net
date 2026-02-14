@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using WireMock.Logging;
@@ -15,7 +12,6 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 

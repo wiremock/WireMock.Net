@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using WireMock.FluentAssertions;

@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using NFluent;
 using WireMock.RegularExpressions;
-using Xunit;
 
 namespace WireMock.Net.Tests.RegularExpressions;
 

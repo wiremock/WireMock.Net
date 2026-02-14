@@ -5,7 +5,6 @@ using FluentAssertions;
 using NFluent;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 

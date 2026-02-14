@@ -1,14 +1,10 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AnyOfTypes;
 using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 

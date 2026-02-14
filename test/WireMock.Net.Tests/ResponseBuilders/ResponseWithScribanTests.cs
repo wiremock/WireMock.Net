@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using NFluent;
 using WireMock.Models;
@@ -9,7 +7,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 using WireMock.Handlers;
 using Moq;
 #if NET452

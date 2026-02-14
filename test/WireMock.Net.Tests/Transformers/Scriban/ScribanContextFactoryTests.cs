@@ -1,12 +1,10 @@
 // Copyright © WireMock.Net
 
-using System;
 using FluentAssertions;
 using Moq;
 using WireMock.Handlers;
 using WireMock.Transformers.Scriban;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Transformers.Scriban
 {

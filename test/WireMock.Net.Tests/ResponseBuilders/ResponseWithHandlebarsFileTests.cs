@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +11,6 @@ using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 

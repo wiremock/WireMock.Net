@@ -1,10 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NFluent;
@@ -13,7 +9,6 @@ using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 

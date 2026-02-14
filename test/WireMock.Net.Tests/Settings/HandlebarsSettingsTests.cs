@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using HandlebarsDotNet;
 using HandlebarsDotNet.Helpers.Enums;
@@ -12,7 +9,6 @@ using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.Settings;
 

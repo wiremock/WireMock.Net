@@ -7,7 +7,6 @@ using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 

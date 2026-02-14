@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Diagnostics;
 using FluentAssertions;
 using Moq;
@@ -10,7 +9,6 @@ using WireMock.Models;
 using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Owin.ActivityTracing;
 

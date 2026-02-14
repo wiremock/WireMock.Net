@@ -3,7 +3,6 @@
 using System.Net.Http.Headers;
 using FluentAssertions;
 using WireMock.Http;
-using Xunit;
 
 namespace WireMock.Net.Tests.Http;
 

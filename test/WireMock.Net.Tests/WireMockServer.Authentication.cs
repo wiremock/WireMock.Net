@@ -5,7 +5,6 @@ using NFluent;
 using WireMock.Matchers;
 using WireMock.Owin;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests
 {

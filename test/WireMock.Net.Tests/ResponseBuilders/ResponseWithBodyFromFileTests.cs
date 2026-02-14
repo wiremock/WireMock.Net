@@ -1,14 +1,11 @@
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using FluentAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders
 {

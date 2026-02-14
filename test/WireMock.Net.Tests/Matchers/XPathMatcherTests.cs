@@ -3,7 +3,6 @@
 using NFluent;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
