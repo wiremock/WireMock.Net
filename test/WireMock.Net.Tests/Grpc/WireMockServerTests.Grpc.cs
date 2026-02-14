@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using ExampleIntegrationTest.Lookup;
 using AwesomeAssertions;
+using ExampleIntegrationTest.Lookup;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
 using Grpc.Net.Client;
@@ -147,6 +147,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf(string data)
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var bytes = Convert.FromBase64String(data);
         var jsonMatcher = new JsonMatcher(new { name = "stef" });
 
@@ -173,11 +174,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf, TestContext.Current.CancellationToken);
+        var response = await client.PostAsync("/grpc/greet.Greeter/SayHello", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcKBWhlbGxv");
     }
@@ -186,6 +187,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_WithWellKnownTypes_Empty()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start();
 
         server
@@ -207,11 +209,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/Greeter/SayNothing", protoBuf);
+        var response = await client.PostAsync("/grpc/Greeter/SayNothing", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAA=");
     }
@@ -220,6 +222,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_WithWellKnownTypes_Timestamp()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start();
 
         server
@@ -249,11 +252,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/Greeter/SayTimestamp", protoBuf);
+        var response = await client.PostAsync("/grpc/Greeter/SayTimestamp", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAsKCQiL96C1BhCMYA==");
     }
@@ -262,6 +265,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_WithWellKnownTypes_Duration()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start();
 
         server
@@ -291,11 +295,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/Greeter/SayDuration", protoBuf);
+        var response = await client.PostAsync("/grpc/Greeter/SayDuration", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAsKCQiL96C1BhCMYA==");
     }
@@ -304,6 +308,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_ServerProtoDefinition_WithWellKnownTypes()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var bytes = Convert.FromBase64String("CgRzdGVm");
 
         using var server = WireMockServer.Start();
@@ -330,11 +335,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/Greeter/SayNothing", protoBuf);
+        var response = await client.PostAsync("/grpc/Greeter/SayNothing", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAA=");
     }
@@ -343,6 +348,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_MultipleFiles()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var bytes = Convert.FromBase64String("CgRzdGVm");
         var jsonMatcher = new JsonMatcher(new { name = "stef" });
 
@@ -371,11 +377,11 @@ message Other {
         protoBuf.Headers.ContentType = new MediaTypeHeaderValue("application/grpc-web");
 
         var client = server.CreateClient();
-        var response = await client.PostAsync("/grpc/greet.Greeter/SayOther", protoBuf);
+        var response = await client.PostAsync("/grpc/greet.Greeter/SayOther", protoBuf, cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseBytes = await response.Content.ReadAsByteArrayAsync();
+        var responseBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcKBWhlbGxv");
     }
@@ -384,6 +390,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_InlineProtoDefinition_UsingGrpcGeneratedClient()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(useHttp2: true);
 
         var jsonMatcher = new JsonMatcher(new { name = "stef" });
@@ -410,7 +417,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayHelloAsync(new HelloRequest { Name = "stef" });
+        var reply = await client.SayHelloAsync(new HelloRequest { Name = "stef" }, cancellationToken: cancellationToken);
 
         // Assert
         reply.Message.Should().Be("hello stef POST");
@@ -420,6 +427,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_MappingProtoDefinition_UsingGrpcGeneratedClient()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(useHttp2: true);
 
         var jsonMatcher = new JsonMatcher(new { name = "stef" });
@@ -448,7 +456,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayHelloAsync(new HelloRequest { Name = "stef" });
+        var reply = await client.SayHelloAsync(new HelloRequest { Name = "stef" }, cancellationToken: cancellationToken);
 
         // Assert
         reply.Message.Should().Be("hello stef POST");
@@ -460,6 +468,7 @@ message Other {
         // Arrange
         var id = $"test-{Guid.NewGuid()}";
 
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(useHttp2: true);
 
         var jsonMatcher = new JsonMatcher(new { name = "stef" });
@@ -486,7 +495,7 @@ message Other {
             );
 
         // Act
-        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Url!);
+        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Url!, cancellationToken);
 
         // Assert
         Then_ReplyMessage_Should_BeCorrect(reply);
@@ -496,6 +505,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_WithWellKnownTypes_Empty_UsingGrpcGeneratedClient()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
@@ -517,7 +527,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayNothingAsync(new Empty());
+        var reply = await client.SayNothingAsync(new Empty(), cancellationToken: cancellationToken);
 
         // Assert
         reply.Should().Be(new Empty());
@@ -529,6 +539,7 @@ message Other {
         // Arrange
         const int seconds = 1722301323;
         const int nanos = 12300;
+        var cancellationToken = TestContext.Current.CancellationToken;
         var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
@@ -558,7 +569,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayTimestampAsync(new MyMessageTimestamp { Ts = Timestamp.FromDateTime(DateTime.UtcNow) });
+        var reply = await client.SayTimestampAsync(new MyMessageTimestamp { Ts = Timestamp.FromDateTime(DateTime.UtcNow) }, cancellationToken: cancellationToken);
 
         // Assert
         reply.Ts.Should().Be(new Timestamp { Seconds = seconds, Nanos = nanos });
@@ -570,6 +581,7 @@ message Other {
         // Arrange
         const int seconds = 1722301323;
         const int nanos = 12300;
+        var cancellationToken = TestContext.Current.CancellationToken;
         var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
@@ -599,7 +611,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayDurationAsync(new MyMessageDuration { Du = Duration.FromTimeSpan(TimeSpan.MinValue) });
+        var reply = await client.SayDurationAsync(new MyMessageDuration { Du = Duration.FromTimeSpan(TimeSpan.MinValue) }, cancellationToken: cancellationToken);
 
         // Assert
         reply.Du.Should().Be(new Duration { Seconds = seconds, Nanos = nanos });
@@ -609,6 +621,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_Enum_UsingGrpcGeneratedClient()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var definition = File.ReadAllText("./Grpc/greet.proto");
 
         using var server = WireMockServer.Start(useHttp2: true);
@@ -635,7 +648,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new Greeter.GreeterClient(channel);
 
-        var reply = await client.SayHelloAsync(new HelloRequest());
+        var reply = await client.SayHelloAsync(new HelloRequest(), cancellationToken: cancellationToken);
 
         // Assert
         reply.Message.Should().Be("hello");
@@ -646,6 +659,7 @@ message Other {
     public async Task WireMockServer_WithBodyAsProtoBuf_Enum_UsingPolicyGrpcGeneratedClient()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         const int seconds = 1722301323;
         const int nanos = 12300;
         const string version = "test";
@@ -685,7 +699,7 @@ message Other {
         var channel = GrpcChannel.ForAddress(server.Url!);
         var client = new PolicyService.PolicyServiceClient(channel);
 
-        var reply = await client.GetVersionAsync(new GetVersionRequest());
+        var reply = await client.GetVersionAsync(new GetVersionRequest(), cancellationToken: cancellationToken);
 
         // Assert
         reply.Version.Should().Be(version);
@@ -697,10 +711,11 @@ message Other {
     [Fact]
     public async Task WireMockServer_WithBodyAsProtoBuf_FromJson_UsingGrpcGeneratedClient()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = Given_When_ServerStarted_And_RunningOnHttpAndGrpc();
-        await Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(server, "protobuf-mapping-1.json");
+        await Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(server, "protobuf-mapping-1.json", cancellationToken);
 
-        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Urls[1]);
+        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Urls[1], cancellationToken);
 
         Then_ReplyMessage_Should_BeCorrect(reply);
     }
@@ -708,11 +723,12 @@ message Other {
     [Fact]
     public async Task WireMockServer_WithBodyAsProtoBuf_ServerProtoDefinitionFromJson_UsingGrpcGeneratedClient()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = Given_When_ServerStarted_And_RunningOnHttpAndGrpc();
         Given_ProtoDefinition_IsAddedOnServerLevel(server);
-        await Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(server, "protobuf-mapping-3.json");
+        await Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(server, "protobuf-mapping-3.json", cancellationToken);
 
-        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Urls[1]);
+        var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Urls[1], cancellationToken);
 
         Then_ReplyMessage_Should_BeCorrect(reply);
     }
@@ -734,23 +750,23 @@ message Other {
         server.AddProtoDefinition("my-greeter", ReadProtoFile("greet.proto"));
     }
 
-    private static async Task Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(WireMockServer server, string filename)
+    private static async Task Given_When_ProtoBufMappingIsAddedViaAdminInterfaceAsync(WireMockServer server, string filename, CancellationToken cancellationToken)
     {
         var mappingsJson = ReadMappingFile(filename);
 
         using var httpClient = server.CreateClient();
 
-        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
+        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson), cancellationToken);
         result.EnsureSuccessStatusCode();
     }
 
-    private static async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(string address)
+    private static async Task<HelloReply> When_GrpcClient_Calls_SayHelloAsync(string address, CancellationToken cancellationToken)
     {
         var channel = GrpcChannel.ForAddress(address);
 
         var client = new Greeter.GreeterClient(channel);
 
-        return await client.SayHelloAsync(new HelloRequest { Name = "stef" });
+        return await client.SayHelloAsync(new HelloRequest { Name = "stef" }, cancellationToken: cancellationToken);
     }
 
     private static void Then_ReplyMessage_Should_BeCorrect(HelloReply reply)

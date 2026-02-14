@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Net.Http;
 using RestEase;
 using WireMock.Client;
 using WireMock.Matchers;
@@ -50,7 +51,7 @@ message HelloReply {
 
         // Act
         var client = server.CreateClient();
-        var getMappingsResult = await client.GetStringAsync("/__admin/mappings");
+        var getMappingsResult = await client.GetStringAsync("/__admin/mappings", TestContext.Current.CancellationToken);
 
         await VerifyJson(getMappingsResult, VerifySettings);
     }

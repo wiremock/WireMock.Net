@@ -7,7 +7,7 @@ namespace WireMock.Net.Tests.Grpc;
 
 public class ProtoBufUtilsTests
 {
-    private static readonly IProtoBufUtils ProtoBufUtils = new ProtoBufUtils();
+    private static readonly ProtoBufUtils _sut = new();
 
     [Fact]
     public async Task GetProtoBufMessageWithHeader_MultipleProtoFiles()
@@ -17,7 +17,7 @@ public class ProtoBufUtilsTests
         var request = ReadProtoFile("request.proto");
 
         // Act
-        var responseBytes = await ProtoBufUtils.GetProtoBufMessageWithHeaderAsync(
+        var responseBytes = await _sut.GetProtoBufMessageWithHeaderAsync(
             [greet, request],
             "greet.HelloRequest", new
             {
@@ -30,7 +30,7 @@ public class ProtoBufUtilsTests
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcKBWhlbGxv");
     }
 
-    private string ReadProtoFile(string filename)
+    private static string ReadProtoFile(string filename)
     {
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Grpc", filename));
     }

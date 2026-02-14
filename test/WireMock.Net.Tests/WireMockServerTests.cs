@@ -67,7 +67,7 @@ public partial class WireMockServerTests
         var server = WireMockServer.Start();
 
         // Act
-        await server.CreateClient().GetAsync("/foo");
+        await server.CreateClient().GetAsync("/foo", TestContext.Current.CancellationToken);
         server.ResetLogEntries();
 
         // Assert
@@ -245,7 +245,7 @@ public partial class WireMockServerTests
         foreach (var address in IPv6)
         {
             // Act
-            var response = await new HttpClient().GetStringAsync("http://[" + address + "]:" + server.Ports[0] + "/foo");
+            var response = await new HttpClient().GetStringAsync("http://[" + address + "]:" + server.Ports[0] + "/foo", TestContext.Current.CancellationToken);
 
             // Assert
             response.Should().Be("x");

@@ -35,7 +35,7 @@ public class ProtoDefinitionHelperTests
         resolver.Exists("x").Should().BeFalse();
 
         // Act + Assert
-        var text = await resolver.OpenText(expectedFilename).ReadToEndAsync();
+        var text = resolver.OpenText(expectedFilename).ReadToEnd();
         text.Should().StartWith(expectedComment);
         System.Action action = () => resolver.OpenText("x");
         action.Should().Throw<FileNotFoundException>();

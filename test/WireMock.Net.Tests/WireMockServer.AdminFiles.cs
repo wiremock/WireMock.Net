@@ -14,18 +14,19 @@ namespace WireMock.Net.Tests;
 
 public class WireMockServerAdminFilesTests
 {
-    private readonly HttpClient _client = new HttpClient();
+    private readonly HttpClient _client = new();
 
     [Fact]
     public async Task WireMockServer_Admin_Files_Post_Ascii()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.GetMappingFolder()).Returns("__admin/mappings");
         filesystemHandlerMock.Setup(fs => fs.FolderExists(It.IsAny<string>())).Returns(true);
         filesystemHandlerMock.Setup(fs => fs.WriteFile(It.IsAny<string>(), It.IsAny<byte[]>()));
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -37,7 +38,7 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream(Encoding.ASCII.GetBytes("Here's a string."))));
 
         // Act
-        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent);
+        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent, cancellationToken);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -53,13 +54,14 @@ public class WireMockServerAdminFilesTests
     public async Task WireMockServer_Admin_Files_Post_MappingFolderDoesNotExistsButWillBeCreated()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.GetMappingFolder()).Returns("x");
         filesystemHandlerMock.Setup(fs => fs.CreateFolder(It.IsAny<string>()));
         filesystemHandlerMock.Setup(fs => fs.FolderExists(It.IsAny<string>())).Returns(false);
         filesystemHandlerMock.Setup(fs => fs.WriteFile(It.IsAny<string>(), It.IsAny<byte[]>()));
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -71,7 +73,7 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream(Encoding.ASCII.GetBytes("Here's a string."))));
 
         // Act
-        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent);
+        var httpResponseMessage = await _client.PostAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", multipartFormDataContent, cancellationToken);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -88,11 +90,12 @@ public class WireMockServerAdminFilesTests
     public async Task WireMockServer_Admin_Files_GetAscii()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         filesystemHandlerMock.Setup(fs => fs.ReadFile(It.IsAny<string>())).Returns(Encoding.ASCII.GetBytes("Here's a string."));
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -104,12 +107,12 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream()));
 
         // Act
-        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt");
+        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt", cancellationToken);
 
         // Assert
         httpResponseMessageGet.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await httpResponseMessageGet.Content.ReadAsStringAsync();
+        var result = await httpResponseMessageGet.Content.ReadAsStringAsync(cancellationToken);
         result.Should().Be("Here's a string.");
 
         // Verify
@@ -122,12 +125,13 @@ public class WireMockServerAdminFilesTests
     public async Task WireMockServer_Admin_Files_GetUTF16()
     {
         // Arrange
-        byte[] symbol = Encoding.UTF32.GetBytes(char.ConvertFromUtf32(0x1D161));
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var symbol = Encoding.UTF32.GetBytes(char.ConvertFromUtf32(0x1D161));
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
         filesystemHandlerMock.Setup(fs => fs.ReadFile(It.IsAny<string>())).Returns(symbol);
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -139,12 +143,12 @@ public class WireMockServerAdminFilesTests
         multipartFormDataContent.Add(new StreamContent(new MemoryStream()));
 
         // Act
-        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.bin");
+        var httpResponseMessageGet = await _client.GetAsync("http://localhost:" + server.Ports[0] + "/__admin/files/filename.bin", cancellationToken);
 
         // Assert
         httpResponseMessageGet.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var result = await httpResponseMessageGet.Content.ReadAsByteArrayAsync();
+        var result = await httpResponseMessageGet.Content.ReadAsByteArrayAsync(cancellationToken);
         result.Should().BeEquivalentTo(symbol);
 
         // Verify
@@ -157,10 +161,11 @@ public class WireMockServerAdminFilesTests
     public async Task WireMockServer_Admin_Files_Head()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(true);
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -170,7 +175,7 @@ public class WireMockServerAdminFilesTests
         // Act
         var requestUri = "http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt";
         var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, requestUri);
-        var httpResponseMessage = await _client.SendAsync(httpRequestMessage);
+        var httpResponseMessage = await _client.SendAsync(httpRequestMessage, cancellationToken);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -184,10 +189,11 @@ public class WireMockServerAdminFilesTests
     public async Task WireMockServer_Admin_Files_Head_FileDoesNotExistsReturns404()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
         filesystemHandlerMock.Setup(fs => fs.FileExists(It.IsAny<string>())).Returns(false);
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = false,
             StartAdminInterface = true,
@@ -197,7 +203,7 @@ public class WireMockServerAdminFilesTests
         // Act
         var requestUri = "http://localhost:" + server.Ports[0] + "/__admin/files/filename.txt";
         var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, requestUri);
-        var httpResponseMessage = await _client.SendAsync(httpRequestMessage);
+        var httpResponseMessage = await _client.SendAsync(httpRequestMessage, cancellationToken);
 
         // Assert
         httpResponseMessage.StatusCode.Should().Be(HttpStatusCode.NotFound);
