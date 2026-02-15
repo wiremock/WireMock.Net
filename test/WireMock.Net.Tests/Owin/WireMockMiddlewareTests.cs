@@ -18,6 +18,8 @@ using WireMock.Matchers.Request;
 using WireMock.ResponseBuilders;
 using WireMock.RequestBuilders;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 
 #if NET6_0_OR_GREATER
 using WireMock.Owin.ActivityTracing;
@@ -44,8 +46,8 @@ public class WireMockMiddlewareTests
 
     public WireMockMiddlewareTests()
     {
-        var guidUtilsMock = new Mock<IGuidUtils>();
-        guidUtilsMock.Setup(g => g.NewGuid()).Returns(NewGuid);
+        var wireMockMiddlewareLoggerMock = new Mock<IWireMockMiddlewareLogger>();
+        // wreMockMiddlewareLoggerMock.Setup(g => g.NewGuid()).Returns(NewGuid);
 
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
@@ -84,7 +86,7 @@ public class WireMockMiddlewareTests
             _requestMapperMock.Object,
             _responseMapperMock.Object,
             _matcherMock.Object,
-            guidUtilsMock.Object
+            wireMockMiddlewareLoggerMock.Object
         );
     }
 
@@ -99,28 +101,6 @@ public class WireMockMiddlewareTests
 
         Expression<Func<ResponseMessage, bool>> match = r => (int)r.StatusCode! == 404 && ((StatusModel)r.BodyData!.BodyAsJson!).Status == "No matching mapping found";
         _responseMapperMock.Verify(m => m.MapAsync(It.Is(match), It.IsAny<HttpResponse>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task WireMockMiddleware_Invoke_NoMatch_When_SaveUnmatchedRequestsIsTrue_Should_Call_LocalFileSystemHandler_WriteUnmatchedRequest()
-    {
-        // Arrange
-        var fileSystemHandlerMock = new Mock<IFileSystemHandler>();
-        _optionsMock.Setup(o => o.FileSystemHandler).Returns(fileSystemHandlerMock.Object);
-        _optionsMock.Setup(o => o.SaveUnmatchedRequests).Returns(true);
-
-        // Act
-        await _sut.Invoke(_contextMock.Object);
-
-        // Assert
-        _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
-
-        Expression<Func<ResponseMessage, bool>> match = r => (int)r.StatusCode! == 404 && ((StatusModel)r.BodyData!.BodyAsJson!).Status == "No matching mapping found";
-        _responseMapperMock.Verify(m => m.MapAsync(It.Is(match), It.IsAny<HttpResponse>()), Times.Once);
-
-        // Verify
-        fileSystemHandlerMock.Verify(f => f.WriteUnmatchedRequest("98fae52e-76df-47d9-876f-2ee32e931d9b.LogEntry.json", It.IsAny<string>()));
-        fileSystemHandlerMock.VerifyNoOtherCalls();
     }
 
     [Fact]

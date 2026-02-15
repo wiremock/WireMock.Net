@@ -11,13 +11,14 @@ using WireMock.Settings;
 
 namespace WireMock.Net.Tests.WebSockets;
 
-public class WebSocketIntegrationTests(ITestOutputHelper output)
+public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAccessor testContext)
 {
+    private readonly CancellationToken _ct = testContext.Current.CancellationToken;
+
     [Fact]
     public async Task EchoServer_Should_Echo_Text_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -43,20 +44,19 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Hello, WebSocket!";
-        await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+        await client.SendAsync(testMessage, cancellationToken: _ct);
 
         // Assert
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
         received.Should().Be(testMessage);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task WithText_Should_Send_Configured_Text()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -80,24 +80,23 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var uri = new Uri($"{server.Url}/ws/message");
 
         // Act
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Any message from client";
-        await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+        await client.SendAsync(testMessage, cancellationToken: _ct);
 
         // Assert
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
         received.Should().Be(responseMessage);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task WithText_Should_Send_Same_Text_For_Multiple_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -119,27 +118,26 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/message");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var testMessages = new[] { "First", "Second", "Third" };
 
         // Act & Assert
         foreach (var testMessage in testMessages)
         {
-            await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+            await client.SendAsync(testMessage, cancellationToken: _ct);
 
-            var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+            var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
             received.Should().Be(responseMessage, $"should always return the fixed response regardless of input message '{testMessage}'");
         }
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task WithBinary_Should_Send_Configured_Bytes()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -163,24 +161,23 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var uri = new Uri($"{server.Url}/ws/binary");
 
         // Act
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Any message from client";
-        await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+        await client.SendAsync(testMessage, cancellationToken: _ct);
 
         // Assert
-        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: cancelationToken);
+        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
         receivedData.Should().BeEquivalentTo(responseBytes);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task WithBinary_Should_Send_Same_Bytes_For_Multiple_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -202,28 +199,27 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/binary");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var testMessages = new[] { "First", "Second", "Third" };
 
         // Act & Assert
         foreach (var testMessage in testMessages)
         {
-            await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+            await client.SendAsync(testMessage, cancellationToken: _ct);
 
-            var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: cancelationToken);
+            var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
             receivedData.Should().BeEquivalentTo(responseBytes, $"should always return the fixed bytes regardless of input message '{testMessage}'");
         }
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
-  
+
 
     [Fact]
     public async Task EchoServer_Should_Echo_Multiple_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -241,28 +237,27 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/echo");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var testMessages = new[] { "Hello", "World", "WebSocket", "Test" };
 
         // Act & Assert
         foreach (var testMessage in testMessages)
         {
-            await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+            await client.SendAsync(testMessage, cancellationToken: _ct);
 
-            var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+            var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
 
             received.Should().Be(testMessage, $"message '{testMessage}' should be echoed back");
         }
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task EchoServer_Should_Echo_Binary_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -280,26 +275,25 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/echo");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
         // Act
-        await client.SendAsync(new ArraySegment<byte>(testData), WebSocketMessageType.Binary, true, cancelationToken);
+        await client.SendAsync(new ArraySegment<byte>(testData), WebSocketMessageType.Binary, true, _ct);
 
-        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: cancelationToken);
+        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
 
         // Assert
         receivedData.Should().BeEquivalentTo(testData);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task EchoServer_Should_Handle_Empty_Messages()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -317,25 +311,24 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/echo");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         // Act
-        await client.SendAsync(string.Empty, cancellationToken: cancelationToken);
+        await client.SendAsync(string.Empty, cancellationToken: _ct);
 
         var receiveBuffer = new byte[1024];
-        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancelationToken);
+        var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), _ct);
 
         // Assert
         result.Count.Should().Be(0);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task CustomHandler_Should_Handle_Help_Command()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -366,12 +359,12 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/chat");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         // Act
-        await client.SendAsync("/help", cancellationToken: cancelationToken);
+        await client.SendAsync("/help", cancellationToken: _ct);
 
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
 
         // Assert
         received.Should().Contain("Available commands");
@@ -379,14 +372,13 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         received.Should().Contain("/time");
         received.Should().Contain("/echo");
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task CustomHandler_Should_Handle_Multiple_Commands_In_Sequence()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -439,7 +431,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/chat");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var commands = new (string, Action<string>)[]
         {
@@ -453,23 +445,22 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act & Assert
         foreach (var (command, assertion) in commands)
         {
-            await client.SendAsync(command, cancellationToken: cancelationToken);
+            await client.SendAsync(command, cancellationToken: _ct);
 
-            var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+            var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
 
             assertion(received);
         }
 
-        await client.SendAsync("/close", cancellationToken: cancelationToken);
+        await client.SendAsync("/close", cancellationToken: _ct);
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
     public async Task WhenMessage_Should_Handle_Multiple_Conditions_Fluently()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -494,7 +485,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/conditional");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         var testCases = new (string message, string expectedContains)[]
         {
@@ -508,21 +499,20 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         // Act & Assert
         foreach (var (message, expectedContains) in testCases)
         {
-            await client.SendAsync(message, cancellationToken: cancelationToken);
+            await client.SendAsync(message, cancellationToken: _ct);
 
-            var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+            var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
 
             received.Should().Contain(expectedContains, $"message '{message}' should return response containing '{expectedContains}'");
         }
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 
     [Fact]
-    public async Task WhenMessage_NoMatch_Should_Return404()
+    public async Task Request_NoMatch_OnPath_Should_Return404()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -536,48 +526,63 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WhenMessage("/close")
-                    .ThenSendMessage(m => m.WithText("Closing connection")
-                    .AndClose()
+                    .WhenMessage("/test")
+                    .ThenSendMessage(m => m.WithText("Test")
+                ))
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url}/ws/abc");
+
+        // Act
+        Func<Task> connectAction = () => client.ConnectAsync(uri, _ct);
+
+        // Assert
+        (await connectAction.Should().ThrowAsync<WebSocketException>())
+            .WithMessage("The server returned status code '404' when status code '101' was expected.");
+    }
+
+    [Fact]
+    public async Task Request_NoMatch_OnMessageText_Should_ThrowException()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/test")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(3))
+                    .WhenMessage("/test")
+                    .ThenSendMessage(m => m.WithText("Test")
                 ))
             );
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/test");
-        await client.ConnectAsync(uri, cancelationToken);
+
+        await client.ConnectAsync(uri, _ct);
+        await client.SendAsync("/abc", cancellationToken: _ct);
 
         // Act
-        await client.SendAsync("/close", cancellationToken: cancelationToken);
-
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        Func<Task> receiveAction = () => client.ReceiveAsTextAsync(cancellationToken: _ct);
 
         // Assert
-        received.Should().Contain("Closing connection");
-
-        // Try to receive again - this will complete the close handshake
-        // and update the client state to Closed
-        try
-        {
-            var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancelationToken);
-
-            // If we get here, the message type should be Close
-            result.MessageType.Should().Be(WebSocketMessageType.Close);
-        }
-        catch (WebSocketException)
-        {
-            // Connection was closed, which is expected
-        }
-
-        // Verify the connection is CloseReceived
-        client.State.Should().Be(WebSocketState.CloseReceived);
+        (await receiveAction.Should().ThrowAsync<WebSocketException>())
+            .WithMessage("The remote party closed the WebSocket connection without completing the close handshake.");
     }
 
     [Fact]
     public async Task WhenMessage_Should_Close_Connection_When_AndClose_Is_Used()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -599,12 +604,12 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
 
         using var client = new ClientWebSocket();
         var uri = new Uri($"{server.Url}/ws/close");
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
 
         // Act
-        await client.SendAsync("/close", cancellationToken: cancelationToken);
+        await client.SendAsync("/close", cancellationToken: _ct);
 
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
 
         // Assert
         received.Should().Contain("Closing connection");
@@ -614,8 +619,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         try
         {
             var receiveBuffer = new byte[1024];
-            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancelationToken);
-            
+            var result = await client.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), _ct);
+
             // If we get here, the message type should be Close
             result.MessageType.Should().Be(WebSocketMessageType.Close);
         }
@@ -632,7 +637,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
     public async Task WithTransformer_Should_Transform_Message_Using_Handlebars()
     {
         // Arrange
-        var cancelationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
@@ -655,16 +659,16 @@ public class WebSocketIntegrationTests(ITestOutputHelper output)
         var uri = new Uri($"{server.Url}/ws/transform");
 
         // Act
-        await client.ConnectAsync(uri, cancelationToken);
+        await client.ConnectAsync(uri, _ct);
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "HellO";
-        await client.SendAsync(testMessage, cancellationToken: cancelationToken);
+        await client.SendAsync(testMessage, cancellationToken: _ct);
 
         // Assert
-        var received = await client.ReceiveAsTextAsync(cancellationToken: cancelationToken);
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
         received.Should().Be("/ws/transform hello");
 
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", cancelationToken);
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
 }

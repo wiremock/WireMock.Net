@@ -9,6 +9,7 @@ using Stef.Validation;
 using WireMock.Extensions;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
+using WireMock.Serialization;
 using WireMock.Services;
 using WireMock.Util;
 
@@ -66,6 +67,8 @@ internal partial class AspNetCoreSelfHost
                 services.AddSingleton<IOwinRequestMapper, OwinRequestMapper>();
                 services.AddSingleton<IOwinResponseMapper, OwinResponseMapper>();
                 services.AddSingleton<IGuidUtils, GuidUtils>();
+                services.AddSingleton<LogEntryMapper>();
+                services.AddSingleton<IWireMockMiddlewareLogger, WireMockMiddlewareLogger>();
 
 #if NET8_0_OR_GREATER
                 AddCors(services);

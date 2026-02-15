@@ -1,9 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace WireMock.Matchers.Request;
 
 /// <summary>

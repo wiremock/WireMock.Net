@@ -23,7 +23,7 @@ internal struct WebSocketTransformModel
     public WebSocketMessage Message { get; set; }
 
     /// <summary>
-    /// The message data as string
+    /// The mapping data as object
     /// </summary>
-    public string? Data { get; set; }
+    public object? Data { get; set; }
 }

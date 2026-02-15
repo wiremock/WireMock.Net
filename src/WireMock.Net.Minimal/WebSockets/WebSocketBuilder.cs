@@ -250,7 +250,7 @@ internal class WebSocketBuilder(Response response) : IWebSocketBuilder
                 Mapping = context.Mapping,
                 Request = context.RequestMessage,
                 Message = incomingMessage,
-                Data = incomingMessage.MessageType == WebSocketMessageType.Text ? incomingMessage.Text : null
+                Data = context.Mapping.Data
             };
 
             return transformer.Transform(text, model);

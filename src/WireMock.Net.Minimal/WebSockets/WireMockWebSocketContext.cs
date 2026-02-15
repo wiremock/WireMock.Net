@@ -3,7 +3,6 @@
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Extensions;
 using WireMock.Owin;
