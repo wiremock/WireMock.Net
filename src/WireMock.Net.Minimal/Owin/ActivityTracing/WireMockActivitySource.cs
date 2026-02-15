@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Diagnostics;
 using WireMock.Logging;
 using WireMock.Settings;
@@ -10,7 +9,7 @@ namespace WireMock.Owin.ActivityTracing;
 /// <summary>
 /// Provides an ActivitySource for WireMock.Net distributed tracing.
 /// </summary>
-public static class WireMockActivitySource
+internal static class WireMockActivitySource
 {
     /// <summary>
     /// The name of the ActivitySource used by WireMock.Net.

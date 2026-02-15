@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Stef.Validation;
 using WireMock.Constants;
 using WireMock.Owin;
 using WireMock.Settings;
@@ -15,8 +14,6 @@ namespace WireMock.ResponseProviders;
 
 internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponseProvider
 {
-    private readonly WebSocketBuilder _builder = Guard.NotNull(builder);
-
     public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(
         IMapping mapping,
         HttpContext context,
@@ -35,13 +32,13 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
 #if NET8_0_OR_GREATER
             var acceptContext = new WebSocketAcceptContext
             {
-                SubProtocol = _builder.AcceptProtocol,
-                KeepAliveInterval = _builder.KeepAliveIntervalSeconds ?? TimeSpan.FromSeconds(WebSocketConstants.DefaultKeepAliveIntervalSeconds)
+                SubProtocol = builder.AcceptProtocol,
+                KeepAliveInterval = builder.KeepAliveIntervalSeconds ?? TimeSpan.FromSeconds(WebSocketConstants.DefaultKeepAliveIntervalSeconds)
 
             };
             var webSocket = await context.WebSockets.AcceptWebSocketAsync(acceptContext).ConfigureAwait(false);
 #else
-            var webSocket = await context.WebSockets.AcceptWebSocketAsync(_builder.AcceptProtocol).ConfigureAwait(false);
+            var webSocket = await context.WebSockets.AcceptWebSocketAsync(builder.AcceptProtocol).ConfigureAwait(false);
 #endif
 
             // Get options from HttpContext.Items (set by WireMockMiddleware)
@@ -52,7 +49,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             }
 
             // Get or create registry from options
-            var registry = _builder.IsBroadcast
+            var registry = builder.IsBroadcast
                 ? options.WebSocketRegistries.GetOrAdd(mapping.Guid, _ => new WebSocketConnectionRegistry())
                 : null;
 
@@ -63,7 +60,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                 requestMessage,
                 mapping,
                 registry,
-                _builder
+                builder
             );
 
             // Update scenario state following the same pattern as WireMockMiddleware
@@ -73,25 +70,22 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             }
 
             // Add to registry if broadcast is enabled
-            if (registry != null)
-            {
-                registry.AddConnection(wsContext);
-            }
+            registry?.AddConnection(wsContext);
 
             try
             {
                 // Handle the WebSocket based on configuration
-                if (_builder.ProxySettings != null)
+                if (builder.ProxySettings != null)
                 {
-                    await HandleProxyAsync(wsContext, _builder.ProxySettings).ConfigureAwait(false);
+                    await HandleProxyAsync(wsContext, builder.ProxySettings).ConfigureAwait(false);
                 }
-                else if (_builder.IsEcho)
+                else if (builder.IsEcho)
                 {
                     await HandleEchoAsync(wsContext).ConfigureAwait(false);
                 }
-                else if (_builder.MessageHandler != null)
+                else if (builder.MessageHandler != null)
                 {
-                    await HandleCustomAsync(wsContext, _builder.MessageHandler).ConfigureAwait(false);
+                    await HandleCustomAsync(wsContext, builder.MessageHandler).ConfigureAwait(false);
                 }
                 else
                 {
