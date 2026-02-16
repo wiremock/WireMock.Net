@@ -1,30 +1,25 @@
 // Copyright © WireMock.Net
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq.Expressions;
+using AwesomeAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
-using WireMock.Models;
-using WireMock.Owin;
-using WireMock.Owin.Mappers;
-using WireMock.Util;
-using WireMock.Logging;
-using WireMock.Matchers;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Requests;
-using WireMock.Settings;
-using AwesomeAssertions;
 using WireMock.Handlers;
+using WireMock.Logging;
+using WireMock.Matchers;
 using WireMock.Matchers.Request;
-using WireMock.ResponseBuilders;
-using WireMock.RequestBuilders;
-using Microsoft.AspNetCore.Http;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-
-#if NET6_0_OR_GREATER
+using WireMock.Models;
+using WireMock.Owin;
 using WireMock.Owin.ActivityTracing;
-using System.Diagnostics;
-#endif
+using WireMock.Owin.Mappers;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
+using WireMock.Settings;
+using WireMock.Util;
 
 namespace WireMock.Net.Tests.Owin;
 
@@ -41,13 +36,16 @@ public class WireMockMiddlewareTests
     private readonly Mock<IMapping> _mappingMock;
     private readonly Mock<IRequestMatchResult> _requestMatchResultMock;
     private readonly Mock<HttpContext> _contextMock;
+    private readonly Mock<IGuidUtils> _guidUtilsMock;
 
     private readonly WireMockMiddleware _sut;
 
     public WireMockMiddlewareTests()
     {
         var wireMockMiddlewareLoggerMock = new Mock<IWireMockMiddlewareLogger>();
-        // wreMockMiddlewareLoggerMock.Setup(g => g.NewGuid()).Returns(NewGuid);
+
+        _guidUtilsMock = new Mock<IGuidUtils>();
+        _guidUtilsMock.Setup(g => g.NewGuid()).Returns(NewGuid);
 
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
@@ -86,7 +84,8 @@ public class WireMockMiddlewareTests
             _requestMapperMock.Object,
             _responseMapperMock.Object,
             _matcherMock.Object,
-            wireMockMiddlewareLoggerMock.Object
+            wireMockMiddlewareLoggerMock.Object,
+            _guidUtilsMock.Object
         );
     }
 
@@ -262,7 +261,6 @@ public class WireMockMiddlewareTests
         _mappings.Should().HaveCount(1);
     }
 
-#if NET6_0_OR_GREATER
     [Fact]
     public async Task WireMockMiddleware_Invoke_AdminPath_WithExcludeAdminRequests_ShouldNotStartActivity()
     {
@@ -346,5 +344,4 @@ public class WireMockMiddlewareTests
         // Assert
         activityStarted.Should().BeFalse();
     }
-#endif
 }

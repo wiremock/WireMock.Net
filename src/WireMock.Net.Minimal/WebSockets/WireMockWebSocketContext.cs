@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics;
-using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Stef.Validation;
 using WireMock.Logging;
 using WireMock.Models;
 using WireMock.Owin;
@@ -21,7 +19,7 @@ namespace WireMock.WebSockets;
 public class WireMockWebSocketContext : IWebSocketContext
 {
     /// <inheritdoc />
-    public Guid ConnectionId { get; } = Guid.NewGuid();
+    public Guid ConnectionId { get; }
 
     /// <inheritdoc />
     public HttpContext HttpContext { get; }
@@ -54,16 +52,20 @@ public class WireMockWebSocketContext : IWebSocketContext
         WebSocketConnectionRegistry? registry,
         WebSocketBuilder builder,
         IWireMockMiddlewareOptions options,
-        IWireMockMiddlewareLogger logger)
+        IWireMockMiddlewareLogger logger,
+        IGuidUtils guidUtils
+    )
     {
-        HttpContext = Guard.NotNull(httpContext);
-        WebSocket = Guard.NotNull(webSocket);
-        RequestMessage = Guard.NotNull(requestMessage);
-        Mapping = Guard.NotNull(mapping);
+        HttpContext = httpContext;
+        WebSocket = webSocket;
+        RequestMessage = requestMessage;
+        Mapping = mapping;
         Registry = registry;
-        Builder = Guard.NotNull(builder);
-        Options = Guard.NotNull(options);
-        Logger = Guard.NotNull(logger);
+        Builder = builder;
+        Options = options;
+        Logger = logger;
+
+        ConnectionId = guidUtils.NewGuid();
     }
 
     /// <inheritdoc />
@@ -187,7 +189,6 @@ public class WireMockWebSocketContext : IWebSocketContext
         object? data,
         Activity? activity)
     {
-        // Create body data
         IBodyData bodyData;
         if (messageType == WebSocketMessageType.Text && data is string textContent)
         {
@@ -214,11 +215,10 @@ public class WireMockWebSocketContext : IWebSocketContext
             };
         }
 
-        // Create a pseudo-request or pseudo-response depending on direction
+        var method = $"WS_{direction.ToString().ToUpperInvariant()}";
+
         RequestMessage? requestMessage = null;
         IResponseMessage? responseMessage = null;
-
-        var method = $"WS_{direction.ToString().ToUpperInvariant()}";
 
         if (direction == WebSocketMessageDirection.Receive)
         {
@@ -241,7 +241,6 @@ public class WireMockWebSocketContext : IWebSocketContext
             responseMessage = new ResponseMessage
             {
                 Method = method,
-                StatusCode = HttpStatusCode.SwitchingProtocols, // WebSocket status
                 BodyData = bodyData,
                 DateTime = DateTime.UtcNow
             };

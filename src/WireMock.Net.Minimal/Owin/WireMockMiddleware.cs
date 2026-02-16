@@ -12,6 +12,7 @@ using WireMock.Owin.Mappers;
 using WireMock.ResponseBuilders;
 using WireMock.Serialization;
 using WireMock.Settings;
+using WireMock.Util;
 
 namespace WireMock.Owin;
 
@@ -21,7 +22,8 @@ internal class WireMockMiddleware(
     IOwinRequestMapper requestMapper,
     IOwinResponseMapper responseMapper,
     IMappingMatcher mappingMatcher,
-    IWireMockMiddlewareLogger logger
+    IWireMockMiddlewareLogger logger,
+    IGuidUtils guidUtils
 )
 {
     private readonly object _lock = new();
@@ -44,6 +46,7 @@ internal class WireMockMiddleware(
         // Store options in HttpContext for providers to access (e.g., WebSocketResponseProvider)
         ctx.Items[nameof(IWireMockMiddlewareOptions)] = options;
         ctx.Items[nameof(IWireMockMiddlewareLogger)] = logger;
+        ctx.Items[nameof(IGuidUtils)] = guidUtils;
 
         var request = await requestMapper.MapAsync(ctx, options).ConfigureAwait(false);
 
