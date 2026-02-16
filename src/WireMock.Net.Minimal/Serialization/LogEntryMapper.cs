@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using Stef.Validation;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Requests;
 using WireMock.Logging;
@@ -11,95 +10,96 @@ using WireMock.Types;
 
 namespace WireMock.Serialization;
 
-internal class LogEntryMapper
+internal class LogEntryMapper(IWireMockMiddlewareOptions options)
 {
-    private readonly IWireMockMiddlewareOptions _options;
-
-    public LogEntryMapper(IWireMockMiddlewareOptions options)
-    {
-        _options = Guard.NotNull(options);
-    }
-
     public LogEntryModel Map(ILogEntry logEntry)
     {
-        var logRequestModel = new LogRequestModel
+        LogRequestModel? logRequestModel = null;
+        if (logEntry.RequestMessage != null)
         {
-            DateTime = logEntry.RequestMessage.DateTime,
-            ClientIP = logEntry.RequestMessage.ClientIP,
-            Path = logEntry.RequestMessage.Path,
-            AbsolutePath = logEntry.RequestMessage.AbsolutePath,
-            Url = logEntry.RequestMessage.Url,
-            AbsoluteUrl = logEntry.RequestMessage.AbsoluteUrl,
-            ProxyUrl = logEntry.RequestMessage.ProxyUrl,
-            Query = logEntry.RequestMessage.Query,
-            Method = logEntry.RequestMessage.Method,
-            HttpVersion = logEntry.RequestMessage.HttpVersion,
-            Headers = logEntry.RequestMessage.Headers,
-            Cookies = logEntry.RequestMessage.Cookies
-        };
-
-        if (logEntry.RequestMessage.BodyData != null)
-        {
-            logRequestModel.DetectedBodyType = logEntry.RequestMessage.BodyData.DetectedBodyType?.ToString();
-            logRequestModel.DetectedBodyTypeFromContentType = logEntry.RequestMessage.BodyData.DetectedBodyTypeFromContentType?.ToString();
-
-            switch (logEntry.RequestMessage.BodyData.DetectedBodyType)
+            logRequestModel = new LogRequestModel
             {
-                case BodyType.String:
-                case BodyType.FormUrlEncoded:
-                    logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString;
-                    break;
+                DateTime = logEntry.RequestMessage.DateTime,
+                ClientIP = logEntry.RequestMessage.ClientIP,
+                Path = logEntry.RequestMessage.Path,
+                AbsolutePath = logEntry.RequestMessage.AbsolutePath,
+                Url = logEntry.RequestMessage.Url,
+                AbsoluteUrl = logEntry.RequestMessage.AbsoluteUrl,
+                ProxyUrl = logEntry.RequestMessage.ProxyUrl,
+                Query = logEntry.RequestMessage.Query,
+                Method = logEntry.RequestMessage.Method,
+                HttpVersion = logEntry.RequestMessage.HttpVersion,
+                Headers = logEntry.RequestMessage.Headers,
+                Cookies = logEntry.RequestMessage.Cookies
+            };
 
-                case BodyType.Json:
-                    logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString; // In case of Json, do also save the Body as string (backwards compatible)
-                    logRequestModel.BodyAsJson = logEntry.RequestMessage.BodyData.BodyAsJson;
-                    break;
+            if (logEntry.RequestMessage.BodyData != null)
+            {
+                logRequestModel.DetectedBodyType = logEntry.RequestMessage.BodyData.DetectedBodyType?.ToString();
+                logRequestModel.DetectedBodyTypeFromContentType = logEntry.RequestMessage.BodyData.DetectedBodyTypeFromContentType?.ToString();
 
-                case BodyType.Bytes:
-                    logRequestModel.BodyAsBytes = logEntry.RequestMessage.BodyData.BodyAsBytes;
-                    break;
+                switch (logEntry.RequestMessage.BodyData.DetectedBodyType)
+                {
+                    case BodyType.String:
+                    case BodyType.FormUrlEncoded:
+                        logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString;
+                        break;
+
+                    case BodyType.Json:
+                        logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString; // In case of Json, do also save the Body as string (backwards compatible)
+                        logRequestModel.BodyAsJson = logEntry.RequestMessage.BodyData.BodyAsJson;
+                        break;
+
+                    case BodyType.Bytes:
+                        logRequestModel.BodyAsBytes = logEntry.RequestMessage.BodyData.BodyAsBytes;
+                        break;
+                }
+
+                logRequestModel.BodyEncoding = logEntry.RequestMessage.BodyData.Encoding != null
+                    ? new EncodingModel
+                    {
+                        EncodingName = logEntry.RequestMessage.BodyData.Encoding.EncodingName,
+                        CodePage = logEntry.RequestMessage.BodyData.Encoding.CodePage,
+                        WebName = logEntry.RequestMessage.BodyData.Encoding.WebName
+                    }
+                    : null;
+            }
+        }
+
+        LogResponseModel? logResponseModel = null;
+        if (logEntry.ResponseMessage != null)
+        {
+            logResponseModel = new LogResponseModel
+            {
+                StatusCode = logEntry.ResponseMessage.StatusCode,
+                Headers = logEntry.ResponseMessage.Headers
+            };
+
+            if (logEntry.ResponseMessage.FaultType != FaultType.NONE)
+            {
+                logResponseModel.FaultType = logEntry.ResponseMessage.FaultType.ToString();
+                logResponseModel.FaultPercentage = logEntry.ResponseMessage.FaultPercentage;
             }
 
-            logRequestModel.BodyEncoding = logEntry.RequestMessage.BodyData.Encoding != null
-                ? new EncodingModel
-                {
-                    EncodingName = logEntry.RequestMessage.BodyData.Encoding.EncodingName,
-                    CodePage = logEntry.RequestMessage.BodyData.Encoding.CodePage,
-                    WebName = logEntry.RequestMessage.BodyData.Encoding.WebName
-                }
-                : null;
-        }
+            if (logEntry.ResponseMessage.BodyData != null)
+            {
+                logResponseModel.BodyOriginal = logEntry.ResponseMessage.BodyOriginal;
+                logResponseModel.BodyDestination = logEntry.ResponseMessage.BodyDestination;
 
-        var logResponseModel = new LogResponseModel
-        {
-            StatusCode = logEntry.ResponseMessage.StatusCode,
-            Headers = logEntry.ResponseMessage.Headers
-        };
+                logResponseModel.DetectedBodyType = logEntry.ResponseMessage.BodyData.DetectedBodyType?.ToString();
+                logResponseModel.DetectedBodyTypeFromContentType = logEntry.ResponseMessage.BodyData.DetectedBodyTypeFromContentType?.ToString();
 
-        if (logEntry.ResponseMessage.FaultType != FaultType.NONE)
-        {
-            logResponseModel.FaultType = logEntry.ResponseMessage.FaultType.ToString();
-            logResponseModel.FaultPercentage = logEntry.ResponseMessage.FaultPercentage;
-        }
+                MapBody(logEntry, logResponseModel);
 
-        if (logEntry.ResponseMessage.BodyData != null)
-        {
-            logResponseModel.BodyOriginal = logEntry.ResponseMessage.BodyOriginal;
-            logResponseModel.BodyDestination = logEntry.ResponseMessage.BodyDestination;
-
-            logResponseModel.DetectedBodyType = logEntry.ResponseMessage.BodyData.DetectedBodyType;
-            logResponseModel.DetectedBodyTypeFromContentType = logEntry.ResponseMessage.BodyData.DetectedBodyTypeFromContentType;
-
-            MapBody(logEntry, logResponseModel);
-
-            logResponseModel.BodyEncoding = logEntry.ResponseMessage.BodyData.Encoding != null
-                ? new EncodingModel
-                {
-                    EncodingName = logEntry.ResponseMessage.BodyData.Encoding.EncodingName,
-                    CodePage = logEntry.ResponseMessage.BodyData.Encoding.CodePage,
-                    WebName = logEntry.ResponseMessage.BodyData.Encoding.WebName
-                }
-                : null;
+                logResponseModel.BodyEncoding = logEntry.ResponseMessage.BodyData.Encoding != null
+                    ? new EncodingModel
+                    {
+                        EncodingName = logEntry.ResponseMessage.BodyData.Encoding.EncodingName,
+                        CodePage = logEntry.ResponseMessage.BodyData.Encoding.CodePage,
+                        WebName = logEntry.ResponseMessage.BodyData.Encoding.WebName
+                    }
+                    : null;
+            }
         }
 
         return new LogEntryModel
@@ -120,11 +120,11 @@ internal class LogEntryMapper
 
     private void MapBody(ILogEntry logEntry, LogResponseModel logResponseModel)
     {
-        switch (logEntry.ResponseMessage.BodyData!.DetectedBodyType)
+        switch (logEntry.ResponseMessage?.BodyData?.DetectedBodyType)
         {
             case BodyType.String:
             case BodyType.FormUrlEncoded:
-                if (!string.IsNullOrEmpty(logEntry.ResponseMessage.BodyData.IsFuncUsed) && _options.DoNotSaveDynamicResponseInLogEntry == true)
+                if (!string.IsNullOrEmpty(logEntry.ResponseMessage.BodyData.IsFuncUsed) && options.DoNotSaveDynamicResponseInLogEntry == true)
                 {
                     logResponseModel.Body = logEntry.ResponseMessage.BodyData.IsFuncUsed;
                 }

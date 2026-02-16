@@ -67,7 +67,11 @@ public sealed class TestOutputHelperWireMockLogger : IWireMockLogger
     /// <inheritdoc />
     public void DebugRequestResponse(LogEntryModel logEntryModel, bool isAdminRequest)
     {
-        var message = JsonConvert.SerializeObject(logEntryModel, Formatting.Indented);
+        var message = JsonConvert.SerializeObject(logEntryModel, new JsonSerializerSettings
+        {
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore
+        });
         _testOutputHelper.WriteLine(Format("DebugRequestResponse", "Admin[{0}] {1}", isAdminRequest, message));
     }
 

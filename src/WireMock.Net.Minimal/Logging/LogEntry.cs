@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Matchers.Request;
 
 namespace WireMock.Logging;
@@ -14,13 +13,13 @@ public class LogEntry : ILogEntry
     public Guid Guid { get; set; }
 
     /// <inheritdoc cref="ILogEntry.RequestMessage" />
-    public IRequestMessage RequestMessage { get; set; } = null!;
+    public IRequestMessage? RequestMessage { get; set; }
 
     /// <inheritdoc cref="ILogEntry.ResponseMessage" />
-    public IResponseMessage ResponseMessage { get; set; } = null!;
+    public IResponseMessage? ResponseMessage { get; set; }
 
     /// <inheritdoc cref="ILogEntry.RequestMatchResult" />
-    public IRequestMatchResult RequestMatchResult { get; set; } = null!;
+    public IRequestMatchResult? RequestMatchResult { get; set; }
 
     /// <inheritdoc cref="ILogEntry.MappingGuid" />
     public Guid? MappingGuid { get; set; }
@@ -35,5 +34,5 @@ public class LogEntry : ILogEntry
     public string? PartialMappingTitle { get; set; }
 
     /// <inheritdoc cref="ILogEntry.PartialMatchResult" />
-    public IRequestMatchResult PartialMatchResult { get; set; } = null!;
+    public IRequestMatchResult? PartialMatchResult { get; set; }
 }

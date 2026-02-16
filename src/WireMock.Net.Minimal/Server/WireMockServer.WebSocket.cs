@@ -1,10 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.WebSockets;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using WireMock.WebSockets;
 

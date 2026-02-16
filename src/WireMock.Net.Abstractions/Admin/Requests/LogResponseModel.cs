@@ -64,12 +64,12 @@ public class LogResponseModel
     /// <summary>
     /// The detected body type (detection based on body content).
     /// </summary>
-    public BodyType? DetectedBodyType { get; set; }
+    public string? DetectedBodyType { get; set; }
 
     /// <summary>
     /// The detected body type (detection based on Content-Type).
     /// </summary>
-    public BodyType? DetectedBodyTypeFromContentType { get; set; }
+    public string? DetectedBodyTypeFromContentType { get; set; }
 
     /// <summary>
     /// The FaultType.

@@ -1,11 +1,20 @@
 // Copyright © WireMock.Net
 
+using System.Diagnostics;
+using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Stef.Validation;
 using WireMock.Extensions;
+using WireMock.Logging;
+using WireMock.Matchers;
+using WireMock.Matchers.Request;
+using WireMock.Models;
 using WireMock.Owin;
+using WireMock.Owin.ActivityTracing;
+using WireMock.Types;
+using WireMock.Util;
 
 namespace WireMock.WebSockets;
 
@@ -14,8 +23,6 @@ namespace WireMock.WebSockets;
 /// </summary>
 public class WireMockWebSocketContext : IWebSocketContext
 {
-    private readonly IWireMockMiddlewareOptions _options;
-
     /// <inheritdoc />
     public Guid ConnectionId { get; } = Guid.NewGuid();
 
@@ -35,6 +42,10 @@ public class WireMockWebSocketContext : IWebSocketContext
 
     internal WebSocketBuilder Builder { get; }
 
+    internal IWireMockMiddlewareOptions Options { get; }
+
+    internal IWireMockMiddlewareLogger Logger { get; }
+
     /// <summary>
     /// Creates a new WebSocketContext
     /// </summary>
@@ -44,7 +55,9 @@ public class WireMockWebSocketContext : IWebSocketContext
         IRequestMessage requestMessage,
         IMapping mapping,
         WebSocketConnectionRegistry? registry,
-        WebSocketBuilder builder)
+        WebSocketBuilder builder,
+        IWireMockMiddlewareOptions options,
+        IWireMockMiddlewareLogger logger)
     {
         HttpContext = Guard.NotNull(httpContext);
         WebSocket = Guard.NotNull(webSocket);
@@ -52,26 +65,19 @@ public class WireMockWebSocketContext : IWebSocketContext
         Mapping = Guard.NotNull(mapping);
         Registry = registry;
         Builder = Guard.NotNull(builder);
-
-        // Get options from HttpContext
-        if (httpContext.Items.TryGetValue<IWireMockMiddlewareOptions>(nameof(WireMockMiddlewareOptions), out var options))
-        {
-            _options = options;
-        }
-        else
-        {
-            throw new InvalidOperationException("WireMockMiddlewareOptions not found in HttpContext.Items");
-        }
+        Options = Guard.NotNull(options);
+        Logger = Guard.NotNull(logger);
     }
 
     /// <inheritdoc />
     public Task SendAsync(string text, CancellationToken cancellationToken = default)
     {
         var bytes = Encoding.UTF8.GetBytes(text);
-        return WebSocket.SendAsync(
+        return SendAsyncInternal(
             new ArraySegment<byte>(bytes),
             WebSocketMessageType.Text,
             true,
+            text,
             cancellationToken
         );
     }
@@ -79,18 +85,157 @@ public class WireMockWebSocketContext : IWebSocketContext
     /// <inheritdoc />
     public Task SendAsync(byte[] bytes, CancellationToken cancellationToken = default)
     {
-        return WebSocket.SendAsync(
+        return SendAsyncInternal(
             new ArraySegment<byte>(bytes),
             WebSocketMessageType.Binary,
             true,
+            bytes,
             cancellationToken
         );
     }
 
-    /// <inheritdoc />
-    public Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription)
+    private async Task SendAsyncInternal(
+        ArraySegment<byte> buffer,
+        WebSocketMessageType messageType,
+        bool endOfMessage,
+        object? data,
+        CancellationToken cancellationToken)
     {
-        return WebSocket.CloseAsync(closeStatus, statusDescription, CancellationToken.None);
+        Activity? activity = null;
+        var shouldTrace = Options.ActivityTracingOptions is not null;
+
+        if (shouldTrace)
+        {
+            activity = WireMockActivitySource.StartWebSocketMessageActivity(WebSocketMessageDirection.Send, Mapping.Guid);
+            WireMockActivitySource.EnrichWithWebSocketMessage(
+                activity,
+                messageType,
+                buffer.Count,
+                endOfMessage,
+                data as string,
+                Options.ActivityTracingOptions
+            );
+        }
+
+        try
+        {
+            await WebSocket.SendAsync(buffer, messageType, endOfMessage, cancellationToken).ConfigureAwait(false);
+
+            // Log the send operation
+            if (Options.MaxRequestLogCount is null or > 0)
+            {
+                LogWebSocketMessage(WebSocketMessageDirection.Send, messageType, data, activity);
+            }
+        }
+        catch (Exception ex)
+        {
+            WireMockActivitySource.RecordException(activity, ex);
+            throw;
+        }
+        finally
+        {
+            activity?.Dispose();
+        }
+    }
+
+    private void LogWebSocketMessage(
+        WebSocketMessageDirection direction,
+        WebSocketMessageType messageType,
+        object? data,
+        Activity? activity)
+    {
+        // Create body data
+        IBodyData bodyData;
+        if (messageType == WebSocketMessageType.Text && data is string textContent)
+        {
+            bodyData = new BodyData
+            {
+                BodyAsString = textContent,
+                DetectedBodyType = BodyType.String
+            };
+        }
+        else if (messageType == WebSocketMessageType.Binary && data is byte[] binary)
+        {
+            bodyData = new BodyData
+            {
+                BodyAsBytes = binary,
+                DetectedBodyType = BodyType.Bytes
+            };
+        }
+        else
+        {
+            bodyData = new BodyData
+            {
+                BodyAsString = messageType.ToString(),
+                DetectedBodyType = BodyType.Bytes
+            };
+        }
+
+        // Create a pseudo-request or pseudo-response depending on direction
+        RequestMessage? requestMessage = null;
+        IResponseMessage? responseMessage = null;
+
+        var method = $"WS_{direction.ToString().ToUpperInvariant()}";
+
+        if (direction == WebSocketMessageDirection.Receive)
+        {
+            // Received message - log as request
+            requestMessage = new RequestMessage(
+                new UrlDetails(RequestMessage.Url),
+                method,
+                RequestMessage.ClientIP,
+                bodyData,
+                null,
+                null
+            )
+            {
+                DateTime = DateTime.UtcNow
+            };
+        }
+        else
+        {
+            // Sent message - log as response
+            responseMessage = new ResponseMessage
+            {
+                StatusCode = HttpStatusCode.SwitchingProtocols, // WebSocket status
+                BodyData = bodyData,
+                DateTime = DateTime.UtcNow
+            };
+        }
+
+        // Create a perfect match result
+        var requestMatchResult = new RequestMatchResult();
+        requestMatchResult.AddScore(typeof(WebSocketMessageDirection), MatchScores.Perfect, null);
+
+        // Create log entry
+        var logEntry = new LogEntry
+        {
+            Guid = Guid.NewGuid(),
+            RequestMessage = requestMessage,
+            ResponseMessage = responseMessage,
+            MappingGuid = Mapping.Guid,
+            MappingTitle = Mapping.Title,
+            RequestMatchResult = requestMatchResult
+        };
+
+        // Enrich activity if present
+        if (activity != null && Options.ActivityTracingOptions != null)
+        {
+            WireMockActivitySource.EnrichWithLogEntry(activity, logEntry, Options.ActivityTracingOptions);
+        }
+
+        // Log using LogLogEntry
+        Logger.LogLogEntry(logEntry, Options.MaxRequestLogCount is null or > 0);
+
+        activity?.Dispose();
+    }
+
+    /// <inheritdoc />
+    public async Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription)
+    {
+        await WebSocket.CloseAsync(closeStatus, statusDescription, CancellationToken.None);
+
+        LogWebSocketMessage(WebSocketMessageDirection.Send, WebSocketMessageType.Close, $"CloseStatus: {closeStatus}, Description: {statusDescription}", null);
     }
 
     /// <inheritdoc />
@@ -108,7 +253,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         }
 
         // Use the same logic as WireMockMiddleware
-        if (_options.Scenarios.TryGetValue(Mapping.Scenario, out var scenarioState))
+        if (Options.Scenarios.TryGetValue(Mapping.Scenario, out var scenarioState))
         {
             // Directly set the next state (bypass counter logic for manual WebSocket state changes)
             scenarioState.NextState = nextState;
@@ -121,7 +266,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         else
         {
             // Create new scenario state if it doesn't exist
-            _options.Scenarios.TryAdd(Mapping.Scenario, new ScenarioState
+            Options.Scenarios.TryAdd(Mapping.Scenario, new ScenarioState
             {
                 Name = Mapping.Scenario,
                 NextState = nextState,
@@ -144,7 +289,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         }
 
         // Ensure scenario exists
-        if (!_options.Scenarios.TryGetValue(Mapping.Scenario, out var scenario))
+        if (!Options.Scenarios.TryGetValue(Mapping.Scenario, out var scenario))
         {
             return;
         }

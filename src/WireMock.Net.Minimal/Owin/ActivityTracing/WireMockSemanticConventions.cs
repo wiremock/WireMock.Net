@@ -25,4 +25,10 @@ internal static class WireMockSemanticConventions
     public const string RequestGuid = "wiremock.request.guid";
     public const string RequestBody = "wiremock.request.body";
     public const string ResponseBody = "wiremock.response.body";
+
+    // WebSocket-specific attributes
+    public const string WebSocketMessageType = "wiremock.websocket.message.type";
+    public const string WebSocketMessageSize = "wiremock.websocket.message.size";
+    public const string WebSocketEndOfMessage = "wiremock.websocket.message.end_of_message";
+    public const string WebSocketMessageContent = "wiremock.websocket.message.content";
 }

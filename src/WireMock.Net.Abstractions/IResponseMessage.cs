@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
@@ -51,6 +50,11 @@ public interface IResponseMessage
     /// Gets or sets the status code.
     /// </summary>
     object? StatusCode { get; set; }
+
+    /// <summary>
+    /// Gets the DateTime.
+    /// </summary>
+    DateTime DateTime { get; }
 
     /// <summary>
     /// Adds the header.

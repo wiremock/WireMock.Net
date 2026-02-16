@@ -42,7 +42,8 @@ internal class WireMockMiddleware(
     private async Task InvokeInternalAsync(HttpContext ctx)
     {
         // Store options in HttpContext for providers to access (e.g., WebSocketResponseProvider)
-        ctx.Items[nameof(WireMockMiddlewareOptions)] = options;
+        ctx.Items[nameof(IWireMockMiddlewareOptions)] = options;
+        ctx.Items[nameof(IWireMockMiddlewareLogger)] = logger;
 
         var request = await requestMapper.MapAsync(ctx, options).ConfigureAwait(false);
 
@@ -158,7 +159,7 @@ internal class WireMockMiddleware(
         }
         finally
         {
-            logger.Log(logRequest, request, response, result.Match, result.Partial, activity);
+            logger.LogRequestAndResponse(logRequest, request, response, result.Match, result.Partial, activity);
 
             try
             {
