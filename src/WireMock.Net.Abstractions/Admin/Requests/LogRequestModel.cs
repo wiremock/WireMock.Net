@@ -18,7 +18,7 @@ public class LogRequestModel
     /// <summary>
     /// The DateTime.
     /// </summary>
-    public DateTime DateTime { get; set; }
+    public required DateTime DateTime { get; set; }
 
     /// <summary>
     /// The Path.
@@ -58,7 +58,7 @@ public class LogRequestModel
     /// <summary>
     /// The HTTP Version.
     /// </summary>
-    public string HttpVersion { get; set; } = null!;
+    public string? HttpVersion { get; set; }
 
     /// <summary>
     /// The Headers.

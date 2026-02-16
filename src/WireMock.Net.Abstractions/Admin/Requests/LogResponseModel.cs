@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using WireMock.Admin.Mappings;
 using WireMock.Types;
 
@@ -80,4 +79,14 @@ public class LogResponseModel
     /// Gets or sets the Fault percentage.
     /// </summary>
     public double? FaultPercentage { get; set; }
+
+    /// <summary>
+    /// The DateTime.
+    /// </summary>
+    public required DateTime DateTime { get; set; }
+
+    /// <summary>
+    /// The method.
+    /// </summary>
+    public string? Method { get; set; }
 }

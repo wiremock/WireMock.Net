@@ -42,6 +42,9 @@ public class ResponseMessage : IResponseMessage
     public DateTime DateTime { get; set; }
 
     /// <inheritdoc />
+    public string? Method { get; set; }
+
+    /// <inheritdoc />
     public void AddHeader(string name, string value)
     {
         Headers ??= new Dictionary<string, WireMockList<string>>();

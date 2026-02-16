@@ -6,7 +6,6 @@ using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Stef.Validation;
-using WireMock.Extensions;
 using WireMock.Logging;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
@@ -167,7 +166,7 @@ public class WireMockWebSocketContext : IWebSocketContext
             bodyData = new BodyData
             {
                 BodyAsString = messageType.ToString(),
-                DetectedBodyType = BodyType.Bytes
+                DetectedBodyType = BodyType.String
             };
         }
 
@@ -197,15 +196,12 @@ public class WireMockWebSocketContext : IWebSocketContext
             // Sent message - log as response
             responseMessage = new ResponseMessage
             {
+                Method = method,
                 StatusCode = HttpStatusCode.SwitchingProtocols, // WebSocket status
                 BodyData = bodyData,
                 DateTime = DateTime.UtcNow
             };
         }
-
-        // Create a perfect match result
-        var requestMatchResult = new RequestMatchResult();
-        requestMatchResult.AddScore(typeof(WebSocketMessageDirection), MatchScores.Perfect, null);
 
         // Create log entry
         var logEntry = new LogEntry
@@ -214,8 +210,7 @@ public class WireMockWebSocketContext : IWebSocketContext
             RequestMessage = requestMessage,
             ResponseMessage = responseMessage,
             MappingGuid = Mapping.Guid,
-            MappingTitle = Mapping.Title,
-            RequestMatchResult = requestMatchResult
+            MappingTitle = Mapping.Title
         };
 
         // Enrich activity if present

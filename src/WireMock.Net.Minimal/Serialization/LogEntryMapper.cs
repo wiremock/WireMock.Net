@@ -71,6 +71,8 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
         {
             logResponseModel = new LogResponseModel
             {
+                DateTime = logEntry.ResponseMessage.DateTime,
+                Method = logEntry.ResponseMessage.Method,
                 StatusCode = logEntry.ResponseMessage.StatusCode,
                 Headers = logEntry.ResponseMessage.Headers
             };

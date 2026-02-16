@@ -57,6 +57,11 @@ public interface IResponseMessage
     DateTime DateTime { get; }
 
     /// <summary>
+    /// Gets the method.
+    /// </summary>
+    string? Method { get; }
+
+    /// <summary>
     /// Adds the header.
     /// </summary>
     /// <param name="name">The name.</param>

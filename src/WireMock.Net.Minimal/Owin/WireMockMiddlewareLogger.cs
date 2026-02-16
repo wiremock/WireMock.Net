@@ -52,23 +52,23 @@ internal class WireMockMiddlewareLogger(
 
     public void LogLogEntry(LogEntry entry, bool addRequest)
     {
-        if (entry.RequestMessage != null)
-        {
-            _options.Logger.DebugRequestResponse(_logEntryMapper.Map(entry), entry.RequestMessage.Path.StartsWith("/__admin/"));
+        _options.Logger.DebugRequestResponse(_logEntryMapper.Map(entry), entry.RequestMessage?.Path.StartsWith("/__admin/") == true);
 
-            // If addRequest is set to true and MaxRequestLogCount is null or does have a value greater than 0, try to add a new request log.
-            if (addRequest && _options.MaxRequestLogCount is null or > 0)
-            {
-                TryAddLogEntry(entry);
-            }
+        // If addRequest is set to true and MaxRequestLogCount is null or does have a value greater than 0, try to add a new request log.
+        if (addRequest && _options.MaxRequestLogCount is null or > 0)
+        {
+            TryAddLogEntry(entry);
         }
+
 
         // In case MaxRequestLogCount has a value greater than 0, try to delete existing request logs based on the count.
         if (_options.MaxRequestLogCount is > 0)
         {
-            var logEntries = _options.LogEntries.Where(le => le.RequestMessage != null).ToList();
+            var logEntries = _options.LogEntries.ToList();
 
-            foreach (var logEntry in logEntries.OrderBy(le => le.RequestMessage!.DateTime).Take(logEntries.Count - _options.MaxRequestLogCount.Value))
+            foreach (var logEntry in logEntries
+                .OrderBy(le => le.RequestMessage?.DateTime ?? le.ResponseMessage?.DateTime)
+                .Take(logEntries.Count - _options.MaxRequestLogCount.Value))
             {
                 TryRemoveLogEntry(logEntry);
             }
@@ -77,10 +77,10 @@ internal class WireMockMiddlewareLogger(
         // In case RequestLogExpirationDuration has a value greater than 0, try to delete existing request logs based on the date.
         if (_options.RequestLogExpirationDuration is > 0)
         {
-            var logEntries = _options.LogEntries.Where(le => le.RequestMessage != null).ToList();
+            var logEntries = _options.LogEntries.ToList();
 
             var checkTime = DateTime.UtcNow.AddHours(-_options.RequestLogExpirationDuration.Value);
-            foreach (var logEntry in logEntries.Where(le => le.RequestMessage!.DateTime < checkTime))
+            foreach (var logEntry in logEntries.Where(le => le.RequestMessage?.DateTime < checkTime || le.ResponseMessage?.DateTime < checkTime))
             {
                 TryRemoveLogEntry(logEntry);
             }

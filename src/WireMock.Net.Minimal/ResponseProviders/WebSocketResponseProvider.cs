@@ -565,7 +565,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             bodyData = new BodyData
             {
                 BodyAsString = messageType.ToString(),
-                DetectedBodyType = BodyType.Bytes
+                DetectedBodyType = BodyType.String
             };
         }
 
@@ -595,15 +595,12 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             // Sent message - log as response
             responseMessage = new ResponseMessage
             {
+                Method = method,
                 StatusCode = HttpStatusCode.SwitchingProtocols, // WebSocket status
                 BodyData = bodyData,
                 DateTime = DateTime.UtcNow
             };
         }
-
-        // Create a perfect match result
-        var requestMatchResult = new RequestMatchResult();
-        requestMatchResult.AddScore(typeof(WebSocketMessageDirection), MatchScores.Perfect, null);
 
         // Create log entry
         var logEntry = new LogEntry
@@ -612,8 +609,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             RequestMessage = requestMessage,
             ResponseMessage = responseMessage,
             MappingGuid = context.Mapping.Guid,
-            MappingTitle = context.Mapping.Title,
-            RequestMatchResult = requestMatchResult
+            MappingTitle = context.Mapping.Title
         };
 
         // Enrich activity if present
