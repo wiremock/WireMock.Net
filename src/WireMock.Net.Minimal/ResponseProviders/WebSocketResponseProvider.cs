@@ -2,21 +2,14 @@
 
 using System.Buffers;
 using System.Diagnostics;
-using System.Drawing;
 using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using WireMock.Constants;
-using WireMock.Logging;
-using WireMock.Matchers;
-using WireMock.Matchers.Request;
-using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
-using WireMock.Types;
-using WireMock.Util;
 using WireMock.WebSockets;
 
 namespace WireMock.ResponseProviders;
@@ -175,7 +168,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                             );
                         }
 
-                        LogWebSocketMessage(context, WebSocketMessageDirection.Receive, result.MessageType, null, receiveActivity);
+                        context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, null, receiveActivity);
 
                         await context.CloseAsync(
                             WebSocketCloseStatus.NormalClosure,
@@ -204,7 +197,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                     }
 
                     // Log the receive operation
-                    LogWebSocketMessage(context, WebSocketMessageDirection.Receive, result.MessageType, textContent, receiveActivity);
+                    context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, textContent, receiveActivity);
 
                     // Echo back (this will be logged by context.SendAsync)
                     await context.WebSocket.SendAsync(
@@ -276,7 +269,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                             );
                         }
 
-                        LogWebSocketMessage(context, WebSocketMessageDirection.Receive, result.MessageType, null, receiveActivity);
+                        context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, null, receiveActivity);
 
                         await context.CloseAsync(
                             WebSocketCloseStatus.NormalClosure,
@@ -302,7 +295,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
 
                     // Log the receive operation
                     object? data = message.Text != null ? message.Text : message.Bytes;
-                    LogWebSocketMessage(context, WebSocketMessageDirection.Receive, result.MessageType, data, receiveActivity);
+                    context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, data, receiveActivity);
 
                     // Call custom handler
                     await handler(message, context).ConfigureAwait(false);
@@ -396,7 +389,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                         );
                     }
 
-                    LogWebSocketMessage(context, direction, result.MessageType, null, activity);
+                    context.LogWebSocketMessage(direction, result.MessageType, null, activity);
 
                     await destination.CloseAsync(
                         result.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
@@ -431,7 +424,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                 }
 
                 // Log the proxy operation
-                LogWebSocketMessage(context, direction, result.MessageType, data, activity);
+                context.LogWebSocketMessage(direction, result.MessageType, data, activity);
 
                 await destination.SendAsync(
                     new ArraySegment<byte>(buffer, 0, result.Count),
@@ -501,7 +494,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                         Array.Copy(buffer, (byte[])data, result.Count);
                     }
 
-                    LogWebSocketMessage(context, WebSocketMessageDirection.Receive, result.MessageType, data, receiveActivity);
+                    context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, data, receiveActivity);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
@@ -527,101 +520,6 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                 await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Timeout");
             }
         }
-    }
-
-    private static void LogWebSocketMessage(
-        WireMockWebSocketContext context,
-        WebSocketMessageDirection direction,
-        WebSocketMessageType messageType,
-        object? data,
-        Activity? activity)
-    {
-        // Skip logging if log count limit is disabled
-        if (context.Options.MaxRequestLogCount == 0)
-        {
-            return;
-        }
-
-        // Create body data
-        IBodyData bodyData;
-        if (messageType == WebSocketMessageType.Text && data is string textContent)
-        {
-            bodyData = new BodyData
-            {
-                BodyAsString = textContent,
-                DetectedBodyType = BodyType.String
-            };
-        }
-        else if (messageType == WebSocketMessageType.Binary && data is byte[] binary)
-        {
-            bodyData = new BodyData
-            {
-                BodyAsBytes = binary,
-                DetectedBodyType = BodyType.Bytes
-            };
-        }
-        else
-        {
-            bodyData = new BodyData
-            {
-                BodyAsString = messageType.ToString(),
-                DetectedBodyType = BodyType.String
-            };
-        }
-
-        // Create a pseudo-request or pseudo-response depending on direction
-        RequestMessage? requestMessage = null;
-        IResponseMessage? responseMessage = null;
-
-        var method = $"WS_{direction.ToString().ToUpperInvariant()}";
-
-        if (direction == WebSocketMessageDirection.Receive)
-        {
-            // Received message - log as request
-            requestMessage = new RequestMessage(
-                new UrlDetails(context.RequestMessage.Url),
-                method,
-                context.RequestMessage.ClientIP,
-                bodyData,
-                null,
-                null
-            )
-            {
-                DateTime = DateTime.UtcNow
-            };
-        }
-        else
-        {
-            // Sent message - log as response
-            responseMessage = new ResponseMessage
-            {
-                Method = method,
-                StatusCode = HttpStatusCode.SwitchingProtocols, // WebSocket status
-                BodyData = bodyData,
-                DateTime = DateTime.UtcNow
-            };
-        }
-
-        // Create log entry
-        var logEntry = new LogEntry
-        {
-            Guid = Guid.NewGuid(),
-            RequestMessage = requestMessage,
-            ResponseMessage = responseMessage,
-            MappingGuid = context.Mapping.Guid,
-            MappingTitle = context.Mapping.Title
-        };
-
-        // Enrich activity if present
-        if (activity != null && context.Options.ActivityTracingOptions != null)
-        {
-            WireMockActivitySource.EnrichWithLogEntry(activity, logEntry, context.Options.ActivityTracingOptions);
-        }
-
-        // Log using LogLogEntry
-        context.Logger.LogLogEntry(logEntry, context.Options.MaxRequestLogCount is null or > 0);
-
-        activity?.Dispose();
     }
 
     private static WebSocketMessage CreateWebSocketMessage(WebSocketReceiveResult result, byte[] buffer)

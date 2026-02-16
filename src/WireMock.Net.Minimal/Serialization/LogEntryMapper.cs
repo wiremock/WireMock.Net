@@ -42,6 +42,8 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
                 {
                     case BodyType.String:
                     case BodyType.FormUrlEncoded:
+                    case BodyType.WebSocketText:
+                    case BodyType.WebSocketClose:
                         logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString;
                         break;
 
@@ -51,6 +53,7 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
                         break;
 
                     case BodyType.Bytes:
+                    case BodyType.WebSocketBinary:
                         logRequestModel.BodyAsBytes = logEntry.RequestMessage.BodyData.BodyAsBytes;
                         break;
                 }
@@ -126,6 +129,8 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
         {
             case BodyType.String:
             case BodyType.FormUrlEncoded:
+            case BodyType.WebSocketText:
+            case BodyType.WebSocketClose:
                 if (!string.IsNullOrEmpty(logEntry.ResponseMessage.BodyData.IsFuncUsed) && options.DoNotSaveDynamicResponseInLogEntry == true)
                 {
                     logResponseModel.Body = logEntry.ResponseMessage.BodyData.IsFuncUsed;
@@ -141,6 +146,7 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
                 break;
 
             case BodyType.Bytes:
+            case BodyType.WebSocketBinary:
                 logResponseModel.BodyAsBytes = logEntry.ResponseMessage.BodyData.BodyAsBytes;
                 break;
 
