@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Stef.Validation;
 using WireMock.Matchers.Request;

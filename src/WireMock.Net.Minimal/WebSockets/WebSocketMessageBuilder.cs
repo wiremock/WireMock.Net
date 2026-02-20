@@ -42,8 +42,7 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
     public IWebSocketMessageBuilder WithDelay(int delayInMilliseconds)
     {
         Guard.Condition(delayInMilliseconds, d => d >= 0, nameof(delayInMilliseconds));
-        Delay = TimeSpan.FromMilliseconds(delayInMilliseconds);
-        return this;
+        return WithDelay(TimeSpan.FromMilliseconds(delayInMilliseconds));
     }
 
     public IWebSocketMessageBuilder Close()

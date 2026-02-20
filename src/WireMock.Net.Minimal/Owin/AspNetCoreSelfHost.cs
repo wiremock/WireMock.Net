@@ -1,12 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Stef.Validation;
-using WireMock.Extensions;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
 using WireMock.Serialization;
@@ -22,7 +19,7 @@ internal partial class AspNetCoreSelfHost
     private readonly IWireMockLogger _logger;
     private readonly HostUrlOptions _urlOptions;
 
-    private IWebHost _host;
+    private IWebHost _host = null!;
 
     public bool IsStarted { get; private set; }
 

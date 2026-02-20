@@ -27,7 +27,7 @@
     <ItemGroup>
         <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
         <PackageReference Include="NUnit" Version="4.4.0" />
-        <PackageReference Include="Stef.Validation" Version="0.1.1" />
+        <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>
 
     <ItemGroup>

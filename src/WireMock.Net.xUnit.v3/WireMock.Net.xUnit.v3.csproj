@@ -30,8 +30,4 @@
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.2" />
-    </ItemGroup>
 </Project>

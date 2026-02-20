@@ -32,7 +32,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AwesomeAssertions" Version="9.1.0" />
+        <PackageReference Include="AwesomeAssertions" Version="9.4.0" />
     </ItemGroup>
 
     <ItemGroup>
