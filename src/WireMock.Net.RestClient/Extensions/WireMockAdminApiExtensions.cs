@@ -3,6 +3,8 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Stef.Validation;
+using WireMock.Admin.Mappings;
+using WireMock.Admin.Requests;
 using WireMock.Client.Builders;
 
 namespace WireMock.Client.Extensions;
@@ -71,6 +73,21 @@ public static class WireMockAdminApiExtensions
         {
             throw new InvalidOperationException($"The /__admin/health endpoint did not return '{HealthStatusHealthy}' after {MaxRetries} retries and {totalWaitTime / 1000.0:0.0} seconds.");
         }
+    }
+
+    /// <summary>
+    /// Find requests based on the criteria (<see cref="RequestModel"/>).
+    /// </summary>
+    /// <param name="adminApi">See <see cref="IWireMockAdminApi"/>.</param>
+    /// <param name="builder">The <see cref="RequestModelBuilder"/> action to fluently build the request model.</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    public static Task<IList<LogEntryModel>> FindRequestsAsync(this IWireMockAdminApi adminApi, Action<RequestModelBuilder> builder, CancellationToken cancellationToken = default)
+    {
+        var modelBuilder = new RequestModelBuilder();
+        builder(modelBuilder);
+
+        var requestModel = modelBuilder.Build();
+        return adminApi.FindRequestsAsync(requestModel, cancellationToken);
     }
 
     private static async Task<bool> IsHealthyAsync(IWireMockAdminApi adminApi, CancellationToken cancellationToken)

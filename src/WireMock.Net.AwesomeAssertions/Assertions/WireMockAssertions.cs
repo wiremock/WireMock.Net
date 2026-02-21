@@ -11,9 +11,10 @@ public partial class WireMockAssertions
 {
     public const string Any = "*";
 
+    private readonly AssertionChain _chain;
+
     public int? CallsCount { get; }
     public IReadOnlyList<IRequestMessage> RequestMessages { get; private set; }
-    private readonly AssertionChain _chain;
 
     public WireMockAssertions(IWireMockServer subject, int? callsCount, AssertionChain chain)
     {
