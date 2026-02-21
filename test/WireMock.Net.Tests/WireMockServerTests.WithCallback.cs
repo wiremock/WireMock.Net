@@ -28,7 +28,7 @@ namespace WireMock.Net.Tests
 
 			// Act
 			var httpClient = new HttpClient();
-			var response = await httpClient.PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("dummy"));
+			var response = await httpClient.PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("dummy"), _ct);
 
 			// Assert
 			response.StatusCode.Should().Be(HttpStatusCode.Conflict);

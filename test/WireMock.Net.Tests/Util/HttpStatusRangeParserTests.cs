@@ -52,7 +52,7 @@ public class HttpStatusRangeParserTests
     [InlineData(",,,", 9999, false)]
 
     [InlineData(null, 399, true)]
-    public void HttpStatusRangeParser_ValidPattern_IsMatch(string pattern, int value, bool expectedResult)
+    public void HttpStatusRangeParser_ValidPattern_IsMatch(string? pattern, int value, bool expectedResult)
     {
         HttpStatusRangeParser.IsMatch(pattern, value).Should().Be(expectedResult);
     }

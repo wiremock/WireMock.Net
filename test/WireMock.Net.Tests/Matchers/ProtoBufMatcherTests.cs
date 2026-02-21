@@ -9,6 +9,8 @@ namespace WireMock.Net.Tests.Matchers;
 
 public class ProtoBufMatcherTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     private const string MessageType = "greet.HelloRequest";
 
     private static IdOrTexts ProtoDefinition => new(null, @"
@@ -37,7 +39,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType);
-        var result = await matcher.DecodeAsync(bytes);
+        var result = await matcher.DecodeAsync(bytes, _ct);
 
         // Assert
         result.Should().BeEquivalentTo(new { name = "stef" });
@@ -51,7 +53,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType);
-        var result = await matcher.IsMatchAsync(bytes);
+        var result = await matcher.IsMatchAsync(bytes, _ct);
 
         // Assert
         result.Score.Should().Be(MatchScores.Perfect);
@@ -67,7 +69,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType, matcher: jsonMatcher);
-        var result = await matcher.IsMatchAsync(bytes);
+        var result = await matcher.IsMatchAsync(bytes, _ct);
 
         // Assert
         result.Score.Should().Be(MatchScores.Perfect);
@@ -82,7 +84,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, MessageType);
-        var result = await matcher.IsMatchAsync(bytes);
+        var result = await matcher.IsMatchAsync(bytes, _ct);
 
         // Assert
         result.Score.Should().Be(MatchScores.Mismatch);
@@ -97,7 +99,7 @@ message HelloReply {
 
         // Act
         var matcher = new ProtoBufMatcher(() => ProtoDefinition, "greet.Greeter.X");
-        var result = await matcher.IsMatchAsync(bytes);
+        var result = await matcher.IsMatchAsync(bytes, _ct);
 
         // Assert
         result.Score.Should().Be(MatchScores.Mismatch);

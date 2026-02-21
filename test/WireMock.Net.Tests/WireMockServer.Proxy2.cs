@@ -11,6 +11,8 @@ namespace WireMock.Net.Tests;
 
 public class WireMockServerProxy2Tests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task WireMockServer_ProxyAndRecordSettings_ShouldProxy()
     {
@@ -34,8 +36,8 @@ public class WireMockServerProxy2Tests
 
         // Assert
         using var httpClient = new HttpClient();
-        var response = await httpClient.SendAsync(request);
-        string content = await response.Content.ReadAsStringAsync();
+        var response = await httpClient.SendAsync(request, _ct);
+        string content = await response.Content.ReadAsStringAsync(_ct);
 
         Check.That(content).IsEqualTo("{\"p\":42}");
         Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Created);

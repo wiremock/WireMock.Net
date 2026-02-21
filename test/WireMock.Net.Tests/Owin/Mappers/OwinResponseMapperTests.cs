@@ -274,7 +274,7 @@ public class OwinResponseMapperTests
     [InlineData("abcd", BodyType.String)]
     [InlineData("", BodyType.String)]
     [InlineData(null, BodyType.None)]
-    public async Task OwinResponseMapper_MapAsync_WithFault_MALFORMED_RESPONSE_CHUNK(string body, BodyType detected)
+    public async Task OwinResponseMapper_MapAsync_WithFault_MALFORMED_RESPONSE_CHUNK(string? body, BodyType detected)
     {
         // Arrange
         var responseMessage = new ResponseMessage

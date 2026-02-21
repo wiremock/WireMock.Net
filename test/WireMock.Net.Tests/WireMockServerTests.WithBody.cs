@@ -393,7 +393,7 @@ public partial class WireMockServerTests
         (await normal.Content.ReadAsStringAsync(cancellationToken)).Should().Be("normal");
 
         // Act 2
-        using var response = await client.GetStreamAsync($"{server.Url}/sse");
+        using var response = await client.GetStreamAsync($"{server.Url}/sse", _ct);
         using var reader = new StreamReader(response);
 
         var data = string.Empty;

@@ -13,7 +13,17 @@ internal static class HttpContentExtensions
         return content.ReadAsStringAsync();
     }
 
+    public static Task<string> ReadAsStringAsync(this StringContent content, CancellationToken _)
+    {
+        return content.ReadAsStringAsync();
+    }
+
     public static Task<byte[]> ReadAsByteArrayAsync(this HttpContent content, CancellationToken _)
+    {
+        return content.ReadAsByteArrayAsync();
+    }
+
+    public static Task<byte[]> ReadAsByteArrayAsync(this ByteArrayContent content, CancellationToken _)
     {
         return content.ReadAsByteArrayAsync();
     }

@@ -22,6 +22,8 @@ namespace WireMock.Net.Tests.ResponseBuilders;
 
 public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task Response_UsingTextPlain()
     {
@@ -44,12 +46,12 @@ public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
         content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
 
         // When
-        var response = await client.PatchAsync("/zipcode", content);
+        var response = await client.PatchAsync("/zipcode", content, _ct);
 
         // Then
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.GetValues("Content-Type").Should().BeEquivalentTo("text/plain; charset=utf-8");
-        var result = await response.Content.ReadAsStringAsync();
+        var result = await response.Content.ReadAsStringAsync(_ct);
         result.Should().Be("0123");
     }
 

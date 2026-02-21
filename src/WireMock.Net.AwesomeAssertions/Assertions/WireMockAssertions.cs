@@ -18,7 +18,7 @@ public partial class WireMockAssertions
     public WireMockAssertions(IWireMockServer subject, int? callsCount, AssertionChain chain)
     {
         CallsCount = callsCount;
-        RequestMessages = subject.LogEntries.Select(logEntry => logEntry.RequestMessage).ToList();
+        RequestMessages = subject.LogEntries.Select(logEntry => logEntry.RequestMessage).OfType<IRequestMessage>().ToList();
         _chain = chain;
     }
 

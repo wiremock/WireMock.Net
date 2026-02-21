@@ -8,12 +8,12 @@ namespace System.Net.Http;
 /// </summary>
 internal static class HttpClientExtensions
 {
-    public static Task<Stream> GetStreamAsync(this HttpClient client, Uri requestUri, CancellationToken _)
+    public static Task<Stream> GetStreamAsync(this HttpClient client, string requestUri, CancellationToken _)
     {
         return client.GetStreamAsync(requestUri);
     }
 
-    public static Task<HttpResponseMessage> GetAsync(this HttpClient client, Uri requestUri, CancellationToken _)
+    public static Task<HttpResponseMessage> GetAsync(this HttpClient client, string requestUri, CancellationToken _)
     {
         return client.GetAsync(requestUri);
     }

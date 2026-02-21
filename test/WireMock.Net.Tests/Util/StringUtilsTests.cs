@@ -227,7 +227,7 @@ public class StringUtilsTests
     [InlineData("")]
     [InlineData(null)]
     [InlineData("x")]
-    public void StringUtils_TryParseQuotedString_With_InvalidStringLength_Returns_False(string input)
+    public void StringUtils_TryParseQuotedString_With_InvalidStringLength_Returns_False(string? input)
     {
         // Act
         var valid = StringUtils.TryParseQuotedString(input, out _, out _);
@@ -252,7 +252,7 @@ public class StringUtilsTests
     public void StringUtils_TryParseQuotedString_With_UnexpectedUnrecognizedEscapeSequence_Returns_False()
     {
         // Arrange
-        var input = new string(new[] { '"', '\\', 'u', '?', '"' });
+        var input = new string(['"', '\\', 'u', '?', '"']);
 
         // Act
         var valid = StringUtils.TryParseQuotedString(input, out _, out _);

@@ -17,6 +17,8 @@ namespace WireMock.Net.Tests.Testcontainers;
 [Collection("Grpc")]
 public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     private readonly ILogger _logger = new XUnitLogger(testOutputHelper, new LoggerExternalScopeProvider(), nameof(TestcontainersTestsGrpc), new XUnitLoggerOptions
     {
         IncludeCategory = true,
@@ -42,12 +44,12 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         try
         {
-            await wireMockContainer.StartAsync();
+            await wireMockContainer.StartAsync(_ct);
 
             // Assert
             using (new AssertionScope())
             {
-                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue, ct: _ct);
                 logs.Should().NotBeNull();
 
                 var url = wireMockContainer.GetPublicUrl();
@@ -70,7 +72,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();
 
-                var settings = await adminClient.GetSettingsAsync();
+                var settings = await adminClient.GetSettingsAsync(_ct);
                 settings.Should().NotBeNull();
             }
         }
@@ -99,12 +101,12 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         try
         {
-            await wireMockContainer.StartAsync();
+            await wireMockContainer.StartAsync(_ct);
 
             // Assert
             using (new AssertionScope())
             {
-                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue, ct: _ct);
                 logs.Should().NotBeNull();
 
                 var url = wireMockContainer.GetPublicUrl();
@@ -124,7 +126,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();
 
-                var settings = await adminClient.GetSettingsAsync();
+                var settings = await adminClient.GetSettingsAsync(_ct);
                 settings.Should().NotBeNull();
             }
         }

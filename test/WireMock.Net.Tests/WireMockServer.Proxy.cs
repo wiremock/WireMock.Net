@@ -21,6 +21,8 @@ namespace WireMock.Net.Tests;
 
 public class WireMockServerProxyTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact(Skip = "Fails in Linux CI")]
     public async Task WireMockServer_ProxySSL_Should_log_proxied_requests()
     {
@@ -65,7 +67,7 @@ public class WireMockServerProxyTests
                 Url = "http://www.google.com",
                 SaveMapping = true,
                 SaveMappingToFile = false,
-                ExcludedHeaders = new[] { "Connection" } // Needed for .NET 4.5.x and 4.6.x
+                ExcludedHeaders = ["Connection"] // Needed for .NET 4.5.x and 4.6.x
             }
         };
         var server = WireMockServer.Start(settings);
@@ -268,7 +270,7 @@ public class WireMockServerProxyTests
                 SaveMappingToFile = true,
                 SaveMappingSettings = new ProxySaveMappingSettings
                 {
-                    HttpMethods = new ProxySaveMappingSetting<string[]>(new string[] { "GET" }, MatchBehaviour.RejectOnMatch) // To make sure that we don't want this mapping
+                    HttpMethods = new ProxySaveMappingSetting<string[]>(["GET"], MatchBehaviour.RejectOnMatch) // To make sure that we don't want this mapping
                 }
             },
             FileSystemHandler = fileSystemHandlerMock.Object
@@ -443,7 +445,7 @@ public class WireMockServerProxyTests
 
         server.Mappings.Should().HaveCount(2);
         var authorizationRequestMessageHeaderMatcher = ((Request)server.Mappings.Single(m => !m.IsAdminInterface).RequestMatcher)
-            .GetRequestMessageMatcher<RequestMessageHeaderMatcher>(x => x.Matchers.Any(m => m.GetPatterns().Contains("BASIC test-A")));
+            .GetRequestMessageMatcher<RequestMessageHeaderMatcher>(x => x.Matchers!.Any(m => m.GetPatterns().Contains("BASIC test-A")));
         authorizationRequestMessageHeaderMatcher.Should().NotBeNull();
     }
 
@@ -464,7 +466,7 @@ public class WireMockServerProxyTests
                 Url = serverForProxyForwarding.Urls[0],
                 SaveMapping = true,
                 SaveMappingToFile = false,
-                ExcludedHeaders = new[] { "excluded-header-X" }
+                ExcludedHeaders = ["excluded-header-X"]
             }
         };
         var server = WireMockServer.Start(settings);
@@ -507,7 +509,7 @@ public class WireMockServerProxyTests
                 Url = serverForProxyForwarding.Urls[0],
                 SaveMapping = true,
                 SaveMappingToFile = false,
-                ExcludedCookies = new[] { "ASP.NET_SessionId" }
+                ExcludedCookies = ["ASP.NET_SessionId"]
             }
         };
         var server = WireMockServer.Start(settings);
@@ -557,7 +559,7 @@ public class WireMockServerProxyTests
                 Url = serverForProxyForwarding.Urls[0],
                 SaveMapping = true,
                 SaveMappingToFile = false,
-                ExcludedParams = new[] { "timestamp" }
+                ExcludedParams = ["timestamp"]
             }
         };
         var server = WireMockServer.Start(settings);
@@ -625,8 +627,7 @@ public class WireMockServerProxyTests
 
         // Assert
         var mapping = serverForProxyForwarding.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
-        var score = mapping.RequestMatcher.GetMatchingScore(serverForProxyForwarding.LogEntries.First().RequestMessage,
-            new RequestMatchResult());
+        var score = mapping!.RequestMatcher.GetMatchingScore(serverForProxyForwarding.LogEntries.First().RequestMessage!, new RequestMatchResult());
         Check.That(score).IsEqualTo(1.0);
     }
 
@@ -774,8 +775,7 @@ public class WireMockServerProxyTests
     {
         // arrange
         var jpegHeader = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00 };
-        var brokenJpegHeader = new byte[]
-            {0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00};
+        var brokenJpegHeader = new byte[] { 0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0xEF, 0xBF, 0xBD, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00 };
 
         bool HasCorrectHeader(byte[]? bytes) => bytes?.SequenceEqual(jpegHeader) == true;
         bool HasBrokenHeader(byte[]? bytes) => bytes?.SequenceEqual(brokenJpegHeader) == true;
@@ -859,10 +859,10 @@ public class WireMockServerProxyTests
             { new StringContent("data"), "test", "test.txt" }
         };
         using var httpClient = new HttpClient();
-        var response = await httpClient.PostAsync(uri, form);
+        var response = await httpClient.PostAsync(uri, form, _ct);
 
         // Assert
-        string content = await response.Content.ReadAsStringAsync();
+        string content = await response.Content.ReadAsStringAsync(_ct);
         Check.That(content).IsEqualTo("{\"i\":42}");
     }
 
@@ -894,10 +894,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}{path}")
         };
-        var response1 = await new HttpClient().SendAsync(requestMessage1);
+        var response1 = await new HttpClient().SendAsync(requestMessage1, _ct);
 
         // Assert 1
-        string content1 = await response1.Content.ReadAsStringAsync();
+        string content1 = await response1.Content.ReadAsStringAsync(_ct);
         Check.That(content1).IsEqualTo("ok");
 
         // Act 2
@@ -906,10 +906,10 @@ public class WireMockServerProxyTests
             Method = HttpMethod.Get,
             RequestUri = new Uri($"{server.Urls[0]}/__admin/mappings")
         };
-        var response2 = await new HttpClient().SendAsync(requestMessage2);
+        var response2 = await new HttpClient().SendAsync(requestMessage2, _ct);
 
         // Assert 2
-        string content2 = await response2.Content.ReadAsStringAsync();
+        string content2 = await response2.Content.ReadAsStringAsync(_ct);
         Check.That(content2).IsEqualTo("[]");
     }
 
@@ -936,12 +936,12 @@ public class WireMockServerProxyTests
         };
         var httpClientHandler = new HttpClientHandler { AllowAutoRedirect = false };
         using var httpClient = new HttpClient(httpClientHandler);
-        var result = await httpClient.SendAsync(requestMessage);
+        var result = await httpClient.SendAsync(requestMessage, _ct);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 
-        var content = await result.Content.ReadAsStringAsync();
+        var content = await result.Content.ReadAsStringAsync(_ct);
         content.Should().NotBeEmpty();
 
         server.LogEntries.Should().HaveCount(1);

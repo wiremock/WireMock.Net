@@ -414,7 +414,7 @@ public class JsonPartialMatcherTests
     [InlineData("{ \"test.nested\":\"value\" }", "{\"test\":{\"nested\":\"value1\"}}")]
     [InlineData("{\"test\":{\"test1\":\"value\"}}", "{\"test\":{\"test1\":\"value1\"}}")]
     [InlineData("[{ \"test.nested\":\"value\" }]", "[{\"test\":{\"nested\":\"value1\"}}]")]
-    public void JsonPartialMatcher_IsMatch_StringInputWithInvalidMatch(string value, string input)
+    public void JsonPartialMatcher_IsMatch_StringInputWithInvalidMatch(string value, string? input)
     {
         // Assign
         var matcher = new JsonPartialMatcher(value);
