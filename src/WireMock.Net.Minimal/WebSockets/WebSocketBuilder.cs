@@ -278,11 +278,19 @@ internal class WebSocketBuilder(Response response) : IWebSocketBuilder
             }
         }
 
-
-        if (message.MessageType == WebSocketMessageType.Binary && matcher is IBytesMatcher bytesMatcher && message.Bytes != null)
+        if (message.MessageType == WebSocketMessageType.Binary)
         {
-            var result = await bytesMatcher.IsMatchAsync(message.Bytes);
-            return result.IsPerfect();
+            if (matcher is IBytesMatcher bytesMatcher)
+            {
+                var result = await bytesMatcher.IsMatchAsync(message.Bytes);
+                return result.IsPerfect();
+            }
+
+            if (matcher is IFuncMatcher funcMatcher)
+            {
+                var result = funcMatcher.IsMatch(message.Bytes);
+                return result.IsPerfect();
+            }            
         }
 
         return false;
