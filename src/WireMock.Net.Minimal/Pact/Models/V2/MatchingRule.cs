@@ -8,20 +8,20 @@ public class MatchingRule
     /// <summary>
     /// type or regex
     /// </summary>
-    public string Match { get; set; } = "type";
+    public required string Match { get; set; }
 
     /// <summary>
     /// Used for Match = "type"
     /// </summary>
-    public string Min { get; set; }
+    public string? Min { get; set; }
 
     /// <summary>
     /// Used for Match = "type"
     /// </summary>
-    public string Max { get; set; }
+    public string? Max { get; set; }
 
     /// <summary>
     /// Used for Match = "regex"
     /// </summary>
-    public string Regex { get; set; }
+    public string? Regex { get; set; }
 }
