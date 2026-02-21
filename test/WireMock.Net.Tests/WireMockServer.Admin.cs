@@ -1,13 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NFluent;
@@ -20,7 +16,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -249,6 +244,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Mapping_WithoutPathOrUrl()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.StartWithAdminInterface();
 
         // Act
@@ -262,16 +258,16 @@ public class WireMockServerAdminTests
         pathMatcher.Should().BeNull();
 
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var mappingModels = await api.GetMappingsAsync();
+        var mappingModels = await api.GetMappingsAsync(cancellationToken);
         var mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
 
-        await api.DeleteMappingsAsync();
+        await api.DeleteMappingsAsync(cancellationToken);
 
-        await api.PostMappingAsync(mappingModel);
-        await api.GetMappingsAsync();
-        mappingModels = await api.GetMappingsAsync();
+        await api.PostMappingAsync(mappingModel, cancellationToken);
+        await api.GetMappingsAsync(cancellationToken);
+        mappingModels = await api.GetMappingsAsync(cancellationToken);
         mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
@@ -356,7 +352,7 @@ public class WireMockServerAdminTests
         Check.That(mappings).HasSize(2);
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1").ConfigureAwait(false);
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1", TestContext.Current.CancellationToken);
 
         // then
         Check.That((int)response.StatusCode).IsEqualTo(400);
@@ -371,7 +367,7 @@ public class WireMockServerAdminTests
         var server = WireMockServer.Start();
 
         // when
-        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo").ConfigureAwait(false);
+        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo", TestContext.Current.CancellationToken);
 
         // then
         Check.That(server.LogEntries).HasSize(1);
@@ -386,14 +382,15 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var client = new HttpClient();
         // Act
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(2);
 
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3", cancellationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(2);
@@ -411,15 +408,16 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount_To_0_Should_Not_AddLogging()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         var client = new HttpClient();
 
         // Act
         var server = WireMockServer.Start();
         server.SetMaxRequestLogCount(0);
 
-        await client.GetAsync("http://localhost:" + server.Port + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo1", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo2", cancellationToken);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo3", cancellationToken);
 
         // Assert
         server.LogEntries.Should().BeEmpty();
@@ -431,6 +429,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Logging_FindLogEntries()
     {
         // Assign
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var client = new HttpClient();
 
         // Act
@@ -438,12 +437,12 @@ public class WireMockServerAdminTests
 
         var tasks = new[]
         {
-            client.GetAsync($"{server.Url}/foo1"),
-            client.PostAsync($"{server.Url}/foo2", new StringContent("test")),
-            client.GetAsync($"{server.Url}/foo3")
+            client.GetAsync($"{server.Url}/foo1", cancellationToken),
+            client.PostAsync($"{server.Url}/foo2", new StringContent("test"), cancellationToken),
+            client.GetAsync($"{server.Url}/foo3", cancellationToken)
         };
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        await Task.WhenAll(tasks);
 
         // Act
         var logEntries = server.FindLogEntries(new RequestMessageMethodMatcher("GET"));
@@ -505,6 +504,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_DeleteMappings()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -549,7 +549,7 @@ public class WireMockServerAdminTests
             Content = new StringContent(guidsJsonBody, Encoding.UTF8, "application/json")
         };
 
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, cancelationToken);
 
         // Assert
         var guids = server.MappingModels.Select(mapping => mapping.Guid!.Value).ToArray();
@@ -557,7 +557,7 @@ public class WireMockServerAdminTests
         Check.That(guids.Contains(guid2.Value)).IsFalse();
         Check.That(guids.Contains(guid3.Value)).IsTrue();
         Check.That(response.StatusCode).Equals(HttpStatusCode.OK);
-        Check.That(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
+        Check.That(await response.Content.ReadAsStringAsync(cancelationToken)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
     }
 
 #if NET5_0_OR_GREATER
@@ -565,12 +565,13 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateHttpClientFactory_And_CallEndpoint()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         var factory = server.CreateHttpClientFactory();
         var client = factory.CreateClient("any name");
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo", cancelationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);
@@ -588,11 +589,12 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateClient_And_CallEndpoint()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         var client = server.CreateClient();
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo", cancellationToken);
 
         // Assert
         Check.That(server.LogEntries).HasSize(1);
@@ -609,6 +611,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateClient_And_CallAdminSettingsEndpoint()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(w =>
         {
             w.StartAdminInterface = true;
@@ -617,7 +620,7 @@ public class WireMockServerAdminTests
         var client = server.CreateClient();
 
         // Act
-        var settings = await client.GetStringAsync($"{server.Url}/adm/settings").ConfigureAwait(false);
+        var settings = await client.GetStringAsync($"{server.Url}/adm/settings", cancellationToken);
 
         // Assert
         settings.Should().NotBeNull();

@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Handlers;
@@ -14,7 +12,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -48,7 +45,7 @@ public class ResponseWithCallbackTests
             .WithBody(req => $"path: {req.Path}");
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("path: /test");
@@ -77,8 +74,8 @@ public class ResponseWithCallbackTests
             });
 
         // Act (2x)
-        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
-        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response1.Message.BodyData!.BodyAsString.Should().Be("x");
@@ -104,8 +101,8 @@ public class ResponseWithCallbackTests
             });
 
         // Act (2x)
-        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
-        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response1 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+        var response2 = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response1.Message.BodyData!.BodyAsString.Should().Be("x");
@@ -126,12 +123,12 @@ public class ResponseWithCallbackTests
             .WithHeader("H2", "X2")
             .WithBody(async req =>
             {
-                await Task.Delay(1).ConfigureAwait(false);
+                await Task.Delay(1);
                 return $"path: {req.Path}";
             });
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("path: /test");
@@ -165,7 +162,7 @@ public class ResponseWithCallbackTests
             });
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("/fooBar");
@@ -189,7 +186,7 @@ public class ResponseWithCallbackTests
             });
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("/fooBar");
@@ -218,7 +215,7 @@ public class ResponseWithCallbackTests
             });
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("/fooBar");
@@ -250,7 +247,7 @@ public class ResponseWithCallbackTests
             .WithHeader(header, "Stef");
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("/fooBar");
@@ -276,7 +273,7 @@ public class ResponseWithCallbackTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("/fooBar");
@@ -311,7 +308,7 @@ public class ResponseWithCallbackTests
             });
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, requestMessage, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMessage, _settings);
 
         // Assert
         response.Message.Headers![headerKey].Should().Contain("extra");

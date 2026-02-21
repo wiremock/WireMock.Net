@@ -1,12 +1,9 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
-using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestBuilders;
 
@@ -64,4 +61,3 @@ message HelloReply {
         protoBufMatcher.Matcher.Should().BeOfType<JsonMatcher>();
     }
 }
-#endif

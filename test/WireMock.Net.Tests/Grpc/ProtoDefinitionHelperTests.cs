@@ -1,12 +1,7 @@
 // Copyright © WireMock.Net
 
-#if PROTOBUF
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Grpc;
 
@@ -18,12 +13,13 @@ public class ProtoDefinitionHelperTests
     public async Task FromDirectory_Greet_ShouldReturnModifiedProtoFiles()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var directory = Path.Combine(Directory.GetCurrentDirectory(), "Grpc", "Test");
         var expectedFilename = "SubFolder/request.proto";
         var expectedComment = $"// {expectedFilename}";
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory, cancellationToken);
         var protoDefinitions = protoDefinitionData.ToList("greet");
 
         // Assert
@@ -39,7 +35,7 @@ public class ProtoDefinitionHelperTests
         resolver.Exists("x").Should().BeFalse();
 
         // Act + Assert
-        var text = await resolver.OpenText(expectedFilename).ReadToEndAsync();
+        var text = resolver.OpenText(expectedFilename).ReadToEnd();
         text.Should().StartWith(expectedComment);
         System.Action action = () => resolver.OpenText("x");
         action.Should().Throw<FileNotFoundException>();
@@ -52,7 +48,7 @@ public class ProtoDefinitionHelperTests
         var directory = Path.Combine(Directory.GetCurrentDirectory(), "Grpc", "ot");
 
         // Act
-        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory);
+        var protoDefinitionData = await ProtoDefinitionDataHelper.FromDirectory(directory, TestContext.Current.CancellationToken);
         var protoDefinitions = protoDefinitionData.ToList("trace_service");
 
         // Assert
@@ -65,11 +61,11 @@ public class ProtoDefinitionHelperTests
             {
                 rejected_spans = 1,
                 error_message = "abc"
-            }
+            },
+            cancellationToken: TestContext.Current.CancellationToken
         );
 
         // Assert
         Convert.ToBase64String(responseBytes).Should().Be("AAAAAAcIARIDYWJj");
     }
 }
-#endif

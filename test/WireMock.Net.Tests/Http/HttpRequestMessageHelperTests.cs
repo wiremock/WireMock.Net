@@ -1,21 +1,21 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Http;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Http;
 
 public class HttpRequestMessageHelperTests
 {
     private const string ClientIp = "::1";
+
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
 
     [Fact]
     public void HttpRequestMessageHelper_Create()
@@ -46,7 +46,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsByteArrayAsync().ConfigureAwait(false)).ContainsExactly(Encoding.UTF8.GetBytes("hi"));
+        Check.That(await message.Content!.ReadAsByteArrayAsync(_ct)).ContainsExactly(Encoding.UTF8.GetBytes("hi"));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("0123");
+        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("0123");
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json");
     }
 
@@ -121,7 +121,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
     }
 
@@ -142,7 +142,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals("{\"x\":42}");
+        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
     }
 
@@ -242,7 +242,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync().ConfigureAwait(false)).Equals(body);
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be(body);
         Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
     }
 

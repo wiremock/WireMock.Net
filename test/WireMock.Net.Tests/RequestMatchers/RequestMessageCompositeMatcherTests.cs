@@ -1,12 +1,9 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using Moq;
 using NFluent;
 using WireMock.Matchers.Request;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 

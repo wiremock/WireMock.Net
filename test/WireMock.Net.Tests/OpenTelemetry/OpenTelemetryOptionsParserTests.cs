@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-#if NET6_0_OR_GREATER
-using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.OpenTelemetry;
-using Xunit;
 
 namespace WireMock.Net.Tests.OpenTelemetry;
 
@@ -14,12 +11,12 @@ public class OpenTelemetryOptionsParserTests
     public void TryParseArguments_Enabled_ShouldReturnOptions()
     {
         // Act
-        var result = OpenTelemetryOptionsParser.TryParseArguments(new[]
-        {
+        var result = OpenTelemetryOptionsParser.TryParseArguments(
+        [
             "--OpenTelemetryEnabled", "true",
             "--OpenTelemetryExcludeAdminRequests", "false",
             "--OpenTelemetryOtlpExporterEndpoint", "http://localhost:4317"
-        }, null, out var options);
+        ], null, out var options);
 
         // Assert
         result.Should().BeTrue();
@@ -39,4 +36,3 @@ public class OpenTelemetryOptionsParserTests
         options.Should().BeNull();
     }
 }
-#endif

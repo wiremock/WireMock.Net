@@ -1,14 +1,13 @@
 // Copyright © WireMock.Net
 
 using WireMock.Matchers;
-using WireMock.Matchers.Request;
 
 namespace WireMock.RequestBuilders;
 
 /// <summary>
 /// The HttpVersionBuilder interface.
 /// </summary>
-public interface IHttpVersionBuilder : IRequestMatcher
+public interface IHttpVersionBuilder : IWebSocketRequestBuilder
 {
     /// <summary>
     /// WithHttpVersion

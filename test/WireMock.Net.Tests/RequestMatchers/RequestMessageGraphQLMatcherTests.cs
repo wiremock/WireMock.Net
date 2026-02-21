@@ -1,15 +1,12 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
-using System.Linq;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -193,4 +190,3 @@ public class RequestMessageGraphQLMatcherTests
         stringMatcherMock.Verify(m => m.IsMatch(It.IsAny<string>()), Times.Never);
     }
 }
-#endif

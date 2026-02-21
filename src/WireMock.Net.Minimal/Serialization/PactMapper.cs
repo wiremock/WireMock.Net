@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using WireMock.Admin.Mappings;
 using WireMock.Extensions;
 using WireMock.Pact.Models.V2;
@@ -28,7 +25,8 @@ internal static class PactMapper
         var pact = new Pact.Models.V2.Pact
         {
             Consumer = new Pacticipant { Name = consumer },
-            Provider = new Pacticipant { Name = provider }
+            Provider = new Pacticipant { Name = provider },
+            Interactions = []
         };
 
         foreach (var mapping in server.MappingModels.OrderBy(m => m.Guid))
@@ -42,7 +40,7 @@ internal static class PactMapper
 
             var interaction = new Interaction
             {
-                Description = !string.IsNullOrWhiteSpace(mapping.Description) ? mapping.Description : mapping.Title ?? string.Empty,
+                Description = mapping.Description ?? mapping.Title ?? string.Empty,
                 Request = MapRequest(mapping.Request, path),
                 Response = MapResponse(mapping.Response)
             };
@@ -65,13 +63,8 @@ internal static class PactMapper
         };
     }
 
-    private static PactResponse MapResponse(ResponseModel? response)
+    private static PactResponse MapResponse(ResponseModel response)
     {
-        if (response == null)
-        {
-            return new PactResponse();
-        }
-
         return new PactResponse
         {
             Status = MapStatusCode(response.StatusCode),

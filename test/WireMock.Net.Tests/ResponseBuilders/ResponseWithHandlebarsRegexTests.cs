@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Handlers;
@@ -10,7 +9,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -44,7 +42,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("abc");
@@ -63,7 +61,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("");
@@ -82,7 +80,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("5000-https");
@@ -101,7 +99,7 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("");
@@ -120,6 +118,6 @@ public class ResponseWithHandlebarsRegexTests
             .WithTransformer();
 
         // Act and Assert
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentNullException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<ArgumentNullException>();
     }
 }

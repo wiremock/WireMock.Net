@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
 #if NET6_0_OR_GREATER
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.OpenTelemetry;
 using Xunit;

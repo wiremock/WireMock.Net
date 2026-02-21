@@ -4,16 +4,16 @@
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Stef.Validation;
 using WireMock.Proxy;
 using WireMock.RequestBuilders;
 using WireMock.Settings;
 using WireMock.Transformers;
-using WireMock.Transformers.Handlebars;
-using WireMock.Transformers.Scriban;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -187,8 +187,10 @@ public partial class Response : IResponseBuilder
     }
 
     /// <inheritdoc />
-    public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(IMapping mapping, IRequestMessage requestMessage, WireMockServerSettings settings)
+    public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(IMapping mapping, HttpContext context, IRequestMessage requestMessage, WireMockServerSettings settings)
     {
+        Guard.NotNull(mapping);
+        Guard.NotNull(context);
         Guard.NotNull(requestMessage);
         Guard.NotNull(settings);
 

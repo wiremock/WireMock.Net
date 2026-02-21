@@ -1,18 +1,14 @@
 // Copyright © WireMock.Net
 
-#if MIMEKIT
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -66,7 +62,7 @@ public partial class WireMockServerTests
 
         var client = server.CreateClient();
 
-        var response = await client.PostAsync("/multipart", formDataContent);
+        var response = await client.PostAsync("/multipart", formDataContent, _ct);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -74,4 +70,3 @@ public partial class WireMockServerTests
         server.Stop();
     }
 }
-#endif

@@ -1,13 +1,10 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NFluent;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -338,7 +335,7 @@ public class JsonPartialWildcardMatcherTests
     [InlineData("{ \"test.nested\":\"value\" }", "{\"test\":{\"nested\":\"value1\"}}")]
     [InlineData("{\"test\":{\"test1\":\"value\"}}", "{\"test\":{\"test1\":\"value1\"}}")]
     [InlineData("[{ \"test.nested\":\"value\" }]", "[{\"test\":{\"nested\":\"value1\"}}]")]
-    public void JsonPartialWildcardMatcher_IsMatch_StringInputWithInvalidMatch(string value, string input)
+    public void JsonPartialWildcardMatcher_IsMatch_StringInputWithInvalidMatch(string value, string? input)
     {
         // Assign
         var matcher = new JsonPartialWildcardMatcher(value);

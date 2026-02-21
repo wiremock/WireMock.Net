@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.Settings;
 

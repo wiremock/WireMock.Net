@@ -293,17 +293,17 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         return newPath;
     }
 
-    private IDictionary<string, object>? MapHeaders(string? responseContentType, IDictionary<string, IOpenApiHeader>? headers)
+    private Dictionary<string, object>? MapHeaders(string? responseContentType, IDictionary<string, IOpenApiHeader>? headers)
     {
         var mappedHeaders = headers?
-            .ToDictionary(item => item.Key, _ => GetExampleMatcherModel(null, _settings.HeaderPatternToUse).Pattern!) ?? new Dictionary<string, object>();
+            .ToDictionary(item => item.Key, _ => GetExampleMatcherModel(null, _settings.HeaderPatternToUse).Pattern!) ?? [];
 
         if (!string.IsNullOrEmpty(responseContentType))
         {
             mappedHeaders.TryAdd(HeaderContentType, responseContentType);
         }
 
-        return mappedHeaders.Keys.Any() ? mappedHeaders : null;
+        return mappedHeaders.Count > 0 ? mappedHeaders : null;
     }
 
     private IList<ParamModel>? MapQueryParameters(IEnumerable<IOpenApiParameter> queryParameters)

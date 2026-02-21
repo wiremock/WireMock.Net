@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
 using NFluent;
 using WireMock.Handlers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Handlers;
 

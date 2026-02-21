@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Diagnostics.CodeAnalysis;
 using Nelibur.ObjectMapper;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Settings;
@@ -7,6 +8,7 @@ using WireMock.Settings;
 
 namespace WireMock.Util;
 
+[SuppressMessage("Performance", "CA1822:Mark members as static")]
 internal sealed class TinyMapperUtils
 {
     public static TinyMapperUtils Instance { get; } = new();
@@ -22,6 +24,9 @@ internal sealed class TinyMapperUtils
         TinyMapper.Bind<WebProxySettingsModel, WebProxySettings>();
         TinyMapper.Bind<WebProxyModel, WebProxySettings>();
         TinyMapper.Bind<ProxyUrlReplaceSettingsModel, ProxyUrlReplaceSettings>();
+
+        TinyMapper.Bind<WebSocketSettings, WebSocketSettingsModel>();
+        TinyMapper.Bind<WebSocketSettingsModel, WebSocketSettings>();
     }
 
     public ProxyAndRecordSettingsModel? Map(ProxyAndRecordSettings? instance)
@@ -52,5 +57,15 @@ internal sealed class TinyMapperUtils
     public WebProxySettings? Map(WebProxyModel? model)
     {
         return model == null ? null : TinyMapper.Map<WebProxySettings>(model);
+    }
+
+    public WebSocketSettingsModel? Map(WebSocketSettings? instance)
+    {
+        return instance == null ? null : TinyMapper.Map<WebSocketSettingsModel>(instance);
+    }
+
+    public WebSocketSettings? Map(WebSocketSettingsModel? model)
+    {
+        return model == null ? null : TinyMapper.Map<WebSocketSettings>(model);
     }
 }

@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
 #pragma warning disable CS1591
-using System;
-using System.Collections.Generic;
 using WireMock.Matchers;
 using WireMock.Server;
 
@@ -13,14 +11,15 @@ public partial class WireMockAssertions
 {
     public const string Any = "*";
 
+    private readonly AssertionChain _chain;
+
     public int? CallsCount { get; }
     public IReadOnlyList<IRequestMessage> RequestMessages { get; private set; }
-    private readonly AssertionChain _chain;
 
     public WireMockAssertions(IWireMockServer subject, int? callsCount, AssertionChain chain)
     {
         CallsCount = callsCount;
-        RequestMessages = subject.LogEntries.Select(logEntry => logEntry.RequestMessage).ToList();
+        RequestMessages = subject.LogEntries.Select(logEntry => logEntry.RequestMessage).OfType<IRequestMessage>().ToList();
         _chain = chain;
     }
 

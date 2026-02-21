@@ -3,6 +3,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using WireMock.Constants;
 using WireMock.Http;
 using WireMock.Proxy;
@@ -33,7 +34,7 @@ public partial class WireMockServer
             proxyRespondProvider.AtPriority(WireMockConstants.ProxyPriority);
         }
 
-        if(settings.ProxyAndRecordSettings.ProxyAll)
+        if (settings.ProxyAndRecordSettings.ProxyAll)
         {
             proxyRespondProvider.AtPriority(int.MinValue);
         }
@@ -41,7 +42,7 @@ public partial class WireMockServer
         proxyRespondProvider.RespondWith(new ProxyAsyncResponseProvider(ProxyAndRecordAsync, settings));
     }
 
-    private async Task<IResponseMessage> ProxyAndRecordAsync(IRequestMessage requestMessage, WireMockServerSettings settings)
+    private async Task<IResponseMessage> ProxyAndRecordAsync(HttpContext _, IRequestMessage requestMessage, WireMockServerSettings settings)
     {
         var requestUri = new Uri(requestMessage.Url);
         var proxyUri = new Uri(settings.ProxyAndRecordSettings!.Url);

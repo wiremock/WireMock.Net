@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Handlers;
@@ -9,7 +9,6 @@ using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -40,7 +39,7 @@ public class ResponseWithHandlebarsHelpersTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(Mock.Of<IMapping>(), Mock.Of<HttpContext>(), request, _settings);
 
         // assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("ABC");

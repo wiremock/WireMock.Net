@@ -3,7 +3,6 @@
 using NFluent;
 using WireMock.Models;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 

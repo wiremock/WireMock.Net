@@ -1,15 +1,12 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 using WireMock.Handlers;
 using Moq;
 #if NET452
@@ -47,7 +44,7 @@ public class ResponseWithScribanTests
         var responseBuilder = Response.Create().WithTransformer(TransformerType.ScribanDotLiquid);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData.Should().BeNull();
@@ -69,7 +66,7 @@ public class ResponseWithScribanTests
             .WithTransformer(TransformerType.Scriban);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(response.Message.BodyData.BodyAsString).Equals("test http://localhost/foo /foo POSt");

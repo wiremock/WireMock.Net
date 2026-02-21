@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "WireMock.Net.WebApplication.NET6": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54544;http://localhost:54545"
+    }
+  }
+}

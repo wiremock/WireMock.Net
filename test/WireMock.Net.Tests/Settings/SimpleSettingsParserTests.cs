@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Settings;
 

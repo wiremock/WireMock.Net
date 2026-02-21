@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using NFluent;
 using WireMock.Matchers;
@@ -13,7 +9,6 @@ using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -331,7 +326,7 @@ public class RequestMessageBodyMatcherTests
     [InlineData(null, 0.0)]
     [InlineData(new byte[0], 0.0)]
     [InlineData(new byte[] { 48 }, 1.0)]
-    public void RequestMessageBodyMatcher_GetMatchingScore_BodyAsBytes_NotNullOrEmptyObjectMatcher(byte[] bytes, double expected)
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyAsBytes_NotNullOrEmptyObjectMatcher(byte[]? bytes, double expected)
     {
         // Assign
         var body = new BodyData
@@ -355,7 +350,7 @@ public class RequestMessageBodyMatcherTests
     [InlineData(null, 0.0)]
     [InlineData("", 0.0)]
     [InlineData("x", 1.0)]
-    public void RequestMessageBodyMatcher_GetMatchingScore_BodyAsString_NotNullOrEmptyObjectMatcher(string data, double expected)
+    public void RequestMessageBodyMatcher_GetMatchingScore_BodyAsString_NotNullOrEmptyObjectMatcher(string? data, double expected)
     {
         // Assign
         var body = new BodyData
@@ -491,7 +486,7 @@ public class RequestMessageBodyMatcherTests
                 ContentType = null,
                 DeserializeJson = true
             };
-            bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+            bodyData = await BodyParser.ParseAsync(bodyParserSettings);
         }
         else if (body is string s)
         {
@@ -501,7 +496,7 @@ public class RequestMessageBodyMatcherTests
                 ContentType = null,
                 DeserializeJson = true
             };
-            bodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
+            bodyData = await BodyParser.ParseAsync(bodyParserSettings);
         }
         else
         {

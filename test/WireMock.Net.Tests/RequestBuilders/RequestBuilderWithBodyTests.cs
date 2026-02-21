@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using FluentAssertions;
+using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NFluent;
@@ -14,7 +11,6 @@ using WireMock.Models;
 using WireMock.RequestBuilders;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestBuilders;
 

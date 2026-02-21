@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Models;
@@ -15,12 +12,13 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
 public class WireMockServerWebhookTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task WireMockServer_WithWebhooks_Should_Send_Message_To_Webhooks()
     {
@@ -75,8 +73,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -124,8 +122,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -180,8 +178,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -235,8 +233,8 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
@@ -267,14 +265,14 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
 
         serverReceivingTheWebhook.LogEntries.Should().HaveCount(1);
-        serverReceivingTheWebhook.LogEntries.First().RequestMessage.Body.Should().Be("OK !");
+        serverReceivingTheWebhook.LogEntries.First().RequestMessage!.Body.Should().Be("OK !");
 
         server.Dispose();
         serverReceivingTheWebhook.Dispose();
@@ -301,14 +299,14 @@ public class WireMockServerWebhookTests
         };
 
         // Assert
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
-        var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
+        var content = await response.Content.ReadAsStringAsync(_ct);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().Be("a-response");
 
         serverReceivingTheWebhook.LogEntries.Should().HaveCount(1);
-        serverReceivingTheWebhook.LogEntries.First().RequestMessage.Body.Should().Be("{\"Status\":\"OK\"}");
+        serverReceivingTheWebhook.LogEntries.First().RequestMessage!.Body.Should().Be("{\"Status\":\"OK\"}");
 
         server.Dispose();
         serverReceivingTheWebhook.Dispose();

@@ -1,12 +1,10 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using NFluent;
 using RestEase;
 using WireMock.Admin.Mappings;
@@ -14,7 +12,6 @@ using WireMock.Client;
 using WireMock.Constants;
 using WireMock.Models;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
@@ -35,17 +32,18 @@ public partial class WireMockAdminApiTests
     public async Task HttpClient_PostMappingsAsync_ForProtoBufMapping(string mappingFile, string guid)
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var mappingsJson = ReadMappingFile(mappingFile);
 
         using var server = WireMockServer.StartWithAdminInterface();
         var httpClient = server.CreateClient();
 
         // Act
-        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson));
+        var result = await httpClient.PostAsync("/__admin/mappings", new StringContent(mappingsJson, Encoding.UTF8, WireMockConstants.ContentTypeJson), cancelationToken);
         result.EnsureSuccessStatusCode();
 
         // Assert
-        var mapping = await httpClient.GetStringAsync($"/__admin/mappings/{guid}");
+        var mapping = await httpClient.GetStringAsync($"/__admin/mappings/{guid}", cancelationToken);
         mapping = RemoveLineContainingUpdatedAt(mapping);
         mapping.Should().Be(mappingsJson);
     }
@@ -72,7 +70,7 @@ public partial class WireMockAdminApiTests
             Title = "test 2",
             Description = "description 2"
         };
-        var result = await api.PostMappingsAsync(new[] { model1, model2 }).ConfigureAwait(false);
+        var result = await api.PostMappingsAsync([model1, model2], TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(result).IsNotNull();
@@ -91,7 +89,7 @@ public partial class WireMockAdminApiTests
     [InlineData(0, 0)]
     [InlineData(200, 200)]
     [InlineData("200", "200")]
-    public async Task IWireMockAdminApi_PostMappingAsync_WithStatusCode(object statusCode, object expectedStatusCode)
+    public async Task IWireMockAdminApi_PostMappingAsync_WithStatusCode(object? statusCode, object? expectedStatusCode)
     {
         // Arrange
         var server = WireMockServer.StartWithAdminInterface();
@@ -105,7 +103,7 @@ public partial class WireMockAdminApiTests
             Priority = 500,
             Title = "test"
         };
-        var result = await api.PostMappingAsync(model).ConfigureAwait(false);
+        var result = await api.PostMappingAsync(model, TestContext.Current.CancellationToken);
 
         // Assert
         Check.That(result).IsNotNull();
@@ -116,7 +114,7 @@ public partial class WireMockAdminApiTests
         Check.That(mapping).IsNotNull();
         Check.That(mapping.Title).Equals("test");
 
-        var response = await mapping.ProvideResponseAsync(new RequestMessage(new UrlDetails("http://localhost/1"), "GET", "")).ConfigureAwait(false);
+        var response = await mapping.ProvideResponseAsync(Mock.Of<HttpContext>(), new RequestMessage(new UrlDetails("http://localhost/1"), "GET", ""));
         Check.That(response.Message.StatusCode).Equals(expectedStatusCode);
 
         server.Stop();
@@ -173,4 +171,3 @@ public partial class WireMockAdminApiTests
         server.Stop();
     }
 }
-#endif

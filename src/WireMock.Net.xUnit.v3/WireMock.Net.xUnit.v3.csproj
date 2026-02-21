@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Some extensions for xUnit (ITestOutputHelper)</Description>
         <AssemblyTitle>WireMock.Net.xUnit.v3</AssemblyTitle>
@@ -29,9 +29,5 @@
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.2" />
     </ItemGroup>
 </Project>

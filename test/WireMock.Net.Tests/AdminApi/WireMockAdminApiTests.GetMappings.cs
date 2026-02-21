@@ -1,15 +1,12 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System.Threading.Tasks;
+using System.Net.Http;
 using RestEase;
-using VerifyXunit;
 using WireMock.Client;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
@@ -41,9 +38,9 @@ message HelloReply {
 
         // Act
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var getMappingsResult = await api.GetMappingsAsync().ConfigureAwait(false);
+        var getMappingsResult = await api.GetMappingsAsync(TestContext.Current.CancellationToken);
 
-        await Verifier.Verify(getMappingsResult, VerifySettings);
+        await Verify(getMappingsResult, VerifySettings);
     }
 
     [Fact]
@@ -54,9 +51,9 @@ message HelloReply {
 
         // Act
         var client = server.CreateClient();
-        var getMappingsResult = await client.GetStringAsync("/__admin/mappings").ConfigureAwait(false);
+        var getMappingsResult = await client.GetStringAsync("/__admin/mappings", TestContext.Current.CancellationToken);
 
-        await Verifier.VerifyJson(getMappingsResult, VerifySettings);
+        await VerifyJson(getMappingsResult, VerifySettings);
     }
 
     public WireMockServer Given_WithBodyAsProtoBuf_AddedToServer()
@@ -150,4 +147,3 @@ message HelloReply {
         return server;
     }
 }
-#endif

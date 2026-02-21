@@ -1,11 +1,10 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Matchers;
 using WireMock.Owin;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests
 {

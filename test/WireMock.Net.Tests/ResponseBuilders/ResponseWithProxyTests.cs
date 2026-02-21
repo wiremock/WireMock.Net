@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NFluent;
 using WireMock.Models;
@@ -13,7 +11,6 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -56,7 +53,7 @@ public class ResponseWithProxyTests : IDisposable
         var responseBuilder = Response.Create().WithProxy(_server.Urls[0]);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         Check.That(request.ProxyUrl).IsNotNull();
@@ -84,7 +81,7 @@ public class ResponseWithProxyTests : IDisposable
         // Act
         var request = new RequestMessage(new UrlDetails($"{_server.Urls[0]}/{_guid}"), "GET", ClientIp);
 
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HttpRequestException>();
+        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<HttpRequestException>();
     }
 
     public void Dispose()

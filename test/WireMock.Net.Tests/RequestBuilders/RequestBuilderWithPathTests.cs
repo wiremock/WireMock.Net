@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using NFluent;
 using WireMock.Matchers;
-using Xunit;
 using WireMock.RequestBuilders;
 using WireMock.Matchers.Request;
 using WireMock.Models;

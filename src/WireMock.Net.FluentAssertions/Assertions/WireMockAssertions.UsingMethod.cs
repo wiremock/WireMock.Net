@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 #pragma warning disable CS1591
-using System;
 using WireMock.Constants;
 
 // ReSharper disable once CheckNamespace

@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using WireMock.Admin.Requests;
 using WireMock.Logging;
+using WireMock.Net.Json;
 
 namespace WireMock.Net;
 
@@ -55,7 +56,7 @@ public class WireMockLogger : IWireMockLogger
     /// <see cref="IWireMockLogger.DebugRequestResponse"/>
     public void DebugRequestResponse(LogEntryModel logEntryModel, bool isAdminRequest)
     {
-        string message = JsonSerializer.Serialize(logEntryModel, _options);
+        string message = JsonSerializer.Serialize(logEntryModel, SourceGenerationContext.Default.LogEntryModel);
 
         _logger.LogDebug("Admin[{IsAdmin}] {Message}", isAdminRequest, message);
     }

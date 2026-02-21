@@ -1,13 +1,12 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 

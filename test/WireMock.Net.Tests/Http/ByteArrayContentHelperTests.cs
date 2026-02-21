@@ -1,16 +1,17 @@
 // Copyright © WireMock.Net
 
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Http;
-using Xunit;
 
 namespace WireMock.Net.Tests.Http;
 
 public class ByteArrayContentHelperTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task ByteArrayContentHelperTests_Create_WithNullContentType()
     {
@@ -22,7 +23,7 @@ public class ByteArrayContentHelperTests
 
         // Assert
         result.Headers.ContentType.Should().BeNull();
-        (await result.ReadAsByteArrayAsync().ConfigureAwait(false)).Should().BeEquivalentTo(content);
+        (await result.ReadAsByteArrayAsync(_ct)).Should().BeEquivalentTo(content);
     }
 
     [Theory]
@@ -39,7 +40,7 @@ public class ByteArrayContentHelperTests
         var result = ByteArrayContentHelper.Create(content, contentType);
 
         // Assert
-        result.Headers.ContentType.ToString().Should().Be(expected);
-        (await result.ReadAsByteArrayAsync().ConfigureAwait(false)).Should().BeEquivalentTo(content);
+        result.Headers.ContentType?.ToString().Should().Be(expected);
+        (await result.ReadAsByteArrayAsync(_ct)).Should().BeEquivalentTo(content);
     }
 }

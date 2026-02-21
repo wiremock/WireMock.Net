@@ -1,10 +1,8 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
-using System;
+using AwesomeAssertions;
 using System.Net;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 
@@ -54,7 +52,7 @@ public class HttpStatusRangeParserTests
     [InlineData(",,,", 9999, false)]
 
     [InlineData(null, 399, true)]
-    public void HttpStatusRangeParser_ValidPattern_IsMatch(string pattern, int value, bool expectedResult)
+    public void HttpStatusRangeParser_ValidPattern_IsMatch(string? pattern, int value, bool expectedResult)
     {
         HttpStatusRangeParser.IsMatch(pattern, value).Should().Be(expectedResult);
     }
