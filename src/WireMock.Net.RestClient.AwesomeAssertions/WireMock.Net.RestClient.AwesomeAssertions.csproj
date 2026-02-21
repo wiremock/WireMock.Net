@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>0.0.1-preview-01</Version>
         <Description>AwesomeAssertions extensions for WireMock.Net RestClient</Description>
         <AssemblyTitle>WireMock.Net.RestClient.AwesomeAssertions</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>

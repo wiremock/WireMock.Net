@@ -1002,7 +1002,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected wiremockadminapi to have been called using body \"byte[1] {...}\", but didn't find it among the body/bodies <null>.");
+            .WithMessage("Expected wiremockadminapi to have been called using body \"byte[1] {...}\", but didn't find it among the body/bodies \"byte[1] {...}\".");
     }
 
     [Fact]
@@ -1016,21 +1016,22 @@ public class WireMockAdminApiAssertionsTests : IDisposable
         });
         var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
+        var bytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
         server
-            .Given(Request.Create().WithPath("/a").UsingPut().WithBody([100]))
+            .Given(Request.Create().WithPath("/binary").UsingPut().WithBody(bytes))
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
         using var httpClient = new HttpClient();
 
-        await httpClient.PutAsync($"{server.Url}/a", new ByteArrayContent([100]), _ct);
+        await httpClient.PutAsync($"{server.Url}/binary", new ByteArrayContent(bytes), _ct);
 
         // Assert
         adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
-            .WithBodyAsBytes([100])
+            .WithBodyAsBytes(bytes)
             .And
             .UsingPut();
 
