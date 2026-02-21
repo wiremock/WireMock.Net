@@ -254,6 +254,106 @@ public class WireMockAdminApiAssertionsTests : IDisposable
     }
 
     [Fact]
+    public async Task HaveReceivedNoCalls_AtPath_WhenACallWasNotMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("xxx", _ct);
+
+        _adminApi.Should()
+            .HaveReceivedNoCalls()
+            .AtPath("anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived0Calls_AtPath_WhenACallWasNotMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("xxx", _ct);
+
+        _adminApi.Should()
+            .HaveReceived(0).Calls()
+            .AtPath("anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived1Call_AtPath_WhenACallWasMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath", _ct);
+
+        _adminApi.Should()
+            .HaveReceived(1).Calls()
+            .AtPath("/anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceived1Call_AtPathUsingPost_WhenAPostCallWasMadeToPath_Should_BeOK()
+    {
+        await _httpClient.PostAsync("anypath", new StringContent(""), _ct);
+
+        _adminApi.Should()
+            .HaveReceived(1).Calls()
+            .AtPath("/anypath")
+            .And
+            .UsingPost();
+    }
+
+    [Fact]
+    public async Task HaveReceived2Calls_AtPath_WhenACallWasMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath", _ct);
+
+        await _httpClient.GetAsync("anypath", _ct);
+
+        _adminApi.Should()
+            .HaveReceived(2).Calls()
+            .AtPath("/anypath");
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtPath_WhenACallWasMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath", _ct);
+
+        _adminApi.Should()
+            .HaveReceivedACall()
+            .AtPath(new WildcardMatcher("/any*"));
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtPathWildcardMatcher_WhenACallWasMadeToPath_Should_BeOK()
+    {
+        await _httpClient.GetAsync("anypath", _ct);
+
+        _adminApi.Should()
+            .HaveReceivedACall()
+            .AtPath("/anypath");
+    }
+
+    [Fact]
+    public void HaveReceivedACall_AtPath_Should_ThrowWhenNoCallsWereMade()
+    {
+        Action act = () => _adminApi.Should()
+            .HaveReceivedACall()
+            .AtPath("anypath");
+
+        act.Should()
+            .Throw<Exception>()
+            .WithMessage("Expected _adminApi to have been called at address matching the path \"anypath\", but no calls were made.");
+    }
+
+    [Fact]
+    public async Task HaveReceivedACall_AtPath_Should_ThrowWhenNoCallsMatchingThePathWereMade()
+    {
+        await _httpClient.GetAsync("", _ct);
+
+        Action act = () => _adminApi.Should()
+            .HaveReceivedACall()
+            .AtPath("/anypath");
+
+        act.Should()
+            .Throw<Exception>()
+            .WithMessage($"Expected _adminApi to have been called at address matching the path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
+    }
+
+    [Fact]
     public async Task HaveReceivedACall_WithHeader_WhenACallWasMadeWithExpectedHeader_Should_BeOK()
     {
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer a");
@@ -344,7 +444,6 @@ public class WireMockAdminApiAssertionsTests : IDisposable
     public async Task HaveReceivedACall_WithHeader_ShouldCheckAllRequests()
     {
         // Arrange
-        var cancellationToken = _ct;
         using var server = WireMockServer.Start(settings =>
         {
             settings.StartAdminInterface = true;
@@ -363,7 +462,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             {
                 Authorization = new AuthenticationHeaderValue("Bearer", "invalidToken")
             }
-        }, cancellationToken);
+        }, _ct);
 
         // Act 2
         var task2 = client2.SendAsync(new HttpRequestMessage(HttpMethod.Get, "/")
@@ -372,7 +471,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             {
                 Authorization = new AuthenticationHeaderValue("Bearer", "validToken")
             }
-        }, cancellationToken);
+        }, _ct);
 
         await Task.WhenAll(task1, task2);
 

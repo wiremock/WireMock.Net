@@ -207,7 +207,6 @@ internal static class BodyParser
         {
             return true;
         }
-        ;
 
         // 1) Quick binary detection
         for (int i = 0; i < data.Length; i++)
