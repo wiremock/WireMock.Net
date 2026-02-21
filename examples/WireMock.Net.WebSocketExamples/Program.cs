@@ -20,8 +20,7 @@ public static class Program
         Console.WriteLine("Choose an example to run:");
         Console.WriteLine("1. Echo Server");
         Console.WriteLine("2. Custom Message Handler");
-        Console.WriteLine("3. ...");
-        Console.WriteLine("4. Scenario/State Machine");
+        Console.WriteLine("3. Broadcast");
         Console.WriteLine("5. WebSocket Proxy");
         Console.WriteLine("6. Multiple WebSocket Endpoints");
         Console.WriteLine("7. All Examples (runs all endpoints)");
@@ -40,9 +39,6 @@ public static class Program
                 break;
             case "3":
                 await RunBroadcastExample();
-                break;
-            case "4":
-                await RunScenarioExample();
                 break;
             case "5":
                 await RunProxyExample();
@@ -227,115 +223,6 @@ public static class Program
         Console.WriteLine("\nConnect multiple clients:");
         Console.WriteLine("  wscat -c ws://localhost:9091/ws/broadcast");
         Console.WriteLine("\nMessages sent from any client will be broadcast to all clients");
-        Console.WriteLine("\nPress any key to stop server...");
-        Console.ReadKey();
-        server.Stop();
-    }
-
-    /// <summary>
-    /// Example 4: Scenario/State Machine
-    /// Demonstrates state transitions during WebSocket session
-    /// </summary>
-    private static async Task RunScenarioExample()
-    {
-        Console.WriteLine("\n=== Scenario/State Machine Example ===");
-        Console.WriteLine("Starting WebSocket server with scenario support...\n");
-
-        var server = WireMockServer.Start(new WireMockServerSettings
-        {
-            Port = 9091,
-            Logger = new WireMockConsoleLogger()
-        });
-
-        // Initial state: Waiting for players
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/game")
-                .WithWebSocketUpgrade()
-            )
-            .InScenario("GameSession")
-            .WillSetStateTo("Lobby")
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        await ctx.SendAsync("Welcome to the game lobby! Type 'ready' to start or 'quit' to leave.");
-                    })
-                )
-            );
-
-        // Lobby state: Waiting for ready
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/game")
-                .WithWebSocketUpgrade()
-            )
-            .InScenario("GameSession")
-            .WhenStateIs("Lobby")
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var text = msg.Text?.ToLower() ?? string.Empty;
-                        
-                        if (text == "ready")
-                        {
-                            ctx.SetScenarioState("Playing");
-                            await ctx.SendAsync("Game started! Type 'attack' to attack, 'defend' to defend, or 'quit' to exit.");
-                        }
-                        else if (text == "quit")
-                        {
-                            await ctx.SendAsync("You left the lobby. Goodbye!");
-                            await ctx.CloseAsync(WebSocketCloseStatus.NormalClosure, "Player quit");
-                        }
-                        else
-                        {
-                            await ctx.SendAsync("In lobby. Type 'ready' to start or 'quit' to leave.");
-                        }
-                    })
-                )
-            );
-
-        // Playing state: Game is active
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/game")
-                .WithWebSocketUpgrade()
-            )
-            .InScenario("GameSession")
-            .WhenStateIs("Playing")
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        var text = msg.Text?.ToLower() ?? string.Empty;
-                        
-                        if (text == "attack")
-                        {
-                            await ctx.SendAsync("You attacked! Critical hit! 💥");
-                        }
-                        else if (text == "defend")
-                        {
-                            await ctx.SendAsync("You defended! Shield up! 🛡️");
-                        }
-                        else if (text == "quit")
-                        {
-                            ctx.SetScenarioState("GameOver");
-                            await ctx.SendAsync("Game over! Thanks for playing.");
-                            await ctx.CloseAsync(WebSocketCloseStatus.NormalClosure, "Game ended");
-                        }
-                        else
-                        {
-                            await ctx.SendAsync("Unknown action. Type 'attack', 'defend', or 'quit'.");
-                        }
-                    })
-                )
-            );
-
-        Console.WriteLine($"Game server listening at: {server.Urls[0]}/ws/game");
-        Console.WriteLine("\nConnect and follow the game flow:");
-        Console.WriteLine("  wscat -c ws://localhost:9091/ws/game");
-        Console.WriteLine("\nGame flow: Lobby -> Type 'ready' -> Playing -> Type 'attack'/'defend' -> Type 'quit'");
         Console.WriteLine("\nPress any key to stop server...");
         Console.ReadKey();
         server.Stop();
@@ -547,9 +434,6 @@ public static class Program
                 )
             );
 
-        // Game scenario endpoint
-        SetupGameScenario(server);
-
         // Time endpoint
         server
             .Given(Request.Create()
@@ -561,45 +445,6 @@ public static class Program
                     .WithMessageHandler(async (msg, ctx) =>
                     {
                         await ctx.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
-                    })
-                )
-            );
-    }
-
-    private static void SetupGameScenario(WireMockServer server)
-    {
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/game")
-                .WithWebSocketUpgrade()
-            )
-            .InScenario("GameSession")
-            .WillSetStateTo("Lobby")
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        await ctx.SendAsync("Welcome! Type 'ready' to start.");
-                    })
-                )
-            );
-
-        server
-            .Given(Request.Create()
-                .WithPath("/ws/game")
-                .WithWebSocketUpgrade()
-            )
-            .InScenario("GameSession")
-            .WhenStateIs("Lobby")
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws
-                    .WithMessageHandler(async (msg, ctx) =>
-                    {
-                        if (msg.Text?.ToLower() == "ready")
-                        {
-                            ctx.SetScenarioState("Playing");
-                            await ctx.SendAsync("Game started!");
-                        }
                     })
                 )
             );

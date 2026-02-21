@@ -51,21 +51,6 @@ public interface IWebSocketContext
     Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription);
 
     /// <summary>
-    /// Manually set the scenario state. This bypasses the counter logic and directly sets the next state.
-    /// Use this for programmatic state changes during WebSocket sessions.
-    /// </summary>
-    /// <param name="nextState">The next state to transition to</param>
-    void SetScenarioState(string nextState);
-
-    /// <summary>
-    /// Manually set the scenario state with description. This bypasses the counter logic and directly sets the next state.
-    /// Use this for programmatic state changes during WebSocket sessions.
-    /// </summary>
-    /// <param name="nextState">The next state to transition to</param>
-    /// <param name="description">Optional description for logging</param>
-    void SetScenarioState(string nextState, string? description);
-
-    /// <summary>
     /// Broadcast text message to all connections in this mapping
     /// </summary>
     Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default);

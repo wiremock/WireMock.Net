@@ -78,12 +78,6 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
                 guidUtils
             );
 
-            // Update scenario state following the same pattern as WireMockMiddleware
-            if (mapping.Scenario != null)
-            {
-                wsContext.UpdateScenarioState();
-            }
-
             // Add to registry if broadcast is enabled
             registry?.AddConnection(wsContext);
 

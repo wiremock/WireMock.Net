@@ -102,85 +102,12 @@ public class WireMockWebSocketContext : IWebSocketContext
     }
 
     /// <inheritdoc />
-    public void SetScenarioState(string nextState)
-    {
-        SetScenarioState(nextState, null);
-    }
-
-    /// <inheritdoc />
-    public void SetScenarioState(string nextState, string? description)
-    {
-        if (Mapping.Scenario == null)
-        {
-            return;
-        }
-
-        // Use the same logic as WireMockMiddleware
-        if (Options.Scenarios.TryGetValue(Mapping.Scenario, out var scenarioState))
-        {
-            // Directly set the next state (bypass counter logic for manual WebSocket state changes)
-            scenarioState.NextState = nextState;
-            scenarioState.Started = true;
-            scenarioState.Finished = nextState == null;
-
-            // Reset counter when manually setting state
-            scenarioState.Counter = 0;
-        }
-        else
-        {
-            // Create new scenario state if it doesn't exist
-            Options.Scenarios.TryAdd(Mapping.Scenario, new ScenarioState
-            {
-                Name = Mapping.Scenario,
-                NextState = nextState,
-                Started = true,
-                Finished = nextState == null,
-                Counter = 0
-            });
-        }
-    }
-
-    /// <inheritdoc />
     public async Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default)
     {
         if (Registry != null)
         {
             await Registry.BroadcastTextAsync(text, cancellationToken);
         }
-    }
-
-    /// <summary>
-    /// Update scenario state following the same pattern as WireMockMiddleware.UpdateScenarioState
-    /// This is called automatically when the WebSocket connection is established.
-    /// </summary>
-    internal void UpdateScenarioState()
-    {
-        if (Mapping.Scenario == null)
-        {
-            return;
-        }
-
-        // Ensure scenario exists
-        if (!Options.Scenarios.TryGetValue(Mapping.Scenario, out var scenario))
-        {
-            return;
-        }
-
-        // Follow exact same logic as WireMockMiddleware.UpdateScenarioState
-        // Increase the number of times this state has been executed
-        scenario.Counter++;
-
-        // Only if the number of times this state is executed equals the required StateTimes, 
-        // proceed to next state and reset the counter to 0
-        if (scenario.Counter == (Mapping.TimesInSameState ?? 1))
-        {
-            scenario.NextState = Mapping.NextState;
-            scenario.Counter = 0;
-        }
-
-        // Else just update Started and Finished
-        scenario.Started = true;
-        scenario.Finished = Mapping.NextState == null;
     }
 
     internal void LogWebSocketMessage(
