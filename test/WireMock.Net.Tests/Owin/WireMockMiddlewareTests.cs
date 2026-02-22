@@ -26,6 +26,7 @@ namespace WireMock.Net.Tests.Owin;
 public class WireMockMiddlewareTests
 {
     private static readonly Guid NewGuid = new("98fae52e-76df-47d9-876f-2ee32e931d9b");
+    private static readonly DateTime UtcNow = new(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     private static readonly DateTime UpdatedAt = new(2022, 12, 4);
 
     private readonly ConcurrentDictionary<Guid, IMapping> _mappings = new();
@@ -37,6 +38,7 @@ public class WireMockMiddlewareTests
     private readonly Mock<IRequestMatchResult> _requestMatchResultMock;
     private readonly Mock<HttpContext> _contextMock;
     private readonly Mock<IGuidUtils> _guidUtilsMock;
+    private readonly Mock<IDateTimeUtils> _dateTimeUtilsMock;
 
     private readonly WireMockMiddleware _sut;
 
@@ -46,6 +48,9 @@ public class WireMockMiddlewareTests
 
         _guidUtilsMock = new Mock<IGuidUtils>();
         _guidUtilsMock.Setup(g => g.NewGuid()).Returns(NewGuid);
+
+        _dateTimeUtilsMock = new Mock<IDateTimeUtils>();
+        _dateTimeUtilsMock.Setup(d => d.UtcNow).Returns(UtcNow);
 
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
@@ -85,7 +90,8 @@ public class WireMockMiddlewareTests
             _responseMapperMock.Object,
             _matcherMock.Object,
             wireMockMiddlewareLoggerMock.Object,
-            _guidUtilsMock.Object
+            _guidUtilsMock.Object,
+            _dateTimeUtilsMock.Object
         );
     }
 

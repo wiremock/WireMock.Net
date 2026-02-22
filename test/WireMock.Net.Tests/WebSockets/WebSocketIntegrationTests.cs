@@ -704,7 +704,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocketProxy(exampleEchoServer.Url!)
+                .WithWebSocketProxy($"{exampleEchoServer.Url}/ws/target")
             );
 
         using var client = new ClientWebSocket();
@@ -759,7 +759,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocketProxy(exampleEchoServer.Url!)
+                .WithWebSocketProxy($"{exampleEchoServer.Url}/ws/target")
             );
 
         using var client = new ClientWebSocket();

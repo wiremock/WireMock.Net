@@ -2,8 +2,6 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System;
-using System.Collections.Generic;
 using System.Net;
 using Stef.Validation;
 using WireMock.Matchers.Request;
@@ -25,6 +23,8 @@ internal class RespondWithAProvider : IRespondWithAProvider
     private readonly IRequestMatcher _requestMatcher;
     private readonly WireMockServerSettings _settings;
     private readonly IDateTimeUtils _dateTimeUtils;
+    private readonly IGuidUtils _guidUtils;
+
     private readonly bool _saveToFile;
 
     private int _priority;
@@ -49,16 +49,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
 
     public IdOrTexts? ProtoDefinition { get; private set; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RespondWithAProvider"/> class.
-    /// </summary>
-    /// <param name="registrationCallback">The registration callback.</param>
-    /// <param name="requestMatcher">The request matcher.</param>
-    /// <param name="settings">The WireMockServerSettings.</param>
-    /// <param name="guidUtils">GuidUtils to make unit testing possible.</param>
-    /// <param name="dateTimeUtils">DateTimeUtils to make unit testing possible.</param>
-    /// <param name="saveToFile">Optional boolean to indicate if this mapping should be saved as static mapping file.</param>
-    public RespondWithAProvider(
+    internal RespondWithAProvider(
         RegistrationCallback registrationCallback,
         IRequestMatcher requestMatcher,
         WireMockServerSettings settings,
@@ -71,6 +62,8 @@ internal class RespondWithAProvider : IRespondWithAProvider
         _requestMatcher = Guard.NotNull(requestMatcher);
         _settings = Guard.NotNull(settings);
         _dateTimeUtils = Guard.NotNull(dateTimeUtils);
+        _guidUtils = Guard.NotNull(guidUtils);
+
         _saveToFile = saveToFile;
 
         Guid = guidUtils.NewGuid();
@@ -82,7 +75,11 @@ internal class RespondWithAProvider : IRespondWithAProvider
         if (provider is Response response && response.WebSocketBuilder != null)
         {
             // If the provider is a Response with a WebSocketBuilder, we need to use a WebSocketResponseProvider instead.
-            provider = new WebSocketResponseProvider(response.WebSocketBuilder);
+            provider = new WebSocketResponseProvider(
+                response.WebSocketBuilder,
+                _guidUtils,
+                _dateTimeUtils
+            );
         }
 
         var mapping = new Mapping

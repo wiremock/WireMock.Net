@@ -16,7 +16,7 @@ using WireMock.WebSockets;
 
 namespace WireMock.ResponseProviders;
 
-internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponseProvider
+internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils guidUtils, IDateTimeUtils dateTimeUtils) : IResponseProvider
 {
     public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(
         IMapping mapping,
@@ -28,6 +28,16 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
         if (!context.WebSockets.IsWebSocketRequest)
         {
             return (ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Bad Request: Not a WebSocket upgrade request"), null);
+        }
+
+        if (!context.Items.TryGetValue<IWireMockMiddlewareOptions>(nameof(IWireMockMiddlewareOptions), out var options))
+        {
+            throw new InvalidOperationException("IWireMockMiddlewareOptions not found in HttpContext.Items");
+        }
+
+        if (!context.Items.TryGetValue<IWireMockMiddlewareLogger>(nameof(IWireMockMiddlewareLogger), out var logger))
+        {
+            throw new InvalidOperationException("IWireMockMiddlewareLogger not found in HttpContext.Items");
         }
 
         try
@@ -44,21 +54,6 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
 #else
             var webSocket = await context.WebSockets.AcceptWebSocketAsync(builder.AcceptProtocol).ConfigureAwait(false);
 #endif
-
-            if (!context.Items.TryGetValue<IWireMockMiddlewareOptions>(nameof(IWireMockMiddlewareOptions), out var options))
-            {
-                throw new InvalidOperationException("IWireMockMiddlewareOptions not found in HttpContext.Items");
-            }
-
-            if (!context.Items.TryGetValue<IWireMockMiddlewareLogger>(nameof(IWireMockMiddlewareLogger), out var logger))
-            {
-                throw new InvalidOperationException("IWireMockMiddlewareLogger not found in HttpContext.Items");
-            }
-
-            if (!context.Items.TryGetValue<IGuidUtils>(nameof(IGuidUtils), out var guidUtils))
-            {
-                throw new InvalidOperationException("IGuidUtils not found in HttpContext.Items");
-            }
 
             // Get or create registry from options
             var registry = builder.IsBroadcast
@@ -109,7 +104,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             }
 
             // Return special marker to indicate WebSocket was handled
-            return (new WebSocketHandledResponse(), null);
+            return (new WebSocketHandledResponse(dateTimeUtils.UtcNow), null);
         }
         catch (Exception ex)
         {
@@ -122,7 +117,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder) : IResponsePr
             }
 
             // Already upgraded - return marker
-            return (new WebSocketHandledResponse(), null);
+            return (new WebSocketHandledResponse(dateTimeUtils.UtcNow), null);
         }
     }
 

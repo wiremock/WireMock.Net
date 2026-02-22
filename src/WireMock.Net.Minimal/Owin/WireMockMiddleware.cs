@@ -23,7 +23,8 @@ internal class WireMockMiddleware(
     IOwinResponseMapper responseMapper,
     IMappingMatcher mappingMatcher,
     IWireMockMiddlewareLogger logger,
-    IGuidUtils guidUtils
+    IGuidUtils guidUtils,
+    IDateTimeUtils dateTimeUtils
 )
 {
     private readonly object _lock = new();
@@ -47,6 +48,7 @@ internal class WireMockMiddleware(
         ctx.Items[nameof(IWireMockMiddlewareOptions)] = options;
         ctx.Items[nameof(IWireMockMiddlewareLogger)] = logger;
         ctx.Items[nameof(IGuidUtils)] = guidUtils;
+        ctx.Items[nameof(IDateTimeUtils)] = dateTimeUtils;
 
         var request = await requestMapper.MapAsync(ctx, options).ConfigureAwait(false);
 

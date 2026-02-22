@@ -9,9 +9,10 @@ namespace WireMock.ResponseProviders;
 /// </summary>
 internal class WebSocketHandledResponse : ResponseMessage
 {
-    public WebSocketHandledResponse()
+    public WebSocketHandledResponse(DateTime dateTime)
     {
         // 101 Switching Protocols
         StatusCode = (int)HttpStatusCode.SwitchingProtocols;
+        DateTime = dateTime;
     }
 }
