@@ -42,16 +42,16 @@ public interface IWebSocketBuilder
     /// <summary>
     /// Configure message sending based on message content matching
     /// </summary>
-    /// <param name="condition">String to match in message text</param>
+    /// <param name="wildcardPattern">String to match in message text</param>
     [PublicAPI]
-    IWebSocketMessageConditionBuilder WhenMessage(string condition);
+    IWebSocketMessageConditionBuilder WhenMessage(string wildcardPattern);
 
     /// <summary>
     /// Configure message sending based on message content matching
     /// </summary>
-    /// <param name="condition">Bytes to match in message</param>
+    /// <param name="exactPattern">Bytes to match in message</param>
     [PublicAPI]
-    IWebSocketMessageConditionBuilder WhenMessage(byte[] condition);
+    IWebSocketMessageConditionBuilder WhenMessage(byte[] exactPattern);
 
     /// <summary>
     /// Configure message sending based on IMatcher

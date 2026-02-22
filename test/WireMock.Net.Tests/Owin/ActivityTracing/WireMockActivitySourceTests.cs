@@ -63,7 +63,7 @@ public class WireMockActivitySourceTests
 
         // Assert
         activity.GetTagItem(WireMockSemanticConventions.HttpStatusCode).Should().Be(200);
-        activity.GetTagItem("otel.status_code").Should().Be("OK");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("OK");
         activity.GetTagItem(WireMockSemanticConventions.ResponseBody).Should().Be("ok");
     }
 
@@ -82,7 +82,7 @@ public class WireMockActivitySourceTests
 
         // Assert
         activity.GetTagItem(WireMockSemanticConventions.HttpStatusCode).Should().Be(500);
-        activity.GetTagItem("otel.status_code").Should().Be("ERROR");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("ERROR");
     }
 
     [Fact]
@@ -182,7 +182,7 @@ public class WireMockActivitySourceTests
         WireMockActivitySource.RecordException(activity, exception);
 
         // Assert
-        activity.GetTagItem("otel.status_code").Should().Be("ERROR");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("ERROR");
         activity.GetTagItem("otel.status_description").Should().Be("boom");
         activity.GetTagItem("exception.type").Should().Be(typeof(InvalidOperationException).FullName);
         activity.GetTagItem("exception.message").Should().Be("boom");

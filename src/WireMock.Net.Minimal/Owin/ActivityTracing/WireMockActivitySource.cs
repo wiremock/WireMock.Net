@@ -104,11 +104,11 @@ internal static class WireMockActivitySource
             // Set status based on HTTP status code (using standard otel.status_code tag)
             if (statusCodeInt.Value >= 400)
             {
-                activity.SetTag("otel.status_code", "ERROR");
+                activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "ERROR");
             }
             else
             {
-                activity.SetTag("otel.status_code", "OK");
+                activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "OK");
             }
         }
 
@@ -191,7 +191,7 @@ internal static class WireMockActivitySource
         }
 
         // Use standard OpenTelemetry exception semantic conventions
-        activity.SetTag("otel.status_code", "ERROR");
+        activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "ERROR");
         activity.SetTag("otel.status_description", exception.Message);
         activity.SetTag("exception.type", exception.GetType().FullName);
         activity.SetTag("exception.message", exception.Message);
@@ -250,6 +250,6 @@ internal static class WireMockActivitySource
             activity.SetTag(WireMockSemanticConventions.WebSocketMessageContent, textContent);
         }
 
-        activity.SetTag("otel.status_code", "OK");
+        activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "OK");
     }
 }

@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Constants;
 using WireMock.Matchers;
@@ -16,7 +12,7 @@ namespace WireMock.Util;
 internal static class BodyParser
 {
     private static readonly Encoding DefaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
-    private static readonly Encoding[] SupportedBodyAsStringEncodingForMultipart = [ DefaultEncoding, Encoding.ASCII ];
+    private static readonly Encoding[] SupportedBodyAsStringEncodingForMultipart = [DefaultEncoding, Encoding.ASCII];
 
     /*
         HEAD - No defined body semantics.
@@ -156,7 +152,7 @@ internal static class BodyParser
         }
 
         // Try to get the body as String, FormUrlEncoded or Json
-        try
+        if (IsProbablyText(data.BodyAsBytes))
         {
             data.BodyAsString = DefaultEncoding.GetString(data.BodyAsBytes);
             data.Encoding = DefaultEncoding;
@@ -168,15 +164,8 @@ internal static class BodyParser
                 QueryStringParser.TryParse(data.BodyAsString, false, out var nameValueCollection)
             )
             {
-                try
-                {
-                    data.BodyAsFormUrlEncoded = nameValueCollection;
-                    data.DetectedBodyType = BodyType.FormUrlEncoded;
-                }
-                catch
-                {
-                    // Deserialize FormUrlEncoded failed, just ignore.
-                }
+                data.BodyAsFormUrlEncoded = nameValueCollection;
+                data.DetectedBodyType = BodyType.FormUrlEncoded;
             }
 
             // If string is not null or empty, try to deserialize the string to a JObject
@@ -193,14 +182,10 @@ internal static class BodyParser
                 }
             }
         }
-        catch
-        {
-            // Reading as string failed, just ignore
-        }
 
         return data;
     }
-    
+
     private static async Task<(string? ContentType, byte[] Bytes)> ReadBytesAsync(Stream stream, string? contentEncoding = null, bool decompressGZipAndDeflate = true)
     {
         using var memoryStream = new MemoryStream();
@@ -214,5 +199,40 @@ internal static class BodyParser
         }
 
         return (null, data);
+    }
+
+    public static bool IsProbablyText(byte[] data)
+    {
+        if (data.Length == 0)
+        {
+            return true;
+        }
+
+        // 1) Quick binary detection
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (data[i] == 0)
+            {
+                return false;
+            }
+        }
+
+        // 2) Validate UTF-8
+        string text;
+        try
+        {
+            text = DefaultEncoding.GetString(data);
+        }
+        catch
+        {
+            return false;
+        }
+
+        // 3) Count printable characters
+        var printable = text.Count(c => !char.IsControl(c) || char.IsWhiteSpace(c));
+        var ratio = (double)printable / text.Length;
+
+        // Threshold commonly used by tools like git
+        return ratio > 0.85;
     }
 }

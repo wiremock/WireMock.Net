@@ -735,11 +735,9 @@ message Other {
 
     private static WireMockServer Given_When_ServerStarted_And_RunningOnHttpAndGrpc()
     {
-        var ports = PortUtils.FindFreeTcpPorts(2);
-
         var settings = new WireMockServerSettings
         {
-            Urls = [$"http://*:{ports[0]}/", $"grpc://*:{ports[1]}/"],
+            Urls = [$"http://*:0", $"grpc://*:0/"],
             StartAdminInterface = true
         };
         return WireMockServer.Start(settings);

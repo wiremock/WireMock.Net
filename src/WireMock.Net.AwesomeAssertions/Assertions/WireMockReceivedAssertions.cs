@@ -9,19 +9,13 @@ namespace WireMock.AwesomeAssertions;
 /// <summary>
 /// Contains a number of methods to assert that the <see cref="IWireMockServer"/> is in the expected state.
 /// </summary>
-public class WireMockReceivedAssertions : ReferenceTypeAssertions<IWireMockServer, WireMockReceivedAssertions>
+/// <remarks>
+/// Create a WireMockReceivedAssertions.
+/// </remarks>
+/// <param name="server">The <see cref="IWireMockServer"/>.</param>
+/// <param name="chain">The assertion chain</param>
+public class WireMockReceivedAssertions(IWireMockServer server, AssertionChain chain) : ReferenceTypeAssertions<IWireMockServer, WireMockReceivedAssertions>(server, chain)
 {
-    private readonly AssertionChain _chain;
-
-    /// <summary>
-    /// Create a WireMockReceivedAssertions.
-    /// </summary>
-    /// <param name="server">The <see cref="IWireMockServer"/>.</param>
-    /// <param name="chain">The assertion chain</param>
-    public WireMockReceivedAssertions(IWireMockServer server, AssertionChain chain) : base(server, chain)
-    {
-        _chain = chain;
-    }
 
     /// <summary>
     /// Asserts if <see cref="IWireMockServer"/> has received no calls.
@@ -29,7 +23,7 @@ public class WireMockReceivedAssertions : ReferenceTypeAssertions<IWireMockServe
     /// <returns><see cref="WireMockAssertions"/></returns>
     public WireMockAssertions HaveReceivedNoCalls()
     {
-        return new WireMockAssertions(Subject, 0, _chain);
+        return new WireMockAssertions(Subject, 0, CurrentAssertionChain);
     }
 
     /// <summary>
@@ -38,7 +32,7 @@ public class WireMockReceivedAssertions : ReferenceTypeAssertions<IWireMockServe
     /// <returns><see cref="WireMockAssertions"/></returns>
     public WireMockAssertions HaveReceivedACall()
     {
-        return new WireMockAssertions(Subject, null, _chain);
+        return new WireMockAssertions(Subject, null, CurrentAssertionChain);
     }
 
     /// <summary>
@@ -48,7 +42,7 @@ public class WireMockReceivedAssertions : ReferenceTypeAssertions<IWireMockServe
     /// <returns><see cref="WireMockANumberOfCallsAssertions"/></returns>
     public WireMockANumberOfCallsAssertions HaveReceived(int callsCount)
     {
-        return new WireMockANumberOfCallsAssertions(Subject, callsCount, _chain);
+        return new WireMockANumberOfCallsAssertions(Subject, callsCount, CurrentAssertionChain);
     }
 
     /// <inheritdoc />

@@ -7,6 +7,8 @@ namespace WireMock.Owin.ActivityTracing;
 /// </summary>
 internal static class WireMockSemanticConventions
 {
+    public const string OtelStatusCode = "otel.status_code";
+
     // Standard HTTP semantic conventions (OpenTelemetry)
     public const string HttpMethod = "http.request.method";
     public const string HttpUrl = "url.full";

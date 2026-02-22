@@ -25,7 +25,7 @@ public partial class WireMockAssertions
 
     public (Func<IReadOnlyList<IRequestMessage>, IReadOnlyList<IRequestMessage>> Filter, Func<IReadOnlyList<IRequestMessage>, bool> Condition) BuildFilterAndCondition(Func<IRequestMessage, bool> predicate)
     {
-        Func<IReadOnlyList<IRequestMessage>, IReadOnlyList<IRequestMessage>> filter = requests => requests.Where(predicate).ToList();
+        IReadOnlyList<IRequestMessage> filter(IReadOnlyList<IRequestMessage> requests) => requests.Where(predicate).ToList();
 
         return (filter, requests => (CallsCount is null && filter(requests).Any()) || CallsCount == filter(requests).Count);
     }

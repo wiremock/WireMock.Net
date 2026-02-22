@@ -5,8 +5,11 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using AwesomeAssertions;
-using WireMock.AwesomeAssertions;
+using RestEase;
+using WireMock.Client;
+using WireMock.Client.AwesomeAssertions;
 using WireMock.Matchers;
+using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -14,21 +17,30 @@ using WireMock.Settings;
 
 namespace WireMock.Net.Tests.FluentAssertions;
 
-public class WireMockAssertionsTests : IDisposable
+public class WireMockAdminApiAssertionsTests : IDisposable
 {
     private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
 
     private readonly WireMockServer _server;
     private readonly HttpClient _httpClient;
+    private readonly IWireMockAdminApi _adminApi;
     private readonly int _portUsed;
+    private readonly ITestOutputHelper _testOutputHelper;
 
-    public WireMockAssertionsTests()
+    public WireMockAdminApiAssertionsTests(ITestOutputHelper testOutputHelper)
     {
-        _server = WireMockServer.Start();
+        _testOutputHelper = testOutputHelper;
+
+        _server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(testOutputHelper);
+        });
         _server.Given(Request.Create().UsingAnyMethod()).RespondWith(Response.Create().WithSuccess());
 
         _portUsed = _server.Ports.First();
         _httpClient = _server.CreateClient();
+        _adminApi = RestClient.For<IWireMockAdminApi>(_server.Url);
     }
 
     [Fact]
@@ -36,7 +48,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedNoCalls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -46,7 +58,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(0).Calls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -56,7 +68,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -66,7 +78,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -76,7 +88,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.PostAsync("anyurl", new StringContent(""), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl")
             .And
@@ -90,7 +102,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(2).Calls()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -100,7 +112,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsoluteUrl(new WildcardMatcher($"http://localhost:{_portUsed}/any*"));
     }
@@ -110,7 +122,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsoluteUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -118,13 +130,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_AtAbsoluteUrl_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsoluteUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called at address matching the absolute url \"anyurl\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called at address matching the absolute url \"anyurl\", but no calls were made.");
     }
 
     [Fact]
@@ -132,13 +144,13 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsoluteUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called at address matching the absolute url \"anyurl\", but didn't find it among the calls to {{\"http://localhost:{_portUsed}/\"}}.");
+            .WithMessage($"Expected _adminApi to have been called at address matching the absolute url \"anyurl\", but didn't find it among the calls to {{\"http://localhost:{_portUsed}/\"}}.");
     }
 
     [Fact]
@@ -146,7 +158,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedNoCalls()
             .AtAbsolutePath("anypath");
     }
@@ -156,7 +168,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(0).Calls()
             .AtAbsolutePath("anypath");
     }
@@ -166,7 +178,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtAbsolutePath("/anypath");
     }
@@ -176,7 +188,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.PostAsync("anypath", new StringContent(""), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtAbsolutePath("/anypath")
             .And
@@ -190,7 +202,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(2).Calls()
             .AtAbsolutePath("/anypath");
     }
@@ -200,7 +212,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsolutePath(new WildcardMatcher("/any*"));
     }
@@ -210,7 +222,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsolutePath("/anypath");
     }
@@ -218,13 +230,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_AtAbsolutePath_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsolutePath("anypath");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called at address matching the absolute path \"anypath\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called at address matching the absolute path \"anypath\", but no calls were made.");
     }
 
     [Fact]
@@ -232,13 +244,13 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtAbsolutePath("/anypath");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called at address matching the absolute path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
+            .WithMessage($"Expected _adminApi to have been called at address matching the absolute path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
     }
 
     [Fact]
@@ -246,7 +258,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedNoCalls()
             .AtPath("anypath");
     }
@@ -256,7 +268,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("xxx", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(0).Calls()
             .AtPath("anypath");
     }
@@ -266,7 +278,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtPath("/anypath");
     }
@@ -276,7 +288,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.PostAsync("anypath", new StringContent(""), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(1).Calls()
             .AtPath("/anypath")
             .And
@@ -290,7 +302,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(2).Calls()
             .AtPath("/anypath");
     }
@@ -300,7 +312,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtPath(new WildcardMatcher("/any*"));
     }
@@ -310,7 +322,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anypath", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtPath("/anypath");
     }
@@ -318,13 +330,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_AtPath_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtPath("anypath");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called at address matching the path \"anypath\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called at address matching the path \"anypath\", but no calls were made.");
     }
 
     [Fact]
@@ -332,13 +344,13 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtPath("/anypath");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called at address matching the path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
+            .WithMessage($"Expected _adminApi to have been called at address matching the path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
     }
 
     [Fact]
@@ -347,7 +359,7 @@ public class WireMockAssertionsTests : IDisposable
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer a");
         await _httpClient.GetAsync("", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .WitHeaderKey("Authorization").Which.Should().StartWith("A");
     }
@@ -358,7 +370,7 @@ public class WireMockAssertionsTests : IDisposable
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer a");
         await _httpClient.GetAsync("", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .WithHeader("Authorization", "Bearer a");
     }
@@ -373,7 +385,7 @@ public class WireMockAssertionsTests : IDisposable
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue("EN"));
         await _httpClient.GetAsync("2", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .WithHeader("Accept", ["application/xml", "application/json"])
             .And
@@ -385,7 +397,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .WithHeader("Authorization", "value");
 
@@ -401,13 +413,13 @@ public class WireMockAssertionsTests : IDisposable
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .WithHeader("Accept", "missing-value");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called with Header \"Accept\" and Values {\"missing-value\"}, but didn't find it among the calls with Header(s)*");
+            .WithMessage("Expected _adminApi to have been called with Header \"Accept\" and Values {\"missing-value\"}, but didn't find it among the calls with Header(s)*");
     }
 
     [Fact]
@@ -419,21 +431,26 @@ public class WireMockAssertionsTests : IDisposable
 
         await httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .WithHeader("Accept", ["missing-value1", "missing-value2"]);
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called with Header \"Accept\" and Values {\"missing-value1\", \"missing-value2\"}, but didn't find it among the calls with Header(s)*");
+            .WithMessage("Expected _adminApi to have been called with Header \"Accept\" and Values {\"missing-value1\", \"missing-value2\"}, but didn't find it among the calls with Header(s)*");
     }
 
     [Fact]
     public async Task HaveReceivedACall_WithHeader_ShouldCheckAllRequests()
     {
         // Arrange
-        using var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
         using var client1 = server.CreateClient();
+        var adminAdmin = RestClient.For<IWireMockAdminApi>(server.Url);
 
         var handler = new HttpClientHandler();
         using var client2 = server.CreateClient(handler);
@@ -459,11 +476,11 @@ public class WireMockAssertionsTests : IDisposable
         await Task.WhenAll(task1, task2);
 
         // Assert
-        server.Should()
+        adminAdmin.Should()
             .HaveReceivedACall()
             .WithHeader("Authorization", "Bearer invalidToken").And.WithoutHeader("x", "y").And.WithoutHeaderKey("a");
 
-        server.Should().
+        adminAdmin.Should().
             HaveReceivedACall()
             .WithHeader("Authorization", "Bearer validToken").And.WithoutHeader("Authorization", "y");
     }
@@ -473,7 +490,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtUrl($"http://localhost:{_portUsed}/anyurl");
     }
@@ -483,7 +500,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .AtUrl(new WildcardMatcher($"http://localhost:{_portUsed}/AN*", true));
     }
@@ -491,13 +508,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_AtUrl_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called at address matching the url \"anyurl\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called at address matching the url \"anyurl\", but no calls were made.");
     }
 
     [Fact]
@@ -505,13 +522,13 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .AtUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called at address matching the url \"anyurl\", but didn't find it among the calls to {{\"http://localhost:{_portUsed}/\"}}.");
+            .WithMessage($"Expected _adminApi to have been called at address matching the url \"anyurl\", but didn't find it among the calls to {{\"http://localhost:{_portUsed}/\"}}.");
     }
 
     [Fact]
@@ -523,7 +540,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.GetAsync("", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .WithProxyUrl("http://localhost:9999");
     }
@@ -535,13 +552,13 @@ public class WireMockAssertionsTests : IDisposable
         _server.Given(Request.Create().UsingAnyMethod())
             .RespondWith(Response.Create().WithProxy(new ProxyAndRecordSettings { Url = "http://localhost:9999" }));
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .WithProxyUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called with proxy url \"anyurl\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called with proxy url \"anyurl\", but no calls were made.");
     }
 
     [Fact]
@@ -553,13 +570,13 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.GetAsync("", _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .WithProxyUrl("anyurl");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called with proxy url \"anyurl\", but didn't find it among the calls with {\"http://localhost:9999\"}.");
+            .WithMessage("Expected _adminApi to have been called with proxy url \"anyurl\", but didn't find it among the calls with {\"http://localhost:9999\"}.");
     }
 
     [Fact]
@@ -568,7 +585,7 @@ public class WireMockAssertionsTests : IDisposable
         await _httpClient.GetAsync("", _ct);
         var clientIP = _server.LogEntries.Last().RequestMessage.ClientIP;
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .FromClientIP(clientIP);
     }
@@ -576,13 +593,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_FromClientIP_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .FromClientIP("different-ip");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called from client IP \"different-ip\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called from client IP \"different-ip\", but no calls were made.");
     }
 
     [Fact]
@@ -591,13 +608,13 @@ public class WireMockAssertionsTests : IDisposable
         await _httpClient.GetAsync("", _ct);
         var clientIP = _server.LogEntries.Last().RequestMessage.ClientIP;
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .FromClientIP("different-ip");
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called from client IP \"different-ip\", but didn't find it among the calls from IP(s) {{\"{clientIP}\"}}.");
+            .WithMessage($"Expected _adminApi to have been called from client IP \"different-ip\", but didn't find it among the calls from IP(s) {{\"{clientIP}\"}}.");
     }
 
     [Fact]
@@ -605,7 +622,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.GetAsync("anyurl", _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedNoCalls()
             .UsingPost();
     }
@@ -622,7 +639,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await Task.WhenAll(tasks);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(2).Calls()
             .UsingDelete();
     }
@@ -630,13 +647,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedACall_UsingPatch_Should_ThrowWhenNoCallsWereMade()
     {
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .UsingPatch();
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called using method \"PATCH\", but no calls were made.");
+            .WithMessage("Expected _adminApi to have been called using method \"PATCH\", but no calls were made.");
     }
 
     [Fact]
@@ -644,13 +661,13 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.PostAsync("anyurl", new StringContent("anycontent"), _ct);
 
-        Action act = () => _server.Should()
+        Action act = () => _adminApi.Should()
             .HaveReceivedACall()
             .UsingOptions();
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called using method \"OPTIONS\", but didn't find it among the methods {\"POST\"}.");
+            .WithMessage("Expected _adminApi to have been called using method \"OPTIONS\", but didn't find it among the methods {\"POST\"}.");
     }
 
 #if !NET452
@@ -665,7 +682,7 @@ public class WireMockAssertionsTests : IDisposable
 
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("CONNECT"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingConnect();
     }
@@ -676,7 +693,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("DELETE"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingDelete();
     }
@@ -686,7 +703,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("GET"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingGet();
     }
@@ -696,7 +713,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("HEAD"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingHead();
     }
@@ -706,7 +723,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("OPTIONS"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingOptions();
     }
@@ -718,7 +735,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod(method), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingPost();
     }
@@ -727,7 +744,12 @@ public class WireMockAssertionsTests : IDisposable
     public async Task HaveReceived1Call_AtAbsoluteUrlUsingPost_ShouldChain()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingGet())
@@ -754,7 +776,7 @@ public class WireMockAssertionsTests : IDisposable
         await Task.WhenAll(tasks);
 
         // Assert
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -762,7 +784,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingGet();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -770,7 +792,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -778,24 +800,22 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(3)
             .Calls();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
             .UsingGet();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(2)
             .Calls()
             .UsingPost();
-
-        server.Stop();
     }
 
     [Fact]
@@ -803,7 +823,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("PATCH"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingPatch();
     }
@@ -813,7 +833,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("PUT"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingPut();
     }
@@ -823,7 +843,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("TRACE"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingTrace();
     }
@@ -833,7 +853,7 @@ public class WireMockAssertionsTests : IDisposable
     {
         await _httpClient.SendAsync(new HttpRequestMessage(new HttpMethod("GET"), "anyurl"), _ct);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedACall()
             .UsingAnyMethod();
     }
@@ -841,13 +861,13 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedNoCalls_UsingAnyMethod_WhenNoCallsWereMade_Should_BeOK()
     {
-        _server
+        _adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
             .UsingAnyMethod();
 
-        _server
+        _adminApi
             .Should()
             .HaveReceivedNoCalls()
             .UsingAnyMethod();
@@ -856,12 +876,12 @@ public class WireMockAssertionsTests : IDisposable
     [Fact]
     public void HaveReceivedNoCalls_AtUrl_WhenNoCallsWereMade_Should_BeOK()
     {
-        _server.Should()
+        _adminApi.Should()
             .HaveReceived(0)
             .Calls()
             .AtUrl(_server.Url ?? string.Empty);
 
-        _server.Should()
+        _adminApi.Should()
             .HaveReceivedNoCalls()
             .AtUrl(_server.Url ?? string.Empty);
     }
@@ -870,7 +890,12 @@ public class WireMockAssertionsTests : IDisposable
     public async Task HaveReceived1Call_WithBodyAsString()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost().WithBody("x"))
@@ -882,7 +907,7 @@ public class WireMockAssertionsTests : IDisposable
         await httpClient.PostAsync($"{server.Url}/a", new StringContent("x"), _ct);
 
         // Assert
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -890,7 +915,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -898,7 +923,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
@@ -906,29 +931,32 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
             .WithBody("y")
             .And
             .UsingPost();
-
-        server.Stop();
     }
 
     [Fact]
     public async Task HaveReceived1Call_WithBodyAsJson()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost().WithBodyAsJson(new { x = "y" }))
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         var requestBody = new
         {
@@ -937,7 +965,7 @@ public class WireMockAssertionsTests : IDisposable
         await httpClient.PostAsJsonAsync($"{server.Url}/a", requestBody, _ct);
 
         // Assert
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -945,7 +973,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -953,7 +981,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
@@ -961,29 +989,32 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
             .WithBodyAsJson(@"{ ""x"": 1234 }")
             .And
             .UsingPost();
-
-        server.Stop();
     }
 
     [Fact]
     public async Task WithBodyAsJson_When_NoMatch_ShouldHaveCorrectErrorMessage()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost())
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         var requestBody = new
         {
@@ -992,7 +1023,7 @@ public class WireMockAssertionsTests : IDisposable
         await httpClient.PostAsJsonAsync($"{server.Url}/a", requestBody, _ct);
 
         // Assert
-        Action act = () => server
+        Action act = () => adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -1002,28 +1033,31 @@ public class WireMockAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("""Expected wiremockserver to have been called using body "{"x":"y"}", but didn't find it among the body/bodies "{"x":"123"}".""");
-
-        server.Stop();
+            .WithMessage("""Expected wiremockadminapi to have been called using body "{"x":"y"}", but didn't find it among the body/bodies "{"x":"123"}".""");
     }
 
     [Fact]
     public async Task WithBodyAsString_When_NoMatch_ShouldHaveCorrectErrorMessage()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost())
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         await httpClient.PostAsync($"{server.Url}/a", new StringContent("123"), _ct);
 
         // Assert
-        Action act = () => server
+        Action act = () => adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -1033,28 +1067,31 @@ public class WireMockAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("""Expected wiremockserver to have been called using body "abc", but didn't find it among the body/bodies "123".""");
-
-        server.Stop();
+            .WithMessage("""Expected wiremockadminapi to have been called using body "abc", but didn't find it among the body/bodies "123".""");
     }
 
     [Fact]
     public async Task WithBodyAsBytes_When_NoMatch_ShouldHaveCorrectErrorMessage()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost())
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         await httpClient.PostAsync($"{server.Url}/a", new ByteArrayContent([5]), _ct);
 
         // Assert
-        Action act = () => server
+        Action act = () => adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -1064,36 +1101,40 @@ public class WireMockAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("""Expected wiremockserver to have been called using body "byte[1] {...}", but didn't find it among the body/bodies "byte[1] {...}".""");
-
-        server.Stop();
+            .WithMessage("Expected wiremockadminapi to have been called using body \"byte[1] {...}\", but didn't find it among the body/bodies \"byte[1] {...}\".");
     }
 
     [Fact]
     public async Task HaveReceived1Call_WithBodyAsBytes()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
+        var bytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
         server
-            .Given(Request.Create().WithPath("/a").UsingPut().WithBody([100]))
+            .Given(Request.Create().WithPath("/binary").UsingPut().WithBody(bytes))
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
-        await httpClient.PutAsync($"{server.Url}/a", new ByteArrayContent([100]), _ct);
+        await httpClient.PutAsync($"{server.Url}/binary", new ByteArrayContent(bytes), _ct);
 
         // Assert
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
-            .WithBodyAsBytes([100])
+            .WithBodyAsBytes(bytes)
             .And
             .UsingPut();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
@@ -1101,34 +1142,37 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPut();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
             .WithBodyAsBytes([42])
             .And
             .UsingPut();
-
-        server.Stop();
     }
 
     [Fact]
     public async Task HaveReceived1Call_WithBodyAsString_UsingStringMatcher()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         server
             .Given(Request.Create().WithPath("/a").UsingPost().WithBody("x"))
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         await httpClient.PostAsync($"{server.Url}/a", new StringContent("x"), _ct);
 
         // Assert
-        server
+        adminApi
             .Should()
             .HaveReceived(1)
             .Calls()
@@ -1136,7 +1180,7 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
@@ -1144,22 +1188,25 @@ public class WireMockAssertionsTests : IDisposable
             .And
             .UsingPost();
 
-        server
+        adminApi
             .Should()
             .HaveReceived(0)
             .Calls()
             .WithBody(new ExactMatcher("y"))
             .And
             .UsingPost();
-
-        server.Stop();
     }
 
     [Fact]
     public async Task HaveReceivedACall_WithHeader_Should_ThrowWhenHttpMethodDoesNotMatch()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act : HTTP GET
         using var httpClient = new HttpClient();
@@ -1172,19 +1219,24 @@ public class WireMockAssertionsTests : IDisposable
         await httpClient.SendAsync(request, _ct);
 
         // Assert
-        server.Should().HaveReceivedACall().UsingPost().And.WithHeader("TestHeader", ["Value", "Value2"]);
+        adminApi.Should().HaveReceivedACall().UsingPost().And.WithHeader("TestHeader", ["Value", "Value2"]);
 
-        Action act = () => server.Should().HaveReceivedACall().UsingGet().And.WithHeader("TestHeader", "Value");
+        Action act = () => adminApi.Should().HaveReceivedACall().UsingGet().And.WithHeader("TestHeader", "Value");
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected server to have been called with Header \"TestHeader\" and Values {\"Value\"}, but didn't find it among the calls with Header(s)*");
+            .WithMessage("Expected adminapi to have been called with Header \"TestHeader\" and Values {\"Value\"}, but didn't find it among the calls with Header(s)*");
     }
 
     [Fact]
     public async Task HaveReceivedACall_WithHeaderKey_Should_ThrowWhenHttpMethodDoesNotMatch()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.StartAdminInterface = true;
+            settings.Logger = new TestOutputHelperWireMockLogger(_testOutputHelper);
+        });
+        var adminApi = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act : HTTP GET
         using var httpClient = new HttpClient();
@@ -1197,12 +1249,12 @@ public class WireMockAssertionsTests : IDisposable
         await httpClient.SendAsync(request, _ct);
 
         // Assert
-        server.Should().HaveReceivedACall().UsingPost().And.WitHeaderKey("TestHeader");
+        adminApi.Should().HaveReceivedACall().UsingPost().And.WitHeaderKey("TestHeader");
 
-        Action act = () => server.Should().HaveReceivedACall().UsingGet().And.WitHeaderKey("TestHeader");
+        Action act = () => adminApi.Should().HaveReceivedACall().UsingGet().And.WitHeaderKey("TestHeader");
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected server to have been called with Header \"TestHeader\", but didn't find it among the calls with Header(s)*");
+            .WithMessage("Expected adminapi to have been called with Header \"TestHeader\", but didn't find it among the calls with Header(s)*");
     }
 
     public void Dispose()
@@ -1210,5 +1262,7 @@ public class WireMockAssertionsTests : IDisposable
         _server?.Stop();
         _server?.Dispose();
         _httpClient?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }
