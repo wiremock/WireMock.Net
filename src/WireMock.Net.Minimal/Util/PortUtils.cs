@@ -74,6 +74,8 @@ internal static class PortUtils
                 socket.Close();
                 socket.Dispose();
             }
+
+            Thread.Sleep(100); // Give the OS some time to release the ports
         }
     }
 

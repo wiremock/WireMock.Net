@@ -27,7 +27,6 @@
         <Compile Include="..\WireMock.Net.Minimal\Util\PortUtils.cs" Link="Util\PortUtils.cs" />
         <Compile Include="..\WireMock.Net.Minimal\Constants\WireMockConstants.cs" Link="Constants\WireMockConstants.cs" />
         <Compile Include="..\WireMock.Net.Shared\Constants\RegexConstants.cs" Link="Constants\RegexConstants.cs" />
-        <Compile Include="..\WireMock.Net.Shared\Extensions\EnumerableExtensions.cs" Link="Extensions\EnumerableExtensions.cs" />
     </ItemGroup>
 
     <ItemGroup>
