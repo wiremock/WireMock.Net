@@ -229,16 +229,7 @@ internal static class BodyParser
         }
 
         // 3) Count printable characters
-        int printable = 0;
-
-        foreach (char c in text)
-        {
-            if (!char.IsControl(c) || char.IsWhiteSpace(c))
-            {
-                printable++;
-            }
-        }
-
+        var printable = text.Count(c => !char.IsControl(c) || char.IsWhiteSpace(c));
         var ratio = (double)printable / text.Length;
 
         // Threshold commonly used by tools like git

@@ -11,8 +11,6 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
 
     public byte[]? MessageBytes { get; private set; }
 
-    public object? MessageData { get; private set; }
-
     public TimeSpan? Delay { get; private set; }
 
     public WebSocketMessageType Type { get; private set; }
@@ -41,7 +39,7 @@ internal class WebSocketMessageBuilder : IWebSocketMessageBuilder
 
     public IWebSocketMessageBuilder WithDelay(int delayInMilliseconds)
     {
-        Guard.Condition(delayInMilliseconds, d => d >= 0, nameof(delayInMilliseconds));
+        Guard.Condition(delayInMilliseconds, d => d >= 0);
         return WithDelay(TimeSpan.FromMilliseconds(delayInMilliseconds));
     }
 
