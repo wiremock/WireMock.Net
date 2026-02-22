@@ -731,7 +731,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     public async Task WithWebSocketProxy_Should_Proxy_Multiple_Messages()
     {
         // Arrange - Start target echo server
-        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        var targetServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
@@ -779,13 +779,16 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        targetServer.Stop();
+        targetServer.Dispose();
     }
 
     [Fact]
     public async Task WithWebSocketProxy_Should_Proxy_Binary_Messages()
     {
         // Arrange - Start target echo server
-        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        var targetServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
@@ -832,5 +835,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+
+        targetServer.Stop();
+        targetServer.Dispose();
     }
 }
