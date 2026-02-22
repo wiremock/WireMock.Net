@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Buffers;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
@@ -33,7 +34,7 @@ public class WireMockWebSocketContext : IWebSocketContext
     /// <inheritdoc />
     public IMapping Mapping { get; }
 
-    internal WebSocketConnectionRegistry? Registry { get; }
+    internal WebSocketConnectionRegistry Registry { get; }
 
     internal WebSocketBuilder Builder { get; }
 
@@ -49,7 +50,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         WebSocket webSocket,
         IRequestMessage requestMessage,
         IMapping mapping,
-        WebSocketConnectionRegistry? registry,
+        WebSocketConnectionRegistry registry,
         WebSocketBuilder builder,
         IWireMockMiddlewareOptions options,
         IWireMockMiddlewareLogger logger,
@@ -96,29 +97,31 @@ public class WireMockWebSocketContext : IWebSocketContext
     /// <inheritdoc />
     public async Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken = default)
     {
-        await WebSocket.CloseAsync(closeStatus, statusDescription, cancellationToken);
+        await WebSocket.CloseAsync(closeStatus, statusDescription, cancellationToken).ConfigureAwait(false);
 
         LogWebSocketMessage(WebSocketMessageDirection.Send, WebSocketMessageType.Close, $"CloseStatus: {closeStatus}, Description: {statusDescription}", null);
     }
 
     /// <inheritdoc />
+    public void Abort(string? statusDescription = null)
+    {
+        WebSocket.Abort();
+
+        LogWebSocketMessage(WebSocketMessageDirection.Send, WebSocketMessageType.Close, $"CloseStatus: Abort, Description: {statusDescription}", null);
+    }
+
+    /// <inheritdoc />
     public async Task BroadcastAsync(string text, bool excludeSender = false, CancellationToken cancellationToken = default)
     {
-        if (Registry != null)
-        {
-            Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
-            await Registry.BroadcastAsync(text, excludeConnectionId, cancellationToken);
-        }
+        Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
+        await Registry.BroadcastAsync(text, excludeConnectionId, cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task BroadcastAsync(byte[] bytes, bool excludeSender = false, CancellationToken cancellationToken = default)
     {
-        if (Registry != null)
-        {
-            Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
-            await Registry.BroadcastAsync(bytes, excludeConnectionId, cancellationToken);
-        }
+        Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
+        await Registry.BroadcastAsync(bytes, excludeConnectionId, cancellationToken);
     }
 
     internal void LogWebSocketMessage(

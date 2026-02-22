@@ -3,7 +3,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WireMock.WebSockets;
 
@@ -27,7 +26,7 @@ internal class WebSocketConnectionRegistry
     /// </summary>
     public void RemoveConnection(Guid connectionId)
     {
-        _connections.TryRemove(connectionId, out _);
+        _ = _connections.TryRemove(connectionId, out _);
     }
 
     /// <summary>
@@ -67,6 +66,6 @@ internal class WebSocketConnectionRegistry
     private IEnumerable<WireMockWebSocketContext> Filter(Guid? excludeConnectionId)
     {
         return _connections.Values
-            .Where(c =>c.WebSocket.State == WebSocketState.Open && (!excludeConnectionId.HasValue || c.ConnectionId != excludeConnectionId));
+            .Where(c => c.WebSocket.State == WebSocketState.Open && (!excludeConnectionId.HasValue || c.ConnectionId != excludeConnectionId));
     }
 }

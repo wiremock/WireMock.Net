@@ -65,12 +65,6 @@ public interface IWebSocketBuilder
     IWebSocketBuilder WithMessageHandler(Func<WebSocketMessage, IWebSocketContext, Task> handler);
 
     /// <summary>
-    /// Enable broadcast mode for this mapping
-    /// </summary>
-    [PublicAPI]
-    IWebSocketBuilder WithBroadcast();
-
-    /// <summary>
     /// Proxy to another WebSocket server
     /// </summary>
     [PublicAPI]

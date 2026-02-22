@@ -48,7 +48,6 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
             {
                 SubProtocol = builder.AcceptProtocol,
                 KeepAliveInterval = builder.KeepAliveIntervalSeconds ?? TimeSpan.FromSeconds(WebSocketConstants.DefaultKeepAliveIntervalSeconds)
-
             };
             var webSocket = await context.WebSockets.AcceptWebSocketAsync(acceptContext).ConfigureAwait(false);
 #else
@@ -56,9 +55,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
 #endif
 
             // Get or create registry from options
-            var registry = builder.IsBroadcast
-                ? options.WebSocketRegistries.GetOrAdd(mapping.Guid, _ => new WebSocketConnectionRegistry())
-                : null;
+            var registry = options.WebSocketRegistries.GetOrAdd(mapping.Guid, _ => new WebSocketConnectionRegistry());
 
             // Create WebSocket context
             var wsContext = new WireMockWebSocketContext(
@@ -73,8 +70,8 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
                 guidUtils
             );
 
-            // Add to registry if broadcast is enabled
-            registry?.AddConnection(wsContext);
+            // Add to registry
+            registry.AddConnection(wsContext);
 
             try
             {
@@ -100,7 +97,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
             finally
             {
                 // Remove from registry
-                registry?.RemoveConnection(wsContext.ConnectionId);
+                registry.RemoveConnection(wsContext.ConnectionId);
             }
 
             // Return special marker to indicate WebSocket was handled
@@ -213,9 +210,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
         }
     }
 
-    private static async Task HandleCustomAsync(
-        WireMockWebSocketContext context,
-        Func<WebSocketMessage, IWebSocketContext, Task> handler)
+    private static async Task HandleCustomAsync(WireMockWebSocketContext context, Func<WebSocketMessage, IWebSocketContext, Task> handler)
     {
         var bufferSize = context.Builder.MaxMessageSize ?? WebSocketConstants.DefaultReceiveBufferSize;
         using var buffer = ArrayPool<byte>.Shared.Lease(bufferSize);
@@ -236,10 +231,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
 
                 try
                 {
-                    var result = await context.WebSocket.ReceiveAsync(
-                        new ArraySegment<byte>(buffer),
-                        cts.Token
-                    ).ConfigureAwait(false);
+                    var result = await context.WebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token).ConfigureAwait(false);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
@@ -257,10 +249,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
 
                         context.LogWebSocketMessage(WebSocketMessageDirection.Receive, result.MessageType, null, receiveActivity);
 
-                        await context.CloseAsync(
-                            WebSocketCloseStatus.NormalClosure,
-                            "Closed by client"
-                        ).ConfigureAwait(false);
+                        await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client").ConfigureAwait(false);
                         break;
                     }
 
@@ -331,10 +320,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
         }
     }
 
-    private static async Task ForwardMessagesAsync(
-        WireMockWebSocketContext context,
-        ClientWebSocket clientWebSocket,
-        WebSocketMessageDirection direction)
+    private static async Task ForwardMessagesAsync(WireMockWebSocketContext context, ClientWebSocket clientWebSocket, WebSocketMessageDirection direction)
     {
         using var buffer = ArrayPool<byte>.Shared.Lease(WebSocketConstants.ProxyForwardBufferSize);
 

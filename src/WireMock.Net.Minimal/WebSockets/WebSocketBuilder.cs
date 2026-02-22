@@ -13,34 +13,22 @@ internal class WebSocketBuilder(Response response) : IWebSocketBuilder
 {
     private readonly List<(IMatcher matcher, List<WebSocketMessageBuilder> messages)> _conditionalMessages = [];
 
-    /// <inheritdoc />
     public string? AcceptProtocol { get; private set; }
 
-    /// <inheritdoc />
     public bool IsEcho { get; private set; }
 
-    /// <inheritdoc />
-    public bool IsBroadcast { get; private set; }
-
-    /// <inheritdoc />
     public Func<WebSocketMessage, IWebSocketContext, Task>? MessageHandler { get; private set; }
 
-    /// <inheritdoc />
     public ProxyAndRecordSettings? ProxySettings { get; private set; }
 
-    /// <inheritdoc />
     public TimeSpan? CloseTimeout { get; private set; }
 
-    /// <inheritdoc />
     public int? MaxMessageSize { get; private set; }
 
-    /// <inheritdoc />
     public int? ReceiveBufferSize { get; private set; }
 
-    /// <inheritdoc />
     public TimeSpan? KeepAliveIntervalSeconds { get; private set; }
 
-    /// <inheritdoc />
     public IWebSocketBuilder WithAcceptProtocol(string protocol)
     {
         AcceptProtocol = Guard.NotNull(protocol);
@@ -114,12 +102,6 @@ internal class WebSocketBuilder(Response response) : IWebSocketBuilder
     {
         MessageHandler = Guard.NotNull(handler);
         IsEcho = false;
-        return this;
-    }
-
-    public IWebSocketBuilder WithBroadcast()
-    {
-        IsBroadcast = true;
         return this;
     }
 

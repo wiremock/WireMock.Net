@@ -400,29 +400,29 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
                             if (text.StartsWith("/help"))
                             {
-                                await context.SendAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>");
+                                await context.SendAsync("Available commands: /help, /time, /echo <text>, /upper <text>, /reverse <text>", _ct);
                             }
                             else if (text.StartsWith("/time"))
                             {
-                                await context.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+                                await context.SendAsync($"Server time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC", _ct);
                             }
                             else if (text.StartsWith("/echo "))
                             {
-                                await context.SendAsync(text.Substring(6));
+                                await context.SendAsync(text.Substring(6), _ct);
                             }
                             else if (text.StartsWith("/upper "))
                             {
-                                await context.SendAsync(text.Substring(7).ToUpper());
+                                await context.SendAsync(text.Substring(7).ToUpper(), _ct);
                             }
                             else if (text.StartsWith("/reverse "))
                             {
                                 var toReverse = text.Substring(9);
                                 var reversed = new string(toReverse.Reverse().ToArray());
-                                await context.SendAsync(reversed);
+                                await context.SendAsync(reversed, _ct);
                             }
                             else if (text.StartsWith("/close"))
                             {
-                                await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing connection");
+                                await context.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing connection", _ct);
                             }
                         }
                     })
@@ -800,8 +800,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
-                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -885,8 +884,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
-                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text && message.Text == "register")
@@ -962,8 +960,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -1020,8 +1017,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBroadcast()
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -1087,8 +1083,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
-                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -1135,8 +1130,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
-                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -1188,8 +1182,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             )
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
-                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(5))
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)

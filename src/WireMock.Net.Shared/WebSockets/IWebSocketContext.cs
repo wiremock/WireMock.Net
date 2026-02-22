@@ -51,6 +51,11 @@ public interface IWebSocketContext
     Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Abort the WebSocket connection to immediately close the connection without waiting for the close handshake
+    /// </summary>
+    void Abort(string? statusDescription = null);
+
+    /// <summary>
     /// Broadcast text message to all connections in this mapping
     /// </summary>
     Task BroadcastAsync(string text, bool excludeSender = false, CancellationToken cancellationToken = default);
