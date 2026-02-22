@@ -673,16 +673,16 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     }
 
     [Fact]
-    public async Task WithWebSocketProxy_Should_Proxy_Messages_To_Target_Server()
+    public async Task WithWebSocketProxy_Should_Proxy_Multiple_TextMessages()
     {
         // Arrange - Start target echo server
-        var targetServer = WireMockServer.Start(new WireMockServerSettings
+        using var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
-        targetServer
+        exampleEchoServer
             .Given(Request.Create()
                 .WithPath("/ws/target")
                 .WithWebSocketUpgrade()
@@ -692,79 +692,23 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             );
 
         // Arrange - Start proxy server
-        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
+        using var sut = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
-        proxyServer
+        sut
             .Given(Request.Create()
                 .WithPath("/ws/proxy")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocketProxy(targetServer.Url!)
+                .WithWebSocketProxy(exampleEchoServer.Url!)
             );
 
         using var client = new ClientWebSocket();
-        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
-
-        // Act
-        await client.ConnectAsync(proxyUri, _ct);
-        client.State.Should().Be(WebSocketState.Open);
-
-        var testMessage = "Hello through proxy!";
-        await client.SendAsync(testMessage, cancellationToken: _ct);
-
-        // Assert
-        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
-        received.Should().Be(testMessage, "message should be proxied to target echo server and echoed back");
-
-        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        targetServer.Stop();
-        targetServer.Dispose();
-    }
-
-    [Fact]
-    public async Task WithWebSocketProxy_Should_Proxy_Multiple_Messages()
-    {
-        // Arrange - Start target echo server
-        var targetServer = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        targetServer
-            .Given(Request.Create()
-                .WithPath("/ws/target")
-                .WithWebSocketUpgrade()
-            )
-            .RespondWith(Response.Create()
-                .WithWebSocket(ws => ws.WithEcho())
-            );
-
-        // Arrange - Start proxy server
-        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
-        {
-            Logger = new TestOutputHelperWireMockLogger(output),
-            Urls = ["ws://localhost:0"]
-        });
-
-        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
-        proxyServer
-            .Given(Request.Create()
-                .WithPath("/ws/proxy")
-                .WithWebSocketUpgrade()
-            )
-            .RespondWith(Response.Create()
-                .WithWebSocketProxy(targetUrl)
-            );
-
-        using var client = new ClientWebSocket();
-        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
+        var proxyUri = new Uri($"{sut.Url}/ws/proxy");
         await client.ConnectAsync(proxyUri, _ct);
 
         var testMessages = new[] { "First", "Second", "Third" };
@@ -780,21 +724,20 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
 
-        targetServer.Stop();
-        targetServer.Dispose();
+        await Task.Delay(100, _ct);
     }
 
     [Fact]
     public async Task WithWebSocketProxy_Should_Proxy_Binary_Messages()
     {
         // Arrange - Start target echo server
-        var targetServer = WireMockServer.Start(new WireMockServerSettings
+        using var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
-        targetServer
+        exampleEchoServer
             .Given(Request.Create()
                 .WithPath("/ws/target")
                 .WithWebSocketUpgrade()
@@ -804,24 +747,23 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             );
 
         // Arrange - Start proxy server
-        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
+        using var sut = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
 
-        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
-        proxyServer
+        sut
             .Given(Request.Create()
                 .WithPath("/ws/proxy")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocketProxy(targetUrl)
+                .WithWebSocketProxy(exampleEchoServer.Url!)
             );
 
         using var client = new ClientWebSocket();
-        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
+        var proxyUri = new Uri($"{sut.Url}/ws/proxy");
         await client.ConnectAsync(proxyUri, _ct);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
@@ -836,8 +778,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
 
-
-        targetServer.Stop();
-        targetServer.Dispose();
+        await Task.Delay(100, _ct);
     }
 }
