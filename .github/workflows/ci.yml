@@ -25,7 +25,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: 'WireMock.Net.TUnitTests'
-      run: dotnet test './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
+      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
 
     - name: 'WireMock.Net.Tests'
       run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
