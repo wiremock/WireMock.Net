@@ -780,4 +780,458 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await Task.Delay(100, _ct);
     }
+
+    [Fact]
+    public async Task Broadcast_Should_Send_TextMessage_To_Multiple_Connected_Clients()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var broadcastMessage = "Broadcast to all clients";
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithBroadcast()
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+
+                            if (text == "register")
+                            {
+                                await context.SendAsync($"Registered: {context.ConnectionId}");
+                            }
+                            else if (text.StartsWith("broadcast:"))
+                            {
+                                var broadcastText = text.Substring(10);
+                                await context.BroadcastAsync(broadcastText);
+                            }
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+        using var client3 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast");
+
+        // Act
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+        await client3.ConnectAsync(uri, _ct);
+
+        await client1.SendAsync("register", cancellationToken: _ct);
+        await client2.SendAsync("register", cancellationToken: _ct);
+        await client3.SendAsync("register", cancellationToken: _ct);
+
+        // Receive registration confirmations
+        var reg1 = await client1.ReceiveAsTextAsync(cancellationToken: _ct);
+        var reg2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+        var reg3 = await client3.ReceiveAsTextAsync(cancellationToken: _ct);
+
+        reg1.Should().StartWith("Registered: ");
+        reg2.Should().StartWith("Registered: ");
+        reg3.Should().StartWith("Registered: ");
+
+        // Send broadcast from client1
+        await client1.SendAsync($"broadcast:{broadcastMessage}", cancellationToken: _ct);
+
+        // Assert - all clients should receive the broadcast
+        var received1 = await client1.ReceiveAsTextAsync(cancellationToken: _ct);
+        var received2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+        var received3 = await client3.ReceiveAsTextAsync(cancellationToken: _ct);
+
+        received1.Should().Be(broadcastMessage);
+        received2.Should().Be(broadcastMessage);
+        received3.Should().Be(broadcastMessage);
+
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(300, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Send_BinaryMessage_To_Multiple_Connected_Clients()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var message = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+        var broadcastMessageFromWireMock = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithBroadcast()
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text && message.Text == "register")
+                        {
+                            await context.SendAsync($"Registered: {context.ConnectionId}");
+                        }
+
+                        if (message.MessageType == WebSocketMessageType.Binary)
+                        {
+                            await context.BroadcastAsync(broadcastMessageFromWireMock);
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+        using var client3 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast");
+
+        // Act
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+        await client3.ConnectAsync(uri, _ct);
+
+        await client1.SendAsync("register", cancellationToken: _ct);
+        await client2.SendAsync("register", cancellationToken: _ct);
+        await client3.SendAsync("register", cancellationToken: _ct);
+
+        // Receive registration confirmations
+        var reg1 = await client1.ReceiveAsTextAsync(cancellationToken: _ct);
+        var reg2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+        var reg3 = await client3.ReceiveAsTextAsync(cancellationToken: _ct);
+
+        reg1.Should().StartWith("Registered: ");
+        reg2.Should().StartWith("Registered: ");
+        reg3.Should().StartWith("Registered: ");
+
+        // Send broadcast from client1
+        await client1.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Binary, true, cancellationToken: _ct);
+
+        // Assert - all clients should receive the broadcast
+        var received1 = await client1.ReceiveAsBytesAsync(cancellationToken: _ct);
+        var received2 = await client2.ReceiveAsBytesAsync(cancellationToken: _ct);
+        var received3 = await client3.ReceiveAsBytesAsync(cancellationToken: _ct);
+
+        received1.Should().BeEquivalentTo(broadcastMessageFromWireMock);
+        received2.Should().BeEquivalentTo(broadcastMessageFromWireMock);
+        received3.Should().BeEquivalentTo(broadcastMessageFromWireMock);
+
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(300, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Handle_Multiple_Broadcast_Messages()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast-multi")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+                            await context.BroadcastAsync(text);
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast-multi");
+
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+
+        var messages = new[] { "Message 1", "Message 2", "Message 3" };
+
+        // Act & Assert
+        foreach (var message in messages)
+        {
+            await client1.SendAsync(message, cancellationToken: _ct);
+
+            var received1 = await client1.ReceiveAsTextAsync(cancellationToken: _ct);
+            var received2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+
+            received1.Should().Be(message);
+            received2.Should().Be(message);
+        }
+
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(300, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Exclude_Sender_When_ExcludeSender_Is_True()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast-exclude")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithBroadcast()
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+
+                            if (text.StartsWith("send:"))
+                            {
+                                var broadcastText = text.Substring(5);
+                                await context.BroadcastAsync(broadcastText, excludeSender: true);
+                            }
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast-exclude");
+
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+
+        var broadcastMessage = "Exclusive broadcast";
+
+        // Act
+        await client1.SendAsync($"send:{broadcastMessage}", cancellationToken: _ct);
+
+        // Assert - only client2 should receive the message
+        var received2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+        received2.Should().Be(broadcastMessage);
+
+        // client1 should not receive anything (or should timeout)
+        var receiveTask1 = client1.ReceiveAsTextAsync(cancellationToken: _ct);
+        var delayTask = Task.Delay(500, _ct);
+
+        var completedTask = await Task.WhenAny(receiveTask1, delayTask);
+        completedTask.Should().Be(delayTask, "client1 should not receive the exclusive broadcast");
+
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(200, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Work_With_Single_Client()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var broadcastMessage = "Single client broadcast";
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast-single")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithBroadcast()
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+                            await context.BroadcastAsync(text);
+                        }
+                    })
+                )
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url}/ws/broadcast-single");
+
+        // Act
+        await client.ConnectAsync(uri, _ct);
+        await client.SendAsync(broadcastMessage, cancellationToken: _ct);
+
+        // Assert
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
+        received.Should().Be(broadcastMessage);
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(100, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Handle_Client_Disconnect_During_Broadcast()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var broadcastMessage = "Message after disconnect";
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast-disconnect")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithBroadcast()
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+                            await context.BroadcastAsync(text);
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast-disconnect");
+
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+
+        // Act - disconnect client1
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnecting", _ct);
+
+        // Send broadcast from client2 - should handle disconnected client gracefully
+        await client2.SendAsync(broadcastMessage, cancellationToken: _ct);
+
+        // Assert - client2 should still receive the broadcast
+        var received2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+        received2.Should().Be(broadcastMessage);
+
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(200, _ct);
+    }
+
+    [Fact]
+    public async Task Broadcast_Should_Support_Targeted_Broadcasting_Based_On_Condition()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/broadcast-conditional")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws
+                    .WithCloseTimeout(TimeSpan.FromSeconds(10))
+                    .WithBroadcast()
+                    .WithMessageHandler(async (message, context) =>
+                    {
+                        if (message.MessageType == WebSocketMessageType.Text)
+                        {
+                            var text = message.Text ?? string.Empty;
+
+                            if (text.StartsWith("to-admins:"))
+                            {
+                                var adminMessage = text.Substring(10);
+                                await context.SendAsync($"Admin broadcast: {adminMessage}");
+                            }
+                            else if (text.StartsWith("to-all:"))
+                            {
+                                var allMessage = text.Substring(7);
+                                await context.BroadcastAsync(allMessage);
+                            }
+                        }
+                    })
+                )
+            );
+
+        using var client1 = new ClientWebSocket();
+        using var client2 = new ClientWebSocket();
+
+        var uri = new Uri($"{server.Url}/ws/broadcast-conditional");
+
+        await client1.ConnectAsync(uri, _ct);
+        await client2.ConnectAsync(uri, _ct);
+
+        // Act
+        await client1.SendAsync("to-all:General message", cancellationToken: _ct);
+
+        // Assert - both clients receive the broadcast
+        var received1 = await client1.ReceiveAsTextAsync(cancellationToken: _ct);
+        var received2 = await client2.ReceiveAsTextAsync(cancellationToken: _ct);
+
+        received1.Should().Be("General message");
+        received2.Should().Be("General message");
+
+        await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+        await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(200, _ct);
+    }
 }

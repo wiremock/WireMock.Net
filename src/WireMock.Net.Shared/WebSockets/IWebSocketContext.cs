@@ -48,10 +48,15 @@ public interface IWebSocketContext
     /// <summary>
     /// Close the WebSocket connection
     /// </summary>
-    Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription);
+    Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Broadcast text message to all connections in this mapping
     /// </summary>
-    Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default);
+    Task BroadcastAsync(string text, bool excludeSender = false, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Broadcast binary message to all connections in this mapping
+    /// </summary>
+    Task BroadcastAsync(byte[] bytes, bool excludeSender = false, CancellationToken cancellationToken = default);
 }

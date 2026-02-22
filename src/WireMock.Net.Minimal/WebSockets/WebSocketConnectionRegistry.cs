@@ -3,6 +3,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WireMock.WebSockets;
 
@@ -48,12 +49,24 @@ internal class WebSocketConnectionRegistry
     /// <summary>
     /// Broadcast text to all connections
     /// </summary>
-    public async Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default)
+    public async Task BroadcastAsync(string text, Guid? excludeConnectionId, CancellationToken cancellationToken = default)
     {
-        var tasks = _connections.Values
-            .Where(c => c.WebSocket.State == WebSocketState.Open)
-            .Select(c => c.SendAsync(text, cancellationToken));
-
+        var tasks = Filter(excludeConnectionId).Select(c => c.SendAsync(text, cancellationToken));
         await Task.WhenAll(tasks);
+    }
+
+    /// <summary>
+    /// Broadcast binary to all connections
+    /// </summary>
+    public async Task BroadcastAsync(byte[] bytes, Guid? excludeConnectionId, CancellationToken cancellationToken = default)
+    {
+        var tasks = Filter(excludeConnectionId).Select(c => c.SendAsync(bytes, cancellationToken));
+        await Task.WhenAll(tasks);
+    }
+
+    private IEnumerable<WireMockWebSocketContext> Filter(Guid? excludeConnectionId)
+    {
+        return _connections.Values
+            .Where(c =>c.WebSocket.State == WebSocketState.Open && (!excludeConnectionId.HasValue || c.ConnectionId != excludeConnectionId));
     }
 }

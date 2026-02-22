@@ -211,7 +211,7 @@ public static class Program
                             var broadcastMessage = $"[{timestamp}] Broadcast: {text}";
                             
                             // Broadcast to all connected clients
-                            await context.BroadcastTextAsync(broadcastMessage);
+                            await context.BroadcastAsync(broadcastMessage);
                             
                             Console.WriteLine($"Broadcasted to {server.GetWebSocketConnections(broadcastMappingGuid).Count} clients: {text}");
                         }
@@ -428,7 +428,7 @@ public static class Program
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
                         {
-                            await context.BroadcastTextAsync($"[Broadcast] {message.Text}");
+                            await context.BroadcastAsync($"[Broadcast] {message.Text}");
                         }
                     })
                 )

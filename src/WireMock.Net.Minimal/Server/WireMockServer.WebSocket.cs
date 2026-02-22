@@ -35,39 +35,64 @@ public partial class WireMockServer
     public async Task CloseWebSocketConnectionAsync(
         Guid connectionId,
         WebSocketCloseStatus closeStatus = WebSocketCloseStatus.NormalClosure,
-        string statusDescription = "Closed by server")
+        string statusDescription = "Closed by server",
+        CancellationToken cancellationToken = default)
     {
         foreach (var registry in _options.WebSocketRegistries.Values)
         {
-            if (registry.TryGetConnection(connectionId, out var connection))
+            if (registry.TryGetConnection(connectionId, out var connection) && !cancellationToken.IsCancellationRequested)
             {
-                await connection.CloseAsync(closeStatus, statusDescription);
+                await connection.CloseAsync(closeStatus, statusDescription, cancellationToken);
                 return;
             }
         }
     }
 
     /// <summary>
-    /// Broadcast a message to all WebSocket connections in a specific mapping
+    /// Broadcast a text message to all WebSocket connections in a specific mapping
     /// </summary>
     [PublicAPI]
-    public async Task BroadcastToWebSocketsAsync(Guid mappingGuid, string text)
+    public async Task BroadcastToWebSocketsAsync(Guid mappingGuid, string text, Guid? excludeConnectionId = null, CancellationToken cancellationToken = default)
     {
         if (_options.WebSocketRegistries.TryGetValue(mappingGuid, out var registry))
         {
-            await registry.BroadcastTextAsync(text);
+            await registry.BroadcastAsync(text, excludeConnectionId, cancellationToken);
         }
     }
 
     /// <summary>
-    /// Broadcast a message to all WebSocket connections
+    /// Broadcast a text message to all WebSocket connections
     /// </summary>
     [PublicAPI]
-    public async Task BroadcastToAllWebSocketsAsync(string text)
+    public async Task BroadcastToAllWebSocketsAsync(string text, Guid? excludeConnectionId = null, CancellationToken cancellationToken = default)
     {
         foreach (var registry in _options.WebSocketRegistries.Values)
         {
-            await registry.BroadcastTextAsync(text);
+            await registry.BroadcastAsync(text, excludeConnectionId, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Broadcast a binary message to all WebSocket connections in a specific mapping
+    /// </summary>
+    [PublicAPI]
+    public async Task BroadcastToWebSocketsAsync(Guid mappingGuid, byte[] bytes, Guid? excludeConnectionId = null, CancellationToken cancellationToken = default)
+    {
+        if (_options.WebSocketRegistries.TryGetValue(mappingGuid, out var registry))
+        {
+            await registry.BroadcastAsync(bytes, excludeConnectionId, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Broadcast a binary message to all WebSocket connections
+    /// </summary>
+    [PublicAPI]
+    public async Task BroadcastToAllWebSocketsAsync(byte[] bytes, Guid? excludeConnectionId = null, CancellationToken cancellationToken = default)
+    {
+        foreach (var registry in _options.WebSocketRegistries.Values)
+        {
+            await registry.BroadcastAsync(bytes, excludeConnectionId, cancellationToken);
         }
     }
 }

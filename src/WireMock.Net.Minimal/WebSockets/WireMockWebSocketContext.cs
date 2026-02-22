@@ -94,19 +94,30 @@ public class WireMockWebSocketContext : IWebSocketContext
     }
 
     /// <inheritdoc />
-    public async Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription)
+    public async Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken = default)
     {
-        await WebSocket.CloseAsync(closeStatus, statusDescription, CancellationToken.None);
+        await WebSocket.CloseAsync(closeStatus, statusDescription, cancellationToken);
 
         LogWebSocketMessage(WebSocketMessageDirection.Send, WebSocketMessageType.Close, $"CloseStatus: {closeStatus}, Description: {statusDescription}", null);
     }
 
     /// <inheritdoc />
-    public async Task BroadcastTextAsync(string text, CancellationToken cancellationToken = default)
+    public async Task BroadcastAsync(string text, bool excludeSender = false, CancellationToken cancellationToken = default)
     {
         if (Registry != null)
         {
-            await Registry.BroadcastTextAsync(text, cancellationToken);
+            Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
+            await Registry.BroadcastAsync(text, excludeConnectionId, cancellationToken);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task BroadcastAsync(byte[] bytes, bool excludeSender = false, CancellationToken cancellationToken = default)
+    {
+        if (Registry != null)
+        {
+            Guid? excludeConnectionId = excludeSender ? ConnectionId : null;
+            await Registry.BroadcastAsync(bytes, excludeConnectionId, cancellationToken);
         }
     }
 
