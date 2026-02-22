@@ -671,4 +671,164 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
     }
+
+    [Fact]
+    public async Task WithWebSocketProxy_Should_Proxy_Messages_To_Target_Server()
+    {
+        // Arrange - Start target echo server
+        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        targetServer
+            .Given(Request.Create()
+                .WithPath("/ws/target")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws.WithEcho())
+            );
+
+        // Arrange - Start proxy server
+        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
+        proxyServer
+            .Given(Request.Create()
+                .WithPath("/ws/proxy")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocketProxy(targetUrl)
+            );
+
+        using var client = new ClientWebSocket();
+        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
+
+        // Act
+        await client.ConnectAsync(proxyUri, _ct);
+        client.State.Should().Be(WebSocketState.Open);
+
+        var testMessage = "Hello through proxy!";
+        await client.SendAsync(testMessage, cancellationToken: _ct);
+
+        // Assert
+        var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
+        received.Should().Be(testMessage, "message should be proxied to target echo server and echoed back");
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+    }
+
+    [Fact]
+    public async Task WithWebSocketProxy_Should_Proxy_Multiple_Messages()
+    {
+        // Arrange - Start target echo server
+        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        targetServer
+            .Given(Request.Create()
+                .WithPath("/ws/target")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws.WithEcho())
+            );
+
+        // Arrange - Start proxy server
+        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
+        proxyServer
+            .Given(Request.Create()
+                .WithPath("/ws/proxy")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocketProxy(targetUrl)
+            );
+
+        using var client = new ClientWebSocket();
+        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
+        await client.ConnectAsync(proxyUri, _ct);
+
+        var testMessages = new[] { "First", "Second", "Third" };
+
+        // Act & Assert
+        foreach (var testMessage in testMessages)
+        {
+            await client.SendAsync(testMessage, cancellationToken: _ct);
+
+            var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
+            received.Should().Be(testMessage, $"message '{testMessage}' should be proxied and echoed back");
+        }
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+    }
+
+    [Fact]
+    public async Task WithWebSocketProxy_Should_Proxy_Binary_Messages()
+    {
+        // Arrange - Start target echo server
+        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        targetServer
+            .Given(Request.Create()
+                .WithPath("/ws/target")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(ws => ws.WithEcho())
+            );
+
+        // Arrange - Start proxy server
+        using var proxyServer = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
+        proxyServer
+            .Given(Request.Create()
+                .WithPath("/ws/proxy")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocketProxy(targetUrl)
+            );
+
+        using var client = new ClientWebSocket();
+        var proxyUri = new Uri($"{proxyServer.Url}/ws/proxy");
+        await client.ConnectAsync(proxyUri, _ct);
+
+        var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+
+        // Act
+        await client.SendAsync(new ArraySegment<byte>(testData), WebSocketMessageType.Binary, true, _ct);
+
+        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
+
+        // Assert
+        receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
+
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+    }
 }
