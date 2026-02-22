@@ -10,6 +10,12 @@ namespace WireMock.WebSockets;
 public interface IWebSocketMessageBuilder
 {
     /// <summary>
+    /// Echo all received messages back to client
+    /// </summary>
+    [PublicAPI]
+    IWebSocketMessageBuilder WithEcho();
+
+    /// <summary>
     /// Send a specific text message
     /// </summary>
     /// <param name="text">The text message to send</param>

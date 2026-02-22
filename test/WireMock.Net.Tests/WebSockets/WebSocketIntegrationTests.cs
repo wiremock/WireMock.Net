@@ -676,7 +676,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     public async Task WithWebSocketProxy_Should_Proxy_Messages_To_Target_Server()
     {
         // Arrange - Start target echo server
-        using var targetServer = WireMockServer.Start(new WireMockServerSettings
+        var targetServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
@@ -698,14 +698,13 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             Urls = ["ws://localhost:0"]
         });
 
-        var targetUrl = $"{targetServer.Url}/ws/target".Replace("http://", "ws://");
         proxyServer
             .Given(Request.Create()
                 .WithPath("/ws/proxy")
                 .WithWebSocketUpgrade()
             )
             .RespondWith(Response.Create()
-                .WithWebSocketProxy(targetUrl)
+                .WithWebSocketProxy(targetServer.Url!)
             );
 
         using var client = new ClientWebSocket();
@@ -723,6 +722,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         received.Should().Be(testMessage, "message should be proxied to target echo server and echoed back");
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        targetServer.Stop();
+        targetServer.Dispose();
     }
 
     [Fact]
