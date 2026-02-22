@@ -338,7 +338,7 @@ public class WireMockAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage($"Expected _server to have been called at address matching the path \"anypath\", but didn't find it among the calls to {{\"\"}}.");
+            .WithMessage($"Expected _server to have been called at address matching the path \"/anypath\", but didn't find it among the calls to {{\"/\"}}.");
     }
 
     [Fact]
