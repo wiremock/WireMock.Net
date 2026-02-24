@@ -16,6 +16,36 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     private readonly CancellationToken _ct = testContext.Current.CancellationToken;
 
     [Fact]
+    public async Task WithNoSetupShouldJustWaitForClose_AndCLose_When_ClientCloses()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output),
+            Urls = ["ws://localhost:0"]
+        });
+
+        server
+            .Given(Request.Create()
+                .WithPath("/ws/x")
+                .WithWebSocketUpgrade()
+            )
+            .RespondWith(Response.Create()
+                .WithWebSocket(_ => { })
+            );
+
+        using var client = new ClientWebSocket();
+        var uri = new Uri($"{server.Url}/ws/x");
+
+        // Act
+        await client.ConnectAsync(uri, _ct);
+        client.State.Should().Be(WebSocketState.Open);
+
+        // Assert
+        await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+    }
+
+    [Fact]
     public async Task EchoServer_Should_Echo_Text_Messages()
     {
         // Arrange
@@ -40,7 +70,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         var uri = new Uri($"{server.Url}/ws/echo");
 
         // Act
-        await client.ConnectAsync(uri, CancellationToken.None);
+        await client.ConnectAsync(uri, _ct);
         client.State.Should().Be(WebSocketState.Open);
 
         var testMessage = "Hello, WebSocket!";
@@ -906,7 +936,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         var uri = new Uri($"{server.Url}/ws/broadcast");
 
-        // Act
         await client1.ConnectAsync(uri, _ct);
         await client2.ConnectAsync(uri, _ct);
         await client3.ConnectAsync(uri, _ct);

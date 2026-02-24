@@ -551,7 +551,9 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         var uri = new Uri($"{server.Url}/ws/test");
 
         await client1.ConnectAsync(uri, _ct);
+        await Task.Delay(100, _ct);
         await client2.ConnectAsync(uri, _ct);
+        await Task.Delay(100, _ct);
 
         var initialConnections = server.GetWebSocketConnections();
         initialConnections.Should().HaveCount(2);

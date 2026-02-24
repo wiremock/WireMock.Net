@@ -4,7 +4,6 @@
 using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.OpenTelemetry;
-using Xunit;
 
 namespace WireMock.Net.Tests.OpenTelemetry;
 
