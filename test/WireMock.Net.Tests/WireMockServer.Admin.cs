@@ -444,14 +444,16 @@ public class WireMockServerAdminTests
 
         await Task.WhenAll(tasks);
 
+        await Task.Delay(200, cancellationToken);
+
         // Act
         var logEntries = server.FindLogEntries(new RequestMessageMethodMatcher("GET"));
 
         // Assert
         logEntries.Should().HaveCount(2);
 
-        logEntries.Single(le => le.RequestMessage.Path.EndsWith("foo1")).Should().NotBeNull();
-        logEntries.Single(le => le.RequestMessage.Path.EndsWith("foo3")).Should().NotBeNull();
+        logEntries.Single(le => le.RequestMessage!.Path.EndsWith("foo1")).Should().NotBeNull();
+        logEntries.Single(le => le.RequestMessage!.Path.EndsWith("foo3")).Should().NotBeNull();
     }
 
     [Fact]
