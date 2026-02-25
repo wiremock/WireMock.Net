@@ -11,6 +11,7 @@ using WireMock.Settings;
 
 namespace WireMock.Net.Tests.WebSockets;
 
+[Collection(nameof(WebSocketIntegrationTests))]
 public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAccessor testContext)
 {
     private readonly CancellationToken _ct = testContext.Current.CancellationToken;
