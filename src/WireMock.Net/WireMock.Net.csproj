@@ -3,7 +3,7 @@
         <Description>Lightweight Http Mocking Server for .NET, inspired by WireMock from the Java landscape.</Description>
         <AssemblyTitle>WireMock.Net</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net462;netstandard2.1;net8.0</TargetFrameworks>
+        <TargetFrameworks>net462;netstandard2.1;netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net</AssemblyName>
         <PackageId>WireMock.Net</PackageId>
