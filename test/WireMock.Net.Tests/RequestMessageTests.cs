@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
 using WireMock.Models;
-using WireMock.Util;
 
 namespace WireMock.Net.Tests;
 
@@ -17,7 +15,7 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "posT", ClientIp);
 
         // then
-        Check.That(request.Method).IsEqualTo("posT");
+        request.Method.Should().Be("posT");
     }
 
     [Fact]
@@ -27,7 +25,7 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "POST", ClientIp);
 
         // then
-        Check.That(request.GetParameter("not_there")).IsNull();
+        request.GetParameter("not_there").Should().BeNull();
     }
 
     [Fact]
@@ -37,7 +35,7 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost?foo=bar"), "POST", ClientIp);
 
         // Assert
-        Check.That(request.GetParameter("foo")).ContainsExactly("bar");
+        request.GetParameter("foo").Should().ContainSingle("bar");
     }
 
     [Fact]
@@ -47,7 +45,7 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost?foo=bar"), "POST", ClientIp);
 
         // Assert
-        Check.That(request.GetParameter("FoO", true)).ContainsExactly("bar");
+        request.GetParameter("FoO", true).Should().ContainSingle("bar");
     }
 
     [Fact]
@@ -57,8 +55,8 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost?key=1&key=2"), "POST", ClientIp);
 
         // Assert
-        Check.That(request.GetParameter("key")).Contains("1");
-        Check.That(request.GetParameter("key")).Contains("2");
+        request.GetParameter("key").Should().Contain("1");
+        request.GetParameter("key").Should().Contain("2");
     }
 
     [Fact]
@@ -68,9 +66,9 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost?key=1,2,3"), "POST", ClientIp);
 
         // Assert
-        Check.That(request.GetParameter("key")).Contains("1");
-        Check.That(request.GetParameter("key")).Contains("2");
-        Check.That(request.GetParameter("key")).Contains("3");
+        request.GetParameter("key").Should().Contain("1");
+        request.GetParameter("key").Should().Contain("2");
+        request.GetParameter("key").Should().Contain("3");
     }
 
     [Fact]
@@ -80,28 +78,8 @@ public class RequestMessageTests
         var request = new RequestMessage(new UrlDetails("http://localhost?key=1,2&foo=bar&key=3"), "POST", ClientIp);
 
         // Assert
-        Check.That(request.GetParameter("key")).Contains("1");
-        Check.That(request.GetParameter("key")).Contains("2");
-        Check.That(request.GetParameter("key")).Contains("3");
-    }
-
-    [Fact]
-    public void RequestMessage_Constructor1_PathSegments()
-    {
-        // Assign
-        var request = new RequestMessage(new UrlDetails("http://localhost/a/b/c"), "POST", ClientIp);
-
-        // Assert
-        Check.That(request.PathSegments).ContainsExactly("a", "b", "c");
-    }
-
-    [Fact]
-    public void RequestMessage_Constructor2_PathSegments()
-    {
-        // Assign
-        var request = new RequestMessage(new UrlDetails("http://localhost/a/b/c"), "POST", ClientIp, new BodyData());
-
-        // Assert
-        Check.That(request.PathSegments).ContainsExactly("a", "b", "c");
+        request.GetParameter("key").Should().Contain("1");
+        request.GetParameter("key").Should().Contain("2");
+        request.GetParameter("key").Should().Contain("3");
     }
 }

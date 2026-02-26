@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Net.WebSockets;
-using AwesomeAssertions;
 using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;

@@ -1,23 +1,14 @@
 // Copyright © WireMock.Net
 
 using Moq;
-using AwesomeAssertions;
 using WireMock.Handlers;
 using WireMock.Owin.Mappers;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
 using WireMock.Owin;
-#if NET452
-using Microsoft.Owin;
-using IResponse = Microsoft.Owin.IOwinResponse;
-// using Response = Microsoft.Owin.OwinResponse;
-#else
 using Microsoft.AspNetCore.Http;
-using IResponse = Microsoft.AspNetCore.Http.HttpResponse;
-// using Response = Microsoft.AspNetCore.Http.HttpResponse;
 using Microsoft.Extensions.Primitives;
-#endif
 
 namespace WireMock.Net.Tests.Owin.Mappers;
 
@@ -25,7 +16,7 @@ public class OwinResponseMapperTests
 {
     private static readonly Task CompletedTask = Task.FromResult(true);
     private readonly OwinResponseMapper _sut;
-    private readonly Mock<IResponse> _responseMock;
+    private readonly Mock<HttpResponse> _responseMock;
     private readonly Mock<Stream> _stream;
     private readonly Mock<IHeaderDictionary> _headers;
     private readonly Mock<IFileSystemHandler> _fileSystemHandlerMock;
@@ -52,7 +43,7 @@ public class OwinResponseMapperTests
         _headers.Setup(h => h.Add(It.IsAny<string>(), It.IsAny<StringValues>()));
 #endif
 
-        _responseMock = new Mock<IResponse>();
+        _responseMock = new Mock<HttpResponse>();
         _responseMock.SetupAllProperties();
         _responseMock.SetupGet(r => r.Body).Returns(_stream.Object);
         _responseMock.SetupGet(r => r.Headers).Returns(_headers.Object);

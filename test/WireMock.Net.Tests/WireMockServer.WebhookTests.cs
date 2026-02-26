@@ -2,7 +2,6 @@
 
 using System.Net;
 using System.Net.Http;
-using AwesomeAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Models;
@@ -139,7 +138,7 @@ public class WireMockServerWebhookTests
     public async Task WireMockServer_WithWebhook_When_WebhookEndPointReturnsError_Should_LogWarning()
     {
         // Arrange
-        var serverReceivingTheWebhook = WireMockServer.Start();
+        using var serverReceivingTheWebhook = WireMockServer.Start();
         serverReceivingTheWebhook.Given(Request.Create().WithPath("/x").UsingPost()).RespondWith(Response.Create().WithBody("!Server Error!").WithStatusCode(500));
 
         var loggerMock = new Mock<IWireMockLogger>();
@@ -150,7 +149,7 @@ public class WireMockServerWebhookTests
 
         // Act
         var guid = "942cb963-c9a3-4e9c-8e71-c1b26d2a4a05";
-        var server = WireMockServer.Start(settings);
+        using var server = WireMockServer.Start(settings);
         server.Given(Request.Create().UsingPost())
             .WithWebhook(new Webhook
             {
@@ -188,9 +187,6 @@ public class WireMockServerWebhookTests
 
         serverReceivingTheWebhook.LogEntries.Should().HaveCount(1);
         serverReceivingTheWebhook.LogEntries.First().MappingGuid.Should().NotBeNull();
-
-        server.Dispose();
-        serverReceivingTheWebhook.Dispose();
     }
 
     [Fact]

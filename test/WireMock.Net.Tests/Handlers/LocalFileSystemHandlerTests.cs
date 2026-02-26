@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
+
 using WireMock.Handlers;
 
 namespace WireMock.Net.Tests.Handlers;
@@ -16,28 +16,31 @@ public class LocalFileSystemHandlerTests
         string result = _sut.GetMappingFolder();
 
         // Assert
-        Check.That(result).EndsWith(Path.Combine("__admin", "mappings"));
+        result.Should().EndWith(Path.Combine("__admin", "mappings"));
     }
 
     [Fact]
     public void LocalFileSystemHandler_CreateFolder_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.CreateFolder(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.CreateFolder(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_WriteMappingFile_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.WriteMappingFile(null, null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.WriteMappingFile(null, null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_ReadResponseBodyAsFile_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.ReadResponseBodyAsFile(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.ReadResponseBodyAsFile(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -47,42 +50,47 @@ public class LocalFileSystemHandlerTests
         var result = _sut.FileExists("x.x");
 
         // Assert
-        Check.That(result).IsFalse();
+        result.Should().BeFalse();
     }
 
     [Fact]
     public void LocalFileSystemHandler_FileExists_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.FileExists(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.FileExists(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_ReadFile_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.ReadFile(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.ReadFile(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_ReadFileAsString_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.ReadFileAsString(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.ReadFileAsString(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_WriteFile_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.WriteFile(null, null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.WriteFile(null, null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void LocalFileSystemHandler_DeleteFile_ThrowsArgumentNullException()
     {
         // Act
-        Check.ThatCode(() => _sut.DeleteFile(null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.DeleteFile(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -92,13 +100,17 @@ public class LocalFileSystemHandlerTests
         string result = _sut.GetUnmatchedRequestsFolder();
 
         // Assert
-        Check.That(result).EndsWith(Path.Combine("requests", "unmatched"));
+        result.Should().EndWith(Path.Combine("requests", "unmatched"));
     }
 
     [Fact]
     public void LocalFileSystemHandler_WriteUnmatchedRequest()
     {
         // Act
-        Check.ThatCode(() => _sut.WriteUnmatchedRequest(null, null)).Throws<ArgumentNullException>();
+        Action act = () => _sut.WriteUnmatchedRequest(null, null);
+        act.Should().Throw<ArgumentNullException>();
     }
 }
+
+
+

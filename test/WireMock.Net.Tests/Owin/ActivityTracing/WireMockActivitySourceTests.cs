@@ -2,7 +2,6 @@
 
 using System.Diagnostics;
 using System.Net.WebSockets;
-using AwesomeAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Matchers.Request;

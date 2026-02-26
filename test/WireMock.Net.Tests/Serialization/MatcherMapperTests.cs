@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
 using AnyOfTypes;
-using AwesomeAssertions;
 using AwesomeAssertions.Execution;
 using Moq;
 using Newtonsoft.Json;
-using NFluent;
 using WireMock.Admin.Mappings;
 using WireMock.Handlers;
 using WireMock.Matchers;
@@ -289,8 +287,11 @@ message HelloReply {
         // Assign
         var model = new MatcherModel { Name = "test" };
 
-        // Act and Assert
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        // Act
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     //[Fact]
@@ -747,7 +748,7 @@ message HelloReply {
         var matcher = (ExactMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
     }
 
     [Fact]
@@ -808,7 +809,7 @@ message HelloReply {
         var matcher = (ExactObjectMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That((byte[])matcher.Value).ContainsExactly(115, 116, 101, 102);
+        ((byte[])matcher.Value).Should().BeEquivalentTo(new byte[] { 115, 116, 101, 102 });
     }
 
     [Fact]
@@ -821,8 +822,11 @@ message HelloReply {
             Patterns = ["_"]
         };
 
-        // Act & Assert
-        Check.ThatCode(() => _sut.Map(model)).Throws<ArgumentException>();
+        // Act
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 
     [Theory]
@@ -844,7 +848,7 @@ message HelloReply {
         var matcher = (RegexMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
 
         var result = matcher.IsMatch("X");
         result.Score.Should().Be(expected);
@@ -869,7 +873,7 @@ message HelloReply {
         var matcher = (WildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
 
         var result = matcher.IsMatch("X");
         result.Score.Should().Be(expected);
@@ -925,7 +929,7 @@ message HelloReply {
         var matcher = (SimMetricsMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x");
+        matcher.GetPatterns().Should().ContainSingle("x");
     }
 
     [Fact]
@@ -942,7 +946,7 @@ message HelloReply {
         var matcher = (SimMetricsMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x");
+        matcher.GetPatterns().Should().ContainSingle("x");
     }
 
     [Fact]
@@ -956,7 +960,10 @@ message HelloReply {
         };
 
         // Act
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     [Fact]
@@ -970,7 +977,10 @@ message HelloReply {
         };
 
         // Act
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     [Fact]

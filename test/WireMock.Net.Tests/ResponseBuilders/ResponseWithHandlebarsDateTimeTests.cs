@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;

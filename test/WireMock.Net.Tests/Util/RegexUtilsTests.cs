@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Text.RegularExpressions;
-using AwesomeAssertions;
 using WireMock.Util;
 
 namespace WireMock.Net.Tests.Util;

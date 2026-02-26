@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using AwesomeAssertions;
 using ExampleIntegrationTest.Lookup;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
@@ -15,7 +14,6 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using WireMock.Util;
 
 // ReSharper disable once CheckNamespace
 namespace WireMock.Net.Tests;

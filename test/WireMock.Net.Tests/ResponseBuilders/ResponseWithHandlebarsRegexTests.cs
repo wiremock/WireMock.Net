@@ -1,8 +1,9 @@
 // Copyright © WireMock.Net
 
+using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -45,7 +46,7 @@ public class ResponseWithHandlebarsRegexTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("abc");
+        response.Message.BodyData.BodyAsString.Should().Be("abc");
     }
 
     [Fact]
@@ -64,7 +65,7 @@ public class ResponseWithHandlebarsRegexTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("");
+        response.Message.BodyData.BodyAsString.Should().Be("");
     }
 
     [Fact]
@@ -83,7 +84,7 @@ public class ResponseWithHandlebarsRegexTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("5000-https");
+        response.Message.BodyData.BodyAsString.Should().Be("5000-https");
     }
 
     [Fact]
@@ -102,7 +103,7 @@ public class ResponseWithHandlebarsRegexTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("");
+        response.Message.BodyData.BodyAsString.Should().Be("");
     }
 
     [Fact]
@@ -117,7 +118,10 @@ public class ResponseWithHandlebarsRegexTests
             .WithBody("{{#Regex.Match request.bodyAsJson \"^(?<proto>\\w+)://[^/]+?(?<port>\\d+)/?\"}}{{/Regex.Match}}")
             .WithTransformer();
 
-        // Act and Assert
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<ArgumentNullException>();
+        // Act
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+
+        // Assert
+        act.Should().ThrowAsync<HandlebarsException>();
     }
 }

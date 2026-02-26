@@ -2,8 +2,7 @@
 
 using System.Net.Http;
 using System.Text;
-using AwesomeAssertions;
-using NFluent;
+
 using WireMock.Http;
 using WireMock.Models;
 using WireMock.Types;
@@ -28,7 +27,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(message.Headers.GetValues("x")).ContainsExactly("value-1");
+        message.Headers.GetValues("x").Should().Equal(new[] { "value-1" });
     }
 
     [Fact]
@@ -46,7 +45,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsByteArrayAsync(_ct)).ContainsExactly(Encoding.UTF8.GetBytes("hi"));
+        (await message.Content!.ReadAsByteArrayAsync(_ct)).Should().Equal(Encoding.UTF8.GetBytes("hi"));
     }
 
     [Fact]
@@ -64,7 +63,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("0123");
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be("0123");
     }
 
     [Fact]
@@ -82,7 +81,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be("{\"x\":42}");
     }
 
     [Fact]
@@ -101,8 +100,8 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
-        Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json");
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be("{\"x\":42}");
+        message.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/json" });
     }
 
     [Fact]
@@ -121,8 +120,8 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
-        Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be("{\"x\":42}");
+        message.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/json; charset=utf-8" });
     }
 
     [Fact]
@@ -142,8 +141,8 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(await message.Content!.ReadAsStringAsync(_ct)).Equals("{\"x\":42}");
-        Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
+        (await message.Content!.ReadAsStringAsync(_ct)).Should().Be("{\"x\":42}");
+        message.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "multipart/form-data" });
     }
 
 
@@ -163,7 +162,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(message.Content!.Headers.GetValues("Content-Type")).ContainsExactly("application/xml");
+        message.Content!.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/xml" });
     }
 
     [Fact]
@@ -182,7 +181,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(message.Content!.Headers.GetValues("Content-Type")).ContainsExactly("application/xml; charset=UTF-8");
+        message.Content!.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/xml; charset=UTF-8" });
     }
 
     [Fact]
@@ -201,7 +200,7 @@ public class HttpRequestMessageHelperTests
         var message = HttpRequestMessageHelper.Create(request, "http://url");
 
         // Assert
-        Check.That(message.Content!.Headers.GetValues("Content-Type")).ContainsExactly("application/xml; charset=Ascii");
+        message.Content!.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/xml; charset=Ascii" });
     }
 
     [Fact]
@@ -243,7 +242,7 @@ public class HttpRequestMessageHelperTests
 
         // Assert
         (await message.Content!.ReadAsStringAsync(_ct)).Should().Be(body);
-        Check.That(message.Content.Headers.GetValues("Content-Type")).ContainsExactly("multipart/form-data");
+        message.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "multipart/form-data" });
     }
 
     [Theory]
@@ -271,3 +270,6 @@ public class HttpRequestMessageHelperTests
         message.Content?.Headers.ContentLength.Should().Be(resultShouldBe ? value : null);
     }
 }
+
+
+

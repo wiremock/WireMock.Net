@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
+
 using WireMock.RegularExpressions;
 
 namespace WireMock.Net.Tests.RegularExpressions;
@@ -23,10 +23,10 @@ public class RegexExtendedTests
         var regexLower = new RegexExtended(guidbLower);
         var regexUpper = new RegexExtended(guidbUpper);
 
-        Check.That(regexLower.IsMatch(inputLower)).Equals(true);
-        Check.That(regexLower.IsMatch(inputUpper)).Equals(false);
-        Check.That(regexUpper.IsMatch(inputUpper)).Equals(true);
-        Check.That(regexUpper.IsMatch(inputLower)).Equals(false);
+        regexLower.IsMatch(inputLower).Should().Be(true);
+        regexLower.IsMatch(inputUpper).Should().Be(false);
+        regexUpper.IsMatch(inputUpper).Should().Be(true);
+        regexUpper.IsMatch(inputLower).Should().Be(false);
     }
 
     [Fact]
@@ -40,10 +40,10 @@ public class RegexExtendedTests
         var regexLower = new RegexExtended(guiddLower);
         var regexUpper = new RegexExtended(guiddUpper);
 
-        Check.That(regexLower.IsMatch(inputLower)).Equals(true);
-        Check.That(regexLower.IsMatch(inputUpper)).Equals(false);
-        Check.That(regexUpper.IsMatch(inputUpper)).Equals(true);
-        Check.That(regexUpper.IsMatch(inputLower)).Equals(false);
+        regexLower.IsMatch(inputLower).Should().Be(true);
+        regexLower.IsMatch(inputUpper).Should().Be(false);
+        regexUpper.IsMatch(inputUpper).Should().Be(true);
+        regexUpper.IsMatch(inputLower).Should().Be(false);
     }
 
     [Fact]
@@ -57,10 +57,10 @@ public class RegexExtendedTests
         var regexLower = new RegexExtended(guidnLower);
         var regexUpper = new RegexExtended(guidnUpper);
 
-        Check.That(regexLower.IsMatch(inputLower)).Equals(true);
-        Check.That(regexLower.IsMatch(inputUpper)).Equals(false);
-        Check.That(regexUpper.IsMatch(inputUpper)).Equals(true);
-        Check.That(regexUpper.IsMatch(inputLower)).Equals(false);
+        regexLower.IsMatch(inputLower).Should().Be(true);
+        regexLower.IsMatch(inputUpper).Should().Be(false);
+        regexUpper.IsMatch(inputUpper).Should().Be(true);
+        regexUpper.IsMatch(inputLower).Should().Be(false);
     }
 
     [Fact]
@@ -74,10 +74,10 @@ public class RegexExtendedTests
         var regexLower = new RegexExtended(guidpLower);
         var regexUpper = new RegexExtended(guidpUpper);
 
-        Check.That(regexLower.IsMatch(inputLower)).Equals(true);
-        Check.That(regexLower.IsMatch(inputUpper)).Equals(false);
-        Check.That(regexUpper.IsMatch(inputUpper)).Equals(true);
-        Check.That(regexUpper.IsMatch(inputLower)).Equals(false);
+        regexLower.IsMatch(inputLower).Should().Be(true);
+        regexLower.IsMatch(inputUpper).Should().Be(false);
+        regexUpper.IsMatch(inputUpper).Should().Be(true);
+        regexUpper.IsMatch(inputLower).Should().Be(false);
     }
 
     [Fact]
@@ -91,9 +91,9 @@ public class RegexExtendedTests
         var regexLower = new RegexExtended(guidxLower);
         var regexUpper = new RegexExtended(guidxUpper);
 
-        Check.That(regexLower.IsMatch(inputLower)).Equals(true);
-        Check.That(regexLower.IsMatch(inputUpper)).Equals(false);
-        Check.That(regexUpper.IsMatch(inputUpper)).Equals(true);
-        Check.That(regexUpper.IsMatch(inputLower)).Equals(false);
+        regexLower.IsMatch(inputLower).Should().Be(true);
+        regexLower.IsMatch(inputUpper).Should().Be(false);
+        regexUpper.IsMatch(inputUpper).Should().Be(true);
+        regexUpper.IsMatch(inputLower).Should().Be(false);
     }
 }

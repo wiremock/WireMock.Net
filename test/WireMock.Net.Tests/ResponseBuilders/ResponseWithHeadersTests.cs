@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
@@ -36,7 +35,7 @@ public class ResponseWithHeadersTests
         var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMock, _settings);
 
         // Assert
-        Check.That(response.Message.Headers[headerName].ToString()).Equals(headerValue);
+        response.Message.Headers[headerName].ToString().Should().Be(headerValue);
     }
 
     [Theory]
@@ -52,7 +51,7 @@ public class ResponseWithHeadersTests
         var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), requestMock, _settings);
 
         // Assert
-        Check.That(response.Message.Headers[headerName].ToArray()).Equals(headerValues);
+        response.Message.Headers[headerName].ToArray().Should().Equal(headerValues);
     }
 
     [Fact]
@@ -67,7 +66,7 @@ public class ResponseWithHeadersTests
         var responseMessage = await response.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(responseMessage.Message.Headers["h"]).ContainsExactly("x");
+        responseMessage.Message.Headers["h"].Should().ContainSingle("x");
     }
 
     [Fact]
@@ -82,7 +81,7 @@ public class ResponseWithHeadersTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.Headers["h"]).ContainsExactly("x");
+        response.Message.Headers["h"].Should().ContainSingle("x");
     }
 
     [Fact]
@@ -97,6 +96,6 @@ public class ResponseWithHeadersTests
         var response = await builder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.Headers["h"]).ContainsExactly("x");
+        response.Message.Headers["h"].Should().ContainSingle("x");
     }
 }

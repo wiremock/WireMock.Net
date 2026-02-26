@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
@@ -17,8 +16,8 @@ public class RequestBuilderWithParamTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageParamMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageParamMatcher>();
     }
 
     [Fact]
@@ -29,8 +28,8 @@ public class RequestBuilderWithParamTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageParamMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageParamMatcher>();
     }
 
     [Fact]
@@ -41,8 +40,8 @@ public class RequestBuilderWithParamTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageParamMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageParamMatcher>();
     }
 
     [Fact]
@@ -53,7 +52,7 @@ public class RequestBuilderWithParamTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageParamMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageParamMatcher>();
     }
 }

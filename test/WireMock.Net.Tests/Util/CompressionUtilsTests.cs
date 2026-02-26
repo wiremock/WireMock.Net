@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using AwesomeAssertions;
 using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
 using WireMock.Util;

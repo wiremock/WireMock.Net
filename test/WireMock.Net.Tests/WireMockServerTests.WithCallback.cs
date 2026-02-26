@@ -2,7 +2,6 @@
 
 using System.Net;
 using System.Net.Http;
-using AwesomeAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;

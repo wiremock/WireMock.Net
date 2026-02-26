@@ -4,9 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using AwesomeAssertions;
 using Moq;
-using NFluent;
+
 using WireMock.Constants;
 using WireMock.Handlers;
 using WireMock.Matchers;
@@ -51,8 +50,8 @@ public class WireMockServerProxyTests
         await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(server.Mappings).HasSize(2);
-        Check.That(server.LogEntries).HasSize(1);
+        server.Mappings.Should().HaveCount(2);
+        server.LogEntries.Should().HaveCount(1);
     }
 
     [Fact]
@@ -347,9 +346,9 @@ public class WireMockServerProxyTests
         string content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         // Assert
-        Check.That(server.Mappings).HasSize(1);
-        Check.That(server.LogEntries).HasSize(1);
-        Check.That(content).Contains("google");
+        server.Mappings.Should().HaveCount(1);
+        server.LogEntries.Should().HaveCount(1);
+        content.Should().Contain("google");
 
         server.Stop();
     }
@@ -389,13 +388,13 @@ public class WireMockServerProxyTests
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
-        Check.That(receivedRequest.BodyData.BodyAsString).IsEqualTo("stringContent");
-        Check.That(receivedRequest.Headers).ContainsKey("Content-Type");
-        Check.That(receivedRequest.Headers["Content-Type"].First()).Contains("text/plain");
-        Check.That(receivedRequest.Headers).ContainsKey("bbb");
+        receivedRequest.BodyData.BodyAsString.Should().Be("stringContent");
+        receivedRequest.Headers.Should().ContainKey("Content-Type");
+        receivedRequest.Headers["Content-Type"].First().Should().Contain("text/plain");
+        receivedRequest.Headers.Should().ContainKey("bbb");
 
         // check that new proxied mapping is added
-        Check.That(server.Mappings).HasSize(2);
+        server.Mappings.Should().HaveCount(2);
     }
 
     [Fact]
@@ -486,10 +485,10 @@ public class WireMockServerProxyTests
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
-        Check.That(mapping).IsNotNull();
+        mapping.Should().NotBeNull();
         var matchers = ((Request)mapping.RequestMatcher).GetRequestMessageMatchers<RequestMessageHeaderMatcher>().Select(m => m.Name).ToList();
-        Check.That(matchers).Not.Contains("excluded-header-X");
-        Check.That(matchers).Contains("ok");
+        matchers.Should().NotContain("excluded-header-X");
+        matchers.Should().Contain("ok");
     }
 
     [Fact]
@@ -534,12 +533,12 @@ public class WireMockServerProxyTests
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
-        Check.That(mapping).IsNotNull();
+        mapping.Should().NotBeNull();
 
         var matchers = ((Request)mapping.RequestMatcher).GetRequestMessageMatchers<RequestMessageCookieMatcher>().Select(m => m.Name).ToList();
-        Check.That(matchers).Not.Contains("ASP.NET_SessionId");
-        Check.That(matchers).Not.Contains("AsP.NeT_SessIonID");
-        Check.That(matchers).Contains("GoodCookie");
+        matchers.Should().NotContain("ASP.NET_SessionId");
+        matchers.Should().NotContain("AsP.NeT_SessIonID");
+        matchers.Should().Contain("GoodCookie");
     }
 
     [Fact]
@@ -579,10 +578,10 @@ public class WireMockServerProxyTests
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
-        Check.That(mapping).IsNotNull();
+        mapping.Should().NotBeNull();
         var matchers = ((Request)mapping.RequestMatcher).GetRequestMessageMatchers<RequestMessageParamMatcher>().Select(m => m.Key).ToList();
-        Check.That(matchers).Not.Contains("timestamp");
-        Check.That(matchers).Contains("name");
+        matchers.Should().NotContain("timestamp");
+        matchers.Should().Contain("name");
     }
 
     [Fact]
@@ -628,7 +627,7 @@ public class WireMockServerProxyTests
         // Assert
         var mapping = serverForProxyForwarding.Mappings.FirstOrDefault(m => m.Guid != defaultMapping.Guid);
         var score = mapping!.RequestMatcher.GetMatchingScore(serverForProxyForwarding.LogEntries.First().RequestMessage!, new RequestMatchResult());
-        Check.That(score).IsEqualTo(1.0);
+        score.Should().Be(1.0);
     }
 
     [Fact]
@@ -659,9 +658,9 @@ public class WireMockServerProxyTests
 
         // Assert
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
-        Check.That(receivedRequest.BodyData.BodyAsString).IsEqualTo("");
-        Check.That(receivedRequest.Headers).ContainsKey("Content-Type");
-        Check.That(receivedRequest.Headers["Content-Type"].First()).Contains("text/plain");
+        receivedRequest.BodyData.BodyAsString.Should().Be("");
+        receivedRequest.Headers.Should().ContainKey("Content-Type");
+        receivedRequest.Headers["Content-Type"].First().Should().Contain("text/plain");
     }
 
     [Fact]
@@ -693,9 +692,9 @@ public class WireMockServerProxyTests
 
         // Assert
         string content = await response.Content.ReadAsStringAsync(cancellationToken);
-        Check.That(content).IsEqualTo("body");
-        Check.That(response.Content.Headers.Contains("Content-Type")).IsTrue();
-        Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("text/plain");
+        content.Should().Be("body");
+        response.Content.Headers.Contains("Content-Type").Should().BeTrue();
+        response.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "text/plain" });
     }
 
     [Fact]
@@ -728,8 +727,8 @@ public class WireMockServerProxyTests
         var response = await httpClient.SendAsync(requestMessage, TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(response.Headers.Contains("Location")).IsTrue();
-        Check.That(response.Headers.GetValues("Location")).ContainsExactly("/testpath");
+        response.Headers.Contains("Location").Should().BeTrue();
+        response.Headers.GetValues("Location").Should().Equal(new[] { "/testpath" });
     }
 
     [Fact]
@@ -761,8 +760,8 @@ public class WireMockServerProxyTests
 
         // then
         var receivedRequest = serverForProxyForwarding.LogEntries.First().RequestMessage;
-        Check.That(receivedRequest.Cookies).IsNotNull();
-        Check.That(receivedRequest.Cookies).ContainsPair("name", "value");
+        receivedRequest.Cookies.Should().NotBeNull();
+        receivedRequest.Cookies.Should().ContainKey("name").And.ContainValue("value");
     }
 
     /// <summary>
@@ -799,7 +798,7 @@ public class WireMockServerProxyTests
         var response = await httpClient.PostAsync(server.Urls[0], new ByteArrayContent(jpegHeader), TestContext.Current.CancellationToken);
 
         // assert
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -831,8 +830,8 @@ public class WireMockServerProxyTests
 
         // Assert
         string content = await response.Content.ReadAsStringAsync(cancellationToken);
-        Check.That(content).IsEqualTo("{\"i\":42}");
-        Check.That(response.Content.Headers.GetValues("Content-Type")).ContainsExactly("application/json; charset=utf-8");
+        content.Should().Be("{\"i\":42}");
+        response.Content.Headers.GetValues("Content-Type").Should().Equal(new[] { "application/json; charset=utf-8" });
     }
 
     [Fact]
@@ -863,7 +862,7 @@ public class WireMockServerProxyTests
 
         // Assert
         string content = await response.Content.ReadAsStringAsync(_ct);
-        Check.That(content).IsEqualTo("{\"i\":42}");
+        content.Should().Be("{\"i\":42}");
     }
 
     [Fact]
@@ -898,7 +897,7 @@ public class WireMockServerProxyTests
 
         // Assert 1
         string content1 = await response1.Content.ReadAsStringAsync(_ct);
-        Check.That(content1).IsEqualTo("ok");
+        content1.Should().Be("ok");
 
         // Act 2
         var requestMessage2 = new HttpRequestMessage
@@ -910,7 +909,7 @@ public class WireMockServerProxyTests
 
         // Assert 2
         string content2 = await response2.Content.ReadAsStringAsync(_ct);
-        Check.That(content2).IsEqualTo("[]");
+        content2.Should().Be("[]");
     }
 
     // On Ubuntu latest it's : "Resource temporarily unavailable"
@@ -948,3 +947,5 @@ public class WireMockServerProxyTests
         server.Stop();
     }
 }
+
+

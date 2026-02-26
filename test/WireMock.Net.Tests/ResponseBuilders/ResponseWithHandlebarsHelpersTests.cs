@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -42,6 +42,6 @@ public class ResponseWithHandlebarsHelpersTests
         var response = await responseBuilder.ProvideResponseAsync(Mock.Of<IMapping>(), Mock.Of<HttpContext>(), request, _settings);
 
         // assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("ABC");
+        response.Message.BodyData.BodyAsString.Should().Be("ABC");
     }
 }

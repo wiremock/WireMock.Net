@@ -3,9 +3,8 @@
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
-using AwesomeAssertions;
 using Moq;
-using NFluent;
+
 using WireMock.Logging;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -147,8 +146,8 @@ public class ObservableLogEntriesTest
         var countResponsesWithStatusNotOk = responses.Count(r => r.StatusCode != HttpStatusCode.OK);
 
         // Assert
-        Check.That(countResponsesWithStatusNotOk).Equals(0);
-        Check.That(count).Equals(expectedCount);
+        countResponsesWithStatusNotOk.Should().Be(0);
+        count.Should().Be(expectedCount);
 
         server.Dispose();
     }

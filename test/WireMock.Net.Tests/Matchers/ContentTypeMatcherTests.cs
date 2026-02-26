@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
-using NFluent;
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -51,7 +49,7 @@ public class ContentTypeMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("ContentTypeMatcher");
+        name.Should().Be("ContentTypeMatcher");
     }
 
     [Fact]
@@ -64,6 +62,6 @@ public class ContentTypeMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("x");
+        patterns.Should().ContainSingle("x");
     }
 }

@@ -3,7 +3,6 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using AwesomeAssertions;
 using WireMock.Http;
 
 namespace WireMock.Net.Tests.Http;

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using JsonConverter.Newtonsoft.Json;
 using WireMock.Admin.Mappings;
 using WireMock.Serialization;

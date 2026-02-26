@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
+
 using WireMock.Util;
 
 namespace WireMock.Net.Tests.Util;
@@ -16,7 +16,7 @@ public class FilePathUtilsTests
         var cleanPath = FilePathUtils.CleanPath(path);
 
         // Assert
-        Check.That(cleanPath).Equals("subdirectory" + Path.DirectorySeparatorChar + "MyXmlResponse.xml");
+        cleanPath.Should().Be("subdirectory" + Path.DirectorySeparatorChar + "MyXmlResponse.xml");
     }
 
     [Theory]
@@ -38,6 +38,6 @@ public class FilePathUtilsTests
         var withoutDirectorySeparators = FilePathUtils.RemoveLeadingDirectorySeparators(cleanPath);
 
         // Assert
-        Check.That(withoutDirectorySeparators).Equals(expected);
+        withoutDirectorySeparators.Should().Be(expected);
     }
 }

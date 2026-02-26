@@ -6,7 +6,7 @@ using System.Linq.Dynamic.Core;
 using System.Reflection;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Util;
 using Xunit;
 
@@ -65,9 +65,9 @@ public class JsonUtilsTests
         // Assert
         var queryable = new[] { instance }.AsQueryable().Select(line);
         bool result = queryable.Any("it == \"Test\"");
-        Check.That(result).IsTrue();
+        result.Should().BeTrue();
 
-        Check.That(line).IsEqualTo("string(it)");
+        line.Should().Be("string(it)");
     }
 
     [Fact]

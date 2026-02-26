@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Net.Http;
-using AwesomeAssertions;
 using WireMock.Server;
 
 namespace WireMock.Net.Tests;

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using WireMock.GraphQL.Models;
 
 namespace WireMock.Net.Tests.Matchers.Models;

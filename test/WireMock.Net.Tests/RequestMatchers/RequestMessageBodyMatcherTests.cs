@@ -1,9 +1,8 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using AwesomeAssertions;
 using Moq;
-using NFluent;
+
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -35,7 +34,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1d);
+        score.Should().Be(1d);
 
         // Verify
         stringMatcherMock.Verify(m => m.GetPatterns(), Times.Never);
@@ -72,7 +71,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(expected);
+        score.Should().Be(expected);
 
         // Verify
         stringMatcherMock1.Verify(m => m.GetPatterns(), Times.Never);
@@ -113,7 +112,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(expected);
+        score.Should().Be(expected);
 
         // Verify
         stringMatcherMock1.Verify(m => m.GetPatterns(), Times.Never);
@@ -154,7 +153,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(expected);
+        score.Should().Be(expected);
 
         // Verify
         stringMatcherMock1.Verify(m => m.GetPatterns(), Times.Never);
@@ -185,7 +184,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
 
         // Verify
         stringMatcherMock.Verify(m => m.GetPatterns(), Times.Never);
@@ -213,7 +212,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
 
         // Verify
         stringMatcherMock.Verify(m => m.IsMatch(It.IsAny<string>()), Times.Once);
@@ -242,7 +241,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1d);
+        score.Should().Be(1d);
 
         // Verify
         stringMatcherMock.Verify(m => m.IsMatch(It.IsAny<string>()), Times.Once);
@@ -269,7 +268,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1d);
+        score.Should().Be(1d);
 
         // Verify
         objectMatcherMock.Verify(m => m.IsMatch(42), Times.Once);
@@ -294,7 +293,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -393,7 +392,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
 
         // Verify
         objectMatcherMock.Verify(m => m.IsMatch(It.IsAny<byte[]>()), Times.Once);
@@ -421,7 +420,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -445,7 +444,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -469,7 +468,7 @@ public class RequestMessageBodyMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Theory]
@@ -510,7 +509,7 @@ public class RequestMessageBodyMatcherTests
         var score = matcher.GetMatchingScore(requestMessage, result);
 
         // assert
-        Check.That(score).IsEqualTo(shouldMatch ? 1d : 0d);
+        score.Should().Be(shouldMatch ? 1d : 0d);
     }
 
     public static TheoryData<object, RequestMessageBodyMatcher, bool> MatchingScoreData

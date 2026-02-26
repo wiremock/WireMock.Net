@@ -1,12 +1,12 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using AwesomeAssertions;
+using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -84,8 +84,8 @@ public class ResponseWithHandlebarsJsonPathTests
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["x"]).IsNotNull();
-        Check.That(j["x"]["Name"].ToString()).Equals("Acme Co");
+        j["x"].Should().NotBeNull();
+        j["x"]["Name"].ToString().Should().Be("Acme Co");
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class ResponseWithHandlebarsJsonPathTests
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson!);
-        Check.That(j["x"].Value<long>()).Equals(99);
+        j["x"].Value<long>().Should().Be(99);
     }
 
     [Fact]
@@ -163,7 +163,7 @@ public class ResponseWithHandlebarsJsonPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals($"{{{Environment.NewLine}  \"Name\": \"Acme Co\",{Environment.NewLine}  \"Products\": [{Environment.NewLine}    {{{Environment.NewLine}      \"Name\": \"Anvil\",{Environment.NewLine}      \"Price\": 50{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}");
+        response.Message.BodyData.BodyAsString.Should().Be($"{{{Environment.NewLine}  \"Name\": \"Acme Co\",{Environment.NewLine}  \"Products\": [{Environment.NewLine}    {{{Environment.NewLine}      \"Name\": \"Anvil\",{Environment.NewLine}      \"Price\": 50{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}");
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class ResponseWithHandlebarsJsonPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals($"{{{Environment.NewLine}  \"Name\": \"Acme Co\",{Environment.NewLine}  \"Products\": [{Environment.NewLine}    {{{Environment.NewLine}      \"Name\": \"Anvil\",{Environment.NewLine}      \"Price\": 50{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}");
+        response.Message.BodyData.BodyAsString.Should().Be($"{{{Environment.NewLine}  \"Name\": \"Acme Co\",{Environment.NewLine}  \"Products\": [{Environment.NewLine}    {{{Environment.NewLine}      \"Name\": \"Anvil\",{Environment.NewLine}      \"Price\": 50{Environment.NewLine}    }}{Environment.NewLine}  ]{Environment.NewLine}}}");
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class ResponseWithHandlebarsJsonPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("%0:Anvil%%1:Elbow Grease%");
+        response.Message.BodyData.BodyAsString.Should().Be("%0:Anvil%%1:Elbow Grease%");
     }
 
     [Fact]
@@ -322,7 +322,7 @@ public class ResponseWithHandlebarsJsonPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("%0:Anvil%%1:Elbow Grease%");
+        response.Message.BodyData.BodyAsString.Should().Be("%0:Anvil%%1:Elbow Grease%");
     }
 
     [Fact]
@@ -348,7 +348,8 @@ public class ResponseWithHandlebarsJsonPathTests
             .WithTransformer();
 
         // Act
-        Check.ThatCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings)).Throws<ArgumentNullException>();
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+        act.Should().ThrowAsync<HandlebarsException>();
     }
 
     [Fact]

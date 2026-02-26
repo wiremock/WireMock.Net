@@ -1,9 +1,8 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -83,7 +82,7 @@ public class ResponseWithHandlebarsXPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("abc");
+        response.Message.BodyData.BodyAsString.Should().Be("abc");
     }
 
     [Fact]
@@ -195,7 +194,7 @@ public class ResponseWithHandlebarsXPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualIgnoringCase("True");
+        response.Message.BodyData.BodyAsString.Should().BeEquivalentTo("True");
     }
 
     [Fact]
@@ -223,6 +222,7 @@ public class ResponseWithHandlebarsXPathTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("a1");
+        response.Message.BodyData.BodyAsString.Should().Be("a1");
     }
 }
+

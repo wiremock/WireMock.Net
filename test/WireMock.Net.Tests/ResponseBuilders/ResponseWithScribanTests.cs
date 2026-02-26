@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
-using NFluent;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
@@ -9,11 +7,7 @@ using WireMock.Types;
 using WireMock.Util;
 using WireMock.Handlers;
 using Moq;
-#if NET452
-using Microsoft.Owin;
-#else
 using Microsoft.AspNetCore.Http;
-#endif
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -69,6 +63,7 @@ public class ResponseWithScribanTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).Equals("test http://localhost/foo /foo POSt");
+        response.Message.BodyData.BodyAsString.Should().Be("test http://localhost/foo /foo POSt");
     }
 }
+

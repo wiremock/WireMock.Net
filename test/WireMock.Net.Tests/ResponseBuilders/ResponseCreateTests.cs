@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
@@ -27,6 +27,6 @@ public class ResponseCreateTests
         var response = await responseBuilder.ProvideResponseAsync(mapping, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message).Equals(responseMessage);
+        response.Message.Should().Be(responseMessage);
     }
 }

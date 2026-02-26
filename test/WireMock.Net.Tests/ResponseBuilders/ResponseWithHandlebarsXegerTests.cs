@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -47,8 +47,8 @@ public class ResponseWithHandlebarsXegerTests
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Number"].Value<int>()).IsStrictlyGreaterThan(1000).And.IsStrictlyLessThan(9999);
-        Check.That(j["Postcode"].Value<string>()).IsNotEmpty();
+        j["Number"].Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
+        j["Postcode"].Value<string>().Should().NotBeEmpty();
     }
 
     [Fact]
@@ -70,7 +70,8 @@ public class ResponseWithHandlebarsXegerTests
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Number"].Value<int>()).IsStrictlyGreaterThan(1000).And.IsStrictlyLessThan(9999);
-        Check.That(j["Postcode"].Value<string>()).IsNotEmpty();
+        j["Number"].Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
+        j["Postcode"].Value<string>().Should().NotBeEmpty();
     }
 }
+

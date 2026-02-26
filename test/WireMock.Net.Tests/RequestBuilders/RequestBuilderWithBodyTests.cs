@@ -1,10 +1,9 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -65,7 +64,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -86,7 +85,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Theory]
@@ -109,7 +108,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(expected);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(expected);
     }
 
     [Fact]
@@ -130,7 +129,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(0.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(0.0);
     }
 
     private class FuncType
@@ -157,7 +156,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -176,7 +175,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -195,7 +194,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -214,7 +213,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -277,7 +276,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -301,7 +300,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsNotEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
     }
 
     [Fact]
@@ -320,7 +319,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -339,7 +338,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsNotEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
     }
 
     [Fact]
@@ -362,7 +361,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -385,7 +384,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -409,7 +408,7 @@ public class RequestBuilderWithBodyTests
         // Assert
         var requestMatchResult = new RequestMatchResult();
         double result = spec.GetMatchingScore(request, requestMatchResult);
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -430,7 +429,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -454,7 +453,7 @@ public class RequestBuilderWithBodyTests
 
         // Assert
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Theory]
@@ -481,3 +480,4 @@ public class RequestBuilderWithBodyTests
         requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 }
+

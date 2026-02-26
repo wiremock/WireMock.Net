@@ -1,6 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
+
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -17,7 +17,7 @@ public class SimMetricsMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("SimMetricsMatcher.Levenstein");
+        name.Should().Be("SimMetricsMatcher.Levenstein");
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class SimMetricsMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class SimMetricsMatcherTests
         double result = matcher.IsMatch("The car drives in the street.").Score;
 
         // Assert
-        Check.That(result).IsStrictlyLessThan(1.0).And.IsStrictlyGreaterThan(0.5);
+        result.Should().BeLessThan(1.0).And.BeGreaterThan(0.5);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class SimMetricsMatcherTests
         double result = matcher.IsMatch("Hello").Score;
 
         // Assert
-        Check.That(result).IsStrictlyLessThan(0.1).And.IsStrictlyGreaterThan(0.05);
+        result.Should().BeLessThan(0.1).And.BeGreaterThan(0.05);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class SimMetricsMatcherTests
         double result = matcher.IsMatch("test").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -82,6 +82,6 @@ public class SimMetricsMatcherTests
         double result = matcher.IsMatch("test").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 }

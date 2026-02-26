@@ -1,9 +1,8 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -20,7 +19,7 @@ public class JsonPartialMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("JsonPartialMatcher");
+        name.Should().Be("JsonPartialMatcher");
     }
 
     [Fact]
@@ -33,7 +32,7 @@ public class JsonPartialMatcherTests
         object value = matcher.Value;
 
         // Assert
-        Check.That(value).Equals("{}");
+        value.Should().Be("{}");
     }
 
     [Fact]
@@ -83,7 +82,7 @@ public class JsonPartialMatcherTests
         double match = matcher.IsMatch(bytes).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -97,7 +96,7 @@ public class JsonPartialMatcherTests
         double match = matcher.IsMatch(s).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -111,7 +110,7 @@ public class JsonPartialMatcherTests
         double match = matcher.IsMatch(o).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]

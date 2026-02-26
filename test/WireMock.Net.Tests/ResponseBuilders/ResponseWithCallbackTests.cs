@@ -2,10 +2,9 @@
 
 using System.Net;
 using System.Text;
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -48,13 +47,13 @@ public class ResponseWithCallbackTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("path: /test");
-        Check.That(response.Message.BodyData.BodyAsBytes).IsNull();
-        Check.That(response.Message.BodyData.BodyAsJson).IsNull();
-        Check.That(response.Message.BodyData.Encoding.CodePage).Equals(Encoding.UTF8.CodePage);
-        Check.That(response.Message.StatusCode).IsEqualTo(500);
-        Check.That(response.Message.Headers["H1"].ToString()).IsEqualTo("X1");
-        Check.That(response.Message.Headers["H2"].ToString()).IsEqualTo("X2");
+        response.Message.BodyData.BodyAsString.Should().Be("path: /test");
+        response.Message.BodyData.BodyAsBytes.Should().BeNull();
+        response.Message.BodyData.BodyAsJson.Should().BeNull();
+        response.Message.BodyData.Encoding.CodePage.Should().Be(Encoding.UTF8.CodePage);
+        response.Message.StatusCode.Should().Be(500);
+        response.Message.Headers["H1"].ToString().Should().Be("X1");
+        response.Message.Headers["H2"].ToString().Should().Be("X2");
     }
 
     [Fact]
@@ -131,13 +130,13 @@ public class ResponseWithCallbackTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualTo("path: /test");
-        Check.That(response.Message.BodyData.BodyAsBytes).IsNull();
-        Check.That(response.Message.BodyData.BodyAsJson).IsNull();
-        Check.That(response.Message.BodyData.Encoding.CodePage).Equals(Encoding.UTF8.CodePage);
-        Check.That(response.Message.StatusCode).IsEqualTo(500);
-        Check.That(response.Message.Headers["H1"].ToString()).IsEqualTo("X1");
-        Check.That(response.Message.Headers["H2"].ToString()).IsEqualTo("X2");
+        response.Message.BodyData.BodyAsString.Should().Be("path: /test");
+        response.Message.BodyData.BodyAsBytes.Should().BeNull();
+        response.Message.BodyData.BodyAsJson.Should().BeNull();
+        response.Message.BodyData.Encoding.CodePage.Should().Be(Encoding.UTF8.CodePage);
+        response.Message.StatusCode.Should().Be(500);
+        response.Message.Headers["H1"].ToString().Should().Be("X1");
+        response.Message.Headers["H2"].ToString().Should().Be("X2");
     }
 
     [Fact]
@@ -314,3 +313,4 @@ public class ResponseWithCallbackTests
         response.Message.Headers![headerKey].Should().Contain("extra");
     }
 }
+

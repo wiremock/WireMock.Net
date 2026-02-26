@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
 using Moq;
-using NFluent;
+
 using WireMock.Authentication;
 using WireMock.Constants;
 using WireMock.Logging;
@@ -67,7 +66,7 @@ public class WireMockServerSettingsTests
 
         // Assert
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-        Check.That(options.AuthenticationMatcher).IsNull();
+        options.AuthenticationMatcher.Should().BeNull();
     }
 
     [Fact]
@@ -120,8 +119,8 @@ public class WireMockServerSettingsTests
 
         // Assert
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings.Count()).IsEqualTo(1);
-        Check.That(mappings[0].Priority).IsEqualTo(0);
+        mappings.Count().Should().Be(1);
+        mappings[0].Priority.Should().Be(0);
     }
 
     [Fact]
@@ -136,7 +135,7 @@ public class WireMockServerSettingsTests
 
         // Assert
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-        Check.That(options.AllowPartialMapping).Equals(true);
+        options.AllowPartialMapping.Should().Be(true);
 
         // Verify
         _loggerMock.Verify(l => l.Info(It.IsAny<string>(), It.IsAny<bool>()));
@@ -154,7 +153,7 @@ public class WireMockServerSettingsTests
 
         // Assert
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-        Check.That(options.AllowBodyForAllHttpMethods).Equals(true);
+        options.AllowBodyForAllHttpMethods.Should().Be(true);
 
         // Verify
         _loggerMock.Verify(l => l.Info(It.Is<string>(s => s.Contains("AllowBodyForAllHttpMethods") && s.Contains("True"))));
@@ -172,7 +171,7 @@ public class WireMockServerSettingsTests
 
         // Assert
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-        Check.That(options.AllowOnlyDefinedHttpStatusCodeInResponse).Equals(true);
+        options.AllowOnlyDefinedHttpStatusCodeInResponse.Should().Be(true);
 
         // Verify
         _loggerMock.Verify(l => l.Info(It.Is<string>(s => s.Contains("AllowOnlyDefinedHttpStatusCodeInResponse") && s.Contains("True"))));
@@ -190,7 +189,7 @@ public class WireMockServerSettingsTests
 
         // Assert
         var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-        Check.That(options.RequestLogExpirationDuration).IsEqualTo(1);
+        options.RequestLogExpirationDuration.Should().Be(1);
     }
 
 #if NET6_0_OR_GREATER
@@ -230,3 +229,4 @@ public class WireMockServerSettingsTests
     }
 #endif
 }
+

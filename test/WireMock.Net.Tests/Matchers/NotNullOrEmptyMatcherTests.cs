@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
-using NFluent;
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -16,7 +14,7 @@ public class NotNullOrEmptyMatcherTests
         var name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("NotNullOrEmptyMatcher");
+        name.Should().Be("NotNullOrEmptyMatcher");
     }
 
     [Theory]

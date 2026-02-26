@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Net;
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using WireMock.Models;

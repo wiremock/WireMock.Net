@@ -2,7 +2,6 @@
 
 using System.Net;
 using System.Net.Http;
-using NFluent;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -39,11 +38,13 @@ public class WireMockServerProxy2Tests
         var response = await httpClient.SendAsync(request, _ct);
         string content = await response.Content.ReadAsStringAsync(_ct);
 
-        Check.That(content).IsEqualTo("{\"p\":42}");
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.Created);
-        Check.That(response.Content.Headers.GetValues("Content-Type").First()).IsEqualTo("application/json");
+        content.Should().Be("{\"p\":42}");
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.Content.Headers.GetValues("Content-Type").First().Should().Be("application/json");
 
         server.Dispose();
         serverAsProxy.Dispose();
     }
 }
+
+

@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
-using NFluent;
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -79,7 +77,7 @@ public class CSharpCodeMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("CSharpCodeMatcher");
+        name.Should().Be("CSharpCodeMatcher");
     }
 
     [Fact]
@@ -92,6 +90,6 @@ public class CSharpCodeMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("x");
+        patterns.Should().ContainSingle("x");
     }
 }

@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using AwesomeAssertions;
-using NFluent;
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;
@@ -18,7 +16,7 @@ public class RegexMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("RegexMatcher");
+        name.Should().Be("RegexMatcher");
     }
 
     [Fact]
@@ -31,7 +29,7 @@ public class RegexMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -42,8 +40,8 @@ public class RegexMatcherTests
         bool case2 = new RegexMatcher("X", true).IgnoreCase;
 
         // Assert
-        Check.That(case1).IsFalse();
-        Check.That(case2).IsTrue();
+        case1.Should().BeFalse();
+        case2.Should().BeTrue();
     }
 
     [Fact]
@@ -56,7 +54,7 @@ public class RegexMatcherTests
         double result = matcher.IsMatch("Hello world!").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0d);
+        result.Should().Be(1.0d);
     }
 
     [Fact]
@@ -69,7 +67,7 @@ public class RegexMatcherTests
         double result = matcher.IsMatch(null).Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0d);
+        result.Should().Be(0.0d);
     }
 
     [Fact]
@@ -108,7 +106,7 @@ public class RegexMatcherTests
         double result = matcher.IsMatch("hello").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0d);
+        result.Should().Be(1.0d);
     }
 
     [Fact]
@@ -121,6 +119,6 @@ public class RegexMatcherTests
         double result = matcher.IsMatch("hello").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 }

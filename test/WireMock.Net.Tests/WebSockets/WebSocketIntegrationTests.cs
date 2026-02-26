@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Net.WebSockets;
-using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
@@ -742,6 +741,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         var proxyUri = new Uri($"{sut.Url}/ws/proxy");
         await client.ConnectAsync(proxyUri, _ct);
 
+        await Task.Delay(500, _ct);
+
         var testMessages = new[] { "First", "Second", "Third" };
 
         // Act & Assert
@@ -754,8 +755,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(100, _ct);
     }
 
     [Fact]
@@ -796,6 +795,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         using var client = new ClientWebSocket();
         var proxyUri = new Uri($"{sut.Url}/ws/proxy");
         await client.ConnectAsync(proxyUri, _ct);
+
+        await Task.Delay(500, _ct);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 

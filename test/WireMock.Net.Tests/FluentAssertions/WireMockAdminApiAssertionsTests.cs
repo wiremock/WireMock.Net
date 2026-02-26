@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using AwesomeAssertions;
 using RestEase;
 using WireMock.Client;
 using WireMock.Client.AwesomeAssertions;
@@ -670,7 +669,6 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             .WithMessage("Expected _adminApi to have been called using method \"OPTIONS\", but didn't find it among the methods {\"POST\"}.");
     }
 
-#if !NET452
     [Fact]
     public async Task HaveReceivedACall_UsingConnect_WhenACallWasMadeUsingConnect_Should_BeOK()
     {
@@ -686,7 +684,6 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             .HaveReceivedACall()
             .UsingConnect();
     }
-#endif
 
     [Fact]
     public async Task HaveReceivedACall_UsingDelete_WhenACallWasMadeUsingDelete_Should_BeOK()
@@ -764,7 +761,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             .RespondWith(Response.Create().WithBody("C response").WithStatusCode(HttpStatusCode.OK));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         var tasks = new[]
         {
@@ -902,7 +899,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
             .RespondWith(Response.Create().WithBody("A response"));
 
         // Act
-        var httpClient = new HttpClient();
+        using var httpClient = new HttpClient();
 
         await httpClient.PostAsync($"{server.Url}/a", new StringContent("x"), _ct);
 

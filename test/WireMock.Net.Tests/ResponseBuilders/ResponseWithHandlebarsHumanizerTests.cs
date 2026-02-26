@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -46,6 +46,7 @@ public class ResponseWithHandlebarsHumanizerTests
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Text"].Value<string>()).IsEqualTo("Pascal case input string is turned into sentence");
+        j["Text"].Value<string>().Should().Be("Pascal case input string is turned into sentence");
     }
 }
+

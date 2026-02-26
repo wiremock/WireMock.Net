@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Text;
-using AwesomeAssertions;
-using NFluent;
+
 using WireMock.Types;
 using WireMock.Util;
 
@@ -30,11 +29,11 @@ public class BodyParserTests
         var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
-        Check.That(body.BodyAsBytes).IsNotNull();
-        Check.That(body.BodyAsJson).IsNotNull();
-        Check.That(body.BodyAsString).Equals(bodyAsJson);
-        Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
-        Check.That(body.DetectedBodyTypeFromContentType).IsEqualTo(detectedBodyTypeFromContentType);
+        body.BodyAsBytes.Should().NotBeNull();
+        body.BodyAsJson.Should().NotBeNull();
+        body.BodyAsString.Should().Be(bodyAsJson);
+        body.DetectedBodyType.Should().Be(detectedBodyType);
+        body.DetectedBodyTypeFromContentType.Should().Be(detectedBodyTypeFromContentType);
     }
 
     [Theory]
@@ -54,11 +53,11 @@ public class BodyParserTests
         var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
-        Check.That(body.BodyAsBytes).IsNotNull();
-        Check.That(body.BodyAsJson).IsNull();
-        Check.That(body.BodyAsString).Equals(bodyAsString);
-        Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
-        Check.That(body.DetectedBodyTypeFromContentType).IsEqualTo(detectedBodyTypeFromContentType);
+        body.BodyAsBytes.Should().NotBeNull();
+        body.BodyAsJson.Should().BeNull();
+        body.BodyAsString.Should().Be(bodyAsString);
+        body.DetectedBodyType.Should().Be(detectedBodyType);
+        body.DetectedBodyTypeFromContentType.Should().Be(detectedBodyTypeFromContentType);
     }
 
     [Theory]
@@ -79,7 +78,7 @@ public class BodyParserTests
         var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // assert
-        Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
+        body.DetectedBodyType.Should().Be(detectedBodyType);
     }
 
     [Theory]
@@ -100,7 +99,7 @@ public class BodyParserTests
         var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // assert
-        Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
+        body.DetectedBodyType.Should().Be(detectedBodyType);
     }
 
     [Fact]
@@ -141,11 +140,11 @@ public class BodyParserTests
         var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
-        Check.That(result.DetectedBodyType).IsEqualTo(BodyType.String);
-        Check.That(result.DetectedBodyTypeFromContentType).IsEqualTo(BodyType.MultiPart);
-        Check.That(result.BodyAsBytes).IsNotNull();
-        Check.That(result.BodyAsJson).IsNull();
-        Check.That(result.BodyAsString).IsNotNull();
+        result.DetectedBodyType.Should().Be(BodyType.String);
+        result.DetectedBodyTypeFromContentType.Should().Be(BodyType.MultiPart);
+        result.BodyAsBytes.Should().NotBeNull();
+        result.BodyAsJson.Should().BeNull();
+        result.BodyAsString.Should().NotBeNull();
     }
 
     [Fact]
@@ -165,11 +164,11 @@ public class BodyParserTests
         var result = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
-        Check.That(result.DetectedBodyType).IsEqualTo(BodyType.Bytes);
-        Check.That(result.DetectedBodyTypeFromContentType).IsEqualTo(BodyType.MultiPart);
-        Check.That(result.BodyAsBytes).IsNotNull();
-        Check.That(result.BodyAsJson).IsNull();
-        Check.That(result.BodyAsString).IsNull();
+        result.DetectedBodyType.Should().Be(BodyType.Bytes);
+        result.DetectedBodyTypeFromContentType.Should().Be(BodyType.MultiPart);
+        result.BodyAsBytes.Should().NotBeNull();
+        result.BodyAsJson.Should().BeNull();
+        result.BodyAsString.Should().BeNull();
     }
 
     [Theory]
@@ -188,11 +187,11 @@ public class BodyParserTests
         var body = await BodyParser.ParseAsync(bodyParserSettings);
 
         // Assert
-        Check.That(body.BodyAsBytes).IsNotNull();
-        Check.That(body.BodyAsJson).IsNull();
-        Check.That(body.BodyAsString).Equals(bodyAsString);
-        Check.That(body.DetectedBodyType).IsEqualTo(detectedBodyType);
-        Check.That(body.DetectedBodyTypeFromContentType).IsEqualTo(detectedBodyTypeFromContentType);
+        body.BodyAsBytes.Should().NotBeNull();
+        body.BodyAsJson.Should().BeNull();
+        body.BodyAsString.Should().Be(bodyAsString);
+        body.DetectedBodyType.Should().Be(detectedBodyType);
+        body.DetectedBodyTypeFromContentType.Should().Be(detectedBodyTypeFromContentType);
     }
 
     [Theory]
@@ -261,7 +260,7 @@ public class BodyParserTests
     [InlineData("PATCH", true)]
     public void BodyParser_ShouldParseBodyForMethodAndAllowAllIsFalse_ExpectedResultForKnownMethods(string method, bool resultShouldBe)
     {
-        Check.That(BodyParser.ShouldParseBody(method, false)).Equals(resultShouldBe);
+        BodyParser.ShouldParseBody(method, false).Should().Be(resultShouldBe);
     }
 
     [Theory]
@@ -278,7 +277,7 @@ public class BodyParserTests
     [InlineData("SOME-UNKNOWN-METHOD")]
     public void BodyParser_ShouldParseBodyForMethodAndAllowAllIsTrue_ExpectedResultShouldBeTrue(string method)
     {
-        Check.That(BodyParser.ShouldParseBody(method, true)).IsTrue();
+        BodyParser.ShouldParseBody(method, true).Should().BeTrue();
     }
 
     [Theory]
@@ -286,6 +285,7 @@ public class BodyParserTests
     [InlineData("SOME-UNKNOWN-METHOD")]
     public void BodyParser_ShouldParseBody_DefaultIsTrueForUnknownMethods(string method)
     {
-        Check.That(BodyParser.ShouldParseBody(method, false)).IsTrue();
+        BodyParser.ShouldParseBody(method, false).Should().BeTrue();
     }
 }
+

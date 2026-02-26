@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
 using WireMock.Owin;
 using WireMock.Owin.Mappers;
 
@@ -31,6 +30,7 @@ public class GlobalExceptionMiddlewareTests
     public void GlobalExceptionMiddleware_Invoke_NullAsNext_DoesNotInvokeNextAndDoesNotThrow()
     {
         // Act
-        Check.ThatCode(() => _sut.Invoke(null)).DoesNotThrow();
+        Action act = () => _sut.Invoke(null);
+        act.Should().NotThrow();
     }
 }

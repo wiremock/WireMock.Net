@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using WireMock.Owin.Mappers;
-using Stef.Validation;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Stef.Validation;
+using WireMock.Owin.Mappers;
 
 namespace WireMock.Owin;
 

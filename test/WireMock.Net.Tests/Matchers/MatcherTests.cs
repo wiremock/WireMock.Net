@@ -1,4 +1,3 @@
-using AwesomeAssertions;
 using WireMock.Matchers;
 
 namespace WireMock.Net.Tests.Matchers;

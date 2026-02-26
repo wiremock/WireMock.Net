@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Collections.Concurrent;
-using AwesomeAssertions;
 using Moq;
 using WireMock.Logging;
 using WireMock.Matchers.Request;

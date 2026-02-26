@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Authors>Stef Heyenrath</Authors>
@@ -74,7 +74,6 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Moq" Version="4.20.72" />
-        <PackageReference Include="NFluent" Version="3.1.0" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
         <PackageReference Include="JsonConverter.System.Text.Json" Version="0.8.0" />
         <PackageReference Include="Google.Protobuf" Version="3.33.5" />

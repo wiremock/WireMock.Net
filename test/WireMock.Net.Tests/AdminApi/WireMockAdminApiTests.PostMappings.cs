@@ -2,10 +2,9 @@
 
 using System.Net.Http;
 using System.Text;
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using RestEase;
 using WireMock.Admin.Mappings;
 using WireMock.Client;
@@ -73,12 +72,12 @@ public partial class WireMockAdminApiTests
         var result = await api.PostMappingsAsync([model1, model2], TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(result).IsNotNull();
-        Check.That(result.Status).IsNotNull();
-        Check.That(result.Guid).IsNull();
-        Check.That(server.Mappings.Where(m => !m.IsAdminInterface)).HasSize(2);
-        Check.That(server.Mappings.Single(x => x.Title == "test 1").Description).IsEqualTo("description 1");
-        Check.That(server.Mappings.Single(x => x.Title == "test 2").Description).IsEqualTo("description 2");
+        result.Should().NotBeNull();
+        result.Status.Should().NotBeNull();
+        result.Guid.Should().BeNull();
+        server.Mappings.Where(m => !m.IsAdminInterface).Should().HaveCount(2);
+        server.Mappings.Single(x => x.Title == "test 1").Description.Should().Be("description 1");
+        server.Mappings.Single(x => x.Title == "test 2").Description.Should().Be("description 2");
 
         server.Stop();
     }
@@ -106,16 +105,16 @@ public partial class WireMockAdminApiTests
         var result = await api.PostMappingAsync(model, TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(result).IsNotNull();
-        Check.That(result.Status).IsNotNull();
-        Check.That(result.Guid).IsNotNull();
+        result.Should().NotBeNull();
+        result.Status.Should().NotBeNull();
+        result.Guid.Should().NotBeNull();
 
         var mapping = server.Mappings.Single(m => m.Priority == 500);
-        Check.That(mapping).IsNotNull();
-        Check.That(mapping.Title).Equals("test");
+        mapping.Should().NotBeNull();
+        mapping.Title.Should().Be("test");
 
         var response = await mapping.ProvideResponseAsync(Mock.Of<HttpContext>(), new RequestMessage(new UrlDetails("http://localhost/1"), "GET", ""));
-        Check.That(response.Message.StatusCode).Equals(expectedStatusCode);
+        response.Message.StatusCode.Should().Be(expectedStatusCode);
 
         server.Stop();
     }

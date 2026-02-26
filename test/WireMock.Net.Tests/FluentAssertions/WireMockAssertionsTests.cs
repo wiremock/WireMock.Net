@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using AwesomeAssertions;
 using WireMock.AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
@@ -407,7 +406,7 @@ public class WireMockAssertionsTests : IDisposable
 
         act.Should()
             .Throw<Exception>()
-            .WithMessage("Expected _server to have been called with Header \"Accept\" and Values {\"missing-value\"}, but didn't find it among the calls with Header(s)*");
+            .WithMessage("Expected _server to have been called with Header \"Accept\" and Values {\"missing-value\"}, but didn't find it among the calls with Header*");
     }
 
     [Fact]
@@ -653,7 +652,6 @@ public class WireMockAssertionsTests : IDisposable
             .WithMessage("Expected _server to have been called using method \"OPTIONS\", but didn't find it among the methods {\"POST\"}.");
     }
 
-#if !NET452
     [Fact]
     public async Task HaveReceivedACall_UsingConnect_WhenACallWasMadeUsingConnect_Should_BeOK()
     {
@@ -669,7 +667,6 @@ public class WireMockAssertionsTests : IDisposable
             .HaveReceivedACall()
             .UsingConnect();
     }
-#endif
 
     [Fact]
     public async Task HaveReceivedACall_UsingDelete_WhenACallWasMadeUsingDelete_Should_BeOK()

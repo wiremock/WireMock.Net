@@ -3,7 +3,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using AwesomeAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using WireMock.Admin.Mappings;
