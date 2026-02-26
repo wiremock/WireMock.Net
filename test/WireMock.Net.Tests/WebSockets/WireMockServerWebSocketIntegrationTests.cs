@@ -48,6 +48,8 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         await client2.ConnectAsync(uri, _ct);
         await client3.ConnectAsync(uri, _ct);
 
+        await Task.Delay(500, _ct);
+
         // Assert
         var connections = server.GetWebSocketConnections();
         connections.Should().HaveCount(3);
@@ -56,8 +58,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(300, _ct);
     }
 
     [Fact]
@@ -140,6 +140,8 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         await client2.ConnectAsync(uri1, _ct);
         await client3.ConnectAsync(uri2, _ct);
 
+        await Task.Delay(500, _ct);
+
         // Assert
         var allConnections = server.GetWebSocketConnections();
         allConnections.Should().HaveCount(3);
@@ -153,8 +155,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(300, _ct);
     }
 
     [Fact]
@@ -187,6 +187,8 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         await client1.ConnectAsync(uri, _ct);
         await client2.ConnectAsync(uri, _ct);
 
+        await Task.Delay(500, _ct);
+
         var connections = server.GetWebSocketConnections();
         connections.Should().HaveCount(2);
 
@@ -200,8 +202,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         remainingConnections.Should().HaveCount(1);
         var remainingConnection = remainingConnections.First();
         remainingConnection.ConnectionId.Should().NotBe(connectionIdToAbort);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -270,8 +270,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -340,8 +338,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -430,8 +426,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -520,8 +514,6 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -552,23 +544,22 @@ public class WireMockServerWebSocketIntegrationTests(ITestOutputHelper output, I
         var uri = new Uri($"{server.Url}/ws/test");
 
         await client1.ConnectAsync(uri, _ct);
-        await Task.Delay(100, _ct);
         await client2.ConnectAsync(uri, _ct);
-        await Task.Delay(100, _ct);
+
+        await Task.Delay(500, _ct);
 
         var initialConnections = server.GetWebSocketConnections();
         initialConnections.Should().HaveCount(2);
 
         // Act
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnect", _ct);
-        await Task.Delay(100, _ct);
+
+        await Task.Delay(500, _ct);
 
         // Assert
         var remainingConnections = server.GetWebSocketConnections();
         remainingConnections.Should().HaveCount(1);
 
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 }

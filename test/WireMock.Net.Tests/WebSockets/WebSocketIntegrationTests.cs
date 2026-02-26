@@ -808,8 +808,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(100, _ct);
     }
 
     [Fact]
@@ -863,6 +861,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await client2.ConnectAsync(uri, _ct);
         await client3.ConnectAsync(uri, _ct);
 
+        await Task.Delay(500, _ct);
+
         await client1.SendAsync("register", cancellationToken: _ct);
         await client2.SendAsync("register", cancellationToken: _ct);
         await client3.SendAsync("register", cancellationToken: _ct);
@@ -891,8 +891,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(300, _ct);
     }
 
     [Fact]
@@ -941,6 +939,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await client2.ConnectAsync(uri, _ct);
         await client3.ConnectAsync(uri, _ct);
 
+        await Task.Delay(500, _ct);
+
         await client1.SendAsync("register", cancellationToken: _ct);
         await client2.SendAsync("register", cancellationToken: _ct);
         await client3.SendAsync("register", cancellationToken: _ct);
@@ -969,8 +969,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client3.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(300, _ct);
     }
 
     [Fact]
@@ -1026,8 +1024,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(300, _ct);
     }
 
     [Fact]
@@ -1090,8 +1086,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -1137,8 +1131,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         received.Should().Be(broadcastMessage);
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(100, _ct);
     }
 
     [Fact]
@@ -1183,6 +1175,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         // Act - disconnect client1
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Disconnecting", _ct);
 
+        await Task.Delay(500, _ct);
+
         // Send broadcast from client2 - should handle disconnected client gracefully
         await client2.SendAsync(broadcastMessage, cancellationToken: _ct);
 
@@ -1191,8 +1185,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         received2.Should().Be(broadcastMessage);
 
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 
     [Fact]
@@ -1254,7 +1246,5 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         await client1.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
         await client2.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(200, _ct);
     }
 }
