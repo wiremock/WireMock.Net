@@ -870,7 +870,7 @@ public partial class WireMockServer
         throw new NotSupportedException();
     }
 
-    private static T DeserializeObject<T>(IRequestMessage requestMessage) where T : new()
+    private static T DeserializeObject<T>(IRequestMessage requestMessage)
     {
         switch (requestMessage.BodyData?.DetectedBodyType)
         {

@@ -42,7 +42,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.11.0" />
         <PackageReference Include="YamlDotNet" Version="16.3.0" />
-        <PackageReference Include="RandomDataGenerator.Net" Version="1.0.19" />
+        <PackageReference Include="RandomDataGenerator.Net" Version="1.0.19.1" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Minimal version from the lightweight Http Mocking Server for .NET</Description>
         <AssemblyTitle>WireMock.Net.Minimal</AssemblyTitle>
@@ -37,14 +37,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!--<PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />-->
-        <PackageReference Include="JmesPath.Net" Version="1.0.330" />
-        <PackageReference Include="NJsonSchema.Extensions" Version="0.1.0" />
+        <PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />
+        <!--<PackageReference Include="JmesPath.Net" Version="1.0.330" />-->
+        <PackageReference Include="NJsonSchema.Extensions" Version="0.2.0" />
         <PackageReference Include="NSwag.Core" Version="13.16.1" />
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
         <PackageReference Include="TinyMapper.Signed" Version="4.0.0" />
         <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.34.0" />
         <PackageReference Include="Scriban.Signed" Version="5.5.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Update="JmesPath.Net.SourceOnly">
+            <NoWarn>CS1591;CS8618</NoWarn>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0'">
@@ -55,18 +61,6 @@
         <PackageReference Include="Microsoft.AspNetCore" Version="2.3.9" />
         <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.3.9" />
     </ItemGroup>
-
-    <PropertyGroup>
-        <!-- Suppress warnings from JmesPath source-only package -->
-        <!--<NoWarn>$(NoWarn);CS8600;CS8602;CS8603;CS8604;CS8619;CS8625;CS0649</NoWarn>-->
-    </PropertyGroup>
-
-    <!--<ItemGroup>
-        --><!-- Disable all warnings for JmesPath source-only package files --><!--
-        <Compile Update="**\jmespath.net.sourceonly\**\*.cs">
-            <NoWarn>$(NoWarn);CS0001-CS9999</NoWarn>
-        </Compile>
-    </ItemGroup>-->
 
     <ItemGroup>
         <Compile Update="Server\WireMockServer.*.cs">

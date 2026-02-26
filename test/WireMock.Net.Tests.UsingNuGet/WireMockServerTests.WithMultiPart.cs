@@ -12,8 +12,10 @@ using WireMock.Server;
 // ReSharper disable once CheckNamespace
 namespace WireMock.Net.Tests;
 
-public partial class WireMockServerTests
+public class WireMockServerTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task WireMockServer_WithMultiPartBody_Using_MimePartMatchers()
     {
@@ -85,19 +87,19 @@ public partial class WireMockServerTests
         var client = server.CreateClient();
 
         // Act 1
-        var response1 = await client.PostAsync("/multipart", formDataContent);
+        var response1 = await client.PostAsync("/multipart", formDataContent, _ct);
 
         // Assert 1
         response1.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content1 = await response1.Content.ReadAsStringAsync();
+        var content1 = await response1.Content.ReadAsStringAsync(_ct);
         content1.Should().Be("POST;This is some plain text");
 
         // Act 2
-        var response2 = await client.PostAsync("/multipart2", formDataContent);
+        var response2 = await client.PostAsync("/multipart2", formDataContent, _ct);
 
         // Assert 1
         response2.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content2 = await response2.Content.ReadAsStringAsync();
+        var content2 = await response2.Content.ReadAsStringAsync(_ct);
         content2.Should().Be("OK");
     }
 }

@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.IO;
-using System.Linq;
 using Stef.Validation;
 using WireMock.Settings;
 
@@ -10,7 +8,7 @@ namespace WireMock.Serialization;
 /// <summary>
 /// Creates sanitized file names for mappings
 /// </summary>
-public class MappingFileNameSanitizer
+internal class MappingFileNameSanitizer
 {
     private const char ReplaceChar = '_';
 

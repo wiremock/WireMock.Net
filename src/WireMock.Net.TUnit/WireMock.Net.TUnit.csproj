@@ -28,7 +28,7 @@
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
-        <PackageReference Include="TUnit.Core" Version="1.13.60" />
+        <PackageReference Include="TUnit.Core" Version="1.17.29" />
     </ItemGroup>
 
     <ItemGroup>

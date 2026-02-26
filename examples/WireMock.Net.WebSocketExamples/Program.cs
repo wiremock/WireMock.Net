@@ -201,7 +201,6 @@ public static class Program
             .WithGuid(broadcastMappingGuid)
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBroadcast()
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)
@@ -423,7 +422,6 @@ public static class Program
             .WithGuid(broadcastGuid)
             .RespondWith(Response.Create()
                 .WithWebSocket(ws => ws
-                    .WithBroadcast()
                     .WithMessageHandler(async (message, context) =>
                     {
                         if (message.MessageType == WebSocketMessageType.Text)

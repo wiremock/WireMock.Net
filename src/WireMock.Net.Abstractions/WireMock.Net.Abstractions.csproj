@@ -39,7 +39,7 @@
     </ItemGroup>-->
 
     <ItemGroup>
-        <PackageReference Include="FluentBuilder" Version="0.13.0">
+        <PackageReference Include="FluentBuilder" Version="0.14.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
