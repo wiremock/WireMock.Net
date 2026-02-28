@@ -1,5 +1,7 @@
 // Copyright © WireMock.Net
 
+using System.Linq;
+
 namespace WireMock.Net.Testcontainers.Utils;
 
 internal static class CombineUtils

@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\WireMock.Net\WireMock.Net.csproj" />
     <ProjectReference Include="..\..\src\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

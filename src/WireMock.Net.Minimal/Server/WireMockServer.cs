@@ -2,13 +2,10 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using AnyOfTypes;
 using JetBrains.Annotations;
 using JsonConverter.Newtonsoft.Json;

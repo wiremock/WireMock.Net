@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Settings;
 using WireMock.Transformers.Handlebars;
 using WireMock.Transformers.Scriban;

@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
 using Stef.Validation;
-using WireMock.Owin.ActivityTracing;
 using WireMock.Settings;
 
 namespace WireMock.Owin;

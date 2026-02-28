@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Linq;
 using JetBrains.Annotations;
 using WireMock.WebSockets;
 

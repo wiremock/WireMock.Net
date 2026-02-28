@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Buffers;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;

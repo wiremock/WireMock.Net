@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Http;
 using WireMock.Matchers;

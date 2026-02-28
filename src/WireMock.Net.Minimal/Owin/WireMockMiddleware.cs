@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using WireMock.Constants;

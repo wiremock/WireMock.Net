@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Minimal version from the lightweight Http Mocking Server for .NET</Description>
         <AssemblyTitle>WireMock.Net.Minimal</AssemblyTitle>
@@ -37,7 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260213.1" />
+        <PackageReference Include="JmesPath.Net.SourceOnly" Version="1.0.330-20260228.1" />
         <!--<PackageReference Include="JmesPath.Net" Version="1.0.330" />-->
         <PackageReference Include="NJsonSchema.Extensions" Version="0.2.0" />
         <PackageReference Include="NSwag.Core" Version="13.16.1" />

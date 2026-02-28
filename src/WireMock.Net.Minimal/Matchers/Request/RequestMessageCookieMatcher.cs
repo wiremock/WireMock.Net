@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
 using Stef.Validation;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace WireMock.Matchers.Request;

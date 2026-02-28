@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using Stef.Validation;

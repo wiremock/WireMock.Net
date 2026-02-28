@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using WireMock.Owin;
 

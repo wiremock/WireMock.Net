@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;

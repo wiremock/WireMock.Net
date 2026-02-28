@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Linq;
 using WireMock.Admin.Mappings;
 using WireMock.Extensions;
 using WireMock.Pact.Models.V2;

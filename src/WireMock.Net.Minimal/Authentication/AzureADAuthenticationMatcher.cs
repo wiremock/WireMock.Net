@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.RegularExpressions;

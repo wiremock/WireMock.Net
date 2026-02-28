@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using Scriban;
 using Scriban.Parsing;
 using Scriban.Runtime;

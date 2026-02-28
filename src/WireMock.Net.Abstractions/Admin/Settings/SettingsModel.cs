@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using WireMock.Handlers;
 using WireMock.Types;

@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics;
+using System.Linq;
 using WireMock.Logging;
 using WireMock.Owin.ActivityTracing;
 using WireMock.Serialization;
