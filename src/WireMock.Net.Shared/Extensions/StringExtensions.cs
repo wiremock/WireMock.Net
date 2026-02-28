@@ -1,6 +1,10 @@
-using System.Globalization;
+// Copyright © WireMock.Net
 
-namespace WireMock.Extensions;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using WireMock.Constants;
+
+namespace System;
 
 internal static class StringExtensions
 {
@@ -28,4 +32,12 @@ internal static class StringExtensions
             return result.ToString(CultureInfo.InvariantCulture).Replace('-', '_');
         }
     }
+
+#if !NET8_0_OR_GREATER
+    public static string Replace(this string text, string oldValue, string newValue, StringComparison stringComparison)
+    {
+        var options = stringComparison == StringComparison.OrdinalIgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+        return Regex.Replace(text, oldValue, newValue, options, RegexConstants.DefaultTimeout);
+    }
+#endif
 }

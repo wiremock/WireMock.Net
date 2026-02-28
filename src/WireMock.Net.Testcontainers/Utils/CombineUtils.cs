@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using System.Linq;
 
 namespace WireMock.Net.Testcontainers.Utils;

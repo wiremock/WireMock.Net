@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
 using WireMock.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -13,7 +10,6 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -56,13 +52,13 @@ public class ResponseWithProxyTests : IDisposable
         var responseBuilder = Response.Create().WithProxy(_server.Urls[0]);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(request.ProxyUrl).IsNotNull();
-        Check.That(response.Message.BodyData.BodyAsString).IsEqualTo(expectedBody);
-        Check.That(response.Message.StatusCode).IsEqualTo(201);
-        Check.That(response.Message.Headers["Content-Type"].ToString()).IsEqualTo("application/json");
+        request.ProxyUrl.Should().NotBeNull();
+        response.Message.BodyData.BodyAsString.Should().Be(expectedBody);
+        response.Message.StatusCode.Should().Be(201);
+        response.Message.Headers["Content-Type"].ToString().Should().Be("application/json");
     }
 
     [Fact]
@@ -83,8 +79,10 @@ public class ResponseWithProxyTests : IDisposable
 
         // Act
         var request = new RequestMessage(new UrlDetails($"{_server.Urls[0]}/{_guid}"), "GET", ClientIp);
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HttpRequestException>();
+        // Assert
+        act.Should().ThrowAsync<HttpRequestException>();
     }
 
     public void Dispose()
@@ -93,3 +91,4 @@ public class ResponseWithProxyTests : IDisposable
         _server?.Dispose();
     }
 }
+

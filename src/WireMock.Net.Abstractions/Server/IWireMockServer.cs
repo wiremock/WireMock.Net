@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using WireMock.Admin.Mappings;
 using WireMock.Logging;

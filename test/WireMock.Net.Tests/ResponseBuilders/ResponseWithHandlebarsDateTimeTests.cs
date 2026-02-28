@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
 using WireMock.Handlers;
@@ -10,7 +8,6 @@ using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -47,7 +44,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -71,7 +68,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -94,7 +91,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
@@ -112,7 +109,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.BodyData!.BodyAsString.Should().Contain($"DateTimeYear = \"{DateTime.Now.Year}\"");
@@ -137,7 +134,7 @@ public class ResponseWithHandlebarsDateTimeTests
             .WithTransformer(options);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var jObject = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);

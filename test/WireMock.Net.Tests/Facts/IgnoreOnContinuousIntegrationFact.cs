@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using Xunit;
+using System.Runtime.CompilerServices;
 
 namespace WireMock.Net.Tests.Facts;
 
@@ -14,7 +13,9 @@ public sealed class IgnoreOnContinuousIntegrationFact : FactAttribute
     private static readonly bool IsContinuousIntegrationGithub = bool.TryParse(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), out var isGH) && isGH;
     private static readonly bool IsContinuousIntegration = IsContinuousIntegrationAzure || IsContinuousIntegrationGithub;
 
-    public IgnoreOnContinuousIntegrationFact()
+    public IgnoreOnContinuousIntegrationFact(
+        [CallerFilePath] string? sourceFilePath = null,
+        [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
     {
         if (IsContinuousIntegration)
         {

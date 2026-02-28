@@ -1,16 +1,11 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
-using NFluent;
+
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -30,10 +25,10 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create());
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + path, TestContext.Current.CancellationToken);
 
         // then
-        Check.That(response.StatusCode).IsEqualTo(HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         server.Stop();
     }
@@ -42,6 +37,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_process_request_if_equals_state_and_single_state_defined()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var path = $"/foo_{Guid.NewGuid()}";
         using var server = WireMockServer.Start();
 
@@ -58,12 +54,12 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("Test state msg"));
 
         // Act
-        var responseNoState = await new HttpClient().GetStringAsync(server.Url + path).ConfigureAwait(false);
-        var responseWithState = await new HttpClient().GetStringAsync(server.Url + path).ConfigureAwait(false);
+        var responseNoState = await new HttpClient().GetStringAsync(server.Url + path, cancellationToken);
+        var responseWithState = await new HttpClient().GetStringAsync(server.Url + path, cancellationToken);
 
         // Assert
-        Check.That(responseNoState).Equals("No state msg");
-        Check.That(responseWithState).Equals("Test state msg");
+        responseNoState.Should().Be("No state msg");
+        responseWithState.Should().Be("Test state msg");
     }
 
     [Theory]
@@ -72,6 +68,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_ContinueOnCorrectState_WhenStateIsUpdated(string? state, string expected1, string expected2)
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var path = $"/foo_{Guid.NewGuid()}";
         var scenario = "s";
         using var server = WireMockServer.Start();
@@ -97,26 +94,27 @@ public class StatefulBehaviorTests
 
         // Act
         var client = server.CreateClient();
-        var response1 = await client.GetStringAsync(server.Url + path);
-        var response2 = await client.GetStringAsync(server.Url + path);
-        var response3 = await client.GetStringAsync(server.Url + path);
+        var response1 = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var response2 = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var response3 = await client.GetStringAsync(server.Url + path, cancellationToken);
 
         server.SetScenarioState(scenario, state);
-        var responseA = await client.GetStringAsync(server.Url + path);
-        var responseB = await client.GetStringAsync(server.Url + path);
+        var responseA = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var responseB = await client.GetStringAsync(server.Url + path, cancellationToken);
 
         // Assert
-        Check.That(response1).Equals("step 1");
-        Check.That(response2).Equals("step 2");
-        Check.That(response3).Equals("step 3");
-        Check.That(responseA).Equals(expected1);
-        Check.That(responseB).Equals(expected2);
+        response1.Should().Be("step 1");
+        response2.Should().Be("step 2");
+        response3.Should().Be("step 3");
+        responseA.Should().Be(expected1);
+        responseB.Should().Be(expected2);
     }
 
     [Fact]
     public async Task Scenarios_With_Same_Path_Should_Use_Times_When_Moving_To_Next_State()
     {
         // given
+        var cancellationToken = TestContext.Current.CancellationToken;
         const int times = 2;
         string path = $"/foo_{Guid.NewGuid()}";
         string body1 = "Scenario S1, No State, Setting State T2";
@@ -137,9 +135,9 @@ public class StatefulBehaviorTests
 
         // when
         var client = new HttpClient();
-        var responseScenario1 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseScenario2 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithState = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseScenario1 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
+        var responseScenario2 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
+        var responseWithState = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
 
         // then
         responseScenario1.Should().Be(body1);
@@ -153,6 +151,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_With_Different_Paths_Should_Use_Times_When_Moving_To_Next_State()
     {
         // given
+        var cancellationToken = TestContext.Current.CancellationToken;
         const int times = 2;
         string path1 = $"/a_{Guid.NewGuid()}";
         string path2 = $"/b_{Guid.NewGuid()}";
@@ -184,11 +183,11 @@ public class StatefulBehaviorTests
 
         // when
         var client = new HttpClient();
-        var t1a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1).ConfigureAwait(false);
-        var t1b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1).ConfigureAwait(false);
-        var t2a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2).ConfigureAwait(false);
-        var t2b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2).ConfigureAwait(false);
-        var t3 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path3).ConfigureAwait(false);
+        var t1a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1, cancellationToken);
+        var t1b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path1, cancellationToken);
+        var t2a = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2, cancellationToken);
+        var t2b = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path2, cancellationToken);
+        var t3 = await client.GetStringAsync("http://localhost:" + server.Ports[0] + path3, cancellationToken);
 
         // then
         t1a.Should().Be(body1);
@@ -204,6 +203,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_Respect_Int_Valued_Scenarios_and_States()
     {
         // given
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/foo_{Guid.NewGuid()}";
         var server = WireMockServer.Start();
 
@@ -220,12 +220,12 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("Scenario 1, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
 
         // then
-        Check.That(responseIntScenario).Equals("Scenario 1, Setting State 2");
-        Check.That(responseWithIntState).Equals("Scenario 1, State 2");
+        responseIntScenario.Should().Be("Scenario 1, Setting State 2");
+        responseWithIntState.Should().Be("Scenario 1, State 2");
 
         server.Stop();
     }
@@ -234,6 +234,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_Respect_Mixed_String_Scenario_and_Int_State()
     {
         // given
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/foo_{Guid.NewGuid()}";
         var server = WireMockServer.Start();
 
@@ -250,12 +251,12 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("string state, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
 
         // then
-        Check.That(responseIntScenario).Equals("string state, Setting State 2");
-        Check.That(responseWithIntState).Equals("string state, State 2");
+        responseIntScenario.Should().Be("string state, Setting State 2");
+        responseWithIntState.Should().Be("string state, State 2");
 
         server.Stop();
     }
@@ -264,6 +265,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_Respect_Mixed_Int_Scenario_and_String_Scenario_and_String_State()
     {
         // given
+        var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/foo_{Guid.NewGuid()}";
         var server = WireMockServer.Start();
 
@@ -280,12 +282,12 @@ public class StatefulBehaviorTests
             .RespondWith(Response.Create().WithBody("string state, State 2"));
 
         // when
-        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
-        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path).ConfigureAwait(false);
+        var responseIntScenario = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
+        var responseWithIntState = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + path, cancellationToken);
 
         // then
-        Check.That(responseIntScenario).Equals("int state, Setting State 2");
-        Check.That(responseWithIntState).Equals("string state, State 2");
+        responseIntScenario.Should().Be("int state, Setting State 2");
+        responseWithIntState.Should().Be("string state, State 2");
 
         server.Stop();
     }
@@ -294,6 +296,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_TodoList_Example()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         var client = server.CreateClient();
 
@@ -316,32 +319,32 @@ public class StatefulBehaviorTests
             .WhenStateIs("Cancel newspaper item added")
             .RespondWith(Response.Create().WithBody("Buy milk;Cancel newspaper subscription"));
 
-        Check.That(server.Scenarios.Any()).IsFalse();
+        server.Scenarios.Any().Should().BeFalse();
 
         // Act and Assert
-        var getResponse1 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
-        Check.That(getResponse1).Equals("Buy milk");
+        var getResponse1 = await client.GetStringAsync("/todo/items", cancelationToken);
+        getResponse1.Should().Be("Buy milk");
 
-        Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
-        Check.That(server.Scenarios["To do list"].NextState).IsEqualTo("TodoList State Started");
-        Check.That(server.Scenarios["To do list"].Started).IsTrue();
-        Check.That(server.Scenarios["To do list"].Finished).IsFalse();
+        server.Scenarios["To do list"].Name.Should().Be("To do list");
+        server.Scenarios["To do list"].NextState.Should().Be("TodoList State Started");
+        server.Scenarios["To do list"].Started.Should().BeTrue();
+        server.Scenarios["To do list"].Finished.Should().BeFalse();
 
-        var postResponse = await client.PostAsync("/todo/items", new StringContent("Cancel newspaper subscription")).ConfigureAwait(false);
-        Check.That(postResponse.StatusCode).Equals(HttpStatusCode.Created);
+        var postResponse = await client.PostAsync("/todo/items", new StringContent("Cancel newspaper subscription"), cancelationToken);
+        postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
-        Check.That(server.Scenarios["To do list"].NextState).IsEqualTo("Cancel newspaper item added");
-        Check.That(server.Scenarios["To do list"].Started).IsTrue();
-        Check.That(server.Scenarios["To do list"].Finished).IsFalse();
+        server.Scenarios["To do list"].Name.Should().Be("To do list");
+        server.Scenarios["To do list"].NextState.Should().Be("Cancel newspaper item added");
+        server.Scenarios["To do list"].Started.Should().BeTrue();
+        server.Scenarios["To do list"].Finished.Should().BeFalse();
 
-        string getResponse2 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
-        Check.That(getResponse2).Equals("Buy milk;Cancel newspaper subscription");
+        string getResponse2 = await client.GetStringAsync("/todo/items", cancelationToken);
+        getResponse2.Should().Be("Buy milk;Cancel newspaper subscription");
 
-        Check.That(server.Scenarios["To do list"].Name).IsEqualTo("To do list");
-        Check.That(server.Scenarios["To do list"].NextState).IsNull();
-        Check.That(server.Scenarios["To do list"].Started).IsTrue();
-        Check.That(server.Scenarios["To do list"].Finished).IsTrue();
+        server.Scenarios["To do list"].Name.Should().Be("To do list");
+        server.Scenarios["To do list"].NextState.Should().BeNull();
+        server.Scenarios["To do list"].Started.Should().BeTrue();
+        server.Scenarios["To do list"].Finished.Should().BeTrue();
 
         server.Stop();
     }
@@ -350,6 +353,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_TodoList_WithSetState()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var scenario = "To do list";
         using var server = WireMockServer.Start();
         var client = server.CreateClient();
@@ -370,14 +374,14 @@ public class StatefulBehaviorTests
         server.SetScenarioState(scenario, "Buy milk");
         server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Buy milk" });
         
-        var getResponse1 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        var getResponse1 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse1.Should().Be("Buy milk");
 
         server.SetScenarioState(scenario, "Cancel newspaper");
         server.Scenarios[scenario].Name.Should().Be(scenario);
         server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Cancel newspaper" });
 
-        var getResponse2 = await client.GetStringAsync("/todo/items").ConfigureAwait(false);
+        var getResponse2 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse2.Should().Be("Buy milk;Cancel newspaper subscription");
     }
 
@@ -413,6 +417,7 @@ public class StatefulBehaviorTests
     public async Task Scenarios_Should_process_request_if_equals_state_and_multiple_state_defined()
     {
         // Assign
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
 
         server
@@ -441,18 +446,19 @@ public class StatefulBehaviorTests
 
         // Act and Assert
         string url = "http://localhost:" + server.Ports[0];
-        var responseNoState1 = await new HttpClient().GetStringAsync(url + "/state1").ConfigureAwait(false);
-        Check.That(responseNoState1).Equals("No state msg 1");
+        var responseNoState1 = await new HttpClient().GetStringAsync(url + "/state1", cancelationToken);
+        responseNoState1.Should().Be("No state msg 1");
 
-        var responseNoState2 = await new HttpClient().GetStringAsync(url + "/state2").ConfigureAwait(false);
-        Check.That(responseNoState2).Equals("No state msg 2");
+        var responseNoState2 = await new HttpClient().GetStringAsync(url + "/state2", cancelationToken);
+        responseNoState2.Should().Be("No state msg 2");
 
-        var responseWithState1 = await new HttpClient().GetStringAsync(url + "/foo1X").ConfigureAwait(false);
-        Check.That(responseWithState1).Equals("Test state msg 1");
+        var responseWithState1 = await new HttpClient().GetStringAsync(url + "/foo1X", cancelationToken);
+        responseWithState1.Should().Be("Test state msg 1");
 
-        var responseWithState2 = await new HttpClient().GetStringAsync(url + "/foo2X").ConfigureAwait(false);
-        Check.That(responseWithState2).Equals("Test state msg 2");
+        var responseWithState2 = await new HttpClient().GetStringAsync(url + "/foo2X", cancelationToken);
+        responseWithState2.Should().Be("Test state msg 2");
 
         server.Stop();
     }
 }
+

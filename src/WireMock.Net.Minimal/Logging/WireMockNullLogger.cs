@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Admin.Requests;
 
 namespace WireMock.Logging;

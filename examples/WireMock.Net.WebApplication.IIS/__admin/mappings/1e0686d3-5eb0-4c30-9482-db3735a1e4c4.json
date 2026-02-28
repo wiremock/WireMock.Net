@@ -1,0 +1,184 @@
+{
+  "Guid": "1e0686d3-5eb0-4c30-9482-db3735a1e4c4",
+  "Title": "",
+  "Request": {
+    "Path": {
+      "Matchers": [
+        {
+          "Name": "WildcardMatcher",
+          "Pattern": "/favicon.ico",
+          "IgnoreCase": false
+        }
+      ]
+    },
+    "Methods": [
+      "GET"
+    ],
+    "Headers": [
+      {
+        "Name": "Accept",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "Host",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "localhost:8081",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "User-Agent",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": ":method",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "GET",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "Accept-Encoding",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "gzip, deflate, br",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "Accept-Language",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "en-US,en;q=0.9,nl;q=0.8",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "Referer",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "https://localhost:8081/__admin/mappings",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-ch-ua",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"99\", \"Google Chrome\";v=\"99\"",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-ch-ua-mobile",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "?0",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-ch-ua-platform",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "\"Windows\"",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-fetch-site",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "same-origin",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-fetch-mode",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "no-cors",
+            "IgnoreCase": true
+          }
+        ]
+      },
+      {
+        "Name": "sec-fetch-dest",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "image",
+            "IgnoreCase": true
+          }
+        ]
+      }
+    ],
+    "Cookies": [
+      {
+        "Name": "ai_user",
+        "Matchers": [
+          {
+            "Name": "WildcardMatcher",
+            "Pattern": "4z4B71qxV7rOSA6Gf3IFZ1|2021-07-20T17:07:54.344Z",
+            "IgnoreCase": true
+          }
+        ]
+      }
+    ]
+  },
+  "Response": {
+    "StatusCode": 200,
+    "Body": "<!doctype html><html lang=\"en\"><head><script>!function(e,t,a,n,g){e[n]=e[n]||[],e[n].push({\"gtm.start\":(new Date).getTime(),event:\"gtm.js\"});var m=t.getElementsByTagName(a)[0],r=t.createElement(a);r.async=!0,r.src=\"https://www.googletagmanager.com/gtm.js?id=GTM-NTGJQ9S\",m.parentNode.insertBefore(r,m)}(window,document,\"script\",\"dataLayer\")</script><meta charset=\"utf-8\"/><link rel=\"icon\" type=\"image/png\" href=\"/favicon.png\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/><title>Product Support Portal | SmartBear Software</title><link href=\"https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700|Roboto+Mono:400,400i\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"https://pro.fontawesome.com/releases/v5.13.1/css/all.css\" integrity=\"sha384-B9BoFFAuBaCfqw6lxWBZrhg/z4NkwqdBci+E+Sc2XlK/Rz25RYn8Fetb+Aw5irxa\" crossorigin=\"anonymous\"><script src=\"https://code.jquery.com/jquery-3.3.1.min.js\" integrity=\"sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=\" crossorigin=\"anonymous\"></script><script src=\"https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js\" type=\"text/javascript\"></script><link href=\"/static/css/main.f0fcb0c0.chunk.css\" rel=\"stylesheet\"></head><body><noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-NTGJQ9S\" height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript><noscript>You need to enable JavaScript to run this website.</noscript><div id=\"root\"></div><script>!function(e){function r(r){for(var n,p,l=r[0],a=r[1],f=r[2],c=0,s=[];c<l.length;c++)p=l[c],Object.prototype.hasOwnProperty.call(o,p)&&o[p]&&s.push(o[p][0]),o[p]=0;for(n in a)Object.prototype.hasOwnProperty.call(a,n)&&(e[n]=a[n]);for(i&&i(r);s.length;)s.shift()();return u.push.apply(u,f||[]),t()}function t(){for(var e,r=0;r<u.length;r++){for(var t=u[r],n=!0,l=1;l<t.length;l++){var a=t[l];0!==o[a]&&(n=!1)}n&&(u.splice(r--,1),e=p(p.s=t[0]))}return e}var n={},o={1:0},u=[];function p(r){if(n[r])return n[r].exports;var t=n[r]={i:r,l:!1,exports:{}};return e[r].call(t.exports,t,t.exports,p),t.l=!0,t.exports}p.m=e,p.c=n,p.d=function(e,r,t){p.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},p.r=function(e){\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})},p.t=function(e,r){if(1&r&&(e=p(e)),8&r)return e;if(4&r&&\"object\"==typeof e&&e&&e.__esModule)return e;var t=Object.create(null);if(p.r(t),Object.defineProperty(t,\"default\",{enumerable:!0,value:e}),2&r&&\"string\"!=typeof e)for(var n in e)p.d(t,n,function(r){return e[r]}.bind(null,n));return t},p.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return p.d(r,\"a\",r),r},p.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},p.p=\"/\";var l=this[\"webpackJsonpweb-support-react\"]=this[\"webpackJsonpweb-support-react\"]||[],a=l.push.bind(l);l.push=r,l=l.slice();for(var f=0;f<l.length;f++)r(l[f]);var i=a;t()}([])</script><script src=\"/static/js/2.cfa1a356.chunk.js\"></script><script src=\"/static/js/main.cb89e4ed.chunk.js\"></script></body></html>",
+    "Headers": {
+      "Content-Type": "text/html",
+      "Last-Modified": "Thu, 10 Mar 2022 08:39:07 GMT",
+      "Transfer-Encoding": "chunked",
+      "Connection": "keep-alive",
+      "Date": "Fri, 11 Mar 2022 09:21:22 GMT",
+      "ETag": "W/\"cd426e4e5a34d81:0\"",
+      "X-XSS-Protection": "1; mode=block",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-Content-Type-Options": "nosniff",
+      "Content-Security-Policy": "frame-ancestors 'self'",
+      "Vary": "Accept-Encoding",
+      "X-Cache": "Miss from cloudfront",
+      "Via": "1.1 e328b143eb69c36369a2def78300d502.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Pop": "AMS1-C1",
+      "X-Amz-Cf-Id": "fUBp1b6g0N3JnLuj_VcueuCf0Rw-eXfBNKHq7luNlAOtqAxU5MUdcA=="
+    }
+  }
+}

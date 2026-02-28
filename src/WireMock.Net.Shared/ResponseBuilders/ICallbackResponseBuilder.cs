@@ -3,14 +3,13 @@
 using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using WireMock.ResponseProviders;
 
 namespace WireMock.ResponseBuilders;
 
 /// <summary>
 /// The CallbackResponseBuilder interface.
 /// </summary>
-public interface ICallbackResponseBuilder : IResponseProvider
+public interface ICallbackResponseBuilder : IWebSocketResponseBuilder
 {
     /// <summary>
     /// The callback builder

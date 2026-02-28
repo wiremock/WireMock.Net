@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using NFluent;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -18,7 +16,7 @@ public class ExactMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("ExactMatcher");
+        name.Should().Be("ExactMatcher");
     }
 
     [Fact]
@@ -31,7 +29,7 @@ public class ExactMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -44,7 +42,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("X").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -57,7 +55,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("x").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -70,7 +68,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("y").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 
     [Fact]
@@ -83,7 +81,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("x").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -96,7 +94,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("x").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Theory]
@@ -112,7 +110,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("x").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(score);
+        result.Should().Be(score);
     }
 
     [Fact]
@@ -125,7 +123,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("caR").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 
     [Fact]
@@ -138,7 +136,7 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("cat").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -151,6 +149,6 @@ public class ExactMatcherTests
         double result = matcher.IsMatch("cat").Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 }

@@ -2,12 +2,9 @@
 
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using FluentAssertions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests
 {
@@ -30,7 +27,7 @@ namespace WireMock.Net.Tests
 
 			// Act
 			var httpClient = new HttpClient();
-			var response = await httpClient.PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("dummy")).ConfigureAwait(false);
+			var response = await httpClient.PostAsync("http://localhost:" + server.Ports[0] + "/foo", new StringContent("dummy"), _ct);
 
 			// Assert
 			response.StatusCode.Should().Be(HttpStatusCode.Conflict);

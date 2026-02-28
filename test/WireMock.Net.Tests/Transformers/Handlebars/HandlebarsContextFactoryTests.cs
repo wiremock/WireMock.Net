@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
 using Moq;
 using WireMock.Handlers;
 using WireMock.Settings;
 using WireMock.Transformers.Handlebars;
-using Xunit;
 
 namespace WireMock.Net.Tests.Transformers.Handlebars;
 

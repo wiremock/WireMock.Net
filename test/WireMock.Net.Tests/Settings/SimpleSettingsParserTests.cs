@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using FluentAssertions;
-using NFluent;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Settings;
 
@@ -57,8 +53,8 @@ public class SimpleSettingsParserTests
         string? value2 = _parser.GetStringValue("test2");
 
         // Assert
-        Check.That(value1).IsEqualTo("one");
-        Check.That(value2).IsEqualTo("two");
+        value1.Should().Be("one");
+        value2.Should().Be("two");
     }
 
     [Fact]
@@ -73,9 +69,9 @@ public class SimpleSettingsParserTests
         string? value3 = _parser.GetStringValue("test3");
 
         // Assert
-        Check.That(value1).IsEqualTo("one");
-        Check.That(value2).IsEqualTo("two");
-        Check.That(value3).IsEqualTo("three");
+        value1.Should().Be("one");
+        value2.Should().Be("two");
+        value3.Should().Be("three");
     }
 
     [Fact]
@@ -90,9 +86,9 @@ public class SimpleSettingsParserTests
         string? value3 = _parser.GetStringValue("test3");
 
         // Assert
-        Check.That(value1).IsEqualTo("one");
-        Check.That(value2).IsEqualTo("two");
-        Check.That(value3).IsEqualTo("three");
+        value1.Should().Be("one");
+        value2.Should().Be("two");
+        value3.Should().Be("three");
     }
 
     [Fact]
@@ -107,9 +103,9 @@ public class SimpleSettingsParserTests
         bool value3 = _parser.GetBoolValue("test3", true);
 
         // Assert
-        Check.That(value1).IsEqualTo(false);
-        Check.That(value2).IsEqualTo(true);
-        Check.That(value3).IsEqualTo(true);
+        value1.Should().Be(false);
+        value2.Should().Be(true);
+        value3.Should().Be(true);
     }
 
     [Fact]
@@ -124,9 +120,9 @@ public class SimpleSettingsParserTests
         bool value3 = _parser.GetBoolWithDefault("missing1", "missing2", defaultValue: true);
 
         // Assert
-        Check.That(value1).IsEqualTo(true);
-        Check.That(value2).IsEqualTo(false);
-        Check.That(value3).IsEqualTo(true);
+        value1.Should().Be(true);
+        value2.Should().Be(false);
+        value3.Should().Be(true);
     }
 
     [Fact]
@@ -146,9 +142,9 @@ public class SimpleSettingsParserTests
         bool value3 = _parser.GetBoolValue("test3", true);
 
         // Assert
-        Check.That(value1).IsEqualTo(false);
-        Check.That(value2).IsEqualTo(true);
-        Check.That(value3).IsEqualTo(true);
+        value1.Should().Be(false);
+        value2.Should().Be(true);
+        value3.Should().Be(true);
     }
 
     [Fact]
@@ -164,10 +160,10 @@ public class SimpleSettingsParserTests
         int? value4 = _parser.GetIntValue("test4");
 
         // Assert
-        Check.That(value1).IsEqualTo(42);
-        Check.That(value2).IsEqualTo(55);
-        Check.That(value3).IsEqualTo(100);
-        Check.That(value4).IsNull();
+        value1.Should().Be(42);
+        value2.Should().Be(55);
+        value3.Should().Be(100);
+        value4.Should().BeNull();
     }
 
     [Fact]
@@ -188,10 +184,10 @@ public class SimpleSettingsParserTests
         int? value4 = _parser.GetIntValue("test4");
 
         // Assert
-        Check.That(value1).IsEqualTo(42);
-        Check.That(value2).IsEqualTo(55);
-        Check.That(value3).IsEqualTo(100);
-        Check.That(value4).IsNull();
+        value1.Should().Be(42);
+        value2.Should().Be(55);
+        value3.Should().Be(100);
+        value4.Should().BeNull();
     }
 
     [Fact]

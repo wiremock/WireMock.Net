@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using AwesomeAssertions;
 using WireMock.Net.Extensions.Routing.Extensions;
 using WireMock.Server;
@@ -28,7 +26,7 @@ public sealed class WireMockRouterTests
         _sut.Map(HttpMethod.Get.ToString(), DefaultUrlPattern, _ => handlerResult);
         using var client = _server.CreateClient();
 
-        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern);
+        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern, TestContext.Current.CancellationToken);
 
         result.Should().Be(handlerResult);
     }
@@ -40,7 +38,7 @@ public sealed class WireMockRouterTests
         _sut.Map(HttpMethod.Get.ToString(), DefaultUrlPattern, _ => Task.FromResult(handlerResult));
         using var client = _server.CreateClient();
 
-        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern);
+        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern, TestContext.Current.CancellationToken);
 
         result.Should().Be(handlerResult);
     }
@@ -55,7 +53,7 @@ public sealed class WireMockRouterTests
             async _ => await Task.FromResult(handlerResult));
         using var client = _server.CreateClient();
 
-        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern);
+        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern, TestContext.Current.CancellationToken);
 
         result.Should().Be(handlerResult);
     }
@@ -74,7 +72,7 @@ public sealed class WireMockRouterTests
         _sut.Map(HttpMethod.Get.ToString(), DefaultUrlPattern, _ => HandleRequestAsync());
         using var client = _server.CreateClient();
 
-        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern);
+        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern, TestContext.Current.CancellationToken);
 
         result.Should().Be(handlerResult);
     }
@@ -93,7 +91,7 @@ public sealed class WireMockRouterTests
         _sut.MapGet(DefaultUrlPattern, _ => HandleRequestAsync());
         using var client = _server.CreateClient();
 
-        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern);
+        var result = await client.GetFromJsonAsync<int>(DefaultUrlPattern, TestContext.Current.CancellationToken);
 
         result.Should().Be(handlerResult);
     }

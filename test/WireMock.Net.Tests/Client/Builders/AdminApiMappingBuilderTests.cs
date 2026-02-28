@@ -1,27 +1,18 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
-using VerifyTests;
-using VerifyXunit;
-using WireMock.Admin.Mappings;
 using WireMock.Client;
 using WireMock.Client.Extensions;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests.Client.Builders;
 
 [ExcludeFromCodeCoverage]
-[UsesVerify]
 public class AdminApiMappingBuilderTests
 {
     private static readonly VerifySettings VerifySettings = new();
+
     static AdminApiMappingBuilderTests()
     {
         VerifyNewtonsoftJson.Enable(VerifySettings);
@@ -30,6 +21,8 @@ public class AdminApiMappingBuilderTests
     [Fact]
     public async Task GetMappingBuilder_BuildAndPostAsync()
     {
+        var ct = TestContext.Current.CancellationToken;
+
         using var server = WireMockServer.StartWithAdminInterface();
 
         var api = RestEase.RestClient.For<IWireMockAdminApi>(server.Url!);
@@ -56,16 +49,15 @@ public class AdminApiMappingBuilderTests
         );
 
         // Act
-        var status = await mappingBuilder.BuildAndPostAsync().ConfigureAwait(false);
+        var status = await mappingBuilder.BuildAndPostAsync(ct);
 
         // Assert
         status.Status.Should().Be("Mapping added");
 
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid, ct);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
 }
-#endif

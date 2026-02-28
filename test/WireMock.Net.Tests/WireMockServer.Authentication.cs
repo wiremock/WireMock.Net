@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Owin;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests
 {
@@ -22,9 +19,9 @@ namespace WireMock.Net.Tests
 
             // Assert
             var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-            Check.That(options.AuthenticationMatcher.Name).IsEqualTo("BasicAuthenticationMatcher");
-            Check.That(options.AuthenticationMatcher.MatchBehaviour).IsEqualTo(MatchBehaviour.AcceptOnMatch);
-            Check.That(options.AuthenticationMatcher.GetPatterns()).ContainsExactly("^(?i)BASIC eDp5$");
+            options.AuthenticationMatcher.Name.Should().Be("BasicAuthenticationMatcher");
+            options.AuthenticationMatcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+            options.AuthenticationMatcher.GetPatterns().Should().ContainSingle("^(?i)BASIC eDp5$");
 
             server.Stop();
         }
@@ -58,9 +55,10 @@ namespace WireMock.Net.Tests
 
             // Assert
             var options = server.GetPrivateFieldValue<IWireMockMiddlewareOptions>("_options");
-            Check.That(options.AuthenticationMatcher).IsNull();
+            options.AuthenticationMatcher.Should().BeNull();
 
             server.Stop();
         }
     }
 }
+

@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Stef.Validation;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -145,9 +144,9 @@ public class Mapping : IMapping
     }
 
     /// <inheritdoc />
-    public Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(IRequestMessage requestMessage)
+    public Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(HttpContext context, IRequestMessage requestMessage)
     {
-        return Provider.ProvideResponseAsync(this, requestMessage, Settings);
+        return Provider.ProvideResponseAsync(this, context, requestMessage, Settings);
     }
 
     /// <inheritdoc />

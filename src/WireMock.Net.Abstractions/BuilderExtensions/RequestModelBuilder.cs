@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Validators;
 
 // ReSharper disable once CheckNamespace

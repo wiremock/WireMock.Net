@@ -1,22 +1,39 @@
 // Copyright © WireMock.Net
 
-#if NET6_0_OR_GREATER
-using System;
 using System.Diagnostics;
-using System.Linq;
-using FluentAssertions;
+using System.Net.WebSockets;
 using Moq;
 using WireMock.Logging;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin.ActivityTracing;
+using WireMock.Settings;
 using WireMock.Util;
-using Xunit;
+using WireMock.WebSockets;
 
 namespace WireMock.Net.Tests.Owin.ActivityTracing;
 
-public class WireMockActivitySourceTests
+public class WireMockActivitySourceTests : IDisposable
 {
+    private readonly ActivityListener _activityListener;
+
+    public WireMockActivitySourceTests()
+    {
+        // Set up ActivityListener for tests
+        _activityListener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == WireMockActivitySource.SourceName,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData
+        };
+
+        ActivitySource.AddActivityListener(_activityListener);
+    }
+
+    public void Dispose()
+    {
+        _activityListener?.Dispose();
+    }
+
     [Fact]
     public void EnrichWithRequest_ShouldSetRequestTagsAndBody_WhenEnabled()
     {
@@ -66,7 +83,7 @@ public class WireMockActivitySourceTests
 
         // Assert
         activity.GetTagItem(WireMockSemanticConventions.HttpStatusCode).Should().Be(200);
-        activity.GetTagItem("otel.status_code").Should().Be("OK");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("OK");
         activity.GetTagItem(WireMockSemanticConventions.ResponseBody).Should().Be("ok");
     }
 
@@ -85,7 +102,7 @@ public class WireMockActivitySourceTests
 
         // Assert
         activity.GetTagItem(WireMockSemanticConventions.HttpStatusCode).Should().Be(500);
-        activity.GetTagItem("otel.status_code").Should().Be("ERROR");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("ERROR");
     }
 
     [Fact]
@@ -179,17 +196,264 @@ public class WireMockActivitySourceTests
     {
         // Arrange
         using var activity = new Activity("test").Start();
-        var exception = new InvalidOperationException("boom");
+        var exception = new InvalidOperationException("Yes, Rico; Kaboom.");
 
         // Act
         WireMockActivitySource.RecordException(activity, exception);
 
         // Assert
-        activity.GetTagItem("otel.status_code").Should().Be("ERROR");
-        activity.GetTagItem("otel.status_description").Should().Be("boom");
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("ERROR");
+        activity.GetTagItem("otel.status_description").Should().Be("Yes, Rico; Kaboom.");
         activity.GetTagItem("exception.type").Should().Be(typeof(InvalidOperationException).FullName);
-        activity.GetTagItem("exception.message").Should().Be("boom");
+        activity.GetTagItem("exception.message").Should().Be("Yes, Rico; Kaboom.");
         activity.GetTagItem("exception.stacktrace").Should().NotBeNull();
     }
+
+    [Fact]
+    public void StartRequestActivity_ShouldCreateActivity_WithCorrectDisplayName()
+    {
+        // Arrange
+        var requestMethod = "POST";
+        var requestPath = "/api/users";
+
+        // Act
+        using var activity = WireMockActivitySource.StartRequestActivity(requestMethod, requestPath);
+
+        // Assert
+        activity.Should().NotBeNull();
+        activity.DisplayName.Should().Be("WireMock POST /api/users");
+        activity.Kind.Should().Be(ActivityKind.Server);
+    }
+
+    [Fact]
+    public void StartWebSocketMessageActivity_ShouldCreateActivity_WithCorrectName()
+    {
+        // Arrange
+        var mappingGuid = Guid.NewGuid();
+        var direction = WebSocketMessageDirection.Receive;
+
+        // Act
+        using var activity = WireMockActivitySource.StartWebSocketMessageActivity(direction, mappingGuid);
+
+        // Assert
+        activity.Should().NotBeNull();
+        activity.DisplayName.Should().Be("WireMock WebSocket receive");
+        activity.Kind.Should().Be(ActivityKind.Server);
+    }
+
+    [Fact]
+    public void StartWebSocketMessageActivity_ShouldSetMappingGuidTag()
+    {
+        // Arrange
+        var mappingGuid = Guid.NewGuid();
+        var direction = WebSocketMessageDirection.Send;
+
+        // Act
+        using var activity = WireMockActivitySource.StartWebSocketMessageActivity(direction, mappingGuid);
+
+        // Assert
+        activity.Should().NotBeNull();
+        activity.GetTagItem(WireMockSemanticConventions.MappingGuid).Should().Be(mappingGuid.ToString());
+    }
+
+    [Fact]
+    public void StartWebSocketMessageActivity_ShouldCreateActivityForSendDirection()
+    {
+        // Arrange
+        var mappingGuid = Guid.NewGuid();
+        var direction = WebSocketMessageDirection.Send;
+
+        // Act
+        using var activity = WireMockActivitySource.StartWebSocketMessageActivity(direction, mappingGuid);
+
+        // Assert
+        activity.Should().NotBeNull();
+        activity.DisplayName.Should().Be("WireMock WebSocket send");
+    }
+
+    [Fact]
+    public void StartWebSocketMessageActivity_ShouldCreateActivityWithListenerConfigured()
+    {
+        // Arrange
+        var mappingGuid = Guid.NewGuid();
+        var direction = WebSocketMessageDirection.Receive;
+
+        // Act - ActivityListener is configured in test constructor
+        using var activity = WireMockActivitySource.StartWebSocketMessageActivity(direction, mappingGuid);
+
+        // Assert - activity should be created since listener is active
+        activity.Should().NotBeNull();
+        activity.DisplayName.Should().Be("WireMock WebSocket receive");
+        activity.GetTagItem(WireMockSemanticConventions.MappingGuid).Should().Be(mappingGuid.ToString());
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldSetMessageTypeTag()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+        var messageType = WebSocketMessageType.Text;
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            messageType,
+            messageSize: 100,
+            endOfMessage: true
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageType).Should().Be("Text");
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldSetMessageSizeTag()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Binary,
+            messageSize: 256,
+            endOfMessage: true
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageSize).Should().Be(256);
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldSetEndOfMessageTag()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Text,
+            messageSize: 50,
+            endOfMessage: false
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketEndOfMessage).Should().Be(false);
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldSetOkStatus()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Text,
+            messageSize: 100,
+            endOfMessage: true
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.OtelStatusCode).Should().Be("OK");
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldRecordTextContent_WhenEnabled()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+        var options = new ActivityTracingOptions { RecordRequestBody = true };
+        var textContent = "Hello WebSocket";
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Text,
+            messageSize: textContent.Length,
+            endOfMessage: true,
+            textContent: textContent,
+            options: options
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageContent).Should().Be(textContent);
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldNotRecordTextContent_WhenDisabled()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+        var options = new ActivityTracingOptions { RecordRequestBody = false };
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Text,
+            messageSize: 100,
+            endOfMessage: true,
+            textContent: "Hello WebSocket",
+            options: options
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageContent).Should().BeNull();
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldNotRecordBinaryContent()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+        var options = new ActivityTracingOptions { RecordRequestBody = true };
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Binary,
+            messageSize: 100,
+            endOfMessage: true,
+            textContent: "should not record",
+            options: options
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageContent).Should().BeNull();
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldHandleNullActivity()
+    {
+        // Arrange & Act - should not throw
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            null,
+            WebSocketMessageType.Text,
+            messageSize: 100,
+            endOfMessage: true
+        );
+
+        // Assert - no exception thrown
+    }
+
+    [Fact]
+    public void EnrichWithWebSocketMessage_ShouldHandleClosedMessageType()
+    {
+        // Arrange
+        using var activity = new Activity("test").Start();
+
+        // Act
+        WireMockActivitySource.EnrichWithWebSocketMessage(
+            activity,
+            WebSocketMessageType.Close,
+            messageSize: 0,
+            endOfMessage: true
+        );
+
+        // Assert
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageType).Should().Be("Close");
+        activity.GetTagItem(WireMockSemanticConventions.WebSocketMessageSize).Should().Be(0);
+    }
 }
-#endif

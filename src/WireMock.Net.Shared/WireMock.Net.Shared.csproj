@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Description>Shared interfaces, models, enumerations and types.</Description>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net451;net452;net46;net461;netstandard1.3;netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>tdd;mock;http;wiremock;test;server;shared</PackageTags>
         <RootNamespace>WireMock</RootNamespace>
@@ -16,10 +16,6 @@
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     </PropertyGroup>
 
-    <!-- https://github.com/aspnet/RoslynCodeDomProvider/issues/51 -->
-    <!-- This is needed else we cannot build net452 in Azure DevOps Pipeline -->
-    <!--<Target Name="CheckIfShouldKillVBCSCompiler" />-->
-
     <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">
         <CodeAnalysisRuleSet>../WireMock.Net/WireMock.Net.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
@@ -29,28 +25,11 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' or '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'">
-        <DefineConstants>$(DefineConstants);NETSTANDARD;USE_ASPNETCORE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' or '$(TargetFramework)' == 'netcoreapp2.2' or '$(TargetFramework)' == 'netcoreapp3.1' or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0' or '$(TargetFramework)' == 'net7.0' or '$(TargetFramework)' == 'net8.0'">
-        <DefineConstants>$(DefineConstants);USE_ASPNETCORE</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-        <DefineConstants>$(DefineConstants);USE_ASPNETCORE;NET46</DefineConstants>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="PolySharp" Version="1.15.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Stef.Validation" Version="0.1.1" />
-        <PackageReference Include="AnyOf" Version="0.4.0" />
-        <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />-->
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.0" />
-        <!--<PackageReference Include="JsonConverter.Abstractions" Version="0.8.0" />-->
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.9" />
+        <PackageReference Include="Stef.Validation" Version="0.2.0" />
+        <PackageReference Include="AnyOf" Version="0.5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
         <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
     </ItemGroup>
 
@@ -62,13 +41,25 @@
         <PackageReference Include="Handlebars.Net.Helpers.Random" Version="2.5.2" />
         <PackageReference Include="Handlebars.Net.Helpers.Xeger" Version="2.5.2" />
         <PackageReference Include="Handlebars.Net.Helpers.XPath" Version="2.5.2" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+        <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.5.2" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' ">
+        <PackageReference Include="Required" Version="1.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="IsExternalInit" Version="1.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Nullable" Version="1.3.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>

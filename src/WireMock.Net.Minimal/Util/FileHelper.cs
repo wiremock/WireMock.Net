@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Stef.Validation;
 using WireMock.Handlers;
 

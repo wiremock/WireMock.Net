@@ -1,14 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-#if NET452
-using Microsoft.Owin;
-#else
 using Microsoft.AspNetCore.Http;
-#endif
-using NFluent;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 
@@ -24,8 +17,8 @@ public class UrlUtilsTests
         var result = UrlUtils.Parse(uri, new PathString("/a"));
 
         // Assert
-        Check.That(result.Url.ToString()).Equals("https://localhost:1234/b?x=0");
-        Check.That(result.AbsoluteUrl.ToString()).Equals("https://localhost:1234/a/b?x=0");
+        result.Url.ToString().Should().Be("https://localhost:1234/b?x=0");
+        result.AbsoluteUrl.ToString().Should().Be("https://localhost:1234/a/b?x=0");
     }
 
     [Fact]
@@ -38,8 +31,8 @@ public class UrlUtilsTests
         var result = UrlUtils.Parse(uri, new PathString());
 
         // Assert
-        Check.That(result.Url.ToString()).Equals("https://localhost:1234/a/b?x=0");
-        Check.That(result.AbsoluteUrl.ToString()).Equals("https://localhost:1234/a/b?x=0");
+        result.Url.ToString().Should().Be("https://localhost:1234/a/b?x=0");
+        result.AbsoluteUrl.ToString().Should().Be("https://localhost:1234/a/b?x=0");
     }
 
     [Fact]
@@ -52,7 +45,7 @@ public class UrlUtilsTests
         var result = UrlUtils.Parse(uri, new PathString("/test"));
 
         // Assert
-        Check.That(result.Url.ToString()).Equals("https://localhost:1234/a/b?x=0");
-        Check.That(result.AbsoluteUrl.ToString()).Equals("https://localhost:1234/a/b?x=0");
+        result.Url.ToString().Should().Be("https://localhost:1234/a/b?x=0");
+        result.AbsoluteUrl.ToString().Should().Be("https://localhost:1234/a/b?x=0");
     }
 }

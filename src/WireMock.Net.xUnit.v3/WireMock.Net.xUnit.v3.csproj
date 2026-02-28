@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Some extensions for xUnit (ITestOutputHelper)</Description>
         <AssemblyTitle>WireMock.Net.xUnit.v3</AssemblyTitle>
@@ -24,14 +24,10 @@
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Stef.Validation" Version="0.2.0" />
-        <PackageReference Include="xunit.v3.extensibility.core" Version="3.2.0" />
+        <PackageReference Include="xunit.v3.extensibility.core" Version="3.2.2" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Abstractions\WireMock.Net.Abstractions.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="JetBrains.Annotations" Version="2025.2.2" />
     </ItemGroup>
 </Project>

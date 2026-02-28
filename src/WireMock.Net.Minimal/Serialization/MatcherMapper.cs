@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using AnyOfTypes;
 using SimMetrics.Net;
@@ -218,7 +216,6 @@ internal class MatcherMapper
                 model.ContentTypeMatcher = Map(mimePartMatcher.ContentTypeMatcher);
                 break;
 
-#if PROTOBUF
             case IProtoBufMatcher protoBufMatcher:
                 protoBufMatcher.ProtoDefinition().Value(id => model.Pattern = id, texts =>
                 {
@@ -235,7 +232,6 @@ internal class MatcherMapper
                 model.ProtoBufMessageType = protoBufMatcher.MessageType;
                 model.ContentMatcher = Map(protoBufMatcher.Matcher);
                 break;
-#endif
         }
 
         afterMap?.Invoke(model);

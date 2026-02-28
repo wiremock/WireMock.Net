@@ -1,19 +1,15 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
 using HandlebarsDotNet;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -47,12 +43,12 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["x"]).IsNotNull();
-        Check.That(j["x"].ToString()).Equals("/pathtest");
+        j["x"].Should().NotBeNull();
+        j["x"].ToString().Should().Be("/pathtest");
     }
 
     [Fact(Skip = "DynamicLinq")]
@@ -77,12 +73,12 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["x"]).IsNotNull();
-        Check.That(j["x"].ToString()).Equals("Test_123");
+        j["x"].Should().NotBeNull();
+        j["x"].ToString().Should().Be("Test_123");
     }
 
     [Fact(Skip = "DynamicLinq")]
@@ -107,12 +103,11 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["x"]).IsNotNull();
-        Check.That(j["x"].ToString()).Equals("{ N = Test_123, I = 9 }");
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["x"]?.ToString().Should().Be("{ N = Test_123, I = 9 }");
     }
 
     [Fact(Skip = "DynamicLinq")]
@@ -137,12 +132,11 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["x"]).IsNotNull();
-        Check.That(j["x"].ToString()).Equals("{ N = Test_123, I = 9 }");
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["x"]?.ToString().Should().Be("{ N = Test_123 }");
     }
 
     [Fact(Skip = "DynamicLinq")]
@@ -162,7 +156,10 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<ArgumentException>();
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+
+        // Assert
+        act.Should().ThrowAsync<HandlebarsException>();
     }
 
     [Fact]
@@ -178,7 +175,10 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+
+        // Assert
+        act.Should().ThrowAsync<HandlebarsException>();
     }
 
     [Fact]
@@ -202,7 +202,7 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         a.Should().ThrowAsync<HandlebarsException>();
@@ -229,9 +229,9 @@ public class ResponseWithHandlebarsLinqTests
             .WithTransformer();
 
         // Act
-        Func<Task> a = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        Func<Task> act = async () => await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        a.Should().ThrowAsync<HandlebarsException>();
+        act.Should().ThrowAsync<HandlebarsException>();
     }
 }

@@ -1,20 +1,15 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using AnyOfTypes;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using AwesomeAssertions.Execution;
 using Moq;
 using Newtonsoft.Json;
-using NFluent;
 using WireMock.Admin.Mappings;
 using WireMock.Handlers;
 using WireMock.Matchers;
 using WireMock.Models;
 using WireMock.Serialization;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
@@ -56,13 +51,12 @@ public class MatcherMapperTests
         var matcherMock2 = new Mock<IStringMatcher>();
 
         // Act
-        var models = _sut.Map(new[] { matcherMock1.Object, matcherMock2.Object });
+        var models = _sut.Map([matcherMock1.Object, matcherMock2.Object]);
 
         // Assert
         models.Should().HaveCount(2);
     }
 
-#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_Matcher_MimePartMatcher()
     {
@@ -94,7 +88,6 @@ public class MatcherMapperTests
         model.ContentMatcher!.Name.Should().Be(nameof(ExactObjectMatcher));
         model.ContentMatcher.Pattern.Should().Be(bytes);
     }
-#endif
 
     [Fact]
     public void MatcherMapper_Map_Matcher_IStringMatcher()
@@ -124,7 +117,7 @@ public class MatcherMapperTests
 
         var matcherMock = new Mock<IStringMatcher>();
         matcherMock.Setup(m => m.Name).Returns("test");
-        matcherMock.Setup(m => m.GetPatterns()).Returns(new AnyOf<string, StringPattern>[] { pattern });
+        matcherMock.Setup(m => m.GetPatterns()).Returns([pattern]);
 
         // Act
         var model = _sut.Map(matcherMock.Object)!;
@@ -171,7 +164,6 @@ public class MatcherMapperTests
         model.XmlNamespaceMap.Should().BeEquivalentTo(xmlNamespaceMap);
     }
 
-#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_Matcher_GraphQLMatcher()
     {
@@ -199,9 +191,7 @@ public class MatcherMapperTests
         model.Pattern.Should().Be(testSchema);
         model.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-#endif
 
-#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_Matcher_ProtoBufMatcher()
     {
@@ -280,7 +270,6 @@ message HelloReply {
         model.ContentMatcher?.Name.Should().Be("JsonMatcher");
         model.ContentMatcher?.Pattern.Should().Be(jsonPattern);
     }
-#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_Null()
@@ -298,8 +287,11 @@ message HelloReply {
         // Assign
         var model = new MatcherModel { Name = "test" };
 
-        // Act and Assert
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        // Act
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     //[Fact]
@@ -598,7 +590,6 @@ message HelloReply {
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
     }
 
-#if MIMEKIT
     [Fact]
     public void MatcherMapper_Map_MatcherModel_MimePartMatcher()
     {
@@ -638,7 +629,6 @@ message HelloReply {
         matcher.ContentTransferEncodingMatcher.Should().BeAssignableTo<RegexMatcher>().Which.GetPatterns().Should().ContainSingle("z");
         matcher.ContentTypeMatcher.Should().BeAssignableTo<ContentTypeMatcher>().Which.GetPatterns().Should().ContainSingle("text/json");
     }
-#endif
 
     [Fact]
     public void MatcherMapper_Map_MatcherModel_XPathMatcher_WithXmlNamespaces_As_String()
@@ -649,10 +639,10 @@ message HelloReply {
         {
             Name = "XPathMatcher",
             Pattern = pattern,
-            XmlNamespaceMap = new[]
-            {
+            XmlNamespaceMap =
+            [
                 new XmlNamespace { Prefix = "s", Uri = "http://schemas.xmlsoap.org/soap/envelope/" }
-            }
+            ]
         };
 
         // Act
@@ -758,7 +748,7 @@ message HelloReply {
         var matcher = (ExactMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
     }
 
     [Fact]
@@ -812,14 +802,14 @@ message HelloReply {
         var model = new MatcherModel
         {
             Name = "ExactObjectMatcher",
-            Patterns = new object[] { "c3RlZg==" }
+            Patterns = ["c3RlZg=="]
         };
 
         // Act
         var matcher = (ExactObjectMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That((byte[])matcher.Value).ContainsExactly(115, 116, 101, 102);
+        ((byte[])matcher.Value).Should().BeEquivalentTo(new byte[] { 115, 116, 101, 102 });
     }
 
     [Fact]
@@ -829,11 +819,14 @@ message HelloReply {
         var model = new MatcherModel
         {
             Name = "ExactObjectMatcher",
-            Patterns = new object[] { "_" }
+            Patterns = ["_"]
         };
 
-        // Act & Assert
-        Check.ThatCode(() => _sut.Map(model)).Throws<ArgumentException>();
+        // Act
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<ArgumentException>();
     }
 
     [Theory]
@@ -855,7 +848,7 @@ message HelloReply {
         var matcher = (RegexMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
 
         var result = matcher.IsMatch("X");
         result.Score.Should().Be(expected);
@@ -880,7 +873,7 @@ message HelloReply {
         var matcher = (WildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x", "y");
+        matcher.GetPatterns().Should().ContainInOrder("x", "y");
 
         var result = matcher.IsMatch("X");
         result.Score.Should().Be(expected);
@@ -936,7 +929,7 @@ message HelloReply {
         var matcher = (SimMetricsMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x");
+        matcher.GetPatterns().Should().ContainSingle("x");
     }
 
     [Fact]
@@ -953,7 +946,7 @@ message HelloReply {
         var matcher = (SimMetricsMatcher)_sut.Map(model)!;
 
         // Assert
-        Check.That(matcher.GetPatterns()).ContainsExactly("x");
+        matcher.GetPatterns().Should().ContainSingle("x");
     }
 
     [Fact]
@@ -967,7 +960,10 @@ message HelloReply {
         };
 
         // Act
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     [Fact]
@@ -981,7 +977,10 @@ message HelloReply {
         };
 
         // Act
-        Check.ThatCode(() => _sut.Map(model)).Throws<NotSupportedException>();
+        Action act = () => _sut.Map(model);
+
+        // Assert
+        act.Should().Throw<NotSupportedException>();
     }
 
     [Fact]
@@ -1050,7 +1049,6 @@ message HelloReply {
         }
     }
 
-#if GRAPHQL
     [Fact]
     public void MatcherMapper_Map_MatcherModel_GraphQLMatcher()
     {
@@ -1083,9 +1081,7 @@ message HelloReply {
         matcher.Name.Should().Be(nameof(GraphQLMatcher));
         matcher.CustomScalars.Should().BeEquivalentTo(customScalars);
     }
-#endif
 
-#if PROTOBUF
     [Fact]
     public void MatcherMapper_Map_MatcherModel_ProtoBufMatcher()
     {
@@ -1132,5 +1128,4 @@ message HelloReply {
         matcher.MessageType.Should().Be(messageType);
         matcher.Matcher?.Value.Should().Be(jsonMatcherPattern);
     }
-#endif
 }

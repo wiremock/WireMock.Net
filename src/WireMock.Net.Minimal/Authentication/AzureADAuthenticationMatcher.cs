@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !NETSTANDARD1_3
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.RegularExpressions;
@@ -112,4 +110,3 @@ internal class AzureADAuthenticationMatcher : IStringMatcher
         return false;
     }
 }
-#endif

@@ -1,29 +1,24 @@
 // Copyright © WireMock.Net
 
 #if NET6_0_OR_GREATER
-using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using FluentAssertions.Execution;
+using AwesomeAssertions;
+using AwesomeAssertions.Execution;
 using Greet;
 using Grpc.Net.Client;
-using Meziantou.Extensions.Logging.Xunit;
+using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.Logging;
 using WireMock.Constants;
 using WireMock.Net.Testcontainers;
 using WireMock.Util;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.Testcontainers;
 
 [Collection("Grpc")]
 public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     private readonly ILogger _logger = new XUnitLogger(testOutputHelper, new LoggerExternalScopeProvider(), nameof(TestcontainersTestsGrpc), new XUnitLoggerOptions
     {
         IncludeCategory = true,
@@ -49,12 +44,12 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         try
         {
-            await wireMockContainer.StartAsync();
+            await wireMockContainer.StartAsync(_ct);
 
             // Assert
             using (new AssertionScope())
             {
-                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue, ct: _ct);
                 logs.Should().NotBeNull();
 
                 var url = wireMockContainer.GetPublicUrl();
@@ -77,7 +72,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();
 
-                var settings = await adminClient.GetSettingsAsync();
+                var settings = await adminClient.GetSettingsAsync(_ct);
                 settings.Should().NotBeNull();
             }
         }
@@ -106,12 +101,12 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
         try
         {
-            await wireMockContainer.StartAsync();
+            await wireMockContainer.StartAsync(_ct);
 
             // Assert
             using (new AssertionScope())
             {
-                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue);
+                var logs = await wireMockContainer.GetLogsAsync(DateTime.MinValue, ct: _ct);
                 logs.Should().NotBeNull();
 
                 var url = wireMockContainer.GetPublicUrl();
@@ -131,7 +126,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
 
                 var adminClient = wireMockContainer.CreateWireMockAdminClient();
 
-                var settings = await adminClient.GetSettingsAsync();
+                var settings = await adminClient.GetSettingsAsync(_ct);
                 settings.Should().NotBeNull();
             }
         }

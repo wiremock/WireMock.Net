@@ -1,21 +1,14 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Admin.Mappings;
 using WireMock.Models;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.Serialization;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
-[UsesVerify]
 public class WebhookMapperTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -46,7 +39,7 @@ public class WebhookMapperTests
         var result = WebhookMapper.Map(model);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -71,7 +64,7 @@ public class WebhookMapperTests
         var result = WebhookMapper.Map(model);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -98,7 +91,7 @@ public class WebhookMapperTests
         var result = WebhookMapper.Map(model);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -130,7 +123,6 @@ public class WebhookMapperTests
         var result = WebhookMapper.Map(webhook);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 }
-#endif

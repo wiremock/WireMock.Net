@@ -59,7 +59,7 @@ server
     )
     .WithGuid("c9929240-7ae8-4a5d-8ed8-0913479f6eeb")
     .RespondWith(Response.Create()
-        .WithStatusCode(208)
+        .WithStatusCode(306)
         .WithBodyAsJson(new
         {
             @as = 1,

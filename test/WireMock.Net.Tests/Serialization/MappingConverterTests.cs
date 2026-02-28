@@ -1,12 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
-using VerifyXunit;
 using WireMock.Matchers;
 using WireMock.Models;
 using WireMock.RequestBuilders;
@@ -15,7 +8,6 @@ using WireMock.Serialization;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
@@ -100,7 +92,7 @@ message HelloReply {
         model.Webhook.Request.BodyAsJson.Should().BeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -177,7 +169,7 @@ message HelloReply {
         model.Webhooks[1].Request.Body.Should().Be("2");
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -199,7 +191,7 @@ message HelloReply {
         model.Description.Should().Be(description);
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -219,7 +211,7 @@ message HelloReply {
         model.Response.UseTransformer.Should().BeTrue();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -250,7 +242,7 @@ message HelloReply {
         model.TimeSettings.TTL.Should().Be(ttl);
 
         // Verify
-        return Verifier.Verify(model, VerifySettings);
+        return Verify(model, VerifySettings);
     }
 
     [Fact]
@@ -296,7 +288,7 @@ message HelloReply {
         model.Response.Delay.Should().Be(delay);
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -318,7 +310,7 @@ message HelloReply {
         model.Response.MaximumRandomDelay.Should().Be(60_000);
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -341,7 +333,7 @@ message HelloReply {
         model.Response.MaximumRandomDelay.Should().Be(maximumDelay);
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -362,7 +354,7 @@ message HelloReply {
         model.Probability.Should().Be(0.4);
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -380,7 +372,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -412,7 +404,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -438,7 +430,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -459,7 +451,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
 #if TRAILINGHEADERS
@@ -482,7 +474,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -503,7 +495,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 #endif
 
@@ -528,10 +520,9 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
-#if GRAPHQL
     [Fact]
     public Task ToMappingModel_Request_WithBodyAsGraphQLSchema_ReturnsCorrectModel()
     {
@@ -560,11 +551,9 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
-#endif
 
-#if PROTOBUF
     [Fact]
     public Task ToMappingModel_Request_WithBodyAsProtoBuf_ReturnsCorrectModel()
     {
@@ -587,7 +576,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -614,7 +603,7 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
 
     [Fact]
@@ -649,8 +638,6 @@ message HelloReply {
         model.Should().NotBeNull();
 
         // Verify
-        return Verifier.Verify(model);
+        return Verify(model);
     }
-#endif
 }
-#endif

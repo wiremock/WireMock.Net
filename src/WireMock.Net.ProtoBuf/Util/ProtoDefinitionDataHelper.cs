@@ -1,9 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using ProtoBufJsonConverter;
 using ProtoBufJsonConverter.Models;
 using Stef.Validation;
@@ -40,7 +36,7 @@ internal static class ProtoDefinitionDataHelper
 
             // Build comment and get content from file.
             var comment = $"// {protoRelativePath}";
-#if NETSTANDARD2_0 || NET462
+#if NET462
             var content = File.ReadAllText(filePath);
 #else
             var content = await File.ReadAllTextAsync(filePath, cancellationToken);

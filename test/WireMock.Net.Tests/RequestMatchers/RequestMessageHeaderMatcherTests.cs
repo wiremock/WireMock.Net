@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -23,7 +20,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
 
     [Fact]
@@ -38,7 +35,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -54,7 +51,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
     [Fact]
     public void RequestMessageHeaderMatcher_GetMatchingScore_RejectOnMatch_HeaderDoesNotMatchPattern()
@@ -69,7 +66,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -85,7 +82,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -101,7 +98,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
 
     [Fact]
@@ -117,7 +114,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
 
     [Fact]
@@ -133,7 +130,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -149,7 +146,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -165,7 +162,7 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -181,6 +178,6 @@ public class RequestMessageHeaderMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 }

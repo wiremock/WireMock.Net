@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-
 namespace WireMock.Net.Tests.Serialization
 {
     public class CustomPathParamMatcherModel

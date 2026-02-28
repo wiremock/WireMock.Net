@@ -4,7 +4,6 @@ using WireMock.Handlers;
 using WireMock.Proxy;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Proxy;
 

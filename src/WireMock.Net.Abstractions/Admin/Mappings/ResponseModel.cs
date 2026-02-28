@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using WireMock.Admin.Settings;
 
 namespace WireMock.Admin.Mappings;

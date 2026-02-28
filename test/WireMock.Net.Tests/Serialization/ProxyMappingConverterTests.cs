@@ -1,23 +1,15 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Matchers;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
 using WireMock.Serialization;
 using WireMock.Settings;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
-[UsesVerify]
 public class ProxyMappingConverterTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -79,7 +71,6 @@ public class ProxyMappingConverterTests
         var model = _mappingConverter.ToMappingModel(proxyMapping);
 
         // Verify
-        return Verifier.Verify(model, VerifySettings);
+        return Verify(model, VerifySettings);
     }
 }
-#endif

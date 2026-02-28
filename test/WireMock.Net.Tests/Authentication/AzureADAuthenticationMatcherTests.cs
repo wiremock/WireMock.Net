@@ -1,17 +1,13 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using WireMock.Authentication;
-using Xunit;
 
 namespace WireMock.Net.Tests.Authentication;
 

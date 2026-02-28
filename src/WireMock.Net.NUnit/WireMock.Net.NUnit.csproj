@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Some extensions for NUnit</Description>
         <AssemblyTitle>WireMock.Net.NUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>net462;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net462;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.NUnit</AssemblyName>
         <RootNamespace>WireMock.Net.NUnit</RootNamespace>
@@ -27,7 +27,7 @@
     <ItemGroup>
         <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.8.0" />
         <PackageReference Include="NUnit" Version="4.4.0" />
-        <PackageReference Include="Stef.Validation" Version="0.1.1" />
+        <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>
 
     <ItemGroup>

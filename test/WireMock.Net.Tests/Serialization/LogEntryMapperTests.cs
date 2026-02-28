@@ -1,9 +1,5 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461)
-using System.Threading.Tasks;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Logging;
 using WireMock.Models;
 using WireMock.Net.Tests.VerifyExtensions;
@@ -12,11 +8,9 @@ using WireMock.ResponseBuilders;
 using WireMock.Serialization;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
-[UsesVerify]
 public class LogEntryMapperTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -64,7 +58,7 @@ public class LogEntryMapperTests
         var result = _sut.Map(logEntry);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -88,7 +82,7 @@ public class LogEntryMapperTests
         var result = _sut.Map(logEntry);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -114,7 +108,7 @@ public class LogEntryMapperTests
         var result = _sut.Map(logEntry);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 
     [Fact]
@@ -153,7 +147,6 @@ public class LogEntryMapperTests
         var result = new LogEntryMapper(options).Map(logEntry);
 
         // Verify
-        return Verifier.Verify(result, VerifySettings);
+        return Verify(result, VerifySettings);
     }
 }
-#endif

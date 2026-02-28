@@ -1,13 +1,10 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.Owin;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -25,7 +22,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -40,7 +37,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.5d);
+        score.Should().Be(0.5d);
     }
 
     [Fact]
@@ -55,7 +52,7 @@ public class RequestMessageParamMatcherTests
         var score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -70,7 +67,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsCloseTo(0.66d, 0.1d);
+        score.Should().BeApproximately(0.66d, 0.1d);
     }
 
     [Fact]
@@ -85,7 +82,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsCloseTo(0.66d, 0.1d);
+        score.Should().BeApproximately(0.66d, 0.1d);
     }
 
     [Fact]
@@ -100,7 +97,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -115,7 +112,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -130,7 +127,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.5d);
+        score.Should().Be(0.5d);
     }
 
     [Fact]
@@ -145,7 +142,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
 
     [Fact]
@@ -160,7 +157,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -175,7 +172,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     [Fact]
@@ -190,7 +187,7 @@ public class RequestMessageParamMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
     }
 
     // Issue #849
@@ -213,3 +210,4 @@ public class RequestMessageParamMatcherTests
         score.Should().Be(1.0);
     }
 }
+

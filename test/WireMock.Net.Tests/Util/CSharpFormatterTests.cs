@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 

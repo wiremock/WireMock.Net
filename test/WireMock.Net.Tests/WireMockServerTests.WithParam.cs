@@ -1,16 +1,11 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Net;
-using System.Threading.Tasks;
-using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
-using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
@@ -23,6 +18,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithParam_QueryParameterMultipleValueSupport_NoComma_Should_Ignore_Comma(string queryValue)
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var settings = new WireMockServerSettings
         {
             QueryParameterMultipleValueSupport = QueryParameterMultipleValueSupport.NoComma
@@ -40,7 +36,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo?query={queryValue}");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Accepted);
@@ -52,6 +48,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithParam_MultiValueComma()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var queryValue = "1,2,3";
         var server = WireMockServer.Start();
         server
@@ -64,7 +61,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/foo?query={queryValue}");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -76,6 +73,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithParam_RejectOnMatch_OnNonMatchingParam_ShouldReturnMappingOk()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         server.Given(
             Request.Create()
@@ -87,7 +85,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/v1/person/workers?showsourcesystem=true&count=700&page=1&sections=personal%2Corganizations%2Cemployment");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -99,6 +97,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithParam_AcceptOnMatch_OnNonMatchingParam_ShouldReturnMappingOk()
     {
         // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start();
         server.Given(
             Request.Create()
@@ -110,7 +109,7 @@ public partial class WireMockServerTests
 
         // Act
         var requestUri = new Uri($"http://localhost:{server.Port}/v1/person/workers?showsourcesystem=true&count=700&page=1&sections=personal%2Corganizations%2Cemployment");
-        var response = await server.CreateClient().GetAsync(requestUri).ConfigureAwait(false);
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);

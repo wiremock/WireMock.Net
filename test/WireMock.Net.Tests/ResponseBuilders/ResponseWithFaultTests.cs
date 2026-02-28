@@ -1,12 +1,10 @@
 // Copyright © WireMock.Net
 
-using System.Threading.Tasks;
-using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -32,7 +30,7 @@ public class ResponseWithFaultTests
 
         // Act
         var responseBuilder = Response.Create().WithFault(faultType);
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.FaultType.Should().Be(faultType);
@@ -48,7 +46,7 @@ public class ResponseWithFaultTests
 
         // Act
         var responseBuilder = Response.Create().WithFault(faultType, percentage);
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         response.Message.FaultType.Should().Be(faultType);

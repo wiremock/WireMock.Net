@@ -1,18 +1,14 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
 using HandlebarsDotNet;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -55,11 +51,11 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Data"].Value<string>()).Equals("abc");
+        j["Data"].Value<string>().Should().Be("abc");
 
         // Verify
         _filesystemHandlerMock.Verify(fs => fs.ReadResponseBodyAsString("x.json"), Times.Once);
@@ -80,11 +76,11 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         var j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Data"].Value<string>()).Equals("abc");
+        j["Data"].Value<string>().Should().Be("abc");
 
         // Verify
         _filesystemHandlerMock.Verify(fs => fs.ReadResponseBodyAsString("x.json"), Times.Once);
@@ -105,7 +101,8 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        Check.ThatAsyncCode(() => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings)).Throws<HandlebarsException>();
+        Func<Task> act = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+        act.Should().ThrowAsync<HandlebarsException>();
 
         // Verify
         _filesystemHandlerMock.Verify(fs => fs.ReadResponseBodyAsString(It.IsAny<string>()), Times.Never);
@@ -127,7 +124,7 @@ public class ResponseWithHandlebarsFileTests
             .WithTransformer();
 
         // Act
-        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, settings);
+        Func<Task> action = () => responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, settings);
 
         action.Should().ThrowAsync<HandlebarsRuntimeException>();
 

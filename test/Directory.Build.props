@@ -1,7 +1,7 @@
 <Project>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
-    <ItemGroup Condition=" '$(TargetFramework)' != 'net45' and '$(TargetFramework)' != 'net452' and '$(TargetFramework)' != 'net461' ">
+    <ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
         <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
     </ItemGroup>
 

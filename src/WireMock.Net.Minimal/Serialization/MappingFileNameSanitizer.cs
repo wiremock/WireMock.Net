@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Linq;
 using Stef.Validation;
 using WireMock.Settings;
@@ -10,7 +9,7 @@ namespace WireMock.Serialization;
 /// <summary>
 /// Creates sanitized file names for mappings
 /// </summary>
-public class MappingFileNameSanitizer
+internal class MappingFileNameSanitizer
 {
     private const char ReplaceChar = '_';
 
@@ -30,7 +29,7 @@ public class MappingFileNameSanitizer
         if (!string.IsNullOrEmpty(mapping.Title))
         {
             // remove 'Proxy Mapping for ' and an extra space character after the HTTP request method
-            name = mapping.Title.Replace(ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile, "").Replace(' '.ToString(), string.Empty);
+            name = mapping.Title!.Replace(ProxyAndRecordSettings.DefaultPrefixForSavedMappingFile, "").Replace(' '.ToString(), string.Empty);
             if (_settings.ProxyAndRecordSettings?.AppendGuidToSavedMappingFile == true)
             {
                 name += $"{ReplaceChar}{mapping.Guid}";

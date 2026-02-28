@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using HandlebarsDotNet;
 using HandlebarsDotNet.Helpers;
 using HandlebarsDotNet.Helpers.Helpers;
@@ -24,7 +21,6 @@ internal static class WireMockHandlebarsHelpers
                 GetBaseDirectory(),
             };
 
-#if !NETSTANDARD1_3_OR_GREATER
             void Add(string? path, ICollection<string> customHelperPaths)
             {
                 if (!string.IsNullOrEmpty(path))
@@ -36,7 +32,7 @@ internal static class WireMockHandlebarsHelpers
             Add(Path.GetDirectoryName(System.Reflection.Assembly.GetCallingAssembly().Location), paths);
             Add(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), paths);
             Add(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName), paths);
-#endif
+
             o.CustomHelperPaths = paths;
 
             o.Categories = settings.HandlebarsSettings?.AllowedHandlebarsHelpers ?? HandlebarsSettings.DefaultAllowedHandlebarsHelpers;
@@ -51,7 +47,7 @@ internal static class WireMockHandlebarsHelpers
 
     private static string GetBaseDirectory()
     {
-#if NETSTANDARD1_3_OR_GREATER || NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
         return AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
 #else
         return AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);

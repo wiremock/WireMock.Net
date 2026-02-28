@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Linq;
 using JsonConverter.Abstractions;
 using JsonConverter.Newtonsoft.Json;

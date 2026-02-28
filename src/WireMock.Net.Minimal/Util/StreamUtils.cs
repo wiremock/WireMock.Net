@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Text;
 
 namespace WireMock.Util;

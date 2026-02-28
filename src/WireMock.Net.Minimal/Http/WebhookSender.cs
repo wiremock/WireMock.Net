@@ -1,12 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Stef.Validation;
 using WireMock.Models;
 using WireMock.Settings;

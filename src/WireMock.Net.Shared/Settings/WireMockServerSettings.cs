@@ -1,25 +1,20 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
 using JetBrains.Annotations;
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using WireMock.Admin.Mappings;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
+using WireMock.Models;
 using WireMock.RegularExpressions;
 using WireMock.Types;
-using System.Globalization;
-using WireMock.Models;
-using JsonConverter.Abstractions;
-using JsonConverter.Newtonsoft.Json;
-
-#if USE_ASPNETCORE
-using Microsoft.Extensions.DependencyInjection;
-#endif
 
 namespace WireMock.Settings;
 
@@ -153,7 +148,6 @@ public class WireMockServerSettings
     [JsonIgnore]
     public Action<object>? PostWireMockMiddlewareInit { get; set; }
 
-#if USE_ASPNETCORE
     /// <summary>
     /// Action which is called with IServiceCollection when ASP.NET Core DI is being configured. [Optional]
     /// </summary>
@@ -166,7 +160,6 @@ public class WireMockServerSettings
     /// </summary>
     [PublicAPI]
     public CorsPolicyOptions? CorsPolicyOptions { get; set; }
-#endif
 
     /// <summary>
     /// The IWireMockLogger which logs Debug, Info, Warning or Error
@@ -251,7 +244,6 @@ public class WireMockServerSettings
     [PublicAPI]
     public bool CustomCertificateDefined => CertificateSettings?.IsDefined == true;
 
-#if USE_ASPNETCORE
     /// <summary>
     /// Client certificate mode for the server
     /// </summary>
@@ -262,8 +254,7 @@ public class WireMockServerSettings
     /// Whether to accept any client certificate
     /// </summary>
     public bool AcceptAnyClientCertificate { get; set; }
-#endif
-
+    
     /// <summary>
     /// Defines the global IWebhookSettings to use.
     /// </summary>
@@ -361,4 +352,10 @@ public class WireMockServerSettings
     /// </remarks>
     [PublicAPI]
     public IJsonConverter DefaultJsonSerializer { get; set; } = new NewtonsoftJsonConverter();
+
+    /// <summary>
+    /// WebSocket settings.
+    /// </summary>
+    [PublicAPI]
+    public WebSocketSettings? WebSocketSettings { get; set; }
 }

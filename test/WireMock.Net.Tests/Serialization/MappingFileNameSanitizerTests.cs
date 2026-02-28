@@ -1,10 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
 using Moq;
 using WireMock.Serialization;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 

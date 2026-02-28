@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using WireMock.Owin;
 
@@ -43,11 +41,8 @@ internal static class CertificateLoader
             }
             finally
             {
-#if NETSTANDARD || NET46
                 certStore.Dispose();
-#else
                 certStore.Close();
-#endif
             }
         }
 
@@ -56,7 +51,7 @@ internal static class CertificateLoader
             if (options.X509CertificateFilePath.EndsWith(ExtensionPem, StringComparison.OrdinalIgnoreCase))
             {
                 // PEM logic based on: https://www.scottbrady91.com/c-sharp/pem-loading-in-dotnet-core-and-dotnet
-#if NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 if (!string.IsNullOrEmpty(options.X509CertificatePassword))
                 {
                     var certPem = File.ReadAllText(options.X509CertificateFilePath);
@@ -66,18 +61,8 @@ internal static class CertificateLoader
                     return new X509Certificate2(cert.Export(X509ContentType.Pfx, defaultPasswordPem), defaultPasswordPem);
                 }
                 return X509Certificate2.CreateFromPemFile(options.X509CertificateFilePath);
-
-#elif NETCOREAPP3_1
-                var cert = new X509Certificate2(options.X509CertificateFilePath);
-                if (!string.IsNullOrEmpty(options.X509CertificatePassword))
-                {
-                    var key = System.Security.Cryptography.ECDsa.Create()!;
-                    key.ImportECPrivateKey(System.Text.Encoding.UTF8.GetBytes(options.X509CertificatePassword), out _);
-                    return cert.CopyWithPrivateKey(key);
-                }
-                return cert;
 #else                
-                throw new InvalidOperationException("Loading a PEM Certificate is only supported for .NET Core App 3.1, .NET 5.0 and higher.");
+                throw new InvalidOperationException("Loading a PEM Certificate is only supported for .NET 8.0 and higher.");
 #endif
             }
 
@@ -123,11 +108,8 @@ internal static class CertificateLoader
         }
         finally
         {
-#if NETSTANDARD || NET46
             certStore.Dispose();
-#else
             certStore.Close();
-#endif
         }
     }
 }

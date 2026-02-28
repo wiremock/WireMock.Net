@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestBuilders;
 
@@ -19,8 +16,8 @@ public class RequestBuilderWithCookieTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageCookieMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageCookieMatcher>();
     }
 
     [Fact]
@@ -31,8 +28,8 @@ public class RequestBuilderWithCookieTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageCookieMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageCookieMatcher>();
     }
 
     [Fact]
@@ -43,7 +40,7 @@ public class RequestBuilderWithCookieTests
 
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
-        Check.That(matchers.Count).IsEqualTo(1);
-        Check.That(matchers[0]).IsInstanceOfType(typeof(RequestMessageCookieMatcher));
+        matchers.Count.Should().Be(1);
+        matchers[0].Should().BeOfType<RequestMessageCookieMatcher>();
     }
 }

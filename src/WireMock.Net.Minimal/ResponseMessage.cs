@@ -2,12 +2,11 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System.Collections.Generic;
 using System.Linq;
+using Stef.Validation;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
-using Stef.Validation;
 
 namespace WireMock;
 
@@ -39,6 +38,12 @@ public class ResponseMessage : IResponseMessage
 
     /// <inheritdoc cref="IResponseMessage.FaultPercentage" />
     public double? FaultPercentage { get; set; }
+
+    /// <inheritdoc />
+    public DateTime DateTime { get; set; }
+
+    /// <inheritdoc />
+    public string? Method { get; set; }
 
     /// <inheritdoc />
     public void AddHeader(string name, string value)

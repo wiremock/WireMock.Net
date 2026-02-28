@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using CultureAwareTesting.xUnit;
-using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 
@@ -86,7 +82,7 @@ public class StringUtilsTests
         }
     }
 
-    [CulturedTheory("en-US")]
+    [CulturedTheory(["en-US"])]
     [InlineData("123.1", 123.1, true)]
     [InlineData("-456.1", -456.1, true)]
     [InlineData("not a double", 0.0, false)] // Invalid case
@@ -230,7 +226,7 @@ public class StringUtilsTests
     [InlineData("")]
     [InlineData(null)]
     [InlineData("x")]
-    public void StringUtils_TryParseQuotedString_With_InvalidStringLength_Returns_False(string input)
+    public void StringUtils_TryParseQuotedString_With_InvalidStringLength_Returns_False(string? input)
     {
         // Act
         var valid = StringUtils.TryParseQuotedString(input, out _, out _);
@@ -255,7 +251,7 @@ public class StringUtilsTests
     public void StringUtils_TryParseQuotedString_With_UnexpectedUnrecognizedEscapeSequence_Returns_False()
     {
         // Arrange
-        var input = new string(new[] { '"', '\\', 'u', '?', '"' });
+        var input = new string(['"', '\\', 'u', '?', '"']);
 
         // Act
         var valid = StringUtils.TryParseQuotedString(input, out _, out _);

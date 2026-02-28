@@ -2,13 +2,10 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using AnyOfTypes;
 using JetBrains.Annotations;
 using JsonConverter.Newtonsoft.Json;
@@ -40,7 +37,7 @@ public partial class WireMockServer : IWireMockServer
     private const int ServerStartDelayInMs = 100;
 
     private readonly WireMockServerSettings _settings;
-    private readonly IOwinSelfHost? _httpServer;
+    private readonly AspNetCoreSelfHost? _httpServer;
     private readonly IWireMockMiddlewareOptions _options = new WireMockMiddlewareOptions();
     private readonly MappingConverter _mappingConverter;
     private readonly MatcherMapper _matcherMapper;
@@ -64,7 +61,7 @@ public partial class WireMockServer : IWireMockServer
 
     /// <inheritdoc />
     [PublicAPI]
-    public int Port => Ports?.FirstOrDefault() ?? default;
+    public int Port => Ports?.FirstOrDefault() ?? 0;
 
     /// <inheritdoc />
     [PublicAPI]
@@ -415,11 +412,12 @@ public partial class WireMockServer : IWireMockServer
             _dateTimeUtils
         );
 
-#if USE_ASPNETCORE
+        _options.AdditionalServiceRegistration = _settings.AdditionalServiceRegistration;
+        _options.CorsPolicyOptions = _settings.CorsPolicyOptions;
+        _options.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
+        _options.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
+
         _httpServer = new AspNetCoreSelfHost(_options, urlOptions);
-#else
-        _httpServer = new OwinSelfHost(_options, urlOptions);
-#endif
         var startTask = _httpServer.StartAsync();
 
         using (var ctsStartTimeout = new CancellationTokenSource(settings.StartTimeout))
@@ -474,7 +472,7 @@ public partial class WireMockServer : IWireMockServer
         Given(Request.Create().WithPath("/*").UsingAnyMethod())
             .WithGuid(Guid.Parse("90008000-0000-4444-a17e-669cd84f1f05"))
             .AtPriority(1000)
-            .RespondWith(new DynamicResponseProvider(_ => ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound)));
+            .RespondWith(new DynamicResponseProvider((_, _) => ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound)));
     }
 
     /// <inheritdoc cref="IWireMockServer.Reset" />
@@ -540,15 +538,11 @@ public partial class WireMockServer : IWireMockServer
         Guard.NotNull(tenant);
         Guard.NotNull(audience);
 
-#if NETSTANDARD1_3
-        throw new NotSupportedException("AzureADAuthentication is not supported for NETStandard 1.3");
-#else
         _options.AuthenticationMatcher = new AzureADAuthenticationMatcher(
             new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler(),
             new Microsoft.IdentityModel.Protocols.ConfigurationManager<Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfiguration>($"https://login.microsoftonline.com/{tenant}/.well-known/openid-configuration", new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectConfigurationRetriever()),
             tenant,
             audience);
-#endif
     }
 
     /// <inheritdoc cref="IWireMockServer.SetBasicAuthentication(string, string)" />

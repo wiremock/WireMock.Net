@@ -1,21 +1,17 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Collections.Concurrent;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers;
-using WireMock.Owin.ActivityTracing;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using System.Security.Cryptography.X509Certificates;
-
-#if !USE_ASPNETCORE
-using Owin;
-#else
-using IAppBuilder = Microsoft.AspNetCore.Builder.IApplicationBuilder;
-using Microsoft.Extensions.DependencyInjection;
-#endif
+using WireMock.WebSockets;
+using ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode;
 
 namespace WireMock.Owin;
 
@@ -39,11 +35,10 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     public int? MaxRequestLogCount { get; set; }
 
-    public Action<IAppBuilder>? PreWireMockMiddlewareInit { get; set; }
+    public Action<IApplicationBuilder>? PreWireMockMiddlewareInit { get; set; }
 
-    public Action<IAppBuilder>? PostWireMockMiddlewareInit { get; set; }
+    public Action<IApplicationBuilder>? PostWireMockMiddlewareInit { get; set; }
 
-#if USE_ASPNETCORE
     public Action<IServiceCollection>? AdditionalServiceRegistration { get; set; }
 
     public CorsPolicyOptions? CorsPolicyOptions { get; set; }
@@ -52,7 +47,6 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public bool AcceptAnyClientCertificate { get; set; }
-#endif
 
     /// <inheritdoc cref="IWireMockMiddlewareOptions.FileSystemHandler"/>
     public IFileSystemHandler? FileSystemHandler { get; set; }
@@ -108,8 +102,11 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
     /// <inheritdoc />
     public bool ProxyAll { get; set; }
 
-#if ACTIVITY_TRACING_SUPPORTED
     /// <inheritdoc />
     public ActivityTracingOptions? ActivityTracingOptions { get; set; }
-#endif
+
+    /// <inheritdoc />
+    public ConcurrentDictionary<Guid, WebSocketConnectionRegistry> WebSocketRegistries { get; } = new();
+
+    public WebSocketSettings? WebSocketSettings { get; set; }
 }

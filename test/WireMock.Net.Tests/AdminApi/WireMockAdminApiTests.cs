@@ -1,21 +1,11 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
-using NFluent;
 using RestEase;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Admin.Mappings;
 using WireMock.Admin.Scenarios;
 using WireMock.Admin.Settings;
@@ -31,11 +21,9 @@ using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.AdminApi;
 
-[UsesVerify]
 public partial class WireMockAdminApiTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -57,6 +45,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_WaitForHealthAsync_AndCall_GetHealthAsync_OK()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var adminUsername = $"username_{Guid.NewGuid()}";
         var adminPassword = $"password_{Guid.NewGuid()}";
         var server = WireMockServer.Start(w =>
@@ -69,10 +58,10 @@ public partial class WireMockAdminApiTests
             .WithAuthorization(adminUsername, adminPassword);
 
         // Act 1
-        await api.WaitForHealthAsync().ConfigureAwait(false);
+        await api.WaitForHealthAsync(cancellationToken: cancellationToken);
 
         // Act 2
-        var status = await api.GetHealthAsync().ConfigureAwait(false);
+        var status = await api.GetHealthAsync(cancellationToken);
         status.Should().Be("Healthy");
     }
 
@@ -90,7 +79,7 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        Func<Task> act = () => api.WaitForHealthAsync(maxRetries: 3);
+        Func<Task> act = () => api.WaitForHealthAsync(maxRetries: 3, cancellationToken: TestContext.Current.CancellationToken);
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
@@ -102,8 +91,8 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        var settings = await api.GetSettingsAsync().ConfigureAwait(false);
-        Check.That(settings).IsNotNull();
+        var settings = await api.GetSettingsAsync(TestContext.Current.CancellationToken);
+        settings.Should().NotBeNull();
     }
 
     [Fact]
@@ -118,10 +107,10 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0] + "/foo");
 
         // Act
-        var settings = await api.GetSettingsAsync().ConfigureAwait(false);
+        var settings = await api.GetSettingsAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(settings).IsNotNull();
+        settings.Should().NotBeNull();
 
         // Cleanup
         server.Stop();
@@ -137,8 +126,8 @@ public partial class WireMockAdminApiTests
 
         // Act
         var settings = new SettingsModel();
-        var status = await api.PostSettingsAsync(settings).ConfigureAwait(false);
-        Check.That(status.Status).Equals("Settings updated");
+        var status = await api.PostSettingsAsync(settings, TestContext.Current.CancellationToken);
+        status.Status.Should().Be("Settings updated");
     }
 
     [Fact]
@@ -150,8 +139,8 @@ public partial class WireMockAdminApiTests
 
         // Act
         var settings = new SettingsModel();
-        var status = await api.PutSettingsAsync(settings).ConfigureAwait(false);
-        Check.That(status.Status).Equals("Settings updated");
+        var status = await api.PutSettingsAsync(settings, TestContext.Current.CancellationToken);
+        status.Status.Should().Be("Settings updated");
     }
 
     // https://github.com/wiremock/WireMock.Net/issues/325
@@ -170,16 +159,16 @@ public partial class WireMockAdminApiTests
             Priority = 500,
             Title = "test"
         };
-        var result = await api.PutMappingAsync(new Guid("a0000000-0000-0000-0000-000000000000"), model).ConfigureAwait(false);
+        var result = await api.PutMappingAsync(new Guid("a0000000-0000-0000-0000-000000000000"), model, TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(result).IsNotNull();
-        Check.That(result.Status).Equals("Mapping added or updated");
-        Check.That(result.Guid).IsNotNull();
+        result.Should().NotBeNull();
+        result.Status.Should().Be("Mapping added or updated");
+        result.Guid.Should().NotBeNull();
 
         var mapping = server.Mappings.Single(m => m.Priority == 500);
-        Check.That(mapping).IsNotNull();
-        Check.That(mapping.Title).Equals("test");
+        mapping.Should().NotBeNull();
+        mapping.Title.Should().Be("test");
 
         server.Stop();
     }
@@ -190,6 +179,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_FindRequestsAsync()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -200,16 +190,17 @@ public partial class WireMockAdminApiTests
             .RespondWith(Response.Create());
 
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo").ConfigureAwait(false);
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo", cancellationToken);
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var requests = await api.FindRequestsAsync(new RequestModel { Methods = new[] { "GET" } }).ConfigureAwait(false);
+        var requests = await api.FindRequestsAsync(new RequestModel { Methods = new[] { "GET" } }, cancellationToken);
 
         // Assert
         requests.Should().HaveCount(1);
         var requestLogged = requests.First();
-        requestLogged.Request.Method.Should().Be("GET");
+        requestLogged.Request!.Method.Should().Be("GET");
         requestLogged.Request.Body.Should().BeNull();
         requestLogged.Request.Path.Should().Be("/foo");
     }
@@ -218,6 +209,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_FindRequestsByMappingGuidAsync_Found()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var mappingGuid = Guid.NewGuid();
         var server = WireMockServer.Start(new WireMockServerSettings
         {
@@ -231,25 +223,25 @@ public partial class WireMockAdminApiTests
 
         var serverUrl = "http://localhost:" + server.Ports[0];
         using var client = new HttpClient();
-        await client.GetAsync(serverUrl + "/foo").ConfigureAwait(false);
-        await client.GetAsync(serverUrl + "/foo?bar=baz").ConfigureAwait(false);
+        await client.GetAsync(serverUrl + "/foo", cancellationToken);
+        await client.GetAsync(serverUrl + "/foo?bar=baz", cancellationToken);
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var logEntryModels = await api.FindRequestsByMappingGuidAsync(mappingGuid).ConfigureAwait(false);
+        var logEntryModels = await api.FindRequestsByMappingGuidAsync(mappingGuid, cancellationToken);
 
         // Assert
         logEntryModels.Should().HaveCount(2);
         logEntryModels[0].Should().NotBeNull();
-        logEntryModels[0]!.Request.Method.Should().Be("GET");
-        logEntryModels[0]!.Request.Body.Should().BeNull();
-        logEntryModels[0]!.Request.Path.Should().Be("/foo");
-        logEntryModels[0]!.Request.Query.Should().BeNullOrEmpty();
+        logEntryModels[0].Request!.Method.Should().Be("GET");
+        logEntryModels[0].Request!.Body.Should().BeNull();
+        logEntryModels[0].Request!.Path.Should().Be("/foo");
+        logEntryModels[0].Request!.Query.Should().BeNullOrEmpty();
         logEntryModels[1].Should().NotBeNull();
-        logEntryModels[1]!.Request.Method.Should().Be("GET");
-        logEntryModels[1]!.Request.Body.Should().BeNull();
-        logEntryModels[1]!.Request.Path.Should().Be("/foo");
-        logEntryModels[1]!.Request.Query.Should().BeEquivalentTo(new Dictionary<string, WireMockList<string>>
+        logEntryModels[1].Request!.Method.Should().Be("GET");
+        logEntryModels[1].Request!.Body.Should().BeNull();
+        logEntryModels[1].Request!.Path.Should().Be("/foo");
+        logEntryModels[1].Request!.Query.Should().BeEquivalentTo(new Dictionary<string, WireMockList<string>>
         {
             {"bar", new WireMockList<string>("baz")}
         });
@@ -259,6 +251,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_FindRequestsByMappingGuidAsync_NotFound()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -270,11 +263,12 @@ public partial class WireMockAdminApiTests
             .RespondWith(Response.Create());
 
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo").ConfigureAwait(false);
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo", cancellationToken);
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var logEntryModels = await api.FindRequestsByMappingGuidAsync(Guid.NewGuid()).ConfigureAwait(false);
+        var logEntryModels = await api.FindRequestsByMappingGuidAsync(Guid.NewGuid(), cancellationToken);
 
         // Assert
         logEntryModels.Should().BeEmpty();
@@ -291,7 +285,7 @@ public partial class WireMockAdminApiTests
         });
 
         // Act
-        var result = await server.CreateClient().GetAsync("/__admin/requests/find?mappingGuid=x");
+        var result = await server.CreateClient().GetAsync("/__admin/requests/find?mappingGuid=x", TestContext.Current.CancellationToken);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -301,30 +295,33 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetRequestsAsync()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
             Logger = new WireMockNullLogger()
         });
         var serverUrl = "http://localhost:" + server.Ports[0];
-        await new HttpClient().GetAsync(serverUrl + "/foo").ConfigureAwait(false);
+        using var httpClient = new HttpClient();
+        await httpClient.GetAsync(serverUrl + "/foo", cancellationToken);
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var requests = await api.GetRequestsAsync().ConfigureAwait(false);
+        var requests = await api.GetRequestsAsync(cancellationToken);
 
         // Assert
-        Check.That(requests).HasSize(1);
+        requests.Should().HaveCount(1);
         var requestLogged = requests.First();
-        Check.That(requestLogged.Request.Method).IsEqualTo("GET");
-        Check.That(requestLogged.Request.Body).IsNull();
-        Check.That(requestLogged.Request.Path).IsEqualTo("/foo");
+        requestLogged.Request.Method.Should().Be("GET");
+        requestLogged.Request.Body.Should().BeNull();
+        requestLogged.Request.Path.Should().Be("/foo");
     }
 
     [Fact]
     public async Task IWireMockAdminApi_GetRequestsAsync_JsonApi()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -341,26 +338,28 @@ public partial class WireMockAdminApiTests
         request.Content = new StringContent(data);
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(jsonApiContentType);
 
-        var response = await new HttpClient().SendAsync(request);
-        Check.That(response).IsNotNull();
+        using var client = new HttpClient();
+        var response = await client.SendAsync(request, cancellationToken);
+        response.Should().NotBeNull();
 
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var requests = await api.GetRequestsAsync().ConfigureAwait(false);
+        var requests = await api.GetRequestsAsync(cancellationToken);
 
         // Assert
-        Check.That(requests).HasSize(1);
+        requests.Should().HaveCount(1);
         var requestLogged = requests.First();
-        Check.That(requestLogged.Request.Method).IsEqualTo("POST");
-        Check.That(requestLogged.Request.Body).IsNotNull();
-        Check.That(requestLogged.Request.Body).Contains("T000001");
+        requestLogged.Request.Method.Should().Be("POST");
+        requestLogged.Request.Body.Should().NotBeNull();
+        requestLogged.Request.Body.Should().Contain("T000001");
     }
 
     [Fact]
     public async Task IWireMockAdminApi_GetMappingAsync_WithBodyModelMatcherModel_WithoutMethods_ShouldReturnCorrectMappingModel()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
@@ -384,7 +383,7 @@ public partial class WireMockAdminApiTests
             },
             Response = new ResponseModel { Body = "world" }
         };
-        var postMappingResult = await api.PostMappingAsync(model).ConfigureAwait(false);
+        var postMappingResult = await api.PostMappingAsync(model, cancellationToken);
 
         // Assert
         postMappingResult.Should().NotBeNull();
@@ -392,9 +391,9 @@ public partial class WireMockAdminApiTests
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
         mapping.Should().NotBeNull();
 
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid, cancellationToken);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -403,6 +402,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetMappingAsync_WithProxy_And_ProxyUrlReplaceSettings()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
@@ -435,7 +435,7 @@ public partial class WireMockAdminApiTests
                 }
             }
         };
-        var postMappingResult = await api.PostMappingAsync(model).ConfigureAwait(false);
+        var postMappingResult = await api.PostMappingAsync(model, cancellationToken);
 
         // Assert
         postMappingResult.Should().NotBeNull();
@@ -443,9 +443,9 @@ public partial class WireMockAdminApiTests
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
         mapping.Should().NotBeNull();
 
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid, cancellationToken);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -454,6 +454,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetMappingAsync_WithProxy_And_ProxyUrlReplaceSettings_And_TransformTemplate()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f06");
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
@@ -484,7 +485,7 @@ public partial class WireMockAdminApiTests
                 }
             }
         };
-        var postMappingResult = await api.PostMappingAsync(model).ConfigureAwait(false);
+        var postMappingResult = await api.PostMappingAsync(model, cancellationToken);
 
         // Assert
         postMappingResult.Should().NotBeNull();
@@ -492,9 +493,9 @@ public partial class WireMockAdminApiTests
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
         mapping.Should().NotBeNull();
 
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid, cancellationToken);
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -503,6 +504,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetRequestsAsync_Json()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var server = WireMockServer.Start(new WireMockServerSettings
         {
             StartAdminInterface = true,
@@ -518,20 +520,21 @@ public partial class WireMockAdminApiTests
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(jsonAcceptHeader));
         request.Content = new StringContent(data);
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(jsonApiContentType);
-        var response = await new HttpClient().SendAsync(request);
-        Check.That(response).IsNotNull();
+        using var client = new HttpClient();
+        var response = await client.SendAsync(request, cancellationToken);
+        response.Should().NotBeNull();
 
         var api = RestClient.For<IWireMockAdminApi>(serverUrl);
 
         // Act
-        var requests = await api.GetRequestsAsync().ConfigureAwait(false);
+        var requests = await api.GetRequestsAsync(cancellationToken);
 
         // Assert
-        Check.That(requests).HasSize(1);
+        requests.Should().HaveCount(1);
         var requestLogged = requests.First();
-        Check.That(requestLogged.Request.Method).IsEqualTo("POST");
-        Check.That(requestLogged.Request.Body).IsNotNull();
-        Check.That(requestLogged.Request.Body).Contains("T000001");
+        requestLogged.Request.Method.Should().Be("POST");
+        requestLogged.Request.Body.Should().NotBeNull();
+        requestLogged.Request.Body.Should().Contain("T000001");
     }
 
     [Fact]
@@ -553,11 +556,11 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        var request = await api.PostFileAsync("filename.txt", "abc").ConfigureAwait(false);
+        var request = await api.PostFileAsync("filename.txt", "abc", TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(request.Guid).IsNull();
-        Check.That(request.Status).Contains("File");
+        request.Guid.Should().BeNull();
+        request.Status.Should().Contain("File");
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.GetMappingFolder(), Times.Once);
@@ -586,11 +589,11 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        var request = await api.PutFileAsync("filename.txt", "abc-abc").ConfigureAwait(false);
+        var request = await api.PutFileAsync("filename.txt", "abc-abc", TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(request.Guid).IsNull();
-        Check.That(request.Status).Contains("File");
+        request.Guid.Should().BeNull();
+        request.Status.Should().Contain("File");
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.WriteFile(It.Is<string>(p => p == "filename.txt"), It.IsAny<byte[]>()), Times.Once);
@@ -601,7 +604,7 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
-    public void IWireMockAdminApi_PutFileAsync_NotFound()
+    public async Task IWireMockAdminApi_PutFileAsync_NotFound()
     {
         // Arrange
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
@@ -617,7 +620,8 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act and Assert
-        Check.ThatAsyncCode(() => api.PutFileAsync("filename.txt", "xxx")).Throws<ApiException>();
+        Func<Task> act = () => api.PutFileAsync("filename.txt", "xxx", TestContext.Current.CancellationToken);
+        await act.Should().ThrowAsync<ApiException>();
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -627,7 +631,7 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
-    public void IWireMockAdminApi_GetFileAsync_NotFound()
+    public async Task IWireMockAdminApi_GetFileAsync_NotFound()
     {
         // Arrange
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
@@ -644,7 +648,8 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act and Assert
-        Check.ThatAsyncCode(() => api.GetFileAsync("filename.txt")).Throws<ApiException>();
+        Func<Task> act = () => api.GetFileAsync("filename.txt", TestContext.Current.CancellationToken);
+        await act.Should().ThrowAsync<ApiException>();
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -672,10 +677,10 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        string file = await api.GetFileAsync("filename.txt").ConfigureAwait(false);
+        string file = await api.GetFileAsync("filename.txt", TestContext.Current.CancellationToken);
 
         // Assert
-        Check.That(file).Equals(data);
+        file.Should().Be(data);
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -703,7 +708,7 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        await api.DeleteFileAsync("filename.txt").ConfigureAwait(false);
+        await api.DeleteFileAsync("filename.txt", TestContext.Current.CancellationToken);
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -714,7 +719,7 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
-    public void IWireMockAdminApi_DeleteFileAsync_NotFound()
+    public async Task IWireMockAdminApi_DeleteFileAsync_NotFound()
     {
         // Arrange
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
@@ -731,7 +736,8 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act and Assert
-        Check.ThatAsyncCode(() => api.DeleteFileAsync("filename.txt")).Throws<ApiException>();
+        Func<Task> act = () => api.DeleteFileAsync("filename.txt", TestContext.Current.CancellationToken);
+        await act.Should().ThrowAsync<ApiException>();
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -741,7 +747,7 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
-    public void IWireMockAdminApi_FileExistsAsync_NotFound()
+    public async Task IWireMockAdminApi_FileExistsAsync_NotFound()
     {
         // Arrange
         var filesystemHandlerMock = new Mock<IFileSystemHandler>(MockBehavior.Strict);
@@ -757,7 +763,8 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act and Assert
-        Check.ThatAsyncCode(() => api.FileExistsAsync("filename.txt")).Throws<ApiException>();
+        Func<Task> act = () => api.FileExistsAsync("filename.txt", TestContext.Current.CancellationToken);
+        await act.Should().ThrowAsync<ApiException>();
 
         // Verify
         filesystemHandlerMock.Verify(fs => fs.FileExists(It.Is<string>(p => p == "filename.txt")), Times.Once);
@@ -775,7 +782,7 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        var status = await api.DeleteScenarioAsync(name).ConfigureAwait(false);
+        var status = await api.DeleteScenarioAsync(name, TestContext.Current.CancellationToken);
         status.Status.Should().Be("No scenario found by name 'x'.");
     }
 
@@ -788,7 +795,7 @@ public partial class WireMockAdminApiTests
         var api = RestClient.For<IWireMockAdminApi>(server.Urls[0]);
 
         // Act
-        var status = await api.ResetScenarioAsync(name).ConfigureAwait(false);
+        var status = await api.ResetScenarioAsync(name, TestContext.Current.CancellationToken);
         status.Status.Should().Be("No scenario found by name 'x'.");
     }
 
@@ -805,7 +812,7 @@ public partial class WireMockAdminApiTests
         {
             State = null
         };
-        var status = await api.PutScenarioStateAsync("x", update).ConfigureAwait(false);
+        var status = await api.PutScenarioStateAsync("x", update, TestContext.Current.CancellationToken);
         status.Status.Should().Be("No scenario found by name 'x'.");
     }
 
@@ -839,7 +846,7 @@ public partial class WireMockAdminApiTests
         {
             State = null
         };
-        var status = await api.PutScenarioStateAsync("s1", update).ConfigureAwait(false);
+        var status = await api.PutScenarioStateAsync("s1", update, TestContext.Current.CancellationToken);
         status.Status.Should().Be("Scenario state set to ''");
     }
 
@@ -866,13 +873,13 @@ public partial class WireMockAdminApiTests
 
         // Act
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var getMappingResult = await api.GetMappingAsync(guid).ConfigureAwait(false);
+        var getMappingResult = await api.GetMappingAsync(guid, TestContext.Current.CancellationToken);
 
         // Assert
         var mapping = server.Mappings.FirstOrDefault(m => m.Guid == guid);
         mapping.Should().NotBeNull();
 
-        await Verifier.Verify(getMappingResult, VerifySettings).DontScrubGuids();
+        await Verify(getMappingResult, VerifySettings).DontScrubGuids();
 
         server.Stop();
     }
@@ -881,6 +888,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetMappingCodeByGuidAsync()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
         var server = WireMockServer.StartWithAdminInterface();
 
@@ -901,13 +909,13 @@ public partial class WireMockAdminApiTests
         // Act
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
-        var mappings = await api.GetMappingsAsync().ConfigureAwait(false);
+        var mappings = await api.GetMappingsAsync(cancellationToken);
         mappings.Should().HaveCount(1);
 
-        var code = await api.GetMappingCodeAsync(guid).ConfigureAwait(false);
+        var code = await api.GetMappingCodeAsync(guid, cancellationToken: cancellationToken);
 
         // Assert
-        await Verifier.Verify(code).DontScrubDateTimes().DontScrubGuids();
+        await Verify(code).DontScrubDateTimes().DontScrubGuids();
 
         server.Stop();
     }
@@ -916,6 +924,7 @@ public partial class WireMockAdminApiTests
     public async Task IWireMockAdminApi_GetMappingsCode()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         var guid1 = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
         var guid2 = Guid.Parse("1b731398-4a5b-457f-a6e3-d65e541c428f");
         var guid3 = Guid.Parse("f74fd144-df53-404f-8e35-da22a640bd5f");
@@ -991,7 +1000,7 @@ public partial class WireMockAdminApiTests
             .WithGuid(guid5)
             .RespondWith(
                 Response.Create()
-                    .WithStatusCode(HttpStatusCode.AlreadyReported)
+                    .WithStatusCode(HttpStatusCode.Unused)
                     .WithBodyAsJson(new
                     {
                         @as = 1,
@@ -1023,13 +1032,13 @@ text
         // Act
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
-        var mappings = await api.GetMappingsAsync().ConfigureAwait(false);
+        var mappings = await api.GetMappingsAsync(cancellationToken);
         mappings.Should().HaveCount(5);
 
-        var code = await api.GetMappingsCodeAsync().ConfigureAwait(false);
+        var code = await api.GetMappingsCodeAsync(cancellationToken: cancellationToken);
 
         // Assert
-        await Verifier.Verify(code).DontScrubDateTimes().DontScrubGuids();
+        await Verify(code).DontScrubDateTimes().DontScrubGuids();
 
         server.Stop();
     }
@@ -1038,13 +1047,13 @@ text
     public async Task IWireMockAdminApi_OpenApiConvert_Yml()
     {
         // Arrange
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "petstore.yml"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "petstore.yml"));
 
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act
-        var mappings = await api.OpenApiConvertAsync(openApiDocument).ConfigureAwait(false);
+        var mappings = await api.OpenApiConvertAsync(openApiDocument, TestContext.Current.CancellationToken);
 
         // Assert
         server.MappingModels.Should().BeEmpty();
@@ -1057,13 +1066,13 @@ text
     public async Task IWireMockAdminApi_OpenApiConvert_Json()
     {
         // Arrange
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "petstore-openapi3.json"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "petstore-openapi3.json"));
 
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act
-        var mappings = await api.OpenApiConvertAsync(openApiDocument).ConfigureAwait(false);
+        var mappings = await api.OpenApiConvertAsync(openApiDocument, TestContext.Current.CancellationToken);
 
         // Assert
         server.MappingModels.Should().BeEmpty();
@@ -1076,13 +1085,13 @@ text
     public async Task IWireMockAdminApi_OpenApiSave_Json()
     {
         // Arrange
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "petstore-openapi3.json"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "petstore-openapi3.json"));
 
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act
-        var statusModel = await api.OpenApiSaveAsync(openApiDocument).ConfigureAwait(false);
+        var statusModel = await api.OpenApiSaveAsync(openApiDocument, TestContext.Current.CancellationToken);
 
         // Assert
         statusModel.Status.Should().Be("OpenApi document converted to Mappings");
@@ -1095,13 +1104,13 @@ text
     public async Task IWireMockAdminApi_OpenApiSave_Yml()
     {
         // Arrange
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "petstore.yml"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "petstore.yml"));
 
         var server = WireMockServer.StartWithAdminInterface();
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act
-        var mappings = await api.OpenApiConvertAsync(openApiDocument).ConfigureAwait(false);
+        var mappings = await api.OpenApiConvertAsync(openApiDocument, TestContext.Current.CancellationToken);
 
         // Assert
         server.MappingModels.Should().BeEmpty();
@@ -1118,7 +1127,7 @@ text
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
 
         // Act
-        var status = await api.ReloadStaticMappingsAsync().ConfigureAwait(false);
+        var status = await api.ReloadStaticMappingsAsync(TestContext.Current.CancellationToken);
 
         // Assert
         status.Status.Should().Be("Static Mappings reloaded");
@@ -1129,4 +1138,3 @@ text
         return File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "__admin", "mappings", filename));
     }
 }
-#endif

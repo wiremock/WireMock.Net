@@ -1,16 +1,9 @@
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Moq;
-using VerifyXunit;
 using WireMock.Net.OpenApiParser;
 using WireMock.Net.OpenApiParser.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.OpenApiParser;
 
-[UsesVerify]
 public class WireMockOpenApiParserTests
 {
     private readonly DateTime _exampleDateTime = new(2024, 6, 19, 12, 34, 56, DateTimeKind.Utc);
@@ -40,13 +33,13 @@ public class WireMockOpenApiParserTests
             ExampleValues = _exampleValuesMock.Object
         };
 
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "payroc-openapi-spec.yaml"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "payroc-openapi-spec.yaml"));
 
         // Act
         var mappings = _sut.FromText(openApiDocument, settings, out _);
 
         // Verify
-        await Verifier.Verify(mappings);
+        await Verify(mappings);
     }
 
     [Fact]
@@ -58,13 +51,12 @@ public class WireMockOpenApiParserTests
             ExampleValues = _exampleValuesMock.Object
         };
 
-        var openApiDocument = await File.ReadAllTextAsync(Path.Combine("OpenApiParser", "oas-content-example.json"));
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "oas-content-example.json"));
 
         // Act
         var mappings = _sut.FromText(openApiDocument, settings, out _);
 
         // Verify
-        await Verifier.Verify(mappings);
+        await Verify(mappings);
     }
 }
-#endif

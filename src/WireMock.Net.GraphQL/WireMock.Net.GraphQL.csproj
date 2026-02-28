@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>GraphQL support for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.Matchers.GraphQL</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.1;net5.0;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net462;netstandard2.1;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>wiremock;matchers;matcher;graphql</PackageTags>
         <RootNamespace>WireMock</RootNamespace>
@@ -26,22 +26,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GraphQL.NewtonsoftJson" Version="8.2.1" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+        <PackageReference Include="GraphQL.NewtonsoftJson" Version="8.5.0" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\WireMock.Net.Shared\WireMock.Net.Shared.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <PackageReference Include="Nullable" Version="1.3.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
 </Project>

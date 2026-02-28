@@ -1,14 +1,13 @@
 // Copyright © WireMock.Net
 
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
-using System.Threading.Tasks;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -44,12 +43,12 @@ public class ResponseWithHandlebarsXegerTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Number"].Value<int>()).IsStrictlyGreaterThan(1000).And.IsStrictlyLessThan(9999);
-        Check.That(j["Postcode"].Value<string>()).IsNotEmpty();
+        j["Number"].Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
+        j["Postcode"].Value<string>().Should().NotBeEmpty();
     }
 
     [Fact]
@@ -67,11 +66,12 @@ public class ResponseWithHandlebarsXegerTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Number"].Value<int>()).IsStrictlyGreaterThan(1000).And.IsStrictlyLessThan(9999);
-        Check.That(j["Postcode"].Value<string>()).IsNotEmpty();
+        j["Number"].Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
+        j["Postcode"].Value<string>().Should().NotBeEmpty();
     }
 }
+

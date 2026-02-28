@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <!--<Version>0.0.1-preview-01</Version>-->
         <Description>OpenTelemetry exporter support for WireMock.Net</Description>
         <AssemblyTitle>WireMock.Net.OpenTelemetry</AssemblyTitle>
         <Authors>Petr Houška</Authors>
-        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <RootNamespace>WireMock.OpenTelemetry</RootNamespace>
         <PackageTags>wiremock;opentelemetry;otel;tracing;telemetry</PackageTags>
@@ -25,15 +24,10 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <!-- OpenTelemetry packages -->
     <ItemGroup>
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
         <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>

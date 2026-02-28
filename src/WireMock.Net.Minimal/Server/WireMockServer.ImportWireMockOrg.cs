@@ -1,17 +1,15 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using Stef.Validation;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Util;
-using Stef.Validation;
 using OrgMapping = WireMock.Org.Abstractions.Mapping;
 
 namespace WireMock.Server;
@@ -46,7 +44,7 @@ public partial class WireMockServer
         }
     }
 
-    private IResponseMessage MappingsPostWireMockOrg(IRequestMessage requestMessage)
+    private IResponseMessage MappingsPostWireMockOrg(HttpContext _, IRequestMessage requestMessage)
     {
         try
         {
@@ -76,7 +74,7 @@ public partial class WireMockServer
         }
     }
 
-    private Guid? ConvertWireMockOrgMappingAndRegisterAsRespondProvider(Org.Abstractions.Mapping mapping, Guid? guid = null, string? path = null)
+    private Guid? ConvertWireMockOrgMappingAndRegisterAsRespondProvider(OrgMapping mapping, Guid? guid = null, string? path = null)
     {
         var requestBuilder = Request.Create();
 

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using WireMock.Admin.Mappings;
 using WireMock.Types;
 
@@ -64,12 +63,12 @@ public class LogResponseModel
     /// <summary>
     /// The detected body type (detection based on body content).
     /// </summary>
-    public BodyType? DetectedBodyType { get; set; }
+    public string? DetectedBodyType { get; set; }
 
     /// <summary>
     /// The detected body type (detection based on Content-Type).
     /// </summary>
-    public BodyType? DetectedBodyTypeFromContentType { get; set; }
+    public string? DetectedBodyTypeFromContentType { get; set; }
 
     /// <summary>
     /// The FaultType.
@@ -80,4 +79,14 @@ public class LogResponseModel
     /// Gets or sets the Fault percentage.
     /// </summary>
     public double? FaultPercentage { get; set; }
+
+    /// <summary>
+    /// The DateTime.
+    /// </summary>
+    public required DateTime DateTime { get; set; }
+
+    /// <summary>
+    /// The method.
+    /// </summary>
+    public string? Method { get; set; }
 }

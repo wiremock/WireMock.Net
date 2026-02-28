@@ -5,11 +5,11 @@ namespace WireMock.Pact.Models.V2;
 
 public class Interaction
 {
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
     public string? ProviderState { get; set; }
 
-    public PactRequest Request { get; set; } = new();
+    public required PactRequest Request { get; set; }
 
-    public PactResponse Response { get; set; } = new();
+    public required PactResponse Response { get; set; }
 }

@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
-#if NET5_0_OR_GREATER
+
+#if NET8_0_OR_GREATER
 using System;
 using System.Net.Http;
 using WireMock.Server;

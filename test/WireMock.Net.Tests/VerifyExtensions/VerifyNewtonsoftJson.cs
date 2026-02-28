@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461)
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
-using VerifyTests;
 
 namespace WireMock.Net.Tests.VerifyExtensions;
 
@@ -41,4 +38,3 @@ internal class JObjectConverter : WriteOnlyJsonConverter<JObject>
         writer.Serialize(dictionary);
     }
 }
-#endif

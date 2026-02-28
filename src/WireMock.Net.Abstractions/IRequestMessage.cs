@@ -1,10 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-#if NETSTANDARD1_3_OR_GREATER || NET461
 using System.Security.Cryptography.X509Certificates;
-#endif
 using WireMock.Types;
 using WireMock.Util;
 
@@ -118,13 +114,11 @@ public interface IRequestMessage
     /// </summary>
     byte[]? BodyAsBytes { get; }
 
-#if MIMEKIT
     /// <summary>
     /// The original body as MimeMessage.
     /// Convenience getter for Handlebars and WireMockAssertions.
     /// </summary>
     Models.Mime.IMimeMessageData? BodyAsMimeMessage { get; }
-#endif
 
     /// <summary>
     /// The detected body type. Convenience getter for Handlebars.
@@ -169,10 +163,8 @@ public interface IRequestMessage
     /// <returns>The query parameter value as WireMockList or null when not found.</returns>
     WireMockList<string>? GetParameter(string key, bool ignoreCase = false);
 
-#if NETSTANDARD1_3_OR_GREATER || NET461
     /// <summary>
     /// Gets the connection's client certificate
     /// </summary>
     X509Certificate2? ClientCertificate { get; }
-#endif
 }
