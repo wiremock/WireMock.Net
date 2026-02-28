@@ -20,8 +20,6 @@
         <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageIcon>WireMock.Net-LogoAspire.png</PackageIcon>
-        <ApplicationIcon>../../resources/WireMock.Net-LogoAspire.ico</ApplicationIcon>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">
