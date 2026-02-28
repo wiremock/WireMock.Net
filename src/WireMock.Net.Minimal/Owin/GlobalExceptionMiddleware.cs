@@ -19,7 +19,7 @@ internal class GlobalExceptionMiddleware
         _responseMapper = Guard.NotNull(responseMapper);
     }
 
-    public RequestDelegate? Next { get; }
+    public RequestDelegate Next { get; }
 
     public Task Invoke(HttpContext ctx)
     {
@@ -30,10 +30,7 @@ internal class GlobalExceptionMiddleware
     {
         try
         {
-            if (Next != null)
-            {
-                await Next.Invoke(ctx).ConfigureAwait(false);
-            }
+            await Next.Invoke(ctx).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

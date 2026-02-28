@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Models;
 using WireMock.Util;
 
@@ -40,6 +39,6 @@ public class RequestMessageProtoBufMatcher : IRequestMatcher
 
     private MatchResult GetMatchResult(IRequestMessage requestMessage)
     {
-        return Matcher?.IsMatchAsync(requestMessage.BodyAsBytes).GetAwaiter().GetResult() ?? default;
+        return Matcher?.IsMatchAsync(requestMessage.BodyAsBytes).GetAwaiter().GetResult() ?? MatchResult.From(nameof(RequestMessageProtoBufMatcher));
     }
 }

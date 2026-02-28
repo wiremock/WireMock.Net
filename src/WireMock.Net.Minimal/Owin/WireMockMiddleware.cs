@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using WireMock.Constants;
@@ -18,7 +17,9 @@ using WireMock.Util;
 namespace WireMock.Owin;
 
 internal class WireMockMiddleware(
+#pragma warning disable CS9113 // Parameter is unread.
     RequestDelegate next,
+#pragma warning restore CS9113 // Parameter is unread.
     IWireMockMiddlewareOptions options,
     IOwinRequestMapper requestMapper,
     IOwinResponseMapper responseMapper,

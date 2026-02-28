@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Moq;
+using WireMock.Logging;
 using WireMock.Owin;
 using WireMock.Owin.Mappers;
 
@@ -17,20 +18,32 @@ public class GlobalExceptionMiddlewareTests
     public GlobalExceptionMiddlewareTests()
     {
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
-        _optionsMock.SetupAllProperties();
+        _optionsMock.SetupGet(o => o.Logger).Returns(Mock.Of<IWireMockLogger>());
 
         _responseMapperMock = new Mock<IOwinResponseMapper>();
-        _responseMapperMock.SetupAllProperties();
         _responseMapperMock.Setup(m => m.MapAsync(It.IsAny<ResponseMessage?>(), It.IsAny<HttpResponse>())).Returns(Task.FromResult(true));
 
-        _sut = new GlobalExceptionMiddleware(null, _optionsMock.Object, _responseMapperMock.Object);
+        _sut = new GlobalExceptionMiddleware(_ => Task.CompletedTask, _optionsMock.Object, _responseMapperMock.Object);
     }
 
     [Fact]
-    public void GlobalExceptionMiddleware_Invoke_NullAsNext_DoesNotInvokeNextAndDoesNotThrow()
+    public void GlobalExceptionMiddleware_Invoke_ValidNext_ShouldNotThrow()
     {
         // Act
-        Action act = () => _sut.Invoke(null);
-        act.Should().NotThrow();
+        _sut.Invoke(Mock.Of<HttpContext>());
+    }
+
+    [Fact]
+    public void GlobalExceptionMiddleware_Invoke_InvalidNext_ShouldCallResponseMapperWith500()
+    {
+        // Arrange
+        var sut = new GlobalExceptionMiddleware(_ => throw new ArgumentException(), _optionsMock.Object, _responseMapperMock.Object);
+
+        // Act
+        sut.Invoke(Mock.Of<HttpContext>());
+
+        // Verify
+        _responseMapperMock.Verify(m => m.MapAsync(It.IsAny<ResponseMessage>(), It.IsAny<HttpResponse>()), Times.Once);
+        _responseMapperMock.VerifyNoOtherCalls();
     }
 }

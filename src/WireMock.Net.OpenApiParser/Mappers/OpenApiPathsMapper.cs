@@ -298,7 +298,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         var mappedHeaders = headers?
             .ToDictionary(item => item.Key, _ => GetExampleMatcherModel(null, _settings.HeaderPatternToUse).Pattern!) ?? [];
 
-        if (!string.IsNullOrEmpty(responseContentType))
+        if (responseContentType != null)
         {
             mappedHeaders.TryAdd(HeaderContentType, responseContentType);
         }

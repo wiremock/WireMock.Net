@@ -582,7 +582,7 @@ public class WireMockAdminApiAssertionsTests : IDisposable
     public async Task HaveReceivedACall_FromClientIP_whenACallWasMadeFromClientIP_Should_BeOK()
     {
         await _httpClient.GetAsync("", _ct);
-        var clientIP = _server.LogEntries.Last().RequestMessage.ClientIP;
+        var clientIP = _server.LogEntries.Last().RequestMessage!.ClientIP;
 
         _adminApi.Should()
             .HaveReceivedACall()

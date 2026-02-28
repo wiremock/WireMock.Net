@@ -35,7 +35,7 @@ public class ResponseWithBodyFromFileTests
             );
 
         // Act
-        var response = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + "/v1/content");
+        var response = await new HttpClient().GetStringAsync("http://localhost:" + server.Ports[0] + "/v1/content", _ct);
 
         // Assert
         response.Should().Contain("<hello>world</hello>");
