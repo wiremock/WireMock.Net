@@ -368,7 +368,7 @@ namespace WireMock.Owin
             }
 
             // In case MaxRequestLogCount has a value greater than 0, try to delete existing request logs based on the count.
-            if (_options.MaxRequestLogCount is > 0)
+            if (_options.MaxRequestLogCount is > 0 && _options.SoftMaxRequestLogCountEnabled != true)
             {
                 var logEntries = _options.LogEntries.ToList();
                 foreach (var logEntry in logEntries.OrderBy(le => le.RequestMessage.DateTime).Take(logEntries.Count - _options.MaxRequestLogCount.Value))

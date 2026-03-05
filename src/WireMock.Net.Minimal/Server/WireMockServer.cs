@@ -46,6 +46,7 @@ public partial class WireMockServer : IWireMockServer
     private readonly MatcherMapper _matcherMapper;
     private readonly MappingToFileSaver _mappingToFileSaver;
     private readonly MappingBuilder _mappingBuilder;
+    private Timer? _softMaxLogTrimTimer;
     private readonly IGuidUtils _guidUtils = new GuidUtils();
     private readonly IDateTimeUtils _dateTimeUtils = new DateTimeUtils();
     private readonly MappingSerializer _mappingSerializer;
@@ -116,6 +117,8 @@ public partial class WireMockServer : IWireMockServer
     /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing)
     {
+        _softMaxLogTrimTimer?.Dispose();
+        _softMaxLogTrimTimer = null;
         DisposeEnhancedFileSystemWatcher();
         _httpServer?.StopAsync();
     }
@@ -763,6 +766,40 @@ public partial class WireMockServer : IWireMockServer
         if (settings.MaxRequestLogCount != null)
         {
             SetMaxRequestLogCount(settings.MaxRequestLogCount);
+        }
+
+        // Start or stop the soft max log trim timer based on settings
+        _softMaxLogTrimTimer?.Dispose();
+        _softMaxLogTrimTimer = null;
+        if (settings.SoftMaxRequestLogCountEnabled == true && settings.MaxRequestLogCount is > 0)
+        {
+            _softMaxLogTrimTimer = new Timer(
+                _ => TrimExcessLogEntries(),
+                null,
+                TimeSpan.FromSeconds(5),
+                TimeSpan.FromSeconds(5));
+        }
+    }
+
+    private void TrimExcessLogEntries()
+    {
+        try
+        {
+            var maxCount = _options.MaxRequestLogCount;
+            if (maxCount is not > 0) return;
+
+            var logEntries = _options.LogEntries.ToList();
+            var excess = logEntries.Count - maxCount.Value;
+            if (excess <= 0) return;
+
+            foreach (var entry in logEntries.OrderBy(e => e.RequestMessage.DateTime).Take(excess))
+            {
+                try { _options.LogEntries.Remove(entry); } catch { /* concurrent removal is safe */ }
+            }
+        }
+        catch
+        {
+            // Timer callback must never throw -- prevents timer from stopping
         }
     }
 }
