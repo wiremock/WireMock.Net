@@ -368,12 +368,20 @@ namespace WireMock.Owin
             }
 
             // In case MaxRequestLogCount has a value greater than 0, try to delete existing request logs based on the count.
+            // Entries are always appended chronologically, so oldest are at the front - no sort needed.
             if (_options.MaxRequestLogCount is > 0 && _options.SoftMaxRequestLogCountEnabled != true)
             {
-                var logEntries = _options.LogEntries.ToList();
-                foreach (var logEntry in logEntries.OrderBy(le => le.RequestMessage.DateTime).Take(logEntries.Count - _options.MaxRequestLogCount.Value))
+                while (_options.LogEntries.Count > _options.MaxRequestLogCount.Value)
                 {
-                    TryRemoveLogEntry(logEntry);
+                    try
+                    {
+                        _options.LogEntries.RemoveAt(0);
+                    }
+                    catch
+                    {
+                        // Ignore exception (can happen during stress testing)
+                        break;
+                    }
                 }
             }
 
