@@ -140,6 +140,14 @@ public class WireMockServerSettings
     public int? MaxRequestLogCount { get; set; }
 
     /// <summary>
+    /// Gets or sets whether MaxRequestLogCount should be enforced using a background timer
+    /// instead of trimming synchronously on each request. When enabled, log trimming happens
+    /// periodically in the background, reducing request processing latency.
+    /// </summary>
+    [PublicAPI]
+    public bool? SoftMaxRequestLogCountEnabled { get; set; }
+
+    /// <summary>
     /// Action which is called (with the IAppBuilder or IApplicationBuilder) before the internal WireMockMiddleware is initialized. [Optional]
     /// </summary>
     [PublicAPI]

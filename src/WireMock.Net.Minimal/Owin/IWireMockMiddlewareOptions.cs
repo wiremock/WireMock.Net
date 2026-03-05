@@ -41,6 +41,8 @@ internal interface IWireMockMiddlewareOptions
 
     int? MaxRequestLogCount { get; set; }
 
+    bool? SoftMaxRequestLogCountEnabled { get; set; }
+
     Action<IAppBuilder>? PreWireMockMiddlewareInit { get; set; }
 
     Action<IAppBuilder>? PostWireMockMiddlewareInit { get; set; }
