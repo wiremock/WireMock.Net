@@ -428,6 +428,25 @@ public class WireMockServerAdminTests
     }
 
     [Fact]
+    public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount_HighVolume()
+    {
+        // Arrange
+        using var client = new HttpClient();
+        using var server = WireMockServer.Start();
+        server.SetMaxRequestLogCount(5);
+
+        // Act - send 50 requests
+        for (int i = 0; i < 50; i++)
+        {
+            await client.GetAsync($"http://localhost:{server.Ports[0]}/req{i}").ConfigureAwait(false);
+        }
+
+        // Assert - should have exactly 5 entries, the most recent ones
+        server.LogEntries.Should().HaveCount(5);
+        server.LogEntries.Last().RequestMessage.Path.Should().EndWith("/req49");
+    }
+
+    [Fact]
     public async Task WireMockServer_Admin_Logging_FindLogEntries()
     {
         // Assign
