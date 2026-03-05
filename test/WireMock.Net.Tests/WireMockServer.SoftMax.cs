@@ -1,6 +1,8 @@
 // Copyright (c) WireMock.Net
 
 #if !(NET452 || NET461 || NETCOREAPP3_1)
+using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -141,6 +143,147 @@ public class WireMockServerSoftMaxTests
 
             // Assert
             json["SoftMaxRequestLogCountEnabled"]?.Value<bool>().Should().BeTrue();
+        }
+        finally
+        {
+            server.Stop();
+        }
+    }
+    // --- Plan 02: Background timer behavior and compatibility tests ---
+
+    [Fact]
+    public async Task SoftMaxDisabled_InlineTrimStillRunsOnEveryRequest()
+    {
+        // Arrange - SoftMaxRequestLogCountEnabled is NOT set (default null = disabled)
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            MaxRequestLogCount = 3
+        });
+
+        try
+        {
+            using var httpClient = new HttpClient();
+            var baseUrl = server.Urls[0];
+
+            // Act - Send 5 requests (exceeds MaxRequestLogCount of 3)
+            for (int i = 0; i < 5; i++)
+            {
+                await httpClient.GetAsync($"{baseUrl}/request{i}");
+            }
+
+            // Assert - Inline trim should have kept count at exactly MaxRequestLogCount
+            server.LogEntries.Count().Should().Be(3);
+        }
+        finally
+        {
+            server.Stop();
+        }
+    }
+
+    [Fact]
+    public async Task SoftMaxEnabled_LogCountCanTemporarilyExceedMax()
+    {
+        // Arrange - SoftMaxRequestLogCountEnabled = true, so inline trim is skipped
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            MaxRequestLogCount = 3,
+            SoftMaxRequestLogCountEnabled = true
+        });
+
+        try
+        {
+            using var httpClient = new HttpClient();
+            var baseUrl = server.Urls[0];
+
+            // Act - Send 6 requests quickly (before timer fires)
+            for (int i = 0; i < 6; i++)
+            {
+                await httpClient.GetAsync($"{baseUrl}/request{i}");
+            }
+
+            // Assert - Count should exceed MaxRequestLogCount since inline trim is bypassed
+            server.LogEntries.Count().Should().BeGreaterThan(3);
+        }
+        finally
+        {
+            server.Stop();
+        }
+    }
+
+    [Fact]
+    public async Task SoftMaxEnabled_BackgroundTimerEventuallyTrimsExcess()
+    {
+        // Arrange - SoftMaxRequestLogCountEnabled = true with timer
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            MaxRequestLogCount = 3,
+            SoftMaxRequestLogCountEnabled = true
+        });
+
+        try
+        {
+            using var httpClient = new HttpClient();
+            var baseUrl = server.Urls[0];
+
+            // Act - Send 10 requests
+            for (int i = 0; i < 10; i++)
+            {
+                await httpClient.GetAsync($"{baseUrl}/request{i}");
+            }
+
+            // Verify excess before timer fires
+            server.LogEntries.Count().Should().BeGreaterThan(3);
+
+            // Wait for background timer to fire (timer interval is 5 seconds)
+            await Task.Delay(TimeSpan.FromSeconds(7));
+
+            // Assert - Timer should have trimmed excess entries
+            server.LogEntries.Count().Should().BeLessThanOrEqualTo(3);
+        }
+        finally
+        {
+            server.Stop();
+        }
+    }
+
+    [Fact]
+    public void SoftMaxEnabled_ServerDisposesCleanly()
+    {
+        // Arrange - Start server with soft max enabled (timer running)
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            MaxRequestLogCount = 5,
+            SoftMaxRequestLogCountEnabled = true
+        });
+
+        // Act & Assert - Dispose should not throw
+        var act = () => server.Dispose();
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public async Task SoftMaxExplicitlyFalse_InlineTrimStillRunsOnEveryRequest()
+    {
+        // Arrange - SoftMaxRequestLogCountEnabled explicitly false
+        var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            MaxRequestLogCount = 3,
+            SoftMaxRequestLogCountEnabled = false
+        });
+
+        try
+        {
+            using var httpClient = new HttpClient();
+            var baseUrl = server.Urls[0];
+
+            // Act - Send 5 requests
+            for (int i = 0; i < 5; i++)
+            {
+                await httpClient.GetAsync($"{baseUrl}/request{i}");
+            }
+
+            // Assert - Inline trim should keep count at exactly MaxRequestLogCount
+            server.LogEntries.Count().Should().Be(3);
         }
         finally
         {
