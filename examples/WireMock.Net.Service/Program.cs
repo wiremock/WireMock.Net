@@ -34,7 +34,7 @@ namespace Wiremock.Net.Service
         }
         #endregion
 
-        private static WireMockServer _server;
+        private static WireMockServer _server = null!;
 
         static void Main(string[] args)
         {
@@ -46,10 +46,8 @@ namespace Wiremock.Net.Service
             // running as service
             if (!Environment.UserInteractive)
             {
-                using (var service = new Service())
-                {
-                    ServiceBase.Run(service);
-                }
+                using var service = new Service();
+                ServiceBase.Run(service);
             }
             else
             {
@@ -67,7 +65,7 @@ namespace Wiremock.Net.Service
         {
             _server = WireMockServer.Start(new WireMockServerSettings
             {
-                Urls = new[] { "http://*:9091/" },
+                Urls = [ "http://*:9091/" ],
                 StartAdminInterface = true,
                 ReadStaticMappings = true,
                 Logger = new WireMockLog4NetLogger()

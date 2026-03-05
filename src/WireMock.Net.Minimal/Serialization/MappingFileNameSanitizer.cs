@@ -42,7 +42,7 @@ internal class MappingFileNameSanitizer
 
         if (!string.IsNullOrEmpty(_settings.ProxyAndRecordSettings?.PrefixForSavedMappingFile))
         {
-            name = $"{_settings.ProxyAndRecordSettings.PrefixForSavedMappingFile}{ReplaceChar}{name}";
+            name = $"{_settings.ProxyAndRecordSettings!.PrefixForSavedMappingFile}{ReplaceChar}{name}";
         }
         return $"{Path.GetInvalidFileNameChars().Aggregate(name, (current, c) => current.Replace(c, ReplaceChar))}.json";
     }
