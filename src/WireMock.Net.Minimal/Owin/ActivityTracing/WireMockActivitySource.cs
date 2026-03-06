@@ -1,16 +1,17 @@
 // Copyright © WireMock.Net
 
-#if ACTIVITY_TRACING_SUPPORTED
-using System;
 using System.Diagnostics;
+using System.Net.WebSockets;
 using WireMock.Logging;
+using WireMock.Settings;
+using WireMock.WebSockets;
 
 namespace WireMock.Owin.ActivityTracing;
 
 /// <summary>
 /// Provides an ActivitySource for WireMock.Net distributed tracing.
 /// </summary>
-public static class WireMockActivitySource
+internal static class WireMockActivitySource
 {
     /// <summary>
     /// The name of the ActivitySource used by WireMock.Net.
@@ -103,11 +104,11 @@ public static class WireMockActivitySource
             // Set status based on HTTP status code (using standard otel.status_code tag)
             if (statusCodeInt.Value >= 400)
             {
-                activity.SetTag("otel.status_code", "ERROR");
+                activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "ERROR");
             }
             else
             {
-                activity.SetTag("otel.status_code", "OK");
+                activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "OK");
             }
         }
 
@@ -190,11 +191,65 @@ public static class WireMockActivitySource
         }
 
         // Use standard OpenTelemetry exception semantic conventions
-        activity.SetTag("otel.status_code", "ERROR");
+        activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "ERROR");
         activity.SetTag("otel.status_description", exception.Message);
         activity.SetTag("exception.type", exception.GetType().FullName);
         activity.SetTag("exception.message", exception.Message);
         activity.SetTag("exception.stacktrace", exception.ToString());
     }
+
+    /// <summary>
+    /// Starts a new activity for a WebSocket message.
+    /// </summary>
+    /// <param name="direction">The direction of the message.</param>
+    /// <param name="mappingGuid">The GUID of the mapping handling the WebSocket.</param>
+    /// <returns>The started activity, or null if tracing is not enabled.</returns>
+    internal static Activity? StartWebSocketMessageActivity(WebSocketMessageDirection direction, Guid mappingGuid)
+    {
+        if (!Source.HasListeners())
+        {
+            return null;
+        }
+
+        var activity = Source.StartActivity(
+            $"WireMock WebSocket {direction.ToString().ToLowerInvariant()}",
+            ActivityKind.Server
+        );
+
+        if (activity != null)
+        {
+            activity.SetTag(WireMockSemanticConventions.MappingGuid, mappingGuid.ToString());
+        }
+
+        return activity;
+    }
+
+    /// <summary>
+    /// Enriches an activity with WebSocket message information.
+    /// </summary>
+    internal static void EnrichWithWebSocketMessage(
+        Activity? activity,
+        WebSocketMessageType messageType,
+        int messageSize,
+        bool endOfMessage,
+        string? textContent = null,
+        ActivityTracingOptions? options = null)
+    {
+        if (activity == null)
+        {
+            return;
+        }
+
+        activity.SetTag(WireMockSemanticConventions.WebSocketMessageType, messageType.ToString());
+        activity.SetTag(WireMockSemanticConventions.WebSocketMessageSize, messageSize);
+        activity.SetTag(WireMockSemanticConventions.WebSocketEndOfMessage, endOfMessage);
+
+        // Record message content if enabled and it's text
+        if (options?.RecordRequestBody == true && messageType == WebSocketMessageType.Text && textContent != null)
+        {
+            activity.SetTag(WireMockSemanticConventions.WebSocketMessageContent, textContent);
+        }
+
+        activity.SetTag(WireMockSemanticConventions.OtelStatusCode, "OK");
+    }
 }
-#endif

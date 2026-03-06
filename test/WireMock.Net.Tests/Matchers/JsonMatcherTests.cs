@@ -1,14 +1,10 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -45,7 +41,7 @@ public class JsonMatcherTests
         var name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("JsonMatcher");
+        name.Should().Be("JsonMatcher");
     }
 
     [Fact]
@@ -58,7 +54,7 @@ public class JsonMatcherTests
         var value = matcher.Value;
 
         // Assert
-        Check.That(value).Equals("{}");
+        value.Should().Be("{}");
     }
 
     [Fact]
@@ -108,7 +104,7 @@ public class JsonMatcherTests
         var match = matcher.IsMatch(bytes).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -122,7 +118,7 @@ public class JsonMatcherTests
         var match = matcher.IsMatch(s).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -136,7 +132,7 @@ public class JsonMatcherTests
         var match = matcher.IsMatch(o).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]

@@ -1,27 +1,22 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
-using NFluent;
+
 using WireMock.Logging;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
 public class ObservableLogEntriesTest
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task WireMockServer_LogEntriesChanged_WithException_Should_LogError()
     {
@@ -45,7 +40,7 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged += (sender, args) => throw new Exception();
 
         // Act
-        await new HttpClient().GetAsync($"http://localhost:{server.Ports[0]}{path}").ConfigureAwait(false);
+        await new HttpClient().GetAsync($"http://localhost:{server.Ports[0]}{path}", _ct);
 
         // Assert
         loggerMock.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
@@ -69,10 +64,10 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged += (sender, args) => count++;
 
         // Act 1a
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path, _ct);
 
         // Act 1b
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path, _ct);
 
         // Assert
         count.Should().Be(2);
@@ -96,13 +91,13 @@ public class ObservableLogEntriesTest
 
         int count = 0;
 
-        void OnServerOnLogEntriesChanged(object sender, NotifyCollectionChangedEventArgs args) => count++;
+        void OnServerOnLogEntriesChanged(object? sender, NotifyCollectionChangedEventArgs args) => count++;
 
         // Add Handler
         server.LogEntriesChanged += OnServerOnLogEntriesChanged;
 
         // Act 1
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path, _ct);
 
         // Assert 1
         count.Should().Be(1);
@@ -111,7 +106,7 @@ public class ObservableLogEntriesTest
         server.LogEntriesChanged -= OnServerOnLogEntriesChanged;
 
         // Act 2
-        await server.CreateClient().GetAsync(path).ConfigureAwait(false);
+        await server.CreateClient().GetAsync(path, _ct);
 
         // Assert 2
         count.Should().Be(1);
@@ -144,15 +139,15 @@ public class ObservableLogEntriesTest
         var listOfTasks = new List<Task<HttpResponseMessage>>();
         for (var i = 0; i < expectedCount; i++)
         {
-            Thread.Sleep(50);
-            listOfTasks.Add(http.GetAsync($"{server.Urls[0]}{path}"));
+            await Task.Delay(50, _ct);
+            listOfTasks.Add(http.GetAsync($"{server.Urls[0]}{path}", _ct));
         }
-        var responses = await Task.WhenAll(listOfTasks).ConfigureAwait(false);
+        var responses = await Task.WhenAll(listOfTasks);
         var countResponsesWithStatusNotOk = responses.Count(r => r.StatusCode != HttpStatusCode.OK);
 
         // Assert
-        Check.That(countResponsesWithStatusNotOk).Equals(0);
-        Check.That(count).Equals(expectedCount);
+        countResponsesWithStatusNotOk.Should().Be(0);
+        count.Should().Be(expectedCount);
 
         server.Dispose();
     }

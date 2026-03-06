@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using NFluent;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -19,7 +17,7 @@ public class XPathMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("XPathMatcher");
+        name.Should().Be("XPathMatcher");
     }
 
     [Fact]
@@ -32,7 +30,7 @@ public class XPathMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -49,7 +47,7 @@ public class XPathMatcherTests
         double result = matcher.IsMatch(xml).Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -81,7 +79,7 @@ public class XPathMatcherTests
         double result = matcher.IsMatch(input).Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -114,7 +112,7 @@ public class XPathMatcherTests
         double result = matcher.IsMatch(input).Score;
 
         // Assert
-        Check.That(result).IsEqualTo(1.0);
+        result.Should().Be(1.0);
     }
 
     [Fact]
@@ -131,6 +129,6 @@ public class XPathMatcherTests
         double result = matcher.IsMatch(xml).Score;
 
         // Assert
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 }

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using Stef.Validation;
 
 namespace WireMock.Models;

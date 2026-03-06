@@ -1,15 +1,10 @@
 // Copyright © WireMock.Net
 
 #if NET8_0_OR_GREATER
-using System;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -22,13 +17,13 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
 public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task Response_UsingTextPlain()
     {
@@ -51,12 +46,12 @@ public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
         content.Headers.ContentType = new MediaTypeHeaderValue("text/plain");
 
         // When
-        var response = await client.PatchAsync("/zipcode", content);
+        var response = await client.PatchAsync("/zipcode", content, _ct);
 
         // Then
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.GetValues("Content-Type").Should().BeEquivalentTo("text/plain; charset=utf-8");
-        var result = await response.Content.ReadAsStringAsync();
+        var result = await response.Content.ReadAsStringAsync(_ct);
         result.Should().Be("0123");
     }
 
@@ -95,10 +90,10 @@ public sealed class ResponseWithProxyIntegrationTests(ITestOutputHelper output)
         {
             var started = new TaskCompletionSource();
             var host = app.Services.GetRequiredService<IHostApplicationLifetime>();
-            host.ApplicationStarted.Register(() => started.SetResult());
+            host.ApplicationStarted.Register(started.SetResult);
             _ = Task.Run(() => app.RunAsync());
             await started.Task;
-            _disposable = new(() => host.StopApplication());
+            _disposable = new(host.StopApplication);
             return this;
         }
 

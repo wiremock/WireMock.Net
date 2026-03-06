@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Models;
 
 namespace WireMock.Extensions;

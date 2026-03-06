@@ -1,14 +1,13 @@
 // Copyright © WireMock.Net
 
 using System.Net.Http.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Projects;
 using WireMock.Net.Aspire.Tests.Facts;
-using Xunit.Abstractions;
 
 namespace WireMock.Net.Aspire.Tests;
 
-public class IntegrationTests(ITestOutputHelper output)
+public class IntegrationTests
 {
     private record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary);
 
@@ -27,11 +26,11 @@ public class IntegrationTests(ITestOutputHelper output)
         var weatherForecasts1 = await httpClient.GetFromJsonAsync<WeatherForecast[]>("/weatherforecast");
 
         // Assert 1
-        weatherForecasts1.Should().BeEquivalentTo(new[]
-        {
+        weatherForecasts1.Should().BeEquivalentTo(
+        [
             new WeatherForecast(new DateOnly(2024, 5, 24), -10, "Freezing"),
             new WeatherForecast(new DateOnly(2024, 5, 25), +33, "Hot")
-        });
+        ]);
 
         // Act 2
         var weatherForecasts2 = await httpClient.GetFromJsonAsync<WeatherForecast[]>("/weatherforecast2");

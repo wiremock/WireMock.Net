@@ -1,13 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -23,7 +19,7 @@ public class JsonPartialWildcardMatcherTests
         var name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("JsonPartialWildcardMatcher");
+        name.Should().Be("JsonPartialWildcardMatcher");
     }
 
     [Fact]
@@ -36,7 +32,7 @@ public class JsonPartialWildcardMatcherTests
         var value = matcher.Value;
 
         // Assert
-        Check.That(value).Equals("{}");
+        value.Should().Be("{}");
     }
 
     [Fact]
@@ -86,7 +82,7 @@ public class JsonPartialWildcardMatcherTests
         var match = matcher.IsMatch(bytes).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -100,7 +96,7 @@ public class JsonPartialWildcardMatcherTests
         var match = matcher.IsMatch(s).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -114,7 +110,7 @@ public class JsonPartialWildcardMatcherTests
         var match = matcher.IsMatch(o).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -338,7 +334,7 @@ public class JsonPartialWildcardMatcherTests
     [InlineData("{ \"test.nested\":\"value\" }", "{\"test\":{\"nested\":\"value1\"}}")]
     [InlineData("{\"test\":{\"test1\":\"value\"}}", "{\"test\":{\"test1\":\"value1\"}}")]
     [InlineData("[{ \"test.nested\":\"value\" }]", "[{\"test\":{\"nested\":\"value1\"}}]")]
-    public void JsonPartialWildcardMatcher_IsMatch_StringInputWithInvalidMatch(string value, string input)
+    public void JsonPartialWildcardMatcher_IsMatch_StringInputWithInvalidMatch(string value, string? input)
     {
         // Assign
         var matcher = new JsonPartialWildcardMatcher(value);

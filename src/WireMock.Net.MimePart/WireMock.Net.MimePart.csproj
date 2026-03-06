@@ -1,10 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>MultiPart Mime support for WireMock.Net using MimeKitLite</Description>
         <AssemblyTitle>WireMock.Net.MimePart</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>wiremock;matchers;matcher;mime;multipart;mimekit</PackageTags>
         <RootNamespace>WireMock</RootNamespace>
@@ -36,24 +36,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nullable" Version="1.3.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Stef.Validation" Version="0.1.1" />
+        <PackageReference Include="Stef.Validation" Version="0.2.0" />
     </ItemGroup>
 
-    <!--<ItemGroup>
-        <PackageReference Include="MimeKitLite" Version="4.12.0" />
-    </ItemGroup>-->
-
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <PackageReference Include="MimeKitLite" Version="4.12.0" />
+        <PackageReference Include="MimeKitLite" Version="4.13.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.40" PrivateAssets="All" />
-        <PackageReference Include="MimeKitLite" Version="4.12.0" PrivateAssets="All" />
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" PrivateAssets="All" />
+        <PackageReference Include="MimeKitLite" Version="4.13.0" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>

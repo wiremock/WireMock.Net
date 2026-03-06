@@ -1,12 +1,8 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using Moq;
-using NFluent;
 using WireMock.Matchers.Request;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestMatchers;
 
@@ -31,7 +27,7 @@ public class RequestMessageCompositeMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.0d);
+        score.Should().Be(0.0d);
     }
 
     [Fact]
@@ -51,7 +47,7 @@ public class RequestMessageCompositeMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(0.9d);
+        score.Should().Be(0.9d);
 
         // Verify
         requestMatcher1Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Once);
@@ -75,7 +71,7 @@ public class RequestMessageCompositeMatcherTests
         double score = matcher.GetMatchingScore(requestMessage, result);
 
         // Assert
-        Check.That(score).IsEqualTo(1.0d);
+        score.Should().Be(1.0d);
 
         // Verify
         requestMatcher1Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Once);

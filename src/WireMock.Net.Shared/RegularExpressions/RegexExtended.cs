@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Stef.Validation;
 
@@ -10,9 +8,7 @@ namespace WireMock.RegularExpressions;
 /// <summary>
 /// Extension to the <see cref="Regex"/> object, adding support for GUID tokens for matching on.
 /// </summary>
-#if !NETSTANDARD1_3
 [Serializable]
-#endif
 internal class RegexExtended : Regex
 {
     /// <inheritdoc cref="Regex"/>
@@ -32,7 +28,7 @@ internal class RegexExtended : Regex
     {
     }
 
-#if !NETSTANDARD1_3 && !NET8_0_OR_GREATER
+#if !NET8_0_OR_GREATER
     /// <inheritdoc cref="Regex"/>
     protected RegexExtended(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) :
         base(info, context)

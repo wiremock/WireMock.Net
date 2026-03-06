@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 using WireMock.Handlers;
 using WireMock.Types;
 
@@ -123,7 +121,6 @@ public class SettingsModel
     /// </summary>
     public Dictionary<string, string[]>? ProtoDefinitions { get; set; }
 
-#if NETSTANDARD1_3_OR_GREATER || NET461
     /// <summary>
     /// Server client certificate mode
     /// </summary>
@@ -133,5 +130,9 @@ public class SettingsModel
     /// Whether to accept any client certificate
     /// </summary>
     public bool AcceptAnyClientCertificate { get; set; }
-#endif
+
+    /// <summary>
+    /// Gets or sets the WebSocket settings.
+    /// </summary>
+    public WebSocketSettingsModel? WebSocketSettings { get; set; }
 }

@@ -1,11 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using NFluent;
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -21,7 +17,7 @@ public class JsonPathMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("JsonPathMatcher");
+        name.Should().Be("JsonPathMatcher");
     }
 
     [Fact]
@@ -34,7 +30,7 @@ public class JsonPathMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -48,7 +44,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(bytes).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -61,7 +57,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(null).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -74,7 +70,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(string.Empty).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -88,7 +84,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(o).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -101,7 +97,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch("").Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -114,7 +110,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch("x").Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -127,7 +123,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(new { Id = 1, Name = "Test" }).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -140,7 +136,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(new { things = new { name = "x" } }).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -154,7 +150,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(json).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -168,7 +164,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(json).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -187,7 +183,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(jobject).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -200,7 +196,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(JObject.Parse("{\"Id\":1,\"Name\":\"Test\"}")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -213,7 +209,7 @@ public class JsonPathMatcherTests
         double match = matcher.IsMatch(JObject.Parse("{\"Id\":1,\"Name\":\"Test\"}")).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(0.0);
+        match.Should().Be(0.0);
     }
 
     [Fact]
@@ -233,7 +229,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(1.0);
+        match.Should().Be(1.0);
     }
 
     [Fact]
@@ -255,7 +251,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1.0);
+        match.Should().Be(1.0);
     }
 
     [Fact]
@@ -277,7 +273,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0.0);
+        match.Should().Be(0.0);
     }
 
     [Fact]
@@ -295,7 +291,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0.0);
+        match.Should().Be(0.0);
     }
 
     [Fact]
@@ -313,7 +309,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0.0);
+        match.Should().Be(0.0);
     }
 
     [Fact]
@@ -337,7 +333,7 @@ public class JsonPathMatcherTests
         }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1.0);
+        match.Should().Be(1.0);
     }
 
     [Fact]

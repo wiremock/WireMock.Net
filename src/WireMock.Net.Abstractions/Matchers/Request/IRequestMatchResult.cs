@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-
 namespace WireMock.Matchers.Request;
 
 /// <summary>

@@ -45,12 +45,12 @@ public class ProxyAndRecordSettingsModel
     /// <summary>
     /// Defines a list from headers which will be excluded from the saved mappings.
     /// </summary>
-    public string[] ExcludedHeaders { get; set; }
+    public string[] ExcludedHeaders { get; set; } = [];
 
     /// <summary>
     /// Defines a list of cookies which will be excluded from the saved mappings.
     /// </summary>
-    public string[] ExcludedCookies { get; set; }
+    public string[] ExcludedCookies { get; set; } = [];
 
     /// <summary>
     /// Prefer the Proxy Mapping over the saved Mapping (in case SaveMapping is set to <c>true</c>).

@@ -1,10 +1,8 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -20,7 +18,7 @@ public class JmesPathMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("JmesPathMatcher");
+        name.Should().Be("JmesPathMatcher");
     }
 
     [Fact]
@@ -33,7 +31,7 @@ public class JmesPathMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("X");
+        patterns.Should().ContainSingle("X");
     }
 
     [Fact]
@@ -47,7 +45,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(bytes).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -60,7 +58,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(null).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -73,7 +71,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(string.Empty).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -87,7 +85,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(o).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -100,7 +98,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch("").Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -113,7 +111,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch("x").Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(0);
+        match.Should().Be(0);
     }
 
     [Fact]
@@ -126,7 +124,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(new { things = new { name = "RequiredThing" } }).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -149,7 +147,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(jobject).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -162,7 +160,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(JObject.Parse("{ \"things\": { \"x\": \"RequiredThing\" } }")).Score;
 
         // Assert 
-        Check.That(match).IsEqualTo(1);
+        match.Should().Be(1);
     }
 
     [Fact]
@@ -175,7 +173,7 @@ public class JmesPathMatcherTests
         double match = matcher.IsMatch(JObject.Parse("{ \"things\": { \"x\": \"RequiredThing\" } }")).Score;
 
         // Assert
-        Check.That(match).IsEqualTo(0.0);
+        match.Should().Be(0.0);
     }
 
     [Fact]

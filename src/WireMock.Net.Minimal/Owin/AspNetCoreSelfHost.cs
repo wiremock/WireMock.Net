@@ -1,42 +1,34 @@
 // Copyright © WireMock.Net
 
-#if USE_ASPNETCORE
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Stef.Validation;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
+using WireMock.Serialization;
 using WireMock.Services;
 using WireMock.Util;
 
 namespace WireMock.Owin;
 
-internal partial class AspNetCoreSelfHost : IOwinSelfHost
+internal partial class AspNetCoreSelfHost
 {
-    private const string CorsPolicyName = "WireMock.Net - Policy";
-
     private readonly CancellationTokenSource _cts = new();
     private readonly IWireMockMiddlewareOptions _wireMockMiddlewareOptions;
     private readonly IWireMockLogger _logger;
     private readonly HostUrlOptions _urlOptions;
 
-    private Exception _runningException;
-    private IWebHost _host;
+    private IWebHost _host = null!;
 
     public bool IsStarted { get; private set; }
 
-    public List<string> Urls { get; } = new();
+    public List<string> Urls { get; } = [];
 
-    public List<int> Ports { get; } = new();
+    public List<int> Ports { get; } = [];
 
-    public Exception RunningException => _runningException;
+    public Exception? RunningException { get; private set; }
 
     public AspNetCoreSelfHost(IWireMockMiddlewareOptions wireMockMiddlewareOptions, HostUrlOptions urlOptions)
     {
@@ -73,8 +65,11 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 services.AddSingleton<IOwinRequestMapper, OwinRequestMapper>();
                 services.AddSingleton<IOwinResponseMapper, OwinResponseMapper>();
                 services.AddSingleton<IGuidUtils, GuidUtils>();
+                services.AddSingleton<IDateTimeUtils, DateTimeUtils>();
+                services.AddSingleton<LogEntryMapper>();
+                services.AddSingleton<IWireMockMiddlewareLogger, WireMockMiddlewareLogger>();
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 AddCors(services);
 #endif
                 _wireMockMiddlewareOptions.AdditionalServiceRegistration?.Invoke(services);
@@ -83,8 +78,16 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
             {
                 appBuilder.UseMiddleware<GlobalExceptionMiddleware>();
 
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
                 UseCors(appBuilder);
+
+                var webSocketOptions = new WebSocketOptions();
+                if (_wireMockMiddlewareOptions.WebSocketSettings?.KeepAliveIntervalSeconds != null)
+                {
+                    webSocketOptions.KeepAliveInterval = TimeSpan.FromSeconds(_wireMockMiddlewareOptions.WebSocketSettings.KeepAliveIntervalSeconds);
+                }
+
+                appBuilder.UseWebSockets(webSocketOptions);
 #endif
                 _wireMockMiddlewareOptions.PreWireMockMiddlewareInit?.Invoke(appBuilder);
 
@@ -99,73 +102,76 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
                 SetHttpsAndUrls(options, _wireMockMiddlewareOptions, _urlOptions.GetDetails());
             })
             .ConfigureKestrelServerOptions()
-
-#if NETSTANDARD1_3
-            .UseUrls(_urlOptions.GetDetails().Select(u => u.Url).ToArray())
-#endif
             .Build();
 
         return RunHost(_cts.Token);
     }
 
-        private Task RunHost(CancellationToken token)
+    private Task RunHost(CancellationToken token)
+    {
+        try
         {
-            try
-            {
-#if NETCOREAPP3_1 || NET5_0_OR_GREATER
-                var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
+#if NET8_0_OR_GREATER
+            var appLifetime = _host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
 #else
-                var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
+            var appLifetime = _host.Services.GetRequiredService<IApplicationLifetime>();
 #endif
-                appLifetime.ApplicationStarted.Register(() =>
-                {
-                    var addresses = _host.ServerFeatures
-                        .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
-                        .Addresses;
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                var addresses = _host.ServerFeatures
+                    .Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()!
+                    .Addresses
+                    .ToArray();
 
+                if (_urlOptions.Urls == null)
+                {
                     foreach (var address in addresses)
                     {
-                        Urls.Add(address.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost"));
+                        PortUtils.TryExtract(address, out _, out _, out var scheme, out var host, out var port);
 
-                        PortUtils.TryExtract(address, out _, out _, out _, out _, out var port);
+                        var replacedHost = ReplaceHostWithLocalhost(host!);
+                        var newUrl = $"{scheme}://{replacedHost}:{port}";
+                        Urls.Add(newUrl);
                         Ports.Add(port);
                     }
+                }
+                else
+                {
+                    var urlOptions = _urlOptions.Urls?.ToArray() ?? [];
+
+                    for (int i = 0; i < urlOptions.Length; i++)
+                    {
+                        PortUtils.TryExtract(urlOptions[i], out _, out _, out var originalScheme, out _, out _);
+                        if (originalScheme!.StartsWith("grpc", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Always replace "grpc" with "http" in the scheme because GrpcChannel needs http or https.
+                            originalScheme = originalScheme.Replace("grpc", "http", StringComparison.OrdinalIgnoreCase);
+                        }
+
+                        PortUtils.TryExtract(addresses[i], out _, out _, out _, out var realHost, out var realPort);
+
+                        var replacedHost = ReplaceHostWithLocalhost(realHost!);
+                        var newUrl = $"{originalScheme}://{replacedHost}:{realPort}";
+
+                        Urls.Add(newUrl);
+                        Ports.Add(realPort);
+                    }
+                }
 
                 IsStarted = true;
             });
 
-#if NETSTANDARD1_3
-            _logger.Info("Server using netstandard1.3");
-#elif NETSTANDARD2_0
-            _logger.Info("Server using netstandard2.0");
-#elif NETSTANDARD2_1
-            _logger.Info("Server using netstandard2.1");
-#elif NETCOREAPP3_1
-            _logger.Info("Server using .NET Core App 3.1");
-#elif NET5_0
-            _logger.Info("Server using .NET 5.0");
-#elif NET6_0
-            _logger.Info("Server using .NET 6.0");
-#elif NET7_0
-            _logger.Info("Server using .NET 7.0");
-#elif NET8_0
+#if NET8_0
             _logger.Info("Server using .NET 8.0");
-#elif NET46
-            _logger.Info("Server using .NET Framework 4.6.1 or higher");
+#else
+            _logger.Info("Server using .NET Standard 2.0");
 #endif
 
-#if NETSTANDARD1_3
-            return Task.Run(() =>
-            {
-                _host.Run(token);
-            });
-#else
             return _host.RunAsync(token);
-#endif
         }
         catch (Exception e)
         {
-            _runningException = e;
+            RunningException = e;
             _logger.Error(e.ToString());
 
             IsStarted = false;
@@ -179,11 +185,11 @@ internal partial class AspNetCoreSelfHost : IOwinSelfHost
         _cts.Cancel();
 
         IsStarted = false;
-#if NETSTANDARD1_3
-        return Task.CompletedTask;
-#else
         return _host.StopAsync();
-#endif
+    }
+
+    private static string ReplaceHostWithLocalhost(string host)
+    {
+        return host.Replace("0.0.0.0", "localhost").Replace("[::]", "localhost");
     }
 }
-#endif

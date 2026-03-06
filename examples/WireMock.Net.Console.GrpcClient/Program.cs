@@ -5,7 +5,7 @@ using Grpc.Net.Client;
 using Policy2;
 
 await TestPolicyAsync();
-// await TestGreeterAsync();
+await TestGreeterAsync();
 return;
 
 async Task TestGreeterAsync()

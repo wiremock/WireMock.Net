@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using JsonConverter.Abstractions;
 using Newtonsoft.Json.Linq;
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER || NET461

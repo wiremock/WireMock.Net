@@ -1,21 +1,13 @@
 // Copyright © WireMock.Net
 
-#if !(NET452 || NET461 || NETCOREAPP3_1)
-using System;
-using System.Threading.Tasks;
-using FluentAssertions;
-using VerifyTests;
-using VerifyXunit;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Serialization;
 using WireMock.Types;
-using Xunit;
 
 namespace WireMock.Net.Tests.Serialization;
 
-[UsesVerify]
 public partial class MappingConverterTests
 {
     private static readonly VerifySettings VerifySettings = new();
@@ -41,7 +33,7 @@ public partial class MappingConverterTests
         code.Should().NotBeEmpty();
 
         // Verify
-        return Verifier.Verify(code, VerifySettings);
+        return Verify(code, VerifySettings);
     }
 
     [Fact]
@@ -61,7 +53,7 @@ public partial class MappingConverterTests
         code.Should().NotBeEmpty();
 
         // Verify
-        return Verifier.Verify(code, VerifySettings);
+        return Verify(code, VerifySettings);
     }
 
     [Fact]
@@ -81,7 +73,7 @@ public partial class MappingConverterTests
         code.Should().NotBeEmpty();
 
         // Verify
-        return Verifier.Verify(code, VerifySettings);
+        return Verify(code, VerifySettings);
     }
 
     [Fact]
@@ -101,7 +93,7 @@ public partial class MappingConverterTests
         code.Should().NotBeEmpty();
 
         // Verify
-        return Verifier.Verify(code, VerifySettings);
+        return Verify(code, VerifySettings);
     }
 
     private IMapping CreateMapping()
@@ -143,4 +135,3 @@ public partial class MappingConverterTests
         ).WithProbability(0.3);
     }
 }
-#endif

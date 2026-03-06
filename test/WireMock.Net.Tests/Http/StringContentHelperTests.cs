@@ -1,23 +1,24 @@
 // Copyright © WireMock.Net
 
+using System.Net.Http;
 using System.Net.Http.Headers;
-using FluentAssertions;
 using WireMock.Http;
-using Xunit;
 
 namespace WireMock.Net.Tests.Http;
 
 public class StringContentHelperTests
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Fact]
-    public void StringContentHelper_Create_WithNullContentType()
+    public async Task StringContentHelper_Create_WithNullContentType()
     {
         // Act
         var result = StringContentHelper.Create("test", null);
 
         // Assert
         result.Headers.ContentType.Should().BeNull();
-        result.ReadAsStringAsync().Result.Should().Be("test");
+        (await result.ReadAsStringAsync(_ct)).Should().Be("test");
     }
 
     [Theory]
@@ -25,7 +26,7 @@ public class StringContentHelperTests
     [InlineData("application/soap+xml", "application/soap+xml")]
     [InlineData("application/soap+xml;charset=UTF-8", "application/soap+xml; charset=UTF-8")]
     [InlineData("application/soap+xml;charset=UTF-8;action=\"http://myCompany.Customer.Contract/ICustomerService/GetSomeConfiguration\"", "application/soap+xml; charset=UTF-8; action=\"http://myCompany.Customer.Contract/ICustomerService/GetSomeConfiguration\"")]
-    public void StringContentHelper_Create(string test, string expected)
+    public async Task StringContentHelper_Create(string test, string expected)
     {
         // Arrange
         var contentType = MediaTypeHeaderValue.Parse(test);
@@ -34,7 +35,7 @@ public class StringContentHelperTests
         var result = StringContentHelper.Create("test", contentType);
 
         // Assert
-        result.Headers.ContentType.ToString().Should().Be(expected);
-        result.ReadAsStringAsync().Result.Should().Be("test");
+        result.Headers.ContentType?.ToString().Should().Be(expected);
+        (await result.ReadAsStringAsync(_ct)).Should().Be("test");
     }
 }

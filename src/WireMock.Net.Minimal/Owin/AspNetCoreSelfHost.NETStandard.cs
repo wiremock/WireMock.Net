@@ -1,12 +1,8 @@
 // Copyright © WireMock.Net
 
-#if USE_ASPNETCORE && !NETSTANDARD1_3
-using System;
-using System.Collections.Generic;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CertificateLoader = WireMock.HttpsCertificate.CertificateLoader;
@@ -38,7 +34,7 @@ internal partial class AspNetCoreSelfHost
                             options.ServerCertificate = CertificateLoader.LoadCertificate(wireMockMiddlewareOptions, urlDetail.Host);
                         }
 
-                        options.ClientCertificateMode = (ClientCertificateMode)wireMockMiddlewareOptions.ClientCertificateMode;
+                        options.ClientCertificateMode = wireMockMiddlewareOptions.ClientCertificateMode;
                         if (wireMockMiddlewareOptions.AcceptAnyClientCertificate)
                         {
                             options.ClientCertificateValidation = (_, _, _) => true;
@@ -47,7 +43,7 @@ internal partial class AspNetCoreSelfHost
 
                     if (urlDetail.IsHttp2)
                     {
-                        listenOptions.Protocols = HttpProtocols.Http2;
+                        SetHttp2AsProtocolsOnListenOptions(listenOptions);
                     }
                 });
                 continue;
@@ -55,15 +51,21 @@ internal partial class AspNetCoreSelfHost
 
             if (urlDetail.IsHttp2)
             {
-                Listen(kestrelOptions, urlDetail, listenOptions =>
-                {
-                    listenOptions.Protocols = HttpProtocols.Http2;
-                });
+                Listen(kestrelOptions, urlDetail, SetHttp2AsProtocolsOnListenOptions);
                 continue;
             }
 
             Listen(kestrelOptions, urlDetail, _ => { });
         }
+    }
+
+    private static void SetHttp2AsProtocolsOnListenOptions(ListenOptions listenOptions)
+    {
+#if NET8_0_OR_GREATER
+        listenOptions.Protocols = HttpProtocols.Http2;
+#else
+        throw new NotSupportedException("HTTP/2 is only supported in .NET 8 or greater.");
+#endif
     }
 
     private static void Listen(KestrelServerOptions kestrelOptions, HostUrlDetails urlDetail, Action<ListenOptions> configure)
@@ -112,4 +114,3 @@ internal static class IWebHostBuilderExtensions
         });
     }
 }
-#endif

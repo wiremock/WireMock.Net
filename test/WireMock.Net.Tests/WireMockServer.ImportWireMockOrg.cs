@@ -1,10 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.IO;
-using System.Linq;
-using FluentAssertions;
 using WireMock.Server;
-using Xunit;
 
 namespace WireMock.Net.Tests
 {

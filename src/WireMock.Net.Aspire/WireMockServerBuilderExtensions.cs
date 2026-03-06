@@ -135,7 +135,7 @@ public static class WireMockServerBuilderExtensions
         });
 
         // Always add the lifecycle hook to support dynamic mappings and proto definitions
-        resourceBuilder.ApplicationBuilder.Services.TryAddLifecycleHook<WireMockServerLifecycleHook>();
+        resourceBuilder.ApplicationBuilder.Services.AddEventingSubscriber<WireMockLifecycleSubscriber>();
 
         return resourceBuilder;
     }

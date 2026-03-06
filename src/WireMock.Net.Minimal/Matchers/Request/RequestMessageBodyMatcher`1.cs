@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
 

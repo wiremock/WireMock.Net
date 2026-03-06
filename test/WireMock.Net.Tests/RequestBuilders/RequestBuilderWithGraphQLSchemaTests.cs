@@ -1,13 +1,9 @@
 // Copyright © WireMock.Net
 
-#if GRAPHQL
-using System.Collections.Generic;
-using FluentAssertions;
 using GraphQL.Types;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestBuilders;
 
@@ -70,4 +66,3 @@ public class RequestBuilderWithGraphQLSchemaTests
         ((RequestMessageGraphQLMatcher)matchers[0]).Matchers.Should().ContainItemsAssignableTo<GraphQLMatcher>();
     }
 }
-#endif

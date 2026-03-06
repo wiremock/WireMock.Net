@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Linq;
 using AnyOfTypes;
 using Newtonsoft.Json.Linq;
@@ -71,7 +70,7 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
         {
             try
             {
-                var jToken = JToken.Parse(input);
+                var jToken = JToken.Parse(input!);
                 score = IsMatch(jToken);
             }
             catch (Exception ex)

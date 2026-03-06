@@ -2,6 +2,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using WireMock.HttpsCertificate;
 using WireMock.Settings;
 
@@ -11,29 +12,21 @@ internal static class HttpClientBuilder
 {
     public static HttpClient Build(HttpClientSettings settings)
     {
-#if NETSTANDARD || NETCOREAPP3_1 || NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
+
         var handler = new HttpClientHandler
         {
             CheckCertificateRevocationList = false,
-#if NET5_0_OR_GREATER
-            SslProtocols = System.Security.Authentication.SslProtocols.Tls13 | System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
-#else
-            SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
-#endif
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
-
+#pragma warning disable SYSLIB0039 // Type or member is obsolete
+            SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls,
+#pragma warning restore SYSLIB0039 // Type or member is obsolete
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
-#elif NET46
+#else
         var handler = new HttpClientHandler
         {
-            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true,
-            AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-        };
-#else
-        var handler = new WebRequestHandler
-        {
-            ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true,
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };
 #endif
@@ -67,13 +60,12 @@ internal static class HttpClientBuilder
             }
         }
 
-#if NET5_0_OR_GREATER
+#if NET8_0_OR_GREATER
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-        ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
-#elif !NETSTANDARD1_3
+#else
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-        ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
 #endif
+        ServicePointManager.ServerCertificateValidationCallback = (message, cert, chain, errors) => true;
 
         return HttpClientFactory2.Create(handler);
     }
