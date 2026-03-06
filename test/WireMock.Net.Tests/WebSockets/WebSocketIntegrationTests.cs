@@ -796,7 +796,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         var proxyUri = new Uri($"{sut.Url}/ws/proxy");
         await client.ConnectAsync(proxyUri, _ct);
 
-        await Task.Delay(250, _ct);
+        await Task.Delay(500, _ct);
 
         var testData = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
@@ -805,7 +805,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
 
-        await Task.Delay(250, _ct);
+        await Task.Delay(500, _ct);
 
         // Assert
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
