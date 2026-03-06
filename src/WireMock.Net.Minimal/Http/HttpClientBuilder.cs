@@ -2,6 +2,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
 using WireMock.HttpsCertificate;
 using WireMock.Settings;
 
@@ -12,10 +13,13 @@ internal static class HttpClientBuilder
     public static HttpClient Build(HttpClientSettings settings)
     {
 #if NET8_0_OR_GREATER
+
         var handler = new HttpClientHandler
         {
             CheckCertificateRevocationList = false,
-            SslProtocols = System.Security.Authentication.SslProtocols.Tls13 | System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls,
+#pragma warning disable SYSLIB0039 // Type or member is obsolete
+            SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls,
+#pragma warning restore SYSLIB0039 // Type or member is obsolete
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         };

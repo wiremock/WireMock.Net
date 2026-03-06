@@ -48,7 +48,7 @@ internal static class CertificateLoader
 
         if (!string.IsNullOrEmpty(options.X509CertificateFilePath))
         {
-            if (options.X509CertificateFilePath.EndsWith(ExtensionPem, StringComparison.OrdinalIgnoreCase))
+            if (options.X509CertificateFilePath!.EndsWith(ExtensionPem, StringComparison.OrdinalIgnoreCase))
             {
                 // PEM logic based on: https://www.scottbrady91.com/c-sharp/pem-loading-in-dotnet-core-and-dotnet
 #if NET8_0_OR_GREATER

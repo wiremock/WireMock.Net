@@ -10,7 +10,7 @@ public static class TestUtils
     {
         var field = obj.GetType().GetTypeInfo().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
 
-        return (T)field.GetValue(obj);
+        return (T)field!.GetValue(obj)!;
     }
 
     /// <summary>
@@ -27,8 +27,8 @@ public static class TestUtils
             throw new ArgumentNullException(nameof(obj));
         }
 
-        Type t = obj.GetType();
-        FieldInfo fi = null;
+        Type? t = obj.GetType();
+        FieldInfo? fi = null;
         while (fi == null && t != null)
         {
             fi = t.GetField(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

@@ -17,7 +17,7 @@ namespace WireMock.Owin;
 
 internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 {
-    public IWireMockLogger Logger { get; set; }
+    public IWireMockLogger Logger { get; set; } = new WireMockConsoleLogger();
 
     public TimeSpan? RequestProcessingDelay { get; set; }
 

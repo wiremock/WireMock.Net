@@ -586,7 +586,7 @@ public partial class WireMockServer
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid))
         {
-            var entry = LogEntries.SingleOrDefault(r => !r.RequestMessage.Path.StartsWith("/__admin/") && r.Guid == guid);
+            var entry = LogEntries.SingleOrDefault(r => r.RequestMessage != null && !r.RequestMessage.Path.StartsWith("/__admin/") && r.Guid == guid);
             if (entry is { })
             {
                 var model = new LogEntryMapper(_options).Map(entry);
@@ -615,7 +615,7 @@ public partial class WireMockServer
     {
         var logEntryMapper = new LogEntryMapper(_options);
         var result = LogEntries
-            .Where(r => !r.RequestMessage.Path.StartsWith("/__admin/"))
+            .Where(r => r.RequestMessage != null && !r.RequestMessage.Path.StartsWith("/__admin/"))
             .Select(logEntryMapper.Map);
 
         return ToJson(result);
@@ -637,10 +637,10 @@ public partial class WireMockServer
         var request = (Request)InitRequestBuilder(requestModel);
 
         var dict = new Dictionary<ILogEntry, RequestMatchResult>();
-        foreach (var logEntry in LogEntries.Where(le => !le.RequestMessage.Path.StartsWith("/__admin/")))
+        foreach (var logEntry in LogEntries.Where(le => le.RequestMessage != null && !le.RequestMessage.Path.StartsWith("/__admin/")))
         {
             var requestMatchResult = new RequestMatchResult();
-            if (request.GetMatchingScore(logEntry.RequestMessage, requestMatchResult) > MatchScores.AlmostPerfect)
+            if (request.GetMatchingScore(logEntry.RequestMessage!, requestMatchResult) > MatchScores.AlmostPerfect)
             {
                 dict.Add(logEntry, requestMatchResult);
             }
@@ -659,7 +659,7 @@ public partial class WireMockServer
             Guid.TryParse(value.ToString(), out var mappingGuid)
         )
         {
-            var logEntries = LogEntries.Where(le => !le.RequestMessage.Path.StartsWith("/__admin/") && le.MappingGuid == mappingGuid);
+            var logEntries = LogEntries.Where(le => le.RequestMessage != null && !le.RequestMessage.Path.StartsWith("/__admin/") && le.MappingGuid == mappingGuid);
             var logEntryMapper = new LogEntryMapper(_options);
             var result = logEntries.Select(logEntryMapper.Map);
             return ToJson(result);

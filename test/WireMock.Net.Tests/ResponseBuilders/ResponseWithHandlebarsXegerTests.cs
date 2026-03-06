@@ -3,7 +3,6 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
@@ -69,9 +68,8 @@ public class ResponseWithHandlebarsXegerTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        j["Number"].Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
-        j["Postcode"].Value<string>().Should().NotBeEmpty();
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["Number"]?.Value<int>().Should().BeGreaterThan(1000).And.BeLessThan(9999);
+        j["Postcode"]?.Value<string>().Should().NotBeEmpty();
     }
 }
-

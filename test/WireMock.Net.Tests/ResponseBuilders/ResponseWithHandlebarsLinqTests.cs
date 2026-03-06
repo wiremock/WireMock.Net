@@ -46,9 +46,9 @@ public class ResponseWithHandlebarsLinqTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
         j["x"].Should().NotBeNull();
-        j["x"].ToString().Should().Be("/pathtest");
+        j["x"]?.ToString().Should().Be("/pathtest");
     }
 
     [Fact(Skip = "DynamicLinq")]
@@ -76,9 +76,8 @@ public class ResponseWithHandlebarsLinqTests
         var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        j["x"].Should().NotBeNull();
-        j["x"].ToString().Should().Be("Test_123");
+        var j = JObject.FromObject(response.Message.BodyData!.BodyAsJson!);
+        j["x"].Should().NotBeNull().And.Subject.ToString().Should().Be("Test_123");
     }
 
     [Fact(Skip = "DynamicLinq")]
