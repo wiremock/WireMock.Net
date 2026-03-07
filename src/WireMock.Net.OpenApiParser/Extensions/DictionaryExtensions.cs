@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
 #if NETSTANDARD2_0
-using System.Collections.Generic;
-
-namespace WireMock.Net.OpenApiParser.Extensions;
+namespace System.Collections.Generic;
 
 internal static class DictionaryExtensions
 {
