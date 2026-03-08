@@ -39,6 +39,8 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     public int? MaxRequestLogCount { get; set; }
 
+    public bool? SoftMaxRequestLogCountEnabled { get; set; }
+
     public Action<IAppBuilder>? PreWireMockMiddlewareInit { get; set; }
 
     public Action<IAppBuilder>? PostWireMockMiddlewareInit { get; set; }

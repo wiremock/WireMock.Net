@@ -35,6 +35,12 @@ public class SettingsModel
     public int? MaxRequestLogCount { get; set; }
 
     /// <summary>
+    /// Gets or sets whether MaxRequestLogCount should be enforced using a background timer
+    /// instead of trimming synchronously on each request.
+    /// </summary>
+    public bool? SoftMaxRequestLogCountEnabled { get; set; }
+
+    /// <summary>
     /// Allow a Body for all HTTP Methods. (default set to <c>false</c>).
     /// </summary>
     public bool? AllowBodyForAllHttpMethods { get; set; }

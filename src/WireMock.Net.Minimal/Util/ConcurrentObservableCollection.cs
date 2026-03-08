@@ -77,6 +77,32 @@ internal class ConcurrentObservableCollection<T> : ObservableCollection<T>
         }
     }
 
+    /// <summary>
+    /// Gets the number of elements contained in the collection (thread-safe).
+    /// </summary>
+    public new int Count
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return Items.Count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes the element at the specified index of the collection (thread-safe).
+    /// </summary>
+    /// <param name="index">The zero-based index of the element to remove.</param>
+    public new void RemoveAt(int index)
+    {
+        lock (_lockObject)
+        {
+            base.RemoveItem(index);
+        }
+    }
+
     public List<T> ToList()
     {
         lock (_lockObject)

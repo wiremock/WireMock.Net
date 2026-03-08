@@ -29,6 +29,7 @@ internal static class WireMockMiddlewareOptionsHelper
         options.HandleRequestsSynchronously = settings.HandleRequestsSynchronously;
         options.Logger = settings.Logger;
         options.MaxRequestLogCount = settings.MaxRequestLogCount;
+        options.SoftMaxRequestLogCountEnabled = settings.SoftMaxRequestLogCountEnabled;
         options.PostWireMockMiddlewareInit = settings.PostWireMockMiddlewareInit;
         options.PreWireMockMiddlewareInit = settings.PreWireMockMiddlewareInit;
         options.QueryParameterMultipleValueSupport = settings.QueryParameterMultipleValueSupport;
