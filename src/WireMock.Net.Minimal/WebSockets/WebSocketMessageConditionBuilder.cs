@@ -5,24 +5,15 @@ using Stef.Validation;
 
 namespace WireMock.WebSockets;
 
-internal class WebSocketMessageConditionBuilder : IWebSocketMessageConditionBuilder
+internal class WebSocketMessageConditionBuilder(WebSocketBuilder parent, IMatcher matcher) : IWebSocketMessageConditionBuilder
 {
-    private readonly WebSocketBuilder _parent;
-    private readonly IMatcher _matcher;
-
-    public WebSocketMessageConditionBuilder(WebSocketBuilder parent, IMatcher matcher)
-    {
-        _parent = Guard.NotNull(parent);
-        _matcher = Guard.NotNull(matcher);
-    }
-
     public IWebSocketBuilder ThenSendMessage(Action<IWebSocketMessageBuilder> configure)
     {
         Guard.NotNull(configure);
         var messageBuilder = new WebSocketMessageBuilder();
         configure(messageBuilder);
 
-        return _parent.AddConditionalMessage(_matcher, messageBuilder);
+        return parent.AddConditionalMessage(matcher, messageBuilder);
     }
 
     public IWebSocketBuilder SendMessages(Action<IWebSocketMessagesBuilder> configure)
@@ -31,6 +22,6 @@ internal class WebSocketMessageConditionBuilder : IWebSocketMessageConditionBuil
         var messagesBuilder = new WebSocketMessagesBuilder();
         configure(messagesBuilder);
 
-        return _parent.AddConditionalMessages(_matcher, messagesBuilder.Messages);
+        return parent.AddConditionalMessages(matcher, messagesBuilder.Messages);
     }
 }

@@ -41,9 +41,6 @@ public class WireMockWebSocketContext : IWebSocketContext
 
     internal IWireMockMiddlewareLogger Logger { get; }
 
-    /// <summary>
-    /// Creates a new WebSocketContext
-    /// </summary>
     internal WireMockWebSocketContext(
         HttpContext httpContext,
         WebSocket webSocket,
