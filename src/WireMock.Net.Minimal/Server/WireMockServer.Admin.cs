@@ -672,7 +672,7 @@ public partial class WireMockServer
     #region Scenarios
     private IResponseMessage ScenariosGet(HttpContext _, IRequestMessage requestMessage)
     {
-        var scenariosStates = Scenarios.Values.Select(s => new ScenarioStateModel
+        var scenariosStates = Scenarios.Select(s => new ScenarioStateModel
         {
             Name = s.Name,
             NextState = s.NextState,
@@ -705,7 +705,7 @@ public partial class WireMockServer
     private IResponseMessage ScenariosSetState(HttpContext _, IRequestMessage requestMessage)
     {
         var name = Enumerable.Reverse(requestMessage.Path.Split('/')).Skip(1).First();
-        if (!_options.Scenarios.ContainsKey(name))
+        if (!_options.ScenarioStateStore.ContainsKey(name))
         {
             ResponseMessageBuilder.Create(HttpStatusCode.NotFound, $"No scenario found by name '{name}'.");
         }

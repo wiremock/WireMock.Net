@@ -325,26 +325,26 @@ public class StatefulBehaviorTests
         var getResponse1 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse1.Should().Be("Buy milk");
 
-        server.Scenarios["To do list"].Name.Should().Be("To do list");
-        server.Scenarios["To do list"].NextState.Should().Be("TodoList State Started");
-        server.Scenarios["To do list"].Started.Should().BeTrue();
-        server.Scenarios["To do list"].Finished.Should().BeFalse();
+        server.Scenarios.First(s => s.Name == "To do list").Name.Should().Be("To do list");
+        server.Scenarios.First(s => s.Name == "To do list").NextState.Should().Be("TodoList State Started");
+        server.Scenarios.First(s => s.Name == "To do list").Started.Should().BeTrue();
+        server.Scenarios.First(s => s.Name == "To do list").Finished.Should().BeFalse();
 
         var postResponse = await client.PostAsync("/todo/items", new StringContent("Cancel newspaper subscription"), cancelationToken);
         postResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        server.Scenarios["To do list"].Name.Should().Be("To do list");
-        server.Scenarios["To do list"].NextState.Should().Be("Cancel newspaper item added");
-        server.Scenarios["To do list"].Started.Should().BeTrue();
-        server.Scenarios["To do list"].Finished.Should().BeFalse();
+        server.Scenarios.First(s => s.Name == "To do list").Name.Should().Be("To do list");
+        server.Scenarios.First(s => s.Name == "To do list").NextState.Should().Be("Cancel newspaper item added");
+        server.Scenarios.First(s => s.Name == "To do list").Started.Should().BeTrue();
+        server.Scenarios.First(s => s.Name == "To do list").Finished.Should().BeFalse();
 
         string getResponse2 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse2.Should().Be("Buy milk;Cancel newspaper subscription");
 
-        server.Scenarios["To do list"].Name.Should().Be("To do list");
-        server.Scenarios["To do list"].NextState.Should().BeNull();
-        server.Scenarios["To do list"].Started.Should().BeTrue();
-        server.Scenarios["To do list"].Finished.Should().BeTrue();
+        server.Scenarios.First(s => s.Name == "To do list").Name.Should().Be("To do list");
+        server.Scenarios.First(s => s.Name == "To do list").NextState.Should().BeNull();
+        server.Scenarios.First(s => s.Name == "To do list").Started.Should().BeTrue();
+        server.Scenarios.First(s => s.Name == "To do list").Finished.Should().BeTrue();
 
         server.Stop();
     }
@@ -372,14 +372,14 @@ public class StatefulBehaviorTests
 
         // Act and Assert
         server.SetScenarioState(scenario, "Buy milk");
-        server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Buy milk" });
+        server.Scenarios.First(s => s.Name == scenario).Should().BeEquivalentTo(new { Name = scenario, NextState = "Buy milk" });
         
         var getResponse1 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse1.Should().Be("Buy milk");
 
         server.SetScenarioState(scenario, "Cancel newspaper");
-        server.Scenarios[scenario].Name.Should().Be(scenario);
-        server.Scenarios[scenario].Should().BeEquivalentTo(new { Name = scenario, NextState = "Cancel newspaper" });
+        server.Scenarios.First(s => s.Name == scenario).Name.Should().Be(scenario);
+        server.Scenarios.First(s => s.Name == scenario).Should().BeEquivalentTo(new { Name = scenario, NextState = "Cancel newspaper" });
 
         var getResponse2 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse2.Should().Be("Buy milk;Cancel newspaper subscription");
