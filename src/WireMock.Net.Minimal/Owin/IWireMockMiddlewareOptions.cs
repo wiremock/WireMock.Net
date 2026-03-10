@@ -27,7 +27,7 @@ internal interface IWireMockMiddlewareOptions
 
     ConcurrentDictionary<Guid, IMapping> Mappings { get; }
 
-    ConcurrentDictionary<string, ScenarioState> Scenarios { get; }
+    IScenarioStateStore Scenarios { get; set; }
 
     ConcurrentObservableCollection<LogEntry> LogEntries { get; }
 

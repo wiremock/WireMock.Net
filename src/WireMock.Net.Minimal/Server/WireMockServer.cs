@@ -2,7 +2,6 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System.Collections.Concurrent;
 using System.Net;
 using AnyOfTypes;
 using JetBrains.Annotations;
@@ -91,7 +90,8 @@ public partial class WireMockServer : IWireMockServer
     /// Gets the scenarios.
     /// </summary>
     [PublicAPI]
-    public ConcurrentDictionary<string, ScenarioState> Scenarios => new(_options.Scenarios);
+    public IReadOnlyList<ScenarioState> Scenarios =>
+        _options.Scenarios.GetAll();
 
     #region IDisposable Members
     /// <summary>
@@ -585,7 +585,7 @@ public partial class WireMockServer : IWireMockServer
     [PublicAPI]
     public bool ResetScenario(string name)
     {
-        return _options.Scenarios.ContainsKey(name) && _options.Scenarios.TryRemove(name, out _);
+        return _options.Scenarios.TryRemove(name);
     }
 
     /// <inheritdoc />

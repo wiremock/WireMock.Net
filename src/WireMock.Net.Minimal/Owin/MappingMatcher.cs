@@ -89,14 +89,13 @@ internal class MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDou
 
     private string? GetNextState(IMapping mapping)
     {
-        // If the mapping does not have a scenario or _options.Scenarios does not contain this scenario from the mapping,
+        // If the mapping does not have a scenario or the store does not contain this scenario,
         // just return null to indicate that there is no next state.
-        if (mapping.Scenario == null || !_options.Scenarios.ContainsKey(mapping.Scenario))
+        if (mapping.Scenario == null)
         {
             return null;
         }
 
-        // Else just return the next state
-        return _options.Scenarios[mapping.Scenario].NextState;
+        return _options.Scenarios.Get(mapping.Scenario)?.NextState;
     }
 }

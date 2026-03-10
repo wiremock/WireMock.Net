@@ -27,7 +27,7 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     public ConcurrentDictionary<Guid, IMapping> Mappings { get; } = new ConcurrentDictionary<Guid, IMapping>();
 
-    public ConcurrentDictionary<string, ScenarioState> Scenarios { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public IScenarioStateStore Scenarios { get; set; } = new InMemoryScenarioStateStore();
 
     public ConcurrentObservableCollection<LogEntry> LogEntries { get; } = new();
 
