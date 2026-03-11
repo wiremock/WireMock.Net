@@ -2,13 +2,10 @@
 
 // This source file is based on mock4net by Alexandre Victoor which is licensed under the Apache 2.0 License.
 // For more details see 'mock4net/LICENSE.txt' and 'mock4net/readme.md' in this project root.
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-#if USE_ASPNETCORE
 using System.Security.Cryptography.X509Certificates;
-#endif
+using System.Text.Json.Serialization;
 using Stef.Validation;
 using WireMock.Models;
 using WireMock.Owin;
@@ -82,11 +79,10 @@ public class RequestMessage : IRequestMessage
     /// <inheritdoc />
     public byte[]? BodyAsBytes { get; }
 
-#if MIMEKIT
     /// <inheritdoc />
     [Newtonsoft.Json.JsonIgnore] // Issue 1001
+    [JsonIgnore]
     public Models.Mime.IMimeMessageData? BodyAsMimeMessage { get; }
-#endif
 
     /// <inheritdoc />
     public string? DetectedBodyType { get; }
@@ -109,10 +105,8 @@ public class RequestMessage : IRequestMessage
     /// <inheritdoc />
     public string Origin { get; }
 
-#if USE_ASPNETCORE
     /// <inheritdoc />
     public X509Certificate2? ClientCertificate { get; }
-#endif
 
     /// <summary>
     /// Used for Unit Testing
@@ -135,10 +129,8 @@ public class RequestMessage : IRequestMessage
         IBodyData? bodyData = null,
         IDictionary<string, string[]>? headers = null,
         IDictionary<string, string>? cookies = null,
-        string httpVersion = "1.1"
-#if USE_ASPNETCORE
-        , X509Certificate2? clientCertificate = null
-#endif
+        string httpVersion = "1.1",
+        X509Certificate2? clientCertificate = null
     )
     {
         Guard.NotNull(urlDetails);
@@ -178,16 +170,11 @@ public class RequestMessage : IRequestMessage
         Query = QueryStringParser.Parse(RawQuery, options?.QueryParameterMultipleValueSupport);
         QueryIgnoreCase = new Dictionary<string, WireMockList<string>>(Query, StringComparer.OrdinalIgnoreCase);
 
-#if USE_ASPNETCORE
         ClientCertificate = clientCertificate;
-#endif
-
-#if MIMEKIT
         if (TypeLoader.TryLoadStaticInstance<IMimeKitUtils>(out var mimeKitUtils) && mimeKitUtils.TryGetMimeMessage(this, out var mimeMessage))
         {
             BodyAsMimeMessage = mimeMessage;
         }
-#endif
     }
 
     /// <inheritdoc />
@@ -199,7 +186,6 @@ public class RequestMessage : IRequestMessage
         }
 
         var query = !ignoreCase ? Query : new Dictionary<string, WireMockList<string>>(Query, StringComparer.OrdinalIgnoreCase);
-
-        return query.ContainsKey(key) ? query[key] : null;
+        return query.TryGetValue(key, out var value) ? value : null;
     }
 }

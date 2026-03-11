@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers.Request;
 using WireMock.Server;

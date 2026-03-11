@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-
 namespace WireMock.Types
 {
     /// <summary>

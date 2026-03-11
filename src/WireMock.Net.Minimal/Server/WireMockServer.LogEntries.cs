@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using JetBrains.Annotations;
@@ -38,9 +36,13 @@ public partial class WireMockServer
         foreach (var log in allLogEntries)
         {
             var requestMatchResult = new RequestMatchResult();
-            foreach (var matcher in matchers)
+
+            if (log.RequestMessage != null)
             {
-                matcher.GetMatchingScore(log.RequestMessage, requestMatchResult);
+                foreach (var matcher in matchers)
+                {
+                    matcher.GetMatchingScore(log.RequestMessage, requestMatchResult);
+                }
             }
 
             if (requestMatchResult.AverageTotalScore > MatchScores.AlmostPerfect)

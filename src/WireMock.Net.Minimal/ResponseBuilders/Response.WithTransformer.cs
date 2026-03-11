@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Types;
 
 namespace WireMock.ResponseBuilders;

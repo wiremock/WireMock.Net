@@ -1,31 +1,27 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
-using NFluent;
 using RestEase;
 using WireMock.Client;
 using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers.Request;
+using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests;
 
-public class WireMockServerAdminTests
+public class WireMockServerAdminTests(ITestOutputHelper output, ITestContextAccessor testContext)
 {
+    private readonly CancellationToken _ct = testContext.Current.CancellationToken;
+
     private static string GetCurrentFolder()
     {
         return Directory.GetCurrentDirectory();
@@ -34,21 +30,22 @@ public class WireMockServerAdminTests
     [Fact]
     public void WireMockServer_Admin_ResetMappings()
     {
-        var server = WireMockServer.Start();
-        string folder = Path.Combine(GetCurrentFolder(), "__admin", "mappings");
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
+        var folder = Path.Combine(GetCurrentFolder(), "__admin", "mappings");
         server.ReadStaticMappings(folder);
 
-        Check.That(server.Mappings).HasSize(Constants.NumStaticMappings);
-        Check.That(server.MappingModels).HasSize(Constants.NumStaticMappings);
+        server.Mappings.Should().HaveCount(Constants.NumStaticMappings);
+        server.MappingModels.Should().HaveCount(Constants.NumStaticMappings);
 
         // Act
         server.ResetMappings();
 
         // Assert
-        Check.That(server.Mappings).HasSize(0);
-        Check.That(server.MappingModels).HasSize(0);
-
-        server.Stop();
+        server.Mappings.Should().HaveCount(0);
+        server.MappingModels.Should().HaveCount(0);
     }
 
     [Fact]
@@ -63,6 +60,7 @@ public class WireMockServerAdminTests
 
         var server = WireMockServer.Start(new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             FileSystemHandler = staticMappingHandlerMock.Object
         });
 
@@ -81,25 +79,28 @@ public class WireMockServerAdminTests
     }
 
     [Fact]
-    public void WireMockServer_Admin_ReadStaticMapping_WithNonGuidFilename()
+    public async Task WireMockServer_Admin_ReadStaticMapping_WithNonGuidFilename()
     {
         var guid = Guid.Parse("04ee4872-9efd-4770-90d3-88d445265d0d");
         string title = "documentdb_root_title";
 
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         string path = Path.Combine(GetCurrentFolder(), "__admin", "mappings", "documentdb_root.json");
         server.ReadStaticMappingAndAddOrUpdate(path);
 
+        await Task.Delay(100, _ct);
+
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(1);
+        mappings.Should().HaveCount(1);
 
-        Check.That(mappings.First().RequestMatcher).IsNotNull();
-        Check.That(mappings.First().Provider).IsNotNull();
-        Check.That(mappings.First().Guid).Equals(guid);
-        Check.That(mappings.First().Title).Equals(title);
-
-        server.Stop();
+        mappings.First().RequestMatcher.Should().NotBeNull();
+        mappings.First().Provider.Should().NotBeNull();
+        mappings.First().Guid.Should().Be(guid);
+        mappings.First().Title.Should().Be(title);
     }
 
     [Fact]
@@ -107,33 +108,35 @@ public class WireMockServerAdminTests
     {
         string guid = "00000002-ee28-4f29-ae63-1ac9b0802d86";
 
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         string path = Path.Combine(GetCurrentFolder(), "__admin", "mappings", guid + ".json");
         server.ReadStaticMappingAndAddOrUpdate(path);
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(1);
+        mappings.Should().HaveCount(1);
 
-        Check.That(mappings.First().RequestMatcher).IsNotNull();
-        Check.That(mappings.First().Provider).IsNotNull();
-        Check.That(mappings.First().Guid).Equals(Guid.Parse(guid));
-        Check.That(mappings.First().Title).IsNullOrEmpty();
-
-        server.Stop();
+        mappings.First().RequestMatcher.Should().NotBeNull();
+        mappings.First().Provider.Should().NotBeNull();
+        mappings.First().Guid.Should().Be(Guid.Parse(guid));
+        mappings.First().Title.Should().BeNullOrEmpty();
     }
 
     [Fact]
     public void WireMockServer_Admin_ReadStaticMapping_WithArray()
     {
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         string path = Path.Combine(GetCurrentFolder(), "__admin", "mappings", "array.json");
         server.ReadStaticMappingAndAddOrUpdate(path);
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(2);
-
-        server.Stop();
+        mappings.Should().HaveCount(2);
     }
 
     [Fact]
@@ -149,21 +152,22 @@ public class WireMockServerAdminTests
         dynamic jsonObj = JsonConvert.DeserializeObject(json)!;
         jsonObj["Response"]["BodyAsFile"] = responseBodyFilePath;
 
-        string output = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-        File.WriteAllText(path, output);
+        var jsonObjAsJson = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+        File.WriteAllText(path, jsonObjAsJson);
 
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         server.ReadStaticMappingAndAddOrUpdate(path);
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(1);
+        mappings.Should().HaveCount(1);
 
-        Check.That(mappings.First().RequestMatcher).IsNotNull();
-        Check.That(mappings.First().Provider).IsNotNull();
-        Check.That(mappings.First().Guid).Equals(Guid.Parse(guid));
-        Check.That(mappings.First().Title).IsNullOrEmpty();
-
-        server.Stop();
+        mappings.First().RequestMatcher.Should().NotBeNull();
+        mappings.First().Provider.Should().NotBeNull();
+        mappings.First().Guid.Should().Be(Guid.Parse(guid));
+        mappings.First().Title.Should().BeNullOrEmpty();
     }
 
     [Fact]
@@ -173,10 +177,11 @@ public class WireMockServerAdminTests
         var staticMappingHandlerMock = new Mock<IFileSystemHandler>();
         staticMappingHandlerMock.Setup(m => m.GetMappingFolder()).Returns("folder");
         staticMappingHandlerMock.Setup(m => m.FolderExists(It.IsAny<string>())).Returns(true);
-        staticMappingHandlerMock.Setup(m => m.EnumerateFiles(It.IsAny<string>(), It.IsAny<bool>())).Returns(new string[0]);
+        staticMappingHandlerMock.Setup(m => m.EnumerateFiles(It.IsAny<string>(), It.IsAny<bool>())).Returns([]);
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             FileSystemHandler = staticMappingHandlerMock.Object
         });
 
@@ -197,8 +202,9 @@ public class WireMockServerAdminTests
         var staticMappingHandlerMock = new Mock<IFileSystemHandler>();
         staticMappingHandlerMock.Setup(m => m.ReadMappingFile(It.IsAny<string>())).Returns(mapping);
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             FileSystemHandler = staticMappingHandlerMock.Object
         });
 
@@ -212,15 +218,16 @@ public class WireMockServerAdminTests
     [Fact]
     public void WireMockServer_Admin_ReadStaticMappings()
     {
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         string folder = Path.Combine(GetCurrentFolder(), "__admin", "mappings");
         server.ReadStaticMappings(folder);
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(Constants.NumStaticMappings);
-
-        server.Stop();
+        mappings.Should().HaveCount(Constants.NumStaticMappings);
     }
 
     [Fact]
@@ -239,7 +246,7 @@ public class WireMockServerAdminTests
         server.ReadStaticMappings(Guid.NewGuid().ToString());
 
         // Assert
-        Check.That(server.Mappings).HasSize(0);
+        server.Mappings.Should().HaveCount(0);
 
         // Verify
         loggerMock.Verify(l => l.Info(It.Is<string>(s => s.StartsWith("The Static Mapping folder")), It.IsAny<object[]>()), Times.Once);
@@ -249,6 +256,7 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_Mapping_WithoutPathOrUrl()
     {
         // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var server = WireMockServer.StartWithAdminInterface();
 
         // Act
@@ -262,16 +270,16 @@ public class WireMockServerAdminTests
         pathMatcher.Should().BeNull();
 
         var api = RestClient.For<IWireMockAdminApi>(server.Url);
-        var mappingModels = await api.GetMappingsAsync();
+        var mappingModels = await api.GetMappingsAsync(cancellationToken);
         var mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
 
-        await api.DeleteMappingsAsync();
+        await api.DeleteMappingsAsync(cancellationToken);
 
-        await api.PostMappingAsync(mappingModel);
-        await api.GetMappingsAsync();
-        mappingModels = await api.GetMappingsAsync();
+        await api.PostMappingAsync(mappingModel, cancellationToken);
+        await api.GetMappingsAsync(cancellationToken);
+        mappingModels = await api.GetMappingsAsync(cancellationToken);
         mappingModel = mappingModels.First();
         mappingModel.Request.Path.Should().BeNull();
         mappingModel.Request.Url.Should().BeNull();
@@ -281,7 +289,10 @@ public class WireMockServerAdminTests
     public void WireMockServer_Admin_Mappings_WithGuid_Get()
     {
         Guid guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         server.Given(Request.Create().WithPath("/foo1").UsingGet()).WithGuid(guid)
             .RespondWith(Response.Create().WithStatusCode(201).WithBody("1"));
@@ -290,31 +301,33 @@ public class WireMockServerAdminTests
             .RespondWith(Response.Create().WithStatusCode(202).WithBody("2"));
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(2);
-
-        server.Stop();
+        mappings.Should().HaveCount(2);
     }
 
     [Fact]
     public void WireMockServer_Admin_Mappings_WithGuidAsString_Get()
     {
         string guid = "90356dba-b36c-469a-a17e-669cd84f1f05";
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         server.Given(Request.Create().WithPath("/foo100").UsingGet()).WithGuid(guid)
             .RespondWith(Response.Create().WithStatusCode(201).WithBody("1"));
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(1);
-
-        server.Stop();
+        mappings.Should().HaveCount(1);
     }
 
     [Fact]
     public void WireMockServer_Admin_Mappings_Add_SameGuid()
     {
         var guid = Guid.Parse("90356dba-b36c-469a-a17e-669cd84f1f05");
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         var response1 = Response.Create().WithStatusCode(500);
         server.Given(Request.Create().UsingGet())
@@ -322,8 +335,8 @@ public class WireMockServerAdminTests
             .RespondWith(response1);
 
         var mappings1 = server.Mappings.ToArray();
-        Check.That(mappings1).HasSize(1);
-        Check.That(mappings1.First().Guid).Equals(guid);
+        mappings1.Should().HaveCount(1);
+        mappings1.First().Guid.Should().Be(guid);
 
         var response2 = Response.Create().WithStatusCode(400);
         server.Given(Request.Create().WithPath("/2").UsingGet())
@@ -331,17 +344,18 @@ public class WireMockServerAdminTests
             .RespondWith(response2);
 
         var mappings2 = server.Mappings.ToArray();
-        Check.That(mappings2).HasSize(1);
-        Check.That(mappings2.First().Guid).Equals(guid);
-        Check.That(mappings2.First().Provider).Equals(response2);
-
-        server.Stop();
+        mappings2.Should().HaveCount(1);
+        mappings2.First().Guid.Should().Be(guid);
+        mappings2.First().Provider.Should().Be(response2);
     }
 
     [Fact]
     public async Task WireMockServer_Admin_Mappings_AtPriority()
     {
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         // given
         server.Given(Request.Create().WithPath("/1").UsingGet())
@@ -353,73 +367,77 @@ public class WireMockServerAdminTests
             .RespondWith(Response.Create().WithStatusCode(400));
 
         var mappings = server.Mappings.ToArray();
-        Check.That(mappings).HasSize(2);
+        mappings.Should().HaveCount(2);
 
         // when
-        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1").ConfigureAwait(false);
+        var response = await new HttpClient().GetAsync("http://localhost:" + server.Port + "/1", TestContext.Current.CancellationToken);
 
         // then
-        Check.That((int)response.StatusCode).IsEqualTo(400);
-
-        server.Stop();
+        ((int)response.StatusCode).Should().Be(400);
     }
 
     [Fact]
     public async Task WireMockServer_Admin_Requests_Get()
     {
         // given
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         // when
-        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo").ConfigureAwait(false);
+        await new HttpClient().GetAsync("http://localhost:" + server.Ports[0] + "/foo", TestContext.Current.CancellationToken);
 
         // then
-        Check.That(server.LogEntries).HasSize(1);
+        server.LogEntries.Should().HaveCount(1);
         var requestLogged = server.LogEntries.First();
-        Check.That(requestLogged.RequestMessage.Method).IsEqualTo("GET");
-        Check.That(requestLogged.RequestMessage.BodyData).IsNull();
-
-        server.Stop();
+        requestLogged.RequestMessage!.Method.Should().Be("GET");
+        requestLogged.RequestMessage.BodyData.Should().BeNull();
     }
 
     [Fact]
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount()
     {
         // Assign
-        var client = new HttpClient();
+        using var client = new HttpClient();
+
         // Act
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         server.SetMaxRequestLogCount(2);
 
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo1", _ct);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo2", _ct);
+        await client.GetAsync("http://localhost:" + server.Ports[0] + "/foo3", _ct);
 
         // Assert
-        Check.That(server.LogEntries).HasSize(2);
+        server.LogEntries.Should().HaveCount(2);
 
         var requestLoggedA = server.LogEntries.First();
-        Check.That(requestLoggedA.RequestMessage.Path).EndsWith("/foo2");
+        requestLoggedA.RequestMessage!.Path.Should().EndWith("/foo2");
 
         var requestLoggedB = server.LogEntries.Last();
-        Check.That(requestLoggedB.RequestMessage.Path).EndsWith("/foo3");
-
-        server.Stop();
+        requestLoggedB.RequestMessage!.Path.Should().EndWith("/foo3");
     }
 
     [Fact]
     public async Task WireMockServer_Admin_Logging_SetMaxRequestLogCount_To_0_Should_Not_AddLogging()
     {
         // Assign
-        var client = new HttpClient();
+        using var client = new HttpClient();
 
         // Act
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         server.SetMaxRequestLogCount(0);
 
-        await client.GetAsync("http://localhost:" + server.Port + "/foo1").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo2").ConfigureAwait(false);
-        await client.GetAsync("http://localhost:" + server.Port + "/foo3").ConfigureAwait(false);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo1", _ct);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo2", _ct);
+        await client.GetAsync("http://localhost:" + server.Port + "/foo3", _ct);
 
         // Assert
         server.LogEntries.Should().BeEmpty();
@@ -434,16 +452,21 @@ public class WireMockServerAdminTests
         using var client = new HttpClient();
 
         // Act
-        using var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
 
         var tasks = new[]
         {
-            client.GetAsync($"{server.Url}/foo1"),
-            client.PostAsync($"{server.Url}/foo2", new StringContent("test")),
-            client.GetAsync($"{server.Url}/foo3")
+            client.GetAsync($"{server.Url}/foo1", _ct),
+            client.PostAsync($"{server.Url}/foo2", new StringContent("test"), _ct),
+            client.GetAsync($"{server.Url}/foo3", _ct)
         };
 
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        await Task.WhenAll(tasks);
+
+        await Task.Delay(200, _ct);
 
         // Act
         var logEntries = server.FindLogEntries(new RequestMessageMethodMatcher("GET"));
@@ -451,8 +474,8 @@ public class WireMockServerAdminTests
         // Assert
         logEntries.Should().HaveCount(2);
 
-        logEntries.Single(le => le.RequestMessage.Path.EndsWith("foo1")).Should().NotBeNull();
-        logEntries.Single(le => le.RequestMessage.Path.EndsWith("foo3")).Should().NotBeNull();
+        logEntries.Single(le => le.RequestMessage!.Path.EndsWith("foo1")).Should().NotBeNull();
+        logEntries.Single(le => le.RequestMessage!.Path.EndsWith("foo3")).Should().NotBeNull();
     }
 
     [Fact]
@@ -462,9 +485,10 @@ public class WireMockServerAdminTests
         var fileMock = new Mock<IFileSystemHandler>();
         var settings = new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             FileSystemHandler = fileMock.Object
         };
-        var server = WireMockServer.Start(settings);
+        using var server = WireMockServer.Start(settings);
 
         // Act
         server.WatchStaticMappings();
@@ -484,8 +508,9 @@ public class WireMockServerAdminTests
         staticMappingHandlerMock.Setup(m => m.FolderExists(It.IsAny<string>())).Returns(true);
         staticMappingHandlerMock.Setup(m => m.WriteMappingFile(It.IsAny<string>(), It.IsAny<string>()));
 
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             FileSystemHandler = staticMappingHandlerMock.Object
         });
 
@@ -505,8 +530,9 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_Admin_DeleteMappings()
     {
         // Arrange
-        var server = WireMockServer.Start(new WireMockServerSettings
+        using var server = WireMockServer.Start(new WireMockServerSettings
         {
+            Logger = new TestOutputHelperWireMockLogger(output),
             StartAdminInterface = true,
             ReadStaticMappings = false,
             WatchStaticMappings = false,
@@ -526,15 +552,15 @@ public class WireMockServerAdminTests
             .AtPriority(2)
             .RespondWith(Response.Create().WithStatusCode(200));
 
-        Check.That(server.MappingModels.Count()).Equals(3);
+        server.MappingModels.Count().Should().Be(3);
 
         var guid1 = server.MappingModels.ElementAt(0).Guid;
         var guid2 = server.MappingModels.ElementAt(1).Guid;
         var guid3 = server.MappingModels.ElementAt(2).Guid;
 
-        Check.That(guid1).IsNotNull();
-        Check.That(guid2).IsNotNull();
-        Check.That(guid3).IsNotNull();
+        guid1.Should().NotBeNull();
+        guid2.Should().NotBeNull();
+        guid3.Should().NotBeNull();
 
         string guidsJsonBody = $"[" +
                                $"{{\"Guid\": \"{guid1}\"}}," +
@@ -549,15 +575,15 @@ public class WireMockServerAdminTests
             Content = new StringContent(guidsJsonBody, Encoding.UTF8, "application/json")
         };
 
-        var response = await new HttpClient().SendAsync(request).ConfigureAwait(false);
+        var response = await new HttpClient().SendAsync(request, _ct);
 
         // Assert
         var guids = server.MappingModels.Select(mapping => mapping.Guid!.Value).ToArray();
-        Check.That(guids.Contains(guid1.Value)).IsFalse();
-        Check.That(guids.Contains(guid2.Value)).IsFalse();
-        Check.That(guids.Contains(guid3.Value)).IsTrue();
-        Check.That(response.StatusCode).Equals(HttpStatusCode.OK);
-        Check.That(await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Equals($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
+        guids.Contains(guid1.Value).Should().BeFalse();
+        guids.Contains(guid2.Value).Should().BeFalse();
+        guids.Contains(guid3.Value).Should().BeTrue();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await response.Content.ReadAsStringAsync(_ct)).Should().Be($"{{\"Status\":\"Mappings deleted. Affected GUIDs: [{guid1}, {guid2}]\"}}");
     }
 
 #if NET5_0_OR_GREATER
@@ -565,22 +591,21 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateHttpClientFactory_And_CallEndpoint()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         var factory = server.CreateHttpClientFactory();
         var client = factory.CreateClient("any name");
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo", _ct);
 
         // Assert
-        Check.That(server.LogEntries).HasSize(1);
+        server.LogEntries.Should().HaveCount(1);
         var requestLogged = server.LogEntries.First();
-        Check.That(requestLogged.RequestMessage.Method).IsEqualTo("GET");
-        Check.That(requestLogged.RequestMessage.BodyData).IsNull();
-
-        // Cleanup
-        server.Stop();
-        server.Dispose();
+        requestLogged.RequestMessage!.Method.Should().Be("GET");
+        requestLogged.RequestMessage.BodyData.Should().BeNull();
     }
 #endif
 
@@ -588,42 +613,39 @@ public class WireMockServerAdminTests
     public async Task WireMockServer_CreateClient_And_CallEndpoint()
     {
         // Arrange
-        var server = WireMockServer.Start();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(output)
+        });
         var client = server.CreateClient();
 
         // Act
-        await client.GetAsync($"{server.Url}/foo").ConfigureAwait(false);
+        await client.GetAsync($"{server.Url}/foo", _ct);
 
         // Assert
-        Check.That(server.LogEntries).HasSize(1);
+        server.LogEntries.Should().HaveCount(1);
         var requestLogged = server.LogEntries.First();
-        Check.That(requestLogged.RequestMessage.Method).IsEqualTo("GET");
-        Check.That(requestLogged.RequestMessage.BodyData).IsNull();
-
-        // Cleanup
-        server.Stop();
-        server.Dispose();
+        requestLogged.RequestMessage!.Method.Should().Be("GET");
+        requestLogged.RequestMessage.BodyData.Should().BeNull();
     }
 
     [Fact]
     public async Task WireMockServer_CreateClient_And_CallAdminSettingsEndpoint()
     {
         // Arrange
-        var server = WireMockServer.Start(w =>
+        var cancellationToken = TestContext.Current.CancellationToken;
+        using var server = WireMockServer.Start(w =>
         {
+            w.Logger = new TestOutputHelperWireMockLogger(output);
             w.StartAdminInterface = true;
             w.AdminPath = "/adm";
         });
         var client = server.CreateClient();
 
         // Act
-        var settings = await client.GetStringAsync($"{server.Url}/adm/settings").ConfigureAwait(false);
+        var settings = await client.GetStringAsync($"{server.Url}/adm/settings", cancellationToken);
 
         // Assert
         settings.Should().NotBeNull();
-
-        // Cleanup
-        server.Stop();
-        server.Dispose();
     }
 }

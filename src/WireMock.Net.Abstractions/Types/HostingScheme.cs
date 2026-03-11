@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-
 namespace WireMock.Types;
 
 [Flags]
@@ -13,5 +11,11 @@ public enum HostingScheme
 
     Https = 0x2,
 
-    HttpAndHttps = Http | Https
+    HttpAndHttps = Http | Https,
+
+    Ws = 0x4,
+
+    Wss = 0x8,
+
+    WsAndWss = Ws | Wss
 }

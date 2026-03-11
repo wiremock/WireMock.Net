@@ -2,7 +2,7 @@
 
 #if MIMEKIT
 using System.Collections.Generic;
-using FluentAssertions;
+using AwesomeAssertions;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;

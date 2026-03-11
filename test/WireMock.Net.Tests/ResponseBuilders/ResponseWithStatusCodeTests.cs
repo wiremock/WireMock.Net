@@ -1,13 +1,11 @@
 // Copyright © WireMock.Net
 
-using FluentAssertions;
-using Moq;
 using System.Net;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -42,7 +40,7 @@ public class ResponseWithStatusCodeTests
                 break;
         }
 
-        var response = await responseBuilder.ProvideResponseAsync(new Mock<IMapping>().Object, request, _settingsMock.Object).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(Mock.Of<IMapping>(), Mock.Of<HttpContext>(), request, _settingsMock.Object);
 
         // Assert
         response.Message.StatusCode.Should().Be(expectedStatusCode);

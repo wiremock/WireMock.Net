@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using FluentAssertions;
 using JsonConverter.Newtonsoft.Json;
 using WireMock.Admin.Mappings;
 using WireMock.Serialization;
-using Xunit;
 #if NET8_0_OR_GREATER
 using JsonConverter.System.Text.Json;
 #endif

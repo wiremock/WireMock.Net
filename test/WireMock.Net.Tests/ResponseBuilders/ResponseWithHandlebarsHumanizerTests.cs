@@ -1,15 +1,13 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Handlers;
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -44,10 +42,11 @@ public class ResponseWithHandlebarsHumanizerTests
             .WithTransformer();
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
         JObject j = JObject.FromObject(response.Message.BodyData.BodyAsJson);
-        Check.That(j["Text"].Value<string>()).IsEqualTo("Pascal case input string is turned into sentence");
+        j["Text"].Value<string>().Should().Be("Pascal case input string is turned into sentence");
     }
 }
+

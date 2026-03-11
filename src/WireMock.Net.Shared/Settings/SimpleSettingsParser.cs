@@ -1,9 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using WireMock.Extensions;
 using WireMock.Util;
 
@@ -197,6 +194,6 @@ internal class SimpleSettingsParser
     public T? GetObjectValueFromJson<T>(string name)
     {
         var value = GetValue(name, values => values.FirstOrDefault());
-        return string.IsNullOrWhiteSpace(value) ? default : JsonUtils.DeserializeObject<T>(value);
+        return string.IsNullOrWhiteSpace(value) ? default : JsonUtils.DeserializeObject<T>(value!);
     }
 }

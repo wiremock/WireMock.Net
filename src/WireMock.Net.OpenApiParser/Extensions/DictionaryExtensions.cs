@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-#if NET46 || NET47 || NETSTANDARD2_0
-using System.Collections.Generic;
-
-namespace WireMock.Net.OpenApiParser.Extensions;
+#if NETSTANDARD2_0
+namespace System.Collections.Generic;
 
 internal static class DictionaryExtensions
 {

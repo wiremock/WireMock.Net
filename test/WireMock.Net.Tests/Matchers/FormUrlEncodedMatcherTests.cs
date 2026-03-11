@@ -1,19 +1,16 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using AnyOfTypes;
-using FluentAssertions;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
 public class FormUrlEncodedMatcherTest
 {
+    private readonly CancellationToken _ct = TestContext.Current.CancellationToken;
+
     [Theory]
     [InlineData("*=*")]
     [InlineData("name=John Doe")]
@@ -29,12 +26,12 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch(params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(new[]
-        {
+        var content = new FormUrlEncodedContent(
+        [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
-        });
-        var contentAsString = await content.ReadAsStringAsync();
+        ]);
+        var contentAsString = await content.ReadAsStringAsync(_ct);
 
         var matcher = new FormUrlEncodedMatcher(patterns.Select(p => new AnyOf<string, StringPattern>(p)).ToArray());
 
@@ -60,12 +57,12 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_And(bool expected, params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(new[]
-        {
+        var content = new FormUrlEncodedContent(
+        [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
-        });
-        var contentAsString = await content.ReadAsStringAsync();
+        ]);
+        var contentAsString = await content.ReadAsStringAsync(_ct);
 
         var matcher = new FormUrlEncodedMatcher(patterns.Select(p => new AnyOf<string, StringPattern>(p)).ToArray(), true, MatchOperator.And);
 
@@ -80,12 +77,12 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties()
     {
         // Arrange
-        var content = new FormUrlEncodedContent(new[]
-        {
+        var content = new FormUrlEncodedContent(
+        [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
-        });
-        var contentAsString = await content.ReadAsStringAsync();
+        ]);
+        var contentAsString = await content.ReadAsStringAsync(_ct);
 
         // The expectation is that the matcher requires all properties to be present in the content.
         var matcher = new FormUrlEncodedMatcher(["name=*", "email=*", "required=*"], matchOperator: MatchOperator.And);

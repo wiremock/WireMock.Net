@@ -2,7 +2,7 @@
 
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using NFluent;
+
 using WireMock.Matchers;
 using Xunit;
 
@@ -99,7 +99,7 @@ public class LinqMatcherTests
         string name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("LinqMatcher");
+        name.Should().Be("LinqMatcher");
     }
 
     [Fact]
@@ -112,6 +112,6 @@ public class LinqMatcherTests
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly("x");
+        patterns.Should().ContainExactly("x");
     }
 }

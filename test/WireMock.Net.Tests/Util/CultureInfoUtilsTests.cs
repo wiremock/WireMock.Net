@@ -1,10 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Globalization;
-using FluentAssertions;
 using WireMock.Util;
-using Xunit;
 
 namespace WireMock.Net.Tests.Util;
 
@@ -39,7 +36,6 @@ public class CultureInfoUtilsTests
         result.Should().Be(expectedCulture);
     }
 
-#if !NETSTANDARD1_3
     [Fact]
     public void Parse_IntegerInput_ReturnsExpectedCultureInfo()
     {
@@ -53,7 +49,6 @@ public class CultureInfoUtilsTests
         // Assert
         result.Should().Be(expectedCulture);
     }
-#endif
 
     [Fact]
     public void Parse_CurrentCultureInput_ReturnsCurrentCulture()

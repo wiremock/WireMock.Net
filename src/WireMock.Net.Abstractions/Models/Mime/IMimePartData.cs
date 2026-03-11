@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.IO;
-
 namespace WireMock.Models.Mime;
 
 /// <summary>

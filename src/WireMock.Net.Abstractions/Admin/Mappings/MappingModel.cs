@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using WireMock.Models;
 
 namespace WireMock.Admin.Mappings;
@@ -65,12 +64,12 @@ public class MappingModel
     /// <summary>
     /// The request model.
     /// </summary>
-    public RequestModel Request { get; set; }
+    public required RequestModel Request { get; set; }
 
     /// <summary>
     /// The response model.
     /// </summary>
-    public ResponseModel Response { get; set; }
+    public required ResponseModel Response { get; set; }
 
     /// <summary>
     /// Saves this mapping as a static mapping file.

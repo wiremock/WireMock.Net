@@ -475,7 +475,7 @@
 # 1.5.30 (28 June 2023)
 - [#959](https://github.com/wiremock/WireMock.Net/pull/959) - Fixed logic for FluentAssertions WithHeader [bug] contributed by [StefH](https://github.com/StefH)
 - [#962](https://github.com/wiremock/WireMock.Net/pull/962) - Bump System.Linq.Dynamic.Core from 1.2.23 to 1.3.0 in /examples/WireMock.Net.Console.Net472.Classic [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
-- [#963](https://github.com/wiremock/WireMock.Net/pull/963) - Bump System.Linq.Dynamic.Core from 1.2.23 to 1.3.0 in /examples/WireMock.Net.StandAlone.Net461 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#963](https://github.com/wiremock/WireMock.Net/pull/963) - Bump System.Linq.Dynamic.Core from 1.2.23 to 1.3.0 in /examples/WireMock.Net.StandAlone.net462 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#958](https://github.com/wiremock/WireMock.Net/issues/958) - [FluentAssertions] Should().HaveReceivedACall().WithHeader() only checks the first header with the matching key. [bug]
 
 # 1.5.29 (22 June 2023)
@@ -587,7 +587,7 @@
 - [#828](https://github.com/wiremock/WireMock.Net/pull/828) - Add setting to skip saving the string-response in the logging when using WithBody(Func...) [feature] contributed by [StefH](https://github.com/StefH)
 - [#832](https://github.com/wiremock/WireMock.Net/pull/832) - Fixes for WireMock.Net.FluentAssertions (callcount behaviour) [feature] contributed by [StefH](https://github.com/StefH)
 - [#834](https://github.com/wiremock/WireMock.Net/pull/834) - Support deleting / resetting a single scenario [feature] contributed by [StefH](https://github.com/StefH)
-- [#837](https://github.com/wiremock/WireMock.Net/pull/837) - Bump Microsoft.AspNetCore.Server.Kestrel.Core from 2.1.7 to 2.1.25 in /examples/WireMock.Net.StandAlone.Net461 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#837](https://github.com/wiremock/WireMock.Net/pull/837) - Bump Microsoft.AspNetCore.Server.Kestrel.Core from 2.1.7 to 2.1.25 in /examples/WireMock.Net.StandAlone.net462 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#838](https://github.com/wiremock/WireMock.Net/pull/838) - Add option to ProxySettings to append guid to mapping file contributed by [StefH](https://github.com/StefH)
 - [#826](https://github.com/wiremock/WireMock.Net/issues/826) - Dynamic Body not to be cached when a Func is used to created the body [feature]
 
@@ -635,14 +635,14 @@
 - [#776](https://github.com/wiremock/WireMock.Net/issues/776) - Update Scriban.Signed to support more functions, e.g math.random [feature]
 
 # 1.5.2 (24 July 2022)
-- [#769](https://github.com/wiremock/WireMock.Net/pull/769) - Bump Microsoft.AspNetCore.Server.Kestrel.Core from 2.1.3 to 2.1.7 in /examples/WireMock.Net.StandAlone.Net461 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#769](https://github.com/wiremock/WireMock.Net/pull/769) - Bump Microsoft.AspNetCore.Server.Kestrel.Core from 2.1.3 to 2.1.7 in /examples/WireMock.Net.StandAlone.net462 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#771](https://github.com/wiremock/WireMock.Net/pull/771) - JsonPartialMatcher - support Regex [feature] contributed by [StefH](https://github.com/StefH)
 
 # 1.5.1 (08 July 2022)
 - [#762](https://github.com/wiremock/WireMock.Net/pull/762) - Bump Newtonsoft.Json from 11.0.2 to 13.0.1 in /examples/WireMock.Net.WebApplication.NETCore2 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#763](https://github.com/wiremock/WireMock.Net/pull/763) - Bump Newtonsoft.Json from 6.0.1 to 13.0.1 in /examples/WireMock.Net.Client.Net472 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#765](https://github.com/wiremock/WireMock.Net/pull/765) - Update WireMock.Org.Abstractions and WireMock.Org.RestClient [feature] contributed by [StefH](https://github.com/StefH)
-- [#766](https://github.com/wiremock/WireMock.Net/pull/766) - Bump Microsoft.AspNetCore.Http from 2.1.1 to 2.1.22 in /examples/WireMock.Net.StandAlone.Net461 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#766](https://github.com/wiremock/WireMock.Net/pull/766) - Bump Microsoft.AspNetCore.Http from 2.1.1 to 2.1.22 in /examples/WireMock.Net.StandAlone.net462 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#767](https://github.com/wiremock/WireMock.Net/pull/767) - Rename (WireMock.Pact.Models.V2)-Request to PactRequest and -Response to PactResponse [feature] contributed by [StefH](https://github.com/StefH)
 - [#764](https://github.com/wiremock/WireMock.Net/issues/764) - Wrong mapping of method GetAdminMappingsAsync from IWireMockOrgApi [bug]
 
@@ -794,7 +794,7 @@
 - [#612](https://github.com/wiremock/WireMock.Net/pull/612) - Don't run SonarCloud tasks for PullRequests [feature] contributed by [StefH](https://github.com/StefH)
 
 # 1.4.13 (26 April 2021)
-- [#607](https://github.com/wiremock/WireMock.Net/pull/607) - Bump System.Text.Encodings.Web from 4.5.0 to 4.5.1 in /examples/WireMock.Net.StandAlone.Net461 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#607](https://github.com/wiremock/WireMock.Net/pull/607) - Bump System.Text.Encodings.Web from 4.5.0 to 4.5.1 in /examples/WireMock.Net.StandAlone.net462 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#609](https://github.com/wiremock/WireMock.Net/pull/609) - Add possibility to use settings to generate MappingModel models with wildcard path parameters. [feature] contributed by [StefH](https://github.com/StefH)
 - [#608](https://github.com/wiremock/WireMock.Net/issues/608) - Import from OpenApi generates model with path parameter narrowed in range (example value=42 instead of '*') [feature]
 
@@ -838,7 +838,7 @@
 - [#570](https://github.com/wiremock/WireMock.Net/pull/570) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.StandAlone.NETCoreApp [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#571](https://github.com/wiremock/WireMock.Net/pull/571) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Console.NETCoreApp2 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#572](https://github.com/wiremock/WireMock.Net/pull/572) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Console.NETCoreApp [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
-- [#573](https://github.com/wiremock/WireMock.Net/pull/573) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Console.Net461.Classic [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#573](https://github.com/wiremock/WireMock.Net/pull/573) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Console.net462.Classic [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#574](https://github.com/wiremock/WireMock.Net/pull/574) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Console.Net452.Classic [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#575](https://github.com/wiremock/WireMock.Net/pull/575) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.StandAlone.Net452 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#576](https://github.com/wiremock/WireMock.Net/pull/576) - Bump log4net from 2.0.8 to 2.0.10 in /examples/WireMock.Net.Service [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
@@ -1434,7 +1434,7 @@
 - [#72](https://github.com/wiremock/WireMock.Net/issues/72) - Matching WithParam on OData End Points
 
 # 1.0.2.10 (12 December 2017)
-- [#70](https://github.com/wiremock/WireMock.Net/issues/70) - Proxy/Intercept pattern is throwing a keep alive header error with net461
+- [#70](https://github.com/wiremock/WireMock.Net/issues/70) - Proxy/Intercept pattern is throwing a keep alive header error with net462
 
 # 1.0.2.9 (07 December 2017)
 - [#71](https://github.com/wiremock/WireMock.Net/pull/71) - Fixed restricted headers on response contributed by [StefH](https://github.com/StefH)

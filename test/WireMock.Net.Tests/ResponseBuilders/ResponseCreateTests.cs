@@ -1,12 +1,11 @@
 // Copyright © WireMock.Net
 
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Moq;
-using NFluent;
+
 using WireMock.Models;
 using WireMock.ResponseBuilders;
 using WireMock.Settings;
-using Xunit;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -25,9 +24,9 @@ public class ResponseCreateTests
         var responseBuilder = Response.Create(() => responseMessage);
 
         // Act
-        var response = await responseBuilder.ProvideResponseAsync(mapping, request, _settings).ConfigureAwait(false);
+        var response = await responseBuilder.ProvideResponseAsync(mapping, Mock.Of<HttpContext>(), request, _settings);
 
         // Assert
-        Check.That(response.Message).Equals(responseMessage);
+        response.Message.Should().Be(responseMessage);
     }
 }

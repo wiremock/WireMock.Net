@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using NFluent;
+
 using WireMock.Matchers;
-using Xunit;
 using WireMock.RequestBuilders;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -27,7 +25,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -45,7 +43,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -59,7 +57,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -71,8 +69,8 @@ public class RequestBuilderWithPathTests
         var request2 = new RequestMessage(new UrlDetails("http://localhost/x2"), "blabla", ClientIp);
 
         var requestMatchResult = new RequestMatchResult();
-        Check.That(requestBuilder.GetMatchingScore(request1, requestMatchResult)).IsEqualTo(1.0);
-        Check.That(requestBuilder.GetMatchingScore(request2, requestMatchResult)).IsEqualTo(1.0);
+        requestBuilder.GetMatchingScore(request1, requestMatchResult).Should().Be(1.0);
+        requestBuilder.GetMatchingScore(request2, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -86,7 +84,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -100,7 +98,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -114,7 +112,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsNotEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
     }
 
     [Fact]
@@ -133,7 +131,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -151,7 +149,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -165,7 +163,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -179,7 +177,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -193,7 +191,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -207,7 +205,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -221,7 +219,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -235,6 +233,7 @@ public class RequestBuilderWithPathTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsNotEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
     }
 }
+

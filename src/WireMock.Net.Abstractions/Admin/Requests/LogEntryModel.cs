@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-
 namespace WireMock.Admin.Requests;
 
 /// <summary>
@@ -17,12 +15,12 @@ public class LogEntryModel
     /// <summary>
     /// The request.
     /// </summary>
-    public required LogRequestModel Request { get; init; }
+    public LogRequestModel? Request { get; init; }
 
     /// <summary>
     /// The response.
     /// </summary>
-    public required LogResponseModel Response { get; init; }
+    public LogResponseModel? Response { get; init; }
 
     /// <summary>
     /// The mapping unique identifier.

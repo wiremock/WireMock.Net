@@ -28,4 +28,18 @@ internal static class DictionaryExtensions
         value = default;
         return false;
     }
+
+    public static bool TryGetValue<T>(this IDictionary<object, object?> dictionary, string key, [NotNullWhen(true)] out T? value)
+    {
+        Guard.NotNull(dictionary);
+
+        if (dictionary[key] is T typedValue)
+        {
+            value = typedValue;
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
 }

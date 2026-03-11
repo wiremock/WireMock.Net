@@ -1,11 +1,8 @@
 // Copyright © WireMock.Net
 
 using AnyOfTypes;
-using FluentAssertions;
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Models;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -124,7 +121,7 @@ public class WildcardMatcherTest
         var name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("WildcardMatcher");
+        name.Should().Be("WildcardMatcher");
     }
 
     [Fact]
@@ -137,7 +134,7 @@ public class WildcardMatcherTest
         var patterns = matcher.GetPatterns();
 
         // Assert
-        Check.That(patterns).ContainsExactly(new AnyOf<string, StringPattern>("x"));
+        patterns.Should().Equal(new[] { new AnyOf<string, StringPattern>("x") });
     }
 
     [Fact]
@@ -149,6 +146,6 @@ public class WildcardMatcherTest
         // Act
         var result = matcher.IsMatch("m").Score;
 
-        Check.That(result).IsEqualTo(0.0);
+        result.Should().Be(0.0);
     }
 }

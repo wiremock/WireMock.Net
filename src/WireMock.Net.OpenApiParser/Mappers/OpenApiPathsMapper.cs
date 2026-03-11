@@ -1,9 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
@@ -293,17 +290,17 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         return newPath;
     }
 
-    private IDictionary<string, object>? MapHeaders(string? responseContentType, IDictionary<string, IOpenApiHeader>? headers)
+    private Dictionary<string, object>? MapHeaders(string? responseContentType, IDictionary<string, IOpenApiHeader>? headers)
     {
         var mappedHeaders = headers?
-            .ToDictionary(item => item.Key, _ => GetExampleMatcherModel(null, _settings.HeaderPatternToUse).Pattern!) ?? new Dictionary<string, object>();
+            .ToDictionary(item => item.Key, _ => GetExampleMatcherModel(null, _settings.HeaderPatternToUse).Pattern!) ?? [];
 
-        if (!string.IsNullOrEmpty(responseContentType))
+        if (responseContentType != null)
         {
             mappedHeaders.TryAdd(HeaderContentType, responseContentType);
         }
 
-        return mappedHeaders.Keys.Any() ? mappedHeaders : null;
+        return mappedHeaders.Count > 0 ? mappedHeaders : null;
     }
 
     private IList<ParamModel>? MapQueryParameters(IEnumerable<IOpenApiParameter> queryParameters)

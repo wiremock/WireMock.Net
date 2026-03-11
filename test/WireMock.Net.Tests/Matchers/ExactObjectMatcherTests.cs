@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using NFluent;
+
 using WireMock.Matchers;
-using Xunit;
 
 namespace WireMock.Net.Tests.Matchers;
 
@@ -19,7 +18,7 @@ public class ExactObjectMatcherTests
         var name = matcher.Name;
 
         // Assert
-        Check.That(name).Equals("ExactObjectMatcher");
+        name.Should().Be("ExactObjectMatcher");
     }
 
     [Fact]
@@ -33,7 +32,7 @@ public class ExactObjectMatcherTests
         var score = matcher.IsMatch(checkValue).Score;
 
         // Assert
-        Check.That(score).IsEqualTo(1.0);
+        score.Should().Be(1.0);
     }
 
     [Fact]
@@ -47,7 +46,7 @@ public class ExactObjectMatcherTests
         var score = matcher.IsMatch(new { x = 500, s = "s" }).Score;
 
         // Assert
-        Check.That(score).IsEqualTo(1.0);
+        score.Should().Be(1.0);
     }
 
     [Fact]
@@ -61,6 +60,6 @@ public class ExactObjectMatcherTests
         var score = matcher.IsMatch(new { x = 500, s = "s" }).Score;
 
         // Assert
-        Check.That(score).IsEqualTo(0.0);
+        score.Should().Be(0.0);
     }
 }

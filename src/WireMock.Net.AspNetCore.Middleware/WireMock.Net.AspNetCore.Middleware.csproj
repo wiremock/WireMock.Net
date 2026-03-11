@@ -20,8 +20,6 @@
         <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageIcon>WireMock.Net-LogoAspire.png</PackageIcon>
-        <ApplicationIcon>../../resources/WireMock.Net-LogoAspire.ico</ApplicationIcon>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">
@@ -33,12 +31,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="../../resources/WireMock.Net-Logo.png" />
-        <None Include="../../resources/WireMock.Net-LogoAspire.png" Pack="true" PackagePath="" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     </ItemGroup>
 
     <ItemGroup>

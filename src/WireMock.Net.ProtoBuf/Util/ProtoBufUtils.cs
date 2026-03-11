@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using JsonConverter.Abstractions;
 using ProtoBufJsonConverter;
 using ProtoBufJsonConverter.Models;

@@ -1,9 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using Stef.Validation;
@@ -142,16 +141,13 @@ internal static class TypeLoader
 
     private static bool TryFindTypeInDlls<TInterface>(string? implementationTypeFullName, [NotNullWhen(true)] out Type? pluginType) where TInterface : class
     {
-#if NETSTANDARD1_3
-        var directoriesToSearch = new[] { AppContext.BaseDirectory };
-#else
-        var processDirectory = Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName);
+        var processDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule?.FileName);
         var assemblyDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         var directoriesToSearch = new[] { processDirectory, assemblyDirectory }
             .Where(d => !string.IsNullOrEmpty(d))
             .Distinct()
             .ToArray();
-#endif
+
         foreach (var directory in directoriesToSearch)
         {
             foreach (var file in Directory.GetFiles(directory!, "*.dll"))

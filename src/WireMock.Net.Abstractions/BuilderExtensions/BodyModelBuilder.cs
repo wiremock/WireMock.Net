@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-
 // ReSharper disable once CheckNamespace
 namespace WireMock.Admin.Mappings;
 

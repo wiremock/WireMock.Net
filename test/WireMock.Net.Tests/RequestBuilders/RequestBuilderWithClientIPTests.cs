@@ -1,11 +1,9 @@
 // Copyright © WireMock.Net
 
-using NFluent;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.RequestBuilders;
-using Xunit;
 
 namespace WireMock.Net.Tests.RequestBuilders;
 
@@ -22,7 +20,7 @@ public class RequestBuilderWithClientIPTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -36,7 +34,7 @@ public class RequestBuilderWithClientIPTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(0.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(0.0);
     }
 
     [Fact]
@@ -50,7 +48,7 @@ public class RequestBuilderWithClientIPTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 
     [Fact]
@@ -64,6 +62,6 @@ public class RequestBuilderWithClientIPTests
 
         // then
         var requestMatchResult = new RequestMatchResult();
-        Check.That(spec.GetMatchingScore(request, requestMatchResult)).IsEqualTo(1.0);
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
 }

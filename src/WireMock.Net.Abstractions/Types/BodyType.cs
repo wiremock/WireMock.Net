@@ -50,5 +50,20 @@ public enum BodyType
     /// <summary>
     /// Use Server-Sent Events (string)
     /// </summary>
-    SseString
+    SseString,
+
+    /// <summary>
+    /// WebSocket message in clear text.
+    /// </summary>
+    WebSocketText,
+
+    /// <summary>
+    /// WebSocket message in binary format.
+    /// </summary>
+    WebSocketBinary,
+
+    /// <summary>
+    /// WebSocket close message.
+    /// </summary>
+    WebSocketClose
 }
