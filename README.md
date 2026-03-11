@@ -18,6 +18,11 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 * Response templating / transformation using Handlebars and extensions
 * Can be used locally or in CI/CD scenarios
 * Can be used for Aspire Distributed Application testing
+* GraphQL support
+* gRPC / ProtoBuf support
+* OpenAPI support
+* OpenTelemetry support
+* WebSockets support
 
 ## :memo: Blogs
 - [mstack.nl : Generate C# Code from Mapping(s)](https://mstack.nl/blog/20230201-wiremock.net-tocode)
