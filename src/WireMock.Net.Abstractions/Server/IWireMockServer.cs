@@ -33,12 +33,6 @@ public interface IWireMockServer : IDisposable
     /// </summary>
     IReadOnlyList<MappingModel> MappingModels { get; }
 
-    // <summary>
-    // Gets the mappings.
-    // </summary>
-    //[PublicAPI]
-    //IEnumerable<IMapping> Mappings { get; }
-
     /// <summary>
     /// Gets the ports.
     /// </summary>
@@ -68,8 +62,6 @@ public interface IWireMockServer : IDisposable
     /// Gets the provider.
     /// </summary>
     string? Provider { get; }
-
-    //ConcurrentDictionary<string, ScenarioState> Scenarios { get; }
 
     /// <summary>
     /// Occurs when [log entries changed].
@@ -114,8 +106,6 @@ public interface IWireMockServer : IDisposable
     /// <param name="matchers">The request matchers to use.</param>
     /// <returns>The <see cref="IReadOnlyList{ILogEntry}"/>.</returns>
     IReadOnlyList<ILogEntry> FindLogEntries(params IRequestMatcher[] matchers);
-
-    // IRespondWithAProvider Given(IRequestMatcher requestMatcher, bool saveToFile = false);
 
     /// <summary>
     /// Reads a static mapping file and adds or updates a single mapping.
