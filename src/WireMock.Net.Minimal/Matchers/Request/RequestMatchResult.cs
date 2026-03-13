@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
-
 namespace WireMock.Matchers.Request;
 
 /// <summary>
@@ -30,7 +28,7 @@ public class RequestMatchResult : IRequestMatchResult
         return AddMatchDetail(new MatchDetail
         {
             Name = matcherType.Name.Replace("RequestMessage", string.Empty),
-            MatcherType = matcherType,
+            MatcherType = matcherType.Name,
             Score = score,
             Exception = exception
         });
