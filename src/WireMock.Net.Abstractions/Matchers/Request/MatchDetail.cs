@@ -10,7 +10,7 @@ public class MatchDetail
     /// <summary>
     /// Gets or sets the type of the matcher.
     /// </summary>
-    public required Type MatcherType { get; set; }
+    public required string MatcherType { get; set; }
 
     /// <summary>
     /// Gets or sets the type of the matcher.
