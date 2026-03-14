@@ -431,8 +431,13 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
         using var server = WireMockServer.Start();
 
         server
-            .Given(Request.Create().WithPath(path).UsingHead())
-            .RespondWith(Response.Create().WithHeader(HttpKnownHeaderNames.ContentLength, length));
+            .WhenRequest(r => r
+                .WithPath(path)
+                .UsingMethod()
+            )
+            .ThenRespondWith(r => r
+                .WithHeader(HttpKnownHeaderNames.ContentLength, length)
+            );
 
         // Act
         var httpRequestMessage = new HttpRequestMessage(HttpMethod.Head, path);
@@ -441,6 +446,44 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
         // Assert
         response.Content.Headers.GetValues(HttpKnownHeaderNames.ContentLength).Should().Contain(length);
     }
+
+#if NET8_0_OR_GREATER
+    [Theory]
+    [InlineData("DELETE")]
+    [InlineData("GET")]
+    [InlineData("OPTIONS")]
+    [InlineData("PATCH")]
+    [InlineData("POST")]
+    [InlineData("PUT")]
+    [InlineData("TRACE")]
+    public async Task WireMockServer_Should_NotAllowResponseHeaderContentLength(string method)
+    {
+        // Assign
+        const string length = "42";
+        var path = $"/cl2_{Guid.NewGuid()}";
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(testOutputHelper)
+        });
+
+        server
+            .WhenRequest(r => r
+                .WithPath(path)
+                .UsingAnyMethod()
+            )
+            .ThenRespondWith(r => r
+                .WithStatusCode(HttpStatusCode.OK)
+                .WithHeader(HttpKnownHeaderNames.ContentLength, length)
+            );
+
+        // Act
+        var httpRequestMessage = new HttpRequestMessage(HttpMethod.Parse(method), path);
+        var response = await server.CreateClient().SendAsync(httpRequestMessage, _ct);
+
+        // Assert
+        response.Content.Headers.GetValues(HttpKnownHeaderNames.ContentLength).Should().Contain(length);
+    }
+#endif
 
     [Theory]
     [InlineData("TRACE")]
