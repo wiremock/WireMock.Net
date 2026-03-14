@@ -86,9 +86,9 @@ namespace WireMock.Owin.Mappers
                     break;
             }
 
-            if (responseMessage.StatusCode is int statusCodeAsInt)
+            if (responseMessage.StatusCode is HttpStatusCode or int)
             {
-                response.StatusCode = MapStatusCode(statusCodeAsInt);
+                response.StatusCode = MapStatusCode((int) responseMessage.StatusCode);
             }
             else if (responseMessage.StatusCode is string statusCodeAsString)
             {

@@ -433,7 +433,7 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
         server
             .WhenRequest(r => r
                 .WithPath(path)
-                .UsingMethod()
+                .UsingHead()
             )
             .ThenRespondWith(r => r
                 .WithHeader(HttpKnownHeaderNames.ContentLength, length)
@@ -456,11 +456,11 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
     [InlineData("POST")]
     [InlineData("PUT")]
     [InlineData("TRACE")]
-    public async Task WireMockServer_Should_NotAllowResponseHeaderContentLength(string method)
+    public async Task WireMockServer_Should_LogAndThrowExceptionWhenInvalidContentLength(string method)
     {
         // Assign
         const string length = "42";
-        var path = $"/cl2_{Guid.NewGuid()}";
+        var path = $"/InvalidContentLength_{Guid.NewGuid()}";
         using var server = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(testOutputHelper)
@@ -481,7 +481,8 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
         var response = await server.CreateClient().SendAsync(httpRequestMessage, _ct);
 
         // Assert
-        response.Content.Headers.GetValues(HttpKnownHeaderNames.ContentLength).Should().Contain(length);
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        testOutputHelper.Output.Should().Contain($"Response Content-Length mismatch: too few bytes written (0 of {length}).");
     }
 #endif
 
