@@ -1,9 +1,9 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Stef.Validation;
 using WireMock.Logging;
 using WireMock.Owin.Mappers;
@@ -57,6 +57,12 @@ internal partial class AspNetCoreSelfHost
         _host = builder
             .UseSetting("suppressStatusMessages", "True") // https://andrewlock.net/suppressing-the-startup-and-shutdown-messages-in-asp-net-core/
             .ConfigureAppConfigurationUsingEnvironmentVariables()
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddProvider(new WireMockAspNetCoreLoggerProvider(_logger));
+                logging.SetMinimumLevel(LogLevel.Warning);
+            })
             .ConfigureServices(services =>
             {
                 services.AddSingleton(_wireMockMiddlewareOptions);
@@ -169,10 +175,10 @@ internal partial class AspNetCoreSelfHost
 
             return _host.RunAsync(token);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            RunningException = e;
-            _logger.Error(e.ToString());
+            RunningException = ex;
+            _logger.Error("Error while RunAsync", ex);
 
             IsStarted = false;
 
