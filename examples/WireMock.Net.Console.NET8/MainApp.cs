@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SharpYaml.Model;
 using WireMock.Logging;
 using WireMock.Matchers;
 using WireMock.Models;
@@ -288,7 +289,24 @@ namespace WireMock.Net.ConsoleApplication
 
             var todos = new Dictionary<int, Todo>();
 
-            var server = WireMockServer.Start();
+            var server = WireMockServer.Start(new WireMockServerSettings
+            {
+                Logger = new WireMockConsoleLogger(),
+
+                Port = 9091
+            });
+
+            server
+               .WhenRequest(r => r
+                   .WithPath("/Content-Length")
+                   .UsingAnyMethod()
+               )
+               .ThenRespondWith(r => r
+                   .WithStatusCode(HttpStatusCode.OK)
+                   .WithHeader("Content-Length", "42")
+               );
+
+            System.Console.ReadLine();
 
             //server
             //    .Given(Request.Create()

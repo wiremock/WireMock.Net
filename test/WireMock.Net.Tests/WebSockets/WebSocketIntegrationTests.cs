@@ -706,7 +706,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     public async Task WithWebSocketProxy_Should_Proxy_Multiple_TextMessages()
     {
         // Arrange - Start target echo server
-        using var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
+        var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
@@ -722,7 +722,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             );
 
         // Arrange - Start proxy server
-        using var sut = WireMockServer.Start(new WireMockServerSettings
+        var sut = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
@@ -755,6 +755,14 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
+
+        await Task.Delay(250, _ct);
+
+        sut.Stop();
+        sut.Dispose();
+
+        exampleEchoServer.Stop();
+        exampleEchoServer.Dispose();
     }
 
     [Fact]

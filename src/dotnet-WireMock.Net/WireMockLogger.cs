@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using WireMock.Admin.Requests;
@@ -11,11 +10,6 @@ namespace WireMock.Net;
 
 public class WireMockLogger : IWireMockLogger
 {
-    private readonly JsonSerializerOptions _options = new()
-    {
-        WriteIndented = true
-    };
-
     private readonly ILogger _logger;
 
     public WireMockLogger(ILogger logger)

@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Globalization;
-using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -88,19 +86,15 @@ namespace WireMock.Owin.Mappers
                     break;
             }
 
-            var statusCodeType = responseMessage.StatusCode?.GetType();
-            if (statusCodeType != null)
+            if (responseMessage.StatusCode is HttpStatusCode or int)
             {
-                if (statusCodeType == typeof(int) || statusCodeType == typeof(int?) || statusCodeType.GetTypeInfo().IsEnum)
-                {
-                    response.StatusCode = MapStatusCode((int)responseMessage.StatusCode!);
-                }
-                else if (statusCodeType == typeof(string))
-                {
-                    // Note: this case will also match on null
-                    int.TryParse(responseMessage.StatusCode as string, out var statusCodeTypeAsInt);
-                    response.StatusCode = MapStatusCode(statusCodeTypeAsInt);
-                }
+                response.StatusCode = MapStatusCode((int) responseMessage.StatusCode);
+            }
+            else if (responseMessage.StatusCode is string statusCodeAsString)
+            {
+                // Note: this case will also match on null
+                _ = int.TryParse(statusCodeAsString, out var statusCodeTypeAsInt);
+                response.StatusCode = MapStatusCode(statusCodeTypeAsInt);
             }
 
             SetResponseHeaders(responseMessage, bytes != null, response);

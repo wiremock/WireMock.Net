@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Stef.Validation;
 using WireMock.Extensions;
 using WireMock.Matchers.Request;
@@ -119,7 +118,7 @@ public class MatchResult
         return new MatchDetail
         {
             Name = Name,
-            MatcherType = typeof(MatchResult),
+            MatcherType = typeof(MatchResult).Name,
             Score = Score,
             Exception = Exception,
             MatchDetails = MatchResults?.Select(mr => mr.ToMatchDetail()).ToArray()
