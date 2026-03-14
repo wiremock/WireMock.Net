@@ -175,6 +175,10 @@ public class WireMockServerSettings
     [JsonIgnore]
     public IFileSystemHandler FileSystemHandler { get; set; } = null!;
 
+    [PublicAPI]
+    [JsonIgnore]
+    public IScenarioStateStore? ScenarioStateStore { get; set; }
+
     /// <summary>
     /// Action which can be used to add additional Handlebars registrations. [Optional]
     /// </summary>

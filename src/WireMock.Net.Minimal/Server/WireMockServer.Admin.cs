@@ -672,7 +672,7 @@ public partial class WireMockServer
     #region Scenarios
     private IResponseMessage ScenariosGet(HttpContext _, IRequestMessage requestMessage)
     {
-        var scenariosStates = Scenarios.Values.Select(s => new ScenarioStateModel
+        var scenariosStates = Scenarios.Select(s => new ScenarioStateModel
         {
             Name = s.Name,
             NextState = s.NextState,

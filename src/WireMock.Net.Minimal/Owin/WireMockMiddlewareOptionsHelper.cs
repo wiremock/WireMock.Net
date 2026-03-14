@@ -27,6 +27,7 @@ internal static class WireMockMiddlewareOptionsHelper
         options.FileSystemHandler = settings.FileSystemHandler;
         options.HandleRequestsSynchronously = settings.HandleRequestsSynchronously;
         options.Logger = settings.Logger;
+        options.Scenarios = settings.ScenarioStateStore ?? options.Scenarios;
         options.MaxRequestLogCount = settings.MaxRequestLogCount;
         options.PostWireMockMiddlewareInit = settings.PostWireMockMiddlewareInit;
         options.PreWireMockMiddlewareInit = settings.PreWireMockMiddlewareInit;

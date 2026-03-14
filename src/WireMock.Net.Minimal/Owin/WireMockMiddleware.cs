@@ -233,20 +233,21 @@ internal class WireMockMiddleware(
 
     private void UpdateScenarioState(IMapping mapping)
     {
-        var scenario = options.Scenarios[mapping.Scenario!];
-
-        // Increase the number of times this state has been executed
-        scenario.Counter++;
-
-        // Only if the number of times this state is executed equals the required StateTimes, proceed to next state and reset the counter to 0
-        if (scenario.Counter == (mapping.TimesInSameState ?? 1))
+        options.Scenarios.Update(mapping.Scenario!, scenario =>
         {
-            scenario.NextState = mapping.NextState;
-            scenario.Counter = 0;
-        }
+            // Increase the number of times this state has been executed
+            scenario.Counter++;
 
-        // Else just update Started and Finished
-        scenario.Started = true;
-        scenario.Finished = mapping.NextState == null;
+            // Only if the number of times this state is executed equals the required StateTimes, proceed to next state and reset the counter to 0
+            if (scenario.Counter == (mapping.TimesInSameState ?? 1))
+            {
+                scenario.NextState = mapping.NextState;
+                scenario.Counter = 0;
+            }
+
+            // Else just update Started and Finished
+            scenario.Started = true;
+            scenario.Finished = mapping.NextState == null;
+        });
     }
 }
