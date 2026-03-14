@@ -82,6 +82,51 @@ class Program
             )
         );
 
+        mappingBuilder.Given(m => m
+            .WithRequest(req => req
+                .WithPath("/testRequestWithQueryParams")
+                .UsingGet()
+                .WithParams(p => p.WithParam("param1", pb => pb.WithExactMatcher("value1")))
+            ).WithResponse(rsp => rsp
+                .WithHeaders(h => h.Add("Content-Type", "application/json"))
+                .WithStatusCode(200)
+                .WithBodyAsJson(new
+                {
+                    status = "ok"
+                }, true)
+            )
+        );
+
+        mappingBuilder.Given(m => m
+            .WithRequest(req => req
+                .WithPath("/testRequestWithHeaders")
+                .UsingGet()
+                .WithHeaders(h => h.WithHeader("Accept", hb => hb.WithExactMatcher("application/json")))
+            ).WithResponse(rsp => rsp
+                .WithHeaders(h => h.Add("Content-Type", "application/json"))
+                .WithStatusCode(200)
+                .WithBodyAsJson(new
+                {
+                    status = "ok"
+                }, true)
+            )
+        );
+
+        mappingBuilder.Given(m => m
+            .WithRequest(req => req
+                .WithPath("/testRequestWithCookie")
+                .UsingGet()
+                .WithCookies(c => c.WithCookie("cookie1", cb => cb.WithExactMatcher("cookievalue1")))
+            ).WithResponse(rsp => rsp
+                .WithHeaders(h => h.Add("Content-Type", "application/json"))
+                .WithStatusCode(200)
+                .WithBodyAsJson(new
+                {
+                    status = "ok"
+                }, true)
+            )
+        );
+
         var result = await mappingBuilder.BuildAndPostAsync().ConfigureAwait(false);
         Console.WriteLine($"result = {JsonConvert.SerializeObject(result)}");
 
