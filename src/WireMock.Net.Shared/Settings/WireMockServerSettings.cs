@@ -177,7 +177,7 @@ public class WireMockServerSettings
 
     [PublicAPI]
     [JsonIgnore]
-    public IScenarioStateStore? ScenarioStateStore { get; set; }
+    public IScenarioStateStore ScenarioStateStore { get; set; } = new InMemoryScenarioStateStore();
 
     /// <summary>
     /// Action which can be used to add additional Handlebars registrations. [Optional]
