@@ -2,6 +2,7 @@
 
 using System.Collections.Concurrent;
 using Moq;
+using WireMock.Handlers;
 using WireMock.Logging;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -23,7 +24,7 @@ public class MappingMatcherTests
         _optionsMock.SetupAllProperties();
         _optionsMock.Setup(o => o.Mappings).Returns(new ConcurrentDictionary<Guid, IMapping>());
         _optionsMock.Setup(o => o.LogEntries).Returns([]);
-        _optionsMock.Setup(o => o.Scenarios).Returns(new ConcurrentDictionary<string, ScenarioState>());
+        _optionsMock.Setup(o => o.ScenarioStateStore).Returns(new InMemoryScenarioStateStore());
 
         var loggerMock = new Mock<IWireMockLogger>();
         loggerMock.SetupAllProperties();
