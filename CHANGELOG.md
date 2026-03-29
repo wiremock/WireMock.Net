@@ -1,3 +1,9 @@
+# 2.1.0 (29 March 2026)
+- [#1425](https://github.com/wiremock/WireMock.Net/pull/1425) - Add helpers for query params fluent MappingModelBuilder [feature] contributed by [biltongza](https://github.com/biltongza)
+- [#1430](https://github.com/wiremock/WireMock.Net/pull/1430) - Add injectable IScenarioStateStore for distributed scenario state [feature] contributed by [m4tchl0ck](https://github.com/m4tchl0ck)
+- [#1431](https://github.com/wiremock/WireMock.Net/pull/1431) - Fix WireMockLogger implementation in dotnet-WireMock [bug] contributed by [StefH](https://github.com/StefH)
+- [#1432](https://github.com/wiremock/WireMock.Net/pull/1432) - Add WireMockAspNetCoreLogger to log Kestrel warnings/errors [feature] contributed by [StefH](https://github.com/StefH)
+
 # 2.0.0 (11 March 2026)
 - [#1359](https://github.com/wiremock/WireMock.Net/pull/1359) - Version 2.x contributed by [StefH](https://github.com/StefH)
 - [#1394](https://github.com/wiremock/WireMock.Net/pull/1394) - MappingSerializer (Newtonsoft or SystemText)-Json [feature] contributed by [StefH](https://github.com/StefH)
@@ -1356,11 +1362,11 @@
 - [#145](https://github.com/wiremock/WireMock.Net/pull/145) - Cancellation token not passed to server instance in .NET Core 2 [bug] contributed by [Bob11327](https://github.com/Bob11327)
 
 # 1.0.3.18 (25 May 2018)
-- [#142](https://github.com/wiremock/WireMock.Net/pull/142) - Allow all headers to be set as Response headers contributed by [StefH](https://github.com/StefH)
+- [#142](https://github.com/wiremock/WireMock.Net/pull/142) - Allow all headers to be set as Response headers [bug] contributed by [StefH](https://github.com/StefH)
 - [#122](https://github.com/wiremock/WireMock.Net/issues/122) - WireMock.Net not responding in unit tests - same works in console application
 - [#126](https://github.com/wiremock/WireMock.Net/issues/126) - Question: UsingHead always returns 0 for Content-Length header even when explicitly specified
 - [#132](https://github.com/wiremock/WireMock.Net/issues/132) - LogEntries not being recorded on subsequent tests
-- [#136](https://github.com/wiremock/WireMock.Net/issues/136) - Question: Does the WireMock send Content-Length response header
+- [#136](https://github.com/wiremock/WireMock.Net/issues/136) - Question: Does the WireMock send Content-Length response header [bug]
 - [#137](https://github.com/wiremock/WireMock.Net/issues/137) - Question: How to specify Transfer-Encoding response header?
 - [#139](https://github.com/wiremock/WireMock.Net/issues/139) - Wiki link https://github.com/StefH/WireMock.Net/wiki/Record-(via-proxy)-and-Save is dead
 

@@ -1,8 +1,7 @@
-# 2.0.0 (11 March 2026)
-- #1359 Version 2.x
-- #1394 MappingSerializer (Newtonsoft or SystemText)-Json [feature]
-- #1341 Configurable JSON serialization support (Newtonsoft.Json vs System.Text.Json) [feature]
-- #1422 WireMock.Net seems to be incompatible with Microsoft.Owin.Security.Interop [bug]
-- #1424 WireMock.Net.FluentAssertions is incompatible with WireMock.Net.Aspire [feature]
+# 2.1.0 (29 March 2026)
+- #1425 Add helpers for query params fluent MappingModelBuilder [feature]
+- #1430 Add injectable IScenarioStateStore for distributed scenario state [feature]
+- #1431 Fix WireMockLogger implementation in dotnet-WireMock [bug]
+- #1432 Add WireMockAspNetCoreLogger to log Kestrel warnings/errors [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

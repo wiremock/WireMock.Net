@@ -1,6 +1,6 @@
 rem https://github.com/StefH/GitHubReleaseNotes
 
-SET version=2.0.0
+SET version=2.1.0
 
 GitHubReleaseNotes --output CHANGELOG.md --skip-empty-releases --exclude-labels wontfix test question invalid doc duplicate example environment --version %version% --token %GH_TOKEN%
 
