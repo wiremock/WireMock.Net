@@ -19,7 +19,7 @@ internal class WireMockListAccessor : IListAccessor, IObjectAccessor
         return target?.ToString() ?? string.Empty;
     }
 
-    public void SetValue(TemplateContext context, SourceSpan span, object target, int index, object value)
+    public void SetValue(TemplateContext context, SourceSpan span, object target, int index, object? value)
     {
         throw new NotImplementedException();
     }
@@ -46,7 +46,7 @@ internal class WireMockListAccessor : IListAccessor, IObjectAccessor
         throw new NotImplementedException();
     }
 
-    public bool TrySetValue(TemplateContext context, SourceSpan span, object target, string member, object value)
+    public bool TrySetValue(TemplateContext context, SourceSpan span, object target, string member, object? value)
     {
         throw new NotImplementedException();
     }
@@ -56,7 +56,7 @@ internal class WireMockListAccessor : IListAccessor, IObjectAccessor
         throw new NotImplementedException();
     }
 
-    public bool TrySetItem(TemplateContext context, SourceSpan span, object target, object index, object value)
+    public bool TrySetItem(TemplateContext context, SourceSpan span, object target, object index, object? value)
     {
         throw new NotImplementedException();
     }

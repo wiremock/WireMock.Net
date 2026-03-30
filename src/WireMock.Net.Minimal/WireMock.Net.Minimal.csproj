@@ -43,7 +43,7 @@
         <PackageReference Include="SimMetrics.Net" Version="1.0.5" />
         <PackageReference Include="TinyMapper.Signed" Version="4.0.0" />
         <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.34.0" />
-        <PackageReference Include="Scriban.Signed" Version="5.5.0" />
+        <PackageReference Include="Scriban.Signed" Version="7.0.6" />
     </ItemGroup>
 
     <ItemGroup>
