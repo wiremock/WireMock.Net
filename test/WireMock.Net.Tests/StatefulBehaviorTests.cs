@@ -373,7 +373,7 @@ public class StatefulBehaviorTests
         // Act and Assert
         server.SetScenarioState(scenario, "Buy milk");
         server.Scenarios.First(s => s.Name == scenario).Should().BeEquivalentTo(new { Name = scenario, NextState = "Buy milk" });
-        
+
         var getResponse1 = await client.GetStringAsync("/todo/items", cancelationToken);
         getResponse1.Should().Be("Buy milk");
 
@@ -411,6 +411,120 @@ public class StatefulBehaviorTests
 
         // Assert
         action.Should().ThrowAsync<HttpRequestException>();
+    }
+
+    [Fact]
+    public async Task Scenarios_FirstRequestWithDelay_StateTransitions_BeforeDelayCompletes()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var path = $"/foo_{Guid.NewGuid()}";
+        using var server = WireMockServer.Start();
+
+        // Mapping 1: start state, has a 500 ms delay
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("1260")
+            .WillSetStateTo("State1")
+            .RespondWith(Response.Create()
+                .WithBody("delayed response")
+                .WithDelay(TimeSpan.FromMilliseconds(500)));
+
+        // Mapping 2: only matches after state has transitioned to "State1"
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("1260")
+            .WhenStateIs("State1")
+            .RespondWith(Response.Create().WithBody("immediate response"));
+
+        var client = new HttpClient();
+
+        // Act: fire request 1 but don't await it yet — it will sit in a 500 ms delay
+        var request1Task = client.GetStringAsync(server.Url + path, cancellationToken);
+
+        // Give the server a moment to match & transition state before the delay completes
+        await Task.Delay(100, cancellationToken);
+
+        // Request 2 is sent while request 1 is still being delayed.
+        // After the fix the state has already transitioned, so request 2 matches Mapping 2.
+        var response2 = await client.GetStringAsync(server.Url + path, cancellationToken);
+
+        var response1 = await request1Task;
+
+        // Assert
+        response1.Should().Be("delayed response");
+        response2.Should().Be("immediate response");
+    }
+
+    [Fact]
+    public async Task Scenarios_WithGlobalRequestProcessingDelay_StateTransitions_BeforeDelayCompletes()
+    {
+        // Arrange: use the global RequestProcessingDelay instead of a per-mapping delay
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var path = $"/foo_{Guid.NewGuid()}";
+        using var server = WireMockServer.Start();
+        server.AddGlobalProcessingDelay(TimeSpan.FromMilliseconds(500));
+
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("s")
+            .WillSetStateTo("State1")
+            .RespondWith(Response.Create().WithBody("delayed response"));
+
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("s")
+            .WhenStateIs("State1")
+            .RespondWith(Response.Create().WithBody("immediate response"));
+
+        var client = new HttpClient();
+
+        // Act
+        var request1Task = client.GetStringAsync(server.Url + path, cancellationToken);
+        await Task.Delay(100, cancellationToken);
+        var response2 = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var response1 = await request1Task;
+
+        // Assert
+        response1.Should().Be("delayed response");
+        response2.Should().Be("immediate response");
+    }
+
+    [Fact]
+    public async Task Scenarios_WithDelay_And_TimesInSameState_Should_Transition_After_Required_Hits()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var path = $"/foo_{Guid.NewGuid()}";
+        using var server = WireMockServer.Start();
+
+        // Mapping 1: requires 2 hits before transitioning; has a short delay
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("s")
+            .WillSetStateTo("State1", 2)
+            .RespondWith(Response.Create()
+                .WithBody("first")
+                .WithDelay(TimeSpan.FromMilliseconds(50)));
+
+        // Mapping 2: matches after state is "State1"
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .InScenario("s")
+            .WhenStateIs("State1")
+            .RespondWith(Response.Create().WithBody("second"));
+
+        var client = new HttpClient();
+
+        // Act
+        var response1 = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var response2 = await client.GetStringAsync(server.Url + path, cancellationToken);
+        var response3 = await client.GetStringAsync(server.Url + path, cancellationToken);
+
+        // Assert: state only transitions after 2 hits, so request 3 is the first to match Mapping 2
+        response1.Should().Be("first");
+        response2.Should().Be("first");
+        response3.Should().Be("second");
     }
 
     [Fact]
