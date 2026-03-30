@@ -175,6 +175,13 @@ public class WireMockServerSettings
     [JsonIgnore]
     public IFileSystemHandler FileSystemHandler { get; set; } = null!;
 
+    /// <summary>
+    /// Gets or sets the store used to persist scenario state information.
+    /// </summary>
+    /// <remarks>
+    /// The scenario state store manages the storage and retrieval of state data associated with scenarios.
+    /// By default, an in-memory implementation is used, but this property can be set to a custom implementation to support alternative storage mechanisms such as databases or distributed caches.
+    /// </remarks>
     [PublicAPI]
     [JsonIgnore]
     public IScenarioStateStore ScenarioStateStore { get; set; } = new InMemoryScenarioStateStore();
@@ -258,7 +265,7 @@ public class WireMockServerSettings
     /// Whether to accept any client certificate
     /// </summary>
     public bool AcceptAnyClientCertificate { get; set; }
-    
+
     /// <summary>
     /// Defines the global IWebhookSettings to use.
     /// </summary>
