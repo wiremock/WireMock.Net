@@ -1,3 +1,7 @@
+# 2.2.0 (30 March 2026)
+- [#1433](https://github.com/wiremock/WireMock.Net/pull/1433) - Add comments for ScenarioStateStore related code [refactor] contributed by [StefH](https://github.com/StefH)
+- [#1434](https://github.com/wiremock/WireMock.Net/pull/1434) - Upgrade Scriban.Signed [security] contributed by [StefH](https://github.com/StefH)
+
 # 2.1.0 (29 March 2026)
 - [#1425](https://github.com/wiremock/WireMock.Net/pull/1425) - Add helpers for query params fluent MappingModelBuilder [feature] contributed by [biltongza](https://github.com/biltongza)
 - [#1430](https://github.com/wiremock/WireMock.Net/pull/1430) - Add injectable IScenarioStateStore for distributed scenario state [feature] contributed by [m4tchl0ck](https://github.com/m4tchl0ck)

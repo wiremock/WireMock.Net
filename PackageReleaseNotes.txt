@@ -1,7 +1,5 @@
-# 2.1.0 (29 March 2026)
-- #1425 Add helpers for query params fluent MappingModelBuilder [feature]
-- #1430 Add injectable IScenarioStateStore for distributed scenario state [feature]
-- #1431 Fix WireMockLogger implementation in dotnet-WireMock [bug]
-- #1432 Add WireMockAspNetCoreLogger to log Kestrel warnings/errors [feature]
+# 2.2.0 (30 March 2026)
+- #1433 Add comments for ScenarioStateStore related code [refactor]
+- #1434 Upgrade Scriban.Signed [security]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
