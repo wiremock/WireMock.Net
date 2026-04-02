@@ -63,6 +63,9 @@ public class Mapping : IMapping
     public bool IsProxy => Provider is ProxyAsyncResponseProvider;
 
     /// <inheritdoc />
+    public bool IsEnabled { get; set; } = true;
+
+    /// <inheritdoc />
     public bool LogMapping => Provider is not (DynamicResponseProvider or DynamicAsyncResponseProvider);
 
     /// <inheritdoc />

@@ -61,6 +61,8 @@ public partial class WireMockServer
         public string OpenApi => $"{_prefix}/openapi";
 
         public RegexMatcher MappingsGuidPathMatcher => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
+        public RegexMatcher MappingsGuidEnablePathMatcher  => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})\\/enable$");
+        public RegexMatcher MappingsGuidDisablePathMatcher => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})\\/disable$");
         public RegexMatcher MappingsCodeGuidPathMatcher => new($"^{_prefixEscaped}\\/mappings\\/code\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
         public RegexMatcher RequestsGuidPathMatcher => new($"^{_prefixEscaped}\\/requests\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
         public RegexMatcher ScenariosNameMatcher => new($"^{_prefixEscaped}\\/scenarios\\/.+$");
@@ -103,6 +105,12 @@ public partial class WireMockServer
         Given(Request.Create().WithPath(_adminPaths.MappingsGuidPathMatcher).UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingGet));
         Given(Request.Create().WithPath(_adminPaths.MappingsGuidPathMatcher).UsingPut().WithHeader(HttpKnownHeaderNames.ContentType, AdminRequestContentTypeJson)).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingPut));
         Given(Request.Create().WithPath(_adminPaths.MappingsGuidPathMatcher).UsingDelete()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingDelete));
+
+        // __admin/mappings/{guid}/enable
+        Given(Request.Create().WithPath(_adminPaths.MappingsGuidEnablePathMatcher).UsingPut()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingEnable));
+
+        // __admin/mappings/{guid}/disable
+        Given(Request.Create().WithPath(_adminPaths.MappingsGuidDisablePathMatcher).UsingPut()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingDisable));
 
         // __admin/mappings/code/{guid}
         Given(Request.Create().WithPath(_adminPaths.MappingsCodeGuidPathMatcher).UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(MappingCodeGet));
@@ -429,6 +437,47 @@ public partial class WireMockServer
     {
         var lastPart = requestMessage.Path.Split('/').LastOrDefault();
         return Guid.TryParse(lastPart, out guid);
+    }
+
+    private static bool TryParseGuidFromSecondToLastSegment(IRequestMessage requestMessage, out Guid guid)
+    {
+        var parts = requestMessage.Path.Split('/');
+        if (parts.Length >= 2 && Guid.TryParse(parts[parts.Length - 2], out guid))
+            return true;
+        guid = Guid.Empty;
+        return false;
+    }
+
+    private IResponseMessage MappingEnable(HttpContext _, IRequestMessage requestMessage)
+    {
+        if (TryParseGuidFromSecondToLastSegment(requestMessage, out var guid))
+        {
+            var mapping = Mappings.FirstOrDefault(m => !m.IsAdminInterface && m.Guid == guid);
+            if (mapping != null)
+            {
+                mapping.IsEnabled = true;
+                return ResponseMessageBuilder.Create(HttpStatusCode.OK, "Mapping enabled", guid);
+            }
+        }
+
+        _settings.Logger.Warn("HttpStatusCode set to 404 : Mapping not found");
+        return ResponseMessageBuilder.Create(HttpStatusCode.NotFound, "Mapping not found");
+    }
+
+    private IResponseMessage MappingDisable(HttpContext _, IRequestMessage requestMessage)
+    {
+        if (TryParseGuidFromSecondToLastSegment(requestMessage, out var guid))
+        {
+            var mapping = Mappings.FirstOrDefault(m => !m.IsAdminInterface && m.Guid == guid);
+            if (mapping != null)
+            {
+                mapping.IsEnabled = false;
+                return ResponseMessageBuilder.Create(HttpStatusCode.OK, "Mapping disabled", guid);
+            }
+        }
+
+        _settings.Logger.Warn("HttpStatusCode set to 404 : Mapping not found");
+        return ResponseMessageBuilder.Create(HttpStatusCode.NotFound, "Mapping not found");
     }
     #endregion Mapping/{guid}
 
