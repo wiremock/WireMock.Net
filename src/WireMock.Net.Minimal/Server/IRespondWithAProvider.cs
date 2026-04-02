@@ -235,6 +235,13 @@ public interface IRespondWithAProvider
     IRespondWithAProvider WithProbability(double probability);
 
     /// <summary>
+    /// Define whether this mapping is enabled. Defaults to <c>true</c>.
+    /// </summary>
+    /// <param name="isEnabled">Whether this mapping is enabled.</param>
+    /// <returns>The <see cref="IRespondWithAProvider"/>.</returns>
+    IRespondWithAProvider WithIsEnabled(bool isEnabled);
+
+    /// <summary>
     /// Define a Grpc ProtoDefinition which is used for the request and the response.
     /// This can be a ProtoDefinition as a string, or an id when the ProtoDefinitions are defined at the WireMockServer.
     /// </summary>
