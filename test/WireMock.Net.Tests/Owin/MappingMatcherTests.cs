@@ -56,6 +56,7 @@ public class MappingMatcherTests
     {
         // Assign
         var mappingMock = new Mock<IMapping>();
+        mappingMock.SetupGet(m => m.IsEnabled).Returns(true);
         mappingMock.Setup(m => m.GetRequestMatchResult(It.IsAny<RequestMessage>(), It.IsAny<string>())).Throws<Exception>();
 
         var mappings = new ConcurrentDictionary<Guid, IMapping>();
@@ -229,6 +230,35 @@ public class MappingMatcherTests
         result.Match!.Mapping.Guid.Should().Be(withProbability);
     }
 
+    [Fact]
+    public void MappingMatcher_FindBestMatch_WhenMappingIsDisabled_ShouldReturnNull()
+    {
+        // Assign
+        var guid = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var mappingMock = new Mock<IMapping>();
+        mappingMock.SetupGet(m => m.Guid).Returns(guid);
+        mappingMock.SetupGet(m => m.IsEnabled).Returns(false);
+        mappingMock.SetupGet(m => m.Probability).Returns((double?)null);
+
+        var matchResult = new RequestMatchResult();
+        matchResult.AddScore(typeof(object), 1.0, null);
+        mappingMock.Setup(m => m.GetRequestMatchResult(It.IsAny<RequestMessage>(), It.IsAny<string>())).Returns(matchResult);
+
+        var mappings = new ConcurrentDictionary<Guid, IMapping>();
+        mappings.TryAdd(guid, mappingMock.Object);
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindBestMatch(request);
+
+        // Assert
+        result.Match.Should().BeNull();
+        result.Partial.Should().BeNull();
+        mappingMock.Verify(m => m.GetRequestMatchResult(It.IsAny<RequestMessage>(), It.IsAny<string>()), Times.Never);
+    }
+
     private static ConcurrentDictionary<Guid, IMapping> InitMappings(params (Guid guid, double[] scores, double? probability)[] matches)
     {
         var mappings = new ConcurrentDictionary<Guid, IMapping>();
@@ -237,6 +267,7 @@ public class MappingMatcherTests
         {
             var mappingMock = new Mock<IMapping>();
             mappingMock.SetupGet(m => m.Guid).Returns(match.guid);
+            mappingMock.SetupGet(m => m.IsEnabled).Returns(true);
 
             var requestMatchResult = new RequestMatchResult();
             foreach (var score in match.scores)

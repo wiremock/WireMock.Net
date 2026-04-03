@@ -109,6 +109,14 @@ public interface IMapping
     bool IsProxy { get; }
 
     /// <summary>
+    /// Gets a value indicating whether this mapping is a Proxy Mapping.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this mapping is a Proxy Mapping; otherwise, <c>false</c>.
+    /// </value>
+    bool IsEnabled { get; set; }
+
+    /// <summary>
     /// Gets a value indicating whether this mapping to be logged.
     /// </summary>
     /// <value>
@@ -135,7 +143,7 @@ public interface IMapping
     /// </summary>
     object? Data { get; }
 
-    /// <summary> 
+    /// <summary>
     /// The probability when this request should be matched. Value is between 0 and 1. [Optional]
     /// </summary>
     double? Probability { get; }
