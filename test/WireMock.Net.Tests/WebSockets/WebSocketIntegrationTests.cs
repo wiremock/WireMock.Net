@@ -811,9 +811,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         // Act
         await client.SendAsync(new ArraySegment<byte>(testData), WebSocketMessageType.Binary, true, _ct);
 
-        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
-
         await Task.Delay(500, _ct);
+
+        var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
 
         // Assert
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
