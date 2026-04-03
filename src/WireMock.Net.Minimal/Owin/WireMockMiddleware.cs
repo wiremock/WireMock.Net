@@ -122,6 +122,14 @@ internal class WireMockMiddleware(
                 }
             }
 
+            // Transition scenario state immediately after matching, before any delay (global or
+            // per-mapping) so that concurrent retries arriving during a delay period see the
+            // updated state and match the correct next mapping instead of re-matching this one.
+            if (targetMapping.Scenario != null)
+            {
+                UpdateScenarioState(targetMapping);
+            }
+
             if (!targetMapping.IsAdminInterface && options.RequestProcessingDelay > TimeSpan.Zero)
             {
                 await Task.Delay(options.RequestProcessingDelay.Value).ConfigureAwait(false);
@@ -145,11 +153,6 @@ internal class WireMockMiddleware(
 
                     mappingToFileSaver.SaveMappingToFile(theOptionalNewMapping);
                 }
-            }
-
-            if (targetMapping.Scenario != null)
-            {
-                UpdateScenarioState(targetMapping);
             }
 
             if (!targetMapping.IsAdminInterface && targetMapping.Webhooks?.Length > 0)
