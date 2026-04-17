@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using JsonConverter.Abstractions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER || NET461
 using System.Text.Json;
@@ -10,9 +11,15 @@ namespace WireMock.Serialization;
 
 internal class MappingSerializer(IJsonConverter jsonConverter)
 {
+    private static readonly JsonConverterOptions JsonConverterOptions = new JsonConverterOptions
+    {
+        DateParseHandling = (int) DateParseHandling.None
+    };
+
     internal T[] DeserializeJsonToArray<T>(string value)
     {
-        return DeserializeObjectToArray<T>(jsonConverter.Deserialize<object>(value)!);
+        // DeserializeObject
+        return DeserializeObjectToArray<T>(jsonConverter.Deserialize<object>(value, JsonConverterOptions)!);
     }
 
     internal static T[] DeserializeObjectToArray<T>(object value)

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using System.Net;
 using System.Text;
 using JetBrains.Annotations;
@@ -26,9 +25,6 @@ using WireMock.Util;
 
 namespace WireMock.Server;
 
-/// <summary>
-/// The fluent mock server.
-/// </summary>
 public partial class WireMockServer
 {
     private const int EnhancedFileSystemWatcherTimeoutMs = 1000;
