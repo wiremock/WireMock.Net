@@ -3,6 +3,8 @@
 using JsonConverter.Newtonsoft.Json;
 using WireMock.Admin.Mappings;
 using WireMock.Serialization;
+using Newtonsoft.Json.Linq;
+
 #if NET8_0_OR_GREATER
 using JsonConverter.System.Text.Json;
 #endif
@@ -318,6 +320,93 @@ public class MappingSerializerTests
         // Assert
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("Cannot deserialize the provided value to an array or object.");
+    }
+
+    [Fact]
+    public void MappingSerializer_DeserializeJsonToArray_WithNewtonsoftJson_DateTimeStringInQueryParamExactMatcherPattern_ShouldPreservePatternAsString()
+    {
+        // Arrange
+        var jsonConverter = new NewtonsoftJsonConverter();
+        var serializer = new MappingSerializer(jsonConverter);
+        var mappingJson =
+            """
+            {
+                "Guid": "12345678-1234-1234-1234-aaaaaaaaaaaa",
+                "Request": {
+                    "Path": "/api/report",
+                    "Methods": ["GET"],
+                    "Params": [
+                        {
+                            "Name": "asOfDate",
+                            "Matchers": [
+                                {
+                                    "Name": "ExactMatcher",
+                                    "Pattern": "2021-11-10T13:39:13.705"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Response": {
+                    "StatusCode": 200
+                }
+            }
+            """;
+
+        // Act
+        var result = serializer.DeserializeJsonToArray<MappingModel>(mappingJson);
+
+        // Assert
+        result.Should().HaveCount(1);
+        var matcher = result[0].Request!.Params![0].Matchers![0];
+        matcher.Name.Should().Be("ExactMatcher");
+        matcher.Pattern.Should().BeOfType<string>()
+            .Which.Should().Be("2021-11-10T13:39:13.705",
+                "datetime-format strings in ExactMatcher Pattern fields must survive deserialization as strings, " +
+                "not be auto-converted to DateTime by Newtonsoft.Json's DateParseHandling.DateTime");
+    }
+
+    [Fact]
+    public void MappingSerializer_DeserializeJsonToArray_WithNewtonsoftJson_DateTimeStringInJsonMatcherBodyPattern_ShouldPreservePatternAsString()
+    {
+        // Arrange
+        var jsonConverter = new NewtonsoftJsonConverter();
+        var serializer = new MappingSerializer(jsonConverter);
+        // Pattern is an INLINE JSON object (not a string) - this is how WireMock mapping files store
+        // JsonMatcher patterns when recorded. Newtonsoft with DateParseHandling.DateTime will convert
+        // the datetime value inside the JObject to JTokenType.Date during deserialization.
+        var mappingJson =
+            """
+            {
+                "Guid": "12345678-1234-1234-1234-bbbbbbbbbbbb",
+                "Request": {
+                    "Path": "/api/report",
+                    "Methods": ["POST"],
+                    "Body": {
+                        "Matcher": {
+                            "Name": "JsonMatcher",
+                            "Pattern": {"Date": "2021-09-30T00:00:00Z", "Names": ["Cash"]}
+                        }
+                    }
+                },
+                "Response": {
+                    "StatusCode": 200
+                }
+            }
+            """;
+
+        // Act
+        var result = serializer.DeserializeJsonToArray<MappingModel>(mappingJson);
+
+        // Assert - datetime values inside the JObject pattern must remain JTokenType.String.
+        result.Should().HaveCount(1);
+        var matcher = result[0].Request!.Body!.Matcher!;
+        matcher.Name.Should().Be("JsonMatcher");
+        var patternJObject = matcher.Pattern.Should().BeOfType<JObject>().Subject;
+        patternJObject["Date"]!.Type.Should().Be(JTokenType.String,
+            "datetime-format strings inside an inline JsonMatcher body pattern must retain JTokenType.String " +
+            "after deserialization; if DateParseHandling.DateTime auto-converts them to JTokenType.Date, " +
+            "JToken.DeepEquals will fail against incoming request bodies parsed with DateParseHandling.None");
     }
 #endif
 }
