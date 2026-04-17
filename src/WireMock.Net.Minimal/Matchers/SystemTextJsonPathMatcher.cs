@@ -1,7 +1,8 @@
 // Copyright © WireMock.Net
 
+using System.Text.Json.Nodes;
 using AnyOfTypes;
-using Newtonsoft.Json.Linq;
+using Json.Path;
 using Stef.Validation;
 using WireMock.Extensions;
 using WireMock.Models;
@@ -10,11 +11,11 @@ using WireMock.Util;
 namespace WireMock.Matchers;
 
 /// <summary>
-/// JsonPathMatcher
+/// SystemTextJsonPathMatcher - behaves the same as <see cref="JsonPathMatcher"/> but uses System.Text.Json instead of Newtonsoft.Json.
 /// </summary>
 /// <seealso cref="IStringMatcher" />
 /// <seealso cref="IObjectMatcher" />
-public class JsonPathMatcher : IStringMatcher, IObjectMatcher
+public class SystemTextJsonPathMatcher : IStringMatcher, IObjectMatcher
 {
     private readonly AnyOf<string, StringPattern>[] _patterns;
 
@@ -25,30 +26,30 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
     public object Value { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JsonPathMatcher"/> class.
+    /// Initializes a new instance of the <see cref="SystemTextJsonPathMatcher"/> class.
     /// </summary>
     /// <param name="patterns">The patterns.</param>
-    public JsonPathMatcher(params string[] patterns) : this(MatchBehaviour.AcceptOnMatch, MatchOperator.Or,
-        patterns.ToAnyOfPatterns())
+    public SystemTextJsonPathMatcher(params string[] patterns)
+        : this(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, patterns.ToAnyOfPatterns())
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JsonPathMatcher"/> class.
+    /// Initializes a new instance of the <see cref="SystemTextJsonPathMatcher"/> class.
     /// </summary>
     /// <param name="patterns">The patterns.</param>
-    public JsonPathMatcher(params AnyOf<string, StringPattern>[] patterns) : this(MatchBehaviour.AcceptOnMatch,
-        MatchOperator.Or, patterns)
+    public SystemTextJsonPathMatcher(params AnyOf<string, StringPattern>[] patterns)
+        : this(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, patterns)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JsonPathMatcher"/> class.
+    /// Initializes a new instance of the <see cref="SystemTextJsonPathMatcher"/> class.
     /// </summary>
     /// <param name="matchBehaviour">The match behaviour.</param>
     /// <param name="matchOperator">The <see cref="Matchers.MatchOperator"/> to use. (default = "Or")</param>
     /// <param name="patterns">The patterns.</param>
-    public JsonPathMatcher(
+    public SystemTextJsonPathMatcher(
         MatchBehaviour matchBehaviour,
         MatchOperator matchOperator = MatchOperator.Or,
         params AnyOf<string, StringPattern>[] patterns)
@@ -69,8 +70,8 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
         {
             try
             {
-                var jToken = JToken.Parse(input!);
-                score = IsMatch(jToken);
+                var node = JsonNode.Parse(input!);
+                score = IsMatchInternal(node);
             }
             catch (Exception ex)
             {
@@ -92,9 +93,14 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
         {
             try
             {
-                // Check if JToken or object
-                JToken jToken = input as JToken ?? JObject.FromObject(input);
-                score = IsMatch(jToken);
+                JsonNode? node = input switch
+                {
+                    JsonNode jsonNode => jsonNode,
+                    string str => JsonNode.Parse(str),
+                    _ => JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(input))
+                };
+
+                score = IsMatchInternal(node);
             }
             catch (Exception ex)
             {
@@ -115,7 +121,7 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
     public MatchOperator MatchOperator { get; }
 
     /// <inheritdoc />
-    public string Name => nameof(JsonPathMatcher);
+    public string Name => nameof(SystemTextJsonPathMatcher);
 
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
@@ -128,38 +134,51 @@ public class JsonPathMatcher : IStringMatcher, IObjectMatcher
                $")";
     }
 
-    private double IsMatch(JToken jToken)
+    private double IsMatchInternal(JsonNode? node)
     {
-        var array = ConvertJTokenToJArrayIfNeeded(jToken);
+        // JsonPath.Net requires the node to be inside an object or array for filter expressions.
+        // Similar to JsonPathMatcher's ConvertJTokenToJArrayIfNeeded, wrap a plain object in an array
+        // when it's an object with a single non-array child property.
+        var evaluationNode = WrapIfNeeded(node);
 
-        // The SelectToken method can accept a string path to a child token ( i.e. "Manufacturers[0].Products[0].Price").
-        // In that case it will return a JValue (some type) which does not implement the IEnumerable interface.
-        var values = _patterns.Select(pattern => array.SelectToken(pattern.GetPattern()) != null).ToArray();
+        var values = _patterns
+            .Select(pattern =>
+            {
+                var path = JsonPath.Parse(pattern.GetPattern());
+                var result = path.Evaluate(evaluationNode);
+                return result.Matches is { Count: > 0 };
+            })
+            .ToArray();
 
         return MatchScores.ToScore(values, MatchOperator);
     }
 
-    // https://github.com/wiremock/WireMock.Net/issues/965
-    // https://stackoverflow.com/questions/66922188/newtonsoft-jsonpath-with-c-sharp-syntax
-    // Filtering using SelectToken() isn't guaranteed to work for objects inside objects -- only objects inside arrays.
-    // So this code checks if it's an JArray, if it's not an array, construct a new JArray.
-    private static JToken ConvertJTokenToJArrayIfNeeded(JToken jToken)
+    // Mirrors JsonPathMatcher.ConvertJTokenToJArrayIfNeeded:
+    // If the node is an object with exactly one property whose value is not already an array,
+    // wrap that value in an array so that filter expressions (e.g. [?(@.x == y)]) can match.
+    private static JsonNode? WrapIfNeeded(JsonNode? node)
     {
-        if (jToken.Count() == 1)
+        if (node is not JsonObject obj)
         {
-            var property = jToken.First();
-            var item = property.First();
-            if (item is JArray)
-            {
-                return jToken;
-            }
-
-            return new JObject
-            {
-                [property.Path] = new JArray(item)
-            };
+            return node;
         }
 
-        return jToken;
+        var properties = obj.ToList();
+        if (properties.Count != 1)
+        {
+            return node;
+        }
+
+        var single = properties[0];
+        if (single.Value is JsonArray)
+        {
+            return node;
+        }
+
+        var clonedValue = JsonNode.Parse(single.Value?.ToJsonString() ?? "null");
+        return new JsonObject
+        {
+            [single.Key] = new JsonArray(clonedValue)
+        };
     }
 }

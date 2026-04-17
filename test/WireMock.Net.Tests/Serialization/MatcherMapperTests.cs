@@ -510,11 +510,31 @@ message HelloReply {
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_Patterns_As_Object()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_Patterns_1_Value_As_Object()
+    {
+        // Assign
+        object pattern = new { post1 = "value1", post2 = "value2" };
+        var patterns = new[] { pattern };
+        var model = new MatcherModel
+        {
+            Name = "JsonPartialMatcher",
+            Patterns = patterns
+        };
+
+        // Act
+        var matcher = (JsonPartialMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(patterns);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_Patterns_2_Values_As_Object()
     {
         // Assign
         object pattern1 = new { AccountIds = new[] { 1, 2, 3 } };
-        object pattern2 = new { X = "x" };
+        object pattern2 = new { post1 = "value1", post2 = "value2" };
         var patterns = new[] { pattern1, pattern2 };
         var model = new MatcherModel
         {
@@ -523,7 +543,7 @@ message HelloReply {
         };
 
         // Act
-        var matcher = (IJsonMatcher)_sut.Map(model)!;
+        var matcher = (JsonPartialMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
@@ -531,36 +551,33 @@ message HelloReply {
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_StringPattern_With_PatternAsFile()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_Pattern_As_String()
     {
         // Assign
-        var pattern = new StringPattern { Pattern = "{ \"AccountIds\": [ 1, 2, 3 ] }", PatternAsFile = "pf" };
+        var pattern = "{ \"Name\": \"T*\" }";
         var model = new MatcherModel
         {
-            Name = "JsonPartialMatcher",
-            Pattern = pattern,
-            Regex = true
+            Name = "JsonPartialWildcardMatcher",
+            Pattern = pattern
         };
 
         // Act
-        var matcher = (JsonPartialMatcher)_sut.Map(model)!;
+        var matcher = (JsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
-        matcher.Value.Should().BeEquivalentTo(pattern);
-        matcher.Regex.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_Patterns_As_Object()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_Pattern_As_Object()
     {
         // Assign
         object pattern = new { X = "*" };
         var model = new MatcherModel
         {
             Name = "JsonPartialWildcardMatcher",
-            Pattern = pattern,
-            Regex = false
+            Pattern = pattern
         };
 
         // Act
@@ -569,202 +586,304 @@ message HelloReply {
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
         matcher.Value.Should().BeEquivalentTo(pattern);
-        matcher.Regex.Should().BeFalse();
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_NotNullOrEmptyMatcher()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_RegexTrue()
     {
         // Assign
+        var pattern = "{ \"x\": \"^\\\\d+$\" }";
         var model = new MatcherModel
         {
-            Name = "NotNullOrEmptyMatcher",
-            RejectOnMatch = true
-        };
-
-        // Act
-        var matcher = _sut.Map(model)!;
-
-        // Assert
-        matcher.Should().BeAssignableTo<NotNullOrEmptyMatcher>();
-        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_MimePartMatcher()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "MimePartMatcher",
-            ContentMatcher = new MatcherModel
-            {
-                Name = "ExactMatcher",
-                Pattern = "x"
-            },
-            ContentDispositionMatcher = new MatcherModel
-            {
-                Name = "WildcardMatcher",
-                Pattern = "y"
-            },
-            ContentTransferEncodingMatcher = new MatcherModel
-            {
-                Name = "RegexMatcher",
-                Pattern = "z"
-            },
-            ContentTypeMatcher = new MatcherModel
-            {
-                Name = "ContentTypeMatcher",
-                Pattern = "text/json"
-            }
-        };
-
-        // Act
-        var matcher = (MimePartMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
-        matcher.ContentMatcher.Should().BeAssignableTo<ExactMatcher>().Which.GetPatterns().Should().ContainSingle("x");
-        matcher.ContentDispositionMatcher.Should().BeAssignableTo<WildcardMatcher>().Which.GetPatterns().Should().ContainSingle("y");
-        matcher.ContentTransferEncodingMatcher.Should().BeAssignableTo<RegexMatcher>().Which.GetPatterns().Should().ContainSingle("z");
-        matcher.ContentTypeMatcher.Should().BeAssignableTo<ContentTypeMatcher>().Which.GetPatterns().Should().ContainSingle("text/json");
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_XPathMatcher_WithXmlNamespaces_As_String()
-    {
-        // Assign
-        var pattern = "/s:Envelope/s:Body/*[local-name()='QueryRequest']";
-        var model = new MatcherModel
-        {
-            Name = "XPathMatcher",
-            Pattern = pattern,
-            XmlNamespaceMap =
-            [
-                new XmlNamespace { Prefix = "s", Uri = "http://schemas.xmlsoap.org/soap/envelope/" }
-            ]
-        };
-
-        // Act
-        var matcher = (XPathMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
-        matcher.XmlNamespaceMap.Should().NotBeNull();
-        matcher.XmlNamespaceMap.Should().HaveCount(1);
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_XPathMatcher_WithoutXmlNamespaces_As_String()
-    {
-        // Assign
-        var pattern = "/s:Envelope/s:Body/*[local-name()='QueryRequest']";
-        var model = new MatcherModel
-        {
-            Name = "XPathMatcher",
+            Name = "JsonPartialWildcardMatcher",
+            Regex = true,
             Pattern = pattern
         };
 
         // Act
-        var matcher = (XPathMatcher)_sut.Map(model)!;
+        var matcher = (JsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
-        matcher.XmlNamespaceMap.Should().BeNull();
+        matcher.Regex.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_CSharpCodeMatcher()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_RejectOnMatch()
     {
         // Assign
+        var pattern = "{ \"x\": \"*\" }";
         var model = new MatcherModel
         {
-            Name = "CSharpCodeMatcher",
-            Patterns = ["return it == \"x\";"]
-        };
-        var sut = new MatcherMapper(new WireMockServerSettings { AllowCSharpCodeMatcher = true });
-
-        // Act 1
-        var matcher1 = (ICSharpCodeMatcher)sut.Map(model)!;
-
-        // Assert 1
-        matcher1.Should().NotBeNull();
-        matcher1.IsMatch("x").Score.Should().Be(1.0d);
-
-        // Act 2
-        var matcher2 = (ICSharpCodeMatcher)sut.Map(model)!;
-
-        // Assert 2
-        matcher2.Should().NotBeNull();
-        matcher2.IsMatch("x").Score.Should().Be(1.0d);
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_CSharpCodeMatcher_NotAllowed_ThrowsException()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "CSharpCodeMatcher",
-            Patterns = ["x"]
-        };
-        var sut = new MatcherMapper(new WireMockServerSettings { AllowCSharpCodeMatcher = false });
-
-        // Act
-        Action action = () => sut.Map(model);
-
-        // Assert
-        action.Should().Throw<NotSupportedException>();
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_ExactMatcher_Pattern()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "ExactMatcher",
-            Patterns = ["x"]
+            Name = "JsonPartialWildcardMatcher",
+            Pattern = pattern,
+            RejectOnMatch = true
         };
 
         // Act
-        var matcher = (ExactMatcher)_sut.Map(model)!;
+        var matcher = (JsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        matcher.GetPatterns().Should().ContainSingle("x");
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
+        matcher.Value.Should().Be(pattern);
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_ExactMatcher_Patterns()
+    public void MatcherMapper_Map_MatcherModel_JsonPartialWildcardMatcher_IgnoreCaseTrue()
     {
         // Assign
+        var pattern = "{ \"name\": \"t*\" }";
         var model = new MatcherModel
         {
-            Name = "ExactMatcher",
-            Patterns = ["x", "y"]
+            Name = "JsonPartialWildcardMatcher",
+            Pattern = pattern,
+            IgnoreCase = true
         };
 
         // Act
-        var matcher = (ExactMatcher)_sut.Map(model)!;
+        var matcher = (JsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        matcher.GetPatterns().Should().ContainInOrder("x", "y");
+        matcher.IgnoreCase.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
+    }
+
+    #region SystemTextJsonMatcher
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_Pattern_As_String()
+    {
+        // Assign
+        var pattern = "{ \"AccountIds\": [ 1, 2, 3 ] }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonMatcher",
+            Pattern = pattern
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(pattern);
+        matcher.Regex.Should().BeFalse();
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_RegexFalse()
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_Pattern_As_Object()
+    {
+        // Assign
+        var pattern = new { AccountIds = new[] { 1, 2, 3 } };
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonMatcher",
+            Pattern = pattern
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_Patterns_As_String()
+    {
+        // Assign
+        var pattern1 = "{ \"AccountIds\": [ 1, 2, 3 ] }";
+        var pattern2 = "{ \"post1\": \"value1\" }";
+        object[] patterns = [pattern1, pattern2];
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonMatcher",
+            Patterns = patterns
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(patterns);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_RejectOnMatch()
     {
         // Assign
         var pattern = "{ \"x\": 1 }";
         var model = new MatcherModel
         {
-            Name = "JsonPartialMatcher",
+            Name = "SystemTextJsonMatcher",
+            Pattern = pattern,
+            RejectOnMatch = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_IgnoreCaseTrue()
+    {
+        // Assign
+        var pattern = "{ \"x\": 1 }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonMatcher",
+            Pattern = pattern,
+            IgnoreCase = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.IgnoreCase.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonMatcher_RegexTrue()
+    {
+        // Assign
+        var pattern = "{ \"x\": \"^\\\\d+$\" }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonMatcher",
+            Pattern = pattern,
+            Regex = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.Regex.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonMatcher_To_MatcherModel()
+    {
+        // Assign
+        var pattern = new { Id = 1, Name = "Test" };
+        var matcher = new SystemTextJsonMatcher(MatchBehaviour.AcceptOnMatch, pattern, ignoreCase: true, regex: true);
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonMatcher));
+        model.Pattern.Should().BeEquivalentTo(pattern);
+        model.IgnoreCase.Should().BeTrue();
+        model.Regex.Should().BeTrue();
+        model.RejectOnMatch.Should().BeNull();
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonMatcher_RejectOnMatch_To_MatcherModel()
+    {
+        // Assign
+        var pattern = "{ \"Id\": 1 }";
+        var matcher = new SystemTextJsonMatcher(MatchBehaviour.RejectOnMatch, pattern);
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonMatcher));
+        model.Pattern.Should().Be(pattern);
+        model.RejectOnMatch.Should().BeTrue();
+        model.Regex.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region SystemTextJsonPartialMatcher
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_Pattern_As_String()
+    {
+        // Assign
+        var pattern = "{ \"AccountIds\": [ 1, 2, 3 ] }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialMatcher",
+            Pattern = pattern
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(pattern);
+        matcher.Regex.Should().BeFalse();
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_Pattern_As_Object()
+    {
+        // Assign
+        var pattern = new { AccountIds = new[] { 1, 2, 3 } };
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialMatcher",
+            Pattern = pattern
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_Patterns_As_String()
+    {
+        // Assign
+        var pattern1 = "{ \"AccountIds\": [ 1, 2, 3 ] }";
+        var pattern2 = "{ \"X\": \"x\" }";
+        object[] patterns = [pattern1, pattern2];
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialMatcher",
+            Patterns = patterns
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(patterns);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_RegexFalse()
+    {
+        // Assign
+        var pattern = "{ \"x\": 1 }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialMatcher",
             Regex = false,
             Pattern = pattern
         };
 
         // Act
-        var matcher = (JsonPartialMatcher)_sut.Map(model)!;
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
@@ -774,19 +893,19 @@ message HelloReply {
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_JsonPartialMatcher_RegexTrue()
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_RegexTrue()
     {
         // Assign
         var pattern = "{ \"x\": 1 }";
         var model = new MatcherModel
         {
-            Name = "JsonPartialMatcher",
+            Name = "SystemTextJsonPartialMatcher",
             Regex = true,
             Pattern = pattern
         };
 
         // Act
-        var matcher = (JsonPartialMatcher)_sut.Map(model)!;
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
@@ -796,336 +915,325 @@ message HelloReply {
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_ExactObjectMatcher_ValidBase64StringPattern()
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_RejectOnMatch()
     {
         // Assign
+        var pattern = "{ \"x\": 1 }";
         var model = new MatcherModel
         {
-            Name = "ExactObjectMatcher",
-            Patterns = ["c3RlZg=="]
+            Name = "SystemTextJsonPartialMatcher",
+            Pattern = pattern,
+            RejectOnMatch = true
         };
 
         // Act
-        var matcher = (ExactObjectMatcher)_sut.Map(model)!;
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
 
         // Assert
-        ((byte[])matcher.Value).Should().BeEquivalentTo(new byte[] { 115, 116, 101, 102 });
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
+        matcher.Value.Should().Be(pattern);
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_ExactObjectMatcher_InvalidBase64StringPattern()
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialMatcher_IgnoreCaseTrue()
     {
         // Assign
+        var pattern = "{ \"x\": 1 }";
         var model = new MatcherModel
         {
-            Name = "ExactObjectMatcher",
-            Patterns = ["_"]
+            Name = "SystemTextJsonPartialMatcher",
+            Pattern = pattern,
+            IgnoreCase = true
         };
 
         // Act
-        Action act = () => _sut.Map(model);
+        var matcher = (SystemTextJsonPartialMatcher)_sut.Map(model)!;
 
         // Assert
-        act.Should().Throw<ArgumentException>();
-    }
-
-    [Theory]
-    [InlineData(MatchOperator.Or, 1.0d)]
-    [InlineData(MatchOperator.And, 0.0d)]
-    [InlineData(MatchOperator.Average, 0.5d)]
-    public void MatcherMapper_Map_MatcherModel_RegexMatcher(MatchOperator matchOperator, double expected)
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "RegexMatcher",
-            Patterns = ["x", "y"],
-            IgnoreCase = true,
-            MatchOperator = matchOperator.ToString()
-        };
-
-        // Act
-        var matcher = (RegexMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.GetPatterns().Should().ContainInOrder("x", "y");
-
-        var result = matcher.IsMatch("X");
-        result.Score.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData(MatchOperator.Or, 1.0d)]
-    [InlineData(MatchOperator.And, 0.0d)]
-    [InlineData(MatchOperator.Average, 0.5d)]
-    public void MatcherMapper_Map_MatcherModel_WildcardMatcher_IgnoreCase(MatchOperator matchOperator, double expected)
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "WildcardMatcher",
-            Patterns = ["x", "y"],
-            IgnoreCase = true,
-            MatchOperator = matchOperator.ToString()
-        };
-
-        // Act
-        var matcher = (WildcardMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.GetPatterns().Should().ContainInOrder("x", "y");
-
-        var result = matcher.IsMatch("X");
-        result.Score.Should().Be(expected);
+        matcher.IgnoreCase.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_WildcardMatcher_With_PatternAsFile()
-    {
-        // Arrange
-        var file = "c:\\test.txt";
-        var fileContent = "c";
-        var stringPattern = new StringPattern
-        {
-            Pattern = fileContent,
-            PatternAsFile = file
-        };
-        var fileSystemHandleMock = new Mock<IFileSystemHandler>();
-        fileSystemHandleMock.Setup(f => f.ReadFileAsString(file)).Returns(fileContent);
-
-        var model = new MatcherModel
-        {
-            Name = "WildcardMatcher",
-            PatternAsFile = file
-        };
-
-        var settings = new WireMockServerSettings
-        {
-            FileSystemHandler = fileSystemHandleMock.Object
-        };
-        var sut = new MatcherMapper(settings);
-
-        // Act
-        var matcher = (WildcardMatcher)sut.Map(model)!;
-
-        // Assert
-        matcher.GetPatterns().Should().HaveCount(1).And.Contain(new AnyOf<string, StringPattern>(stringPattern));
-
-        var result = matcher.IsMatch("c");
-        result.Score.Should().Be(MatchScores.Perfect);
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_SimMetricsMatcher()
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPartialMatcher_To_MatcherModel()
     {
         // Assign
-        var model = new MatcherModel
-        {
-            Name = "SimMetricsMatcher",
-            Pattern = "x"
-        };
-
-        // Act
-        var matcher = (SimMetricsMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.GetPatterns().Should().ContainSingle("x");
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_SimMetricsMatcher_BlockDistance()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "SimMetricsMatcher.BlockDistance",
-            Pattern = "x"
-        };
-
-        // Act
-        var matcher = (SimMetricsMatcher)_sut.Map(model)!;
-
-        // Assert
-        matcher.GetPatterns().Should().ContainSingle("x");
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_SimMetricsMatcher_Throws1()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "error",
-            Pattern = "x"
-        };
-
-        // Act
-        Action act = () => _sut.Map(model);
-
-        // Assert
-        act.Should().Throw<NotSupportedException>();
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_SimMetricsMatcher_Throws2()
-    {
-        // Assign
-        var model = new MatcherModel
-        {
-            Name = "SimMetricsMatcher.error",
-            Pattern = "x"
-        };
-
-        // Act
-        Action act = () => _sut.Map(model);
-
-        // Assert
-        act.Should().Throw<NotSupportedException>();
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_MatcherModelToCustomMatcher()
-    {
-        // Arrange
-        var patternModel = new CustomPathParamMatcherModel("/customer/{customerId}/document/{documentId}",
-            new Dictionary<string, string>(2)
-            {
-                { "customerId", @"^[0-9]+$" },
-                { "documentId", @"^[0-9a-zA-Z\-\_]+\.[a-zA-Z]+$" }
-            });
-        var model = new MatcherModel
-        {
-            Name = nameof(CustomPathParamMatcher),
-            Pattern = JsonConvert.SerializeObject(patternModel)
-        };
-
-        var settings = new WireMockServerSettings();
-        settings.CustomMatcherMappings = settings.CustomMatcherMappings ?? new Dictionary<string, Func<MatcherModel, IMatcher>>();
-        settings.CustomMatcherMappings[nameof(CustomPathParamMatcher)] = matcherModel =>
-        {
-            var matcherParams = JsonConvert.DeserializeObject<CustomPathParamMatcherModel>((string)matcherModel.Pattern!)!;
-            return new CustomPathParamMatcher(
-                matcherModel.RejectOnMatch == true ? MatchBehaviour.RejectOnMatch : MatchBehaviour.AcceptOnMatch,
-                matcherParams.Path,
-                matcherParams.PathParams
-            );
-        };
-        var sut = new MatcherMapper(settings);
-
-        // Act
-        var matcher = sut.Map(model) as CustomPathParamMatcher;
-
-        // Assert
-        matcher.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void MatcherMapper_Map_MatcherModel_CustomMatcherToMatcherModel()
-    {
-        // Arrange
-        var matcher = new CustomPathParamMatcher("/customer/{customerId}/document/{documentId}",
-            new Dictionary<string, string>(2)
-            {
-                { "customerId", @"^[0-9]+$" },
-                { "documentId", @"^[0-9a-zA-Z\-\_]+\.[a-zA-Z]+$" }
-            });
+        var pattern = new { Id = 1, Name = "Test" };
+        var matcher = new SystemTextJsonPartialMatcher(MatchBehaviour.AcceptOnMatch, pattern, ignoreCase: true, regex: true);
 
         // Act
         var model = _sut.Map(matcher)!;
 
         // Assert
-        using (new AssertionScope())
-        {
-            model.Should().NotBeNull();
-            model.Name.Should().Be(nameof(CustomPathParamMatcher));
-
-            var matcherParams = JsonConvert.DeserializeObject<CustomPathParamMatcherModel>((string)model.Pattern!)!;
-            matcherParams.Path.Should().Be("/customer/{customerId}/document/{documentId}");
-            matcherParams.PathParams.Should().BeEquivalentTo(new Dictionary<string, string>(2)
-            {
-                { "customerId", @"^[0-9]+$" },
-                { "documentId", @"^[0-9a-zA-Z\-\_]+\.[a-zA-Z]+$" }
-            });
-        }
+        model.Name.Should().Be(nameof(SystemTextJsonPartialMatcher));
+        model.Pattern.Should().BeEquivalentTo(pattern);
+        model.IgnoreCase.Should().BeTrue();
+        model.Regex.Should().BeTrue();
+        model.RejectOnMatch.Should().BeNull();
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_GraphQLMatcher()
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPartialMatcher_RejectOnMatch_To_MatcherModel()
     {
-        // Arrange
-        const string testSchema = @"
-  scalar DateTime
-  scalar MyCustomScalar
+        // Assign
+        var pattern = "{ \"Id\": 1 }";
+        var matcher = new SystemTextJsonPartialMatcher(MatchBehaviour.RejectOnMatch, pattern);
 
-  type Message {
-    id: ID!
-  }
+        // Act
+        var model = _sut.Map(matcher)!;
 
-  type Mutation {
-    createMessage(x: MyCustomScalar, dt: DateTime): Message
-  }";
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPartialMatcher));
+        model.Pattern.Should().Be(pattern);
+        model.RejectOnMatch.Should().BeTrue();
+        model.Regex.Should().BeFalse();
+    }
 
-        var customScalars = new Dictionary<string, Type> { { "MyCustomScalar", typeof(string) } };
+    #endregion
+
+    #region SystemTextJsonPartialWildcardMatcher
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialWildcardMatcher_Pattern_As_Object()
+    {
+        // Assign
+        object pattern = new { X = "*" };
         var model = new MatcherModel
         {
-            Name = nameof(GraphQLMatcher),
-            Pattern = testSchema,
-            CustomScalars = customScalars
+            Name = "SystemTextJsonPartialWildcardMatcher",
+            Pattern = pattern,
+            Regex = false
         };
 
         // Act
-        var matcher = (IGraphQLMatcher)_sut.Map(model)!;
+        var matcher = (SystemTextJsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        matcher.GetPatterns().Should().HaveElementAt(0, testSchema);
-        matcher.Name.Should().Be(nameof(GraphQLMatcher));
-        matcher.CustomScalars.Should().BeEquivalentTo(customScalars);
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().BeEquivalentTo(pattern);
+        matcher.Regex.Should().BeFalse();
     }
 
     [Fact]
-    public void MatcherMapper_Map_MatcherModel_ProtoBufMatcher()
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialWildcardMatcher_Pattern_As_String()
     {
-        // Arrange
-        const string protoDefinition = @"
-syntax = ""proto3"";
-
-package greet;
-
-service Greeter {
-  rpc SayHello (HelloRequest) returns (HelloReply);
-}
-
-message HelloRequest {
-  string name = 1;
-}
-
-message HelloReply {
-  string message = 1;
-}
-";
-        const string messageType = "greet.HelloRequest";
-
-        var jsonMatcherPattern = new { name = "stef" };
-
+        // Assign
+        var pattern = "{ \"Name\": \"T*\" }";
         var model = new MatcherModel
         {
-            Name = nameof(ProtoBufMatcher),
-            Pattern = protoDefinition,
-            ProtoBufMessageType = messageType,
-            ContentMatcher = new MatcherModel
-            {
-                Name = nameof(JsonMatcher),
-                Pattern = jsonMatcherPattern
-            }
+            Name = "SystemTextJsonPartialWildcardMatcher",
+            Pattern = pattern
         };
 
         // Act
-        var matcher = (ProtoBufMatcher)_sut.Map(model)!;
+        var matcher = (SystemTextJsonPartialWildcardMatcher)_sut.Map(model)!;
 
         // Assert
-        matcher.ProtoDefinition().Texts.Should().ContainSingle(protoDefinition);
-        matcher.Name.Should().Be(nameof(ProtoBufMatcher));
-        matcher.MessageType.Should().Be(messageType);
-        matcher.Matcher?.Value.Should().Be(jsonMatcherPattern);
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Value.Should().Be(pattern);
     }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialWildcardMatcher_RegexTrue()
+    {
+        // Assign
+        var pattern = "{ \"x\": \"^\\\\d+$\" }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialWildcardMatcher",
+            Regex = true,
+            Pattern = pattern
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialWildcardMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.Regex.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialWildcardMatcher_RejectOnMatch()
+    {
+        // Assign
+        var pattern = "{ \"x\": \"*\" }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialWildcardMatcher",
+            Pattern = pattern,
+            RejectOnMatch = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialWildcardMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPartialWildcardMatcher_IgnoreCaseTrue()
+    {
+        // Assign
+        var pattern = "{ \"name\": \"t*\" }";
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPartialWildcardMatcher",
+            Pattern = pattern,
+            IgnoreCase = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPartialWildcardMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.IgnoreCase.Should().BeTrue();
+        matcher.Value.Should().Be(pattern);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPartialWildcardMatcher_To_MatcherModel()
+    {
+        // Assign
+        var pattern = new { Id = 1, Name = "T*" };
+        var matcher = new SystemTextJsonPartialWildcardMatcher(MatchBehaviour.AcceptOnMatch, pattern, ignoreCase: true);
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPartialWildcardMatcher));
+        model.Pattern.Should().BeEquivalentTo(pattern);
+        model.IgnoreCase.Should().BeTrue();
+        model.Regex.Should().BeFalse();
+        model.RejectOnMatch.Should().BeNull();
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPartialWildcardMatcher_RejectOnMatch_To_MatcherModel()
+    {
+        // Assign
+        var pattern = "{ \"Name\": \"T*\" }";
+        var matcher = new SystemTextJsonPartialWildcardMatcher(MatchBehaviour.RejectOnMatch, pattern);
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPartialWildcardMatcher));
+        model.Pattern.Should().Be(pattern);
+        model.RejectOnMatch.Should().BeTrue();
+        model.Regex.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region SystemTextJsonPathMatcher
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPathMatcher_SinglePattern()
+    {
+        // Arrange
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPathMatcher",
+            Pattern = "$.Id"
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPathMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
+        matcher.GetPatterns().Should().ContainSingle().Which.First.Should().Be("$.Id");
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPathMatcher_MultiplePatterns()
+    {
+        // Arrange
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPathMatcher",
+            Patterns = ["$.Id", "$.Name"],
+            MatchOperator = "And"
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPathMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchOperator.Should().Be(MatchOperator.And);
+        matcher.GetPatterns().Select(p => p.First).Should().BeEquivalentTo("$.Id", "$.Name");
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_MatcherModel_SystemTextJsonPathMatcher_RejectOnMatch()
+    {
+        // Arrange
+        var model = new MatcherModel
+        {
+            Name = "SystemTextJsonPathMatcher",
+            Pattern = "$.Id",
+            RejectOnMatch = true
+        };
+
+        // Act
+        var matcher = (SystemTextJsonPathMatcher)_sut.Map(model)!;
+
+        // Assert
+        matcher.MatchBehaviour.Should().Be(MatchBehaviour.RejectOnMatch);
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPathMatcher_To_MatcherModel_SinglePattern()
+    {
+        // Arrange
+        var matcher = new SystemTextJsonPathMatcher("$.Id");
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPathMatcher));
+        model.Pattern.Should().Be("$.Id");
+        model.Patterns.Should().BeNull();
+        model.RejectOnMatch.Should().BeNull();
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPathMatcher_To_MatcherModel_MultiplePatterns()
+    {
+        // Arrange
+        var matcher = new SystemTextJsonPathMatcher(MatchBehaviour.AcceptOnMatch, MatchOperator.And, "$.Id", "$.Name");
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPathMatcher));
+        model.Pattern.Should().BeNull();
+        model.Patterns.Should().BeEquivalentTo(["$.Id", "$.Name"]);
+        model.MatchOperator.Should().Be("And");
+    }
+
+    [Fact]
+    public void MatcherMapper_Map_Matcher_SystemTextJsonPathMatcher_RejectOnMatch_To_MatcherModel()
+    {
+        // Arrange
+        var matcher = new SystemTextJsonPathMatcher(MatchBehaviour.RejectOnMatch, MatchOperator.Or, "$.Id");
+
+        // Act
+        var model = _sut.Map(matcher)!;
+
+        // Assert
+        model.Name.Should().Be(nameof(SystemTextJsonPathMatcher));
+        model.Pattern.Should().Be("$.Id");
+        model.RejectOnMatch.Should().BeTrue();
+    }
+
+    #endregion
 }
