@@ -523,7 +523,7 @@ message HelloReply {
         };
 
         // Act
-        var matcher = (JsonMatcher)_sut.Map(model)!;
+        var matcher = (IJsonMatcher)_sut.Map(model)!;
 
         // Assert
         matcher.MatchBehaviour.Should().Be(MatchBehaviour.AcceptOnMatch);
