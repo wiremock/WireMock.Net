@@ -12,9 +12,8 @@ namespace WireMock.Matchers;
 /// <summary>
 /// JsonPathMatcher
 /// </summary>
-/// <seealso cref="IStringMatcher" />
-/// <seealso cref="IObjectMatcher" />
-public class JsonPathMatcher : IStringMatcher, IObjectMatcher
+/// <seealso cref="IJsonPathMatcher" />
+public class JsonPathMatcher : IJsonPathMatcher
 {
     private readonly AnyOf<string, StringPattern>[] _patterns;
 

@@ -121,8 +121,13 @@ internal class MatcherMapper
             case nameof(JsonPathMatcher):
                 return new JsonPathMatcher(matchBehaviour, matchOperator, stringPatterns);
 
-            case nameof(SystemTextJsonPathMatcher):
-                return new SystemTextJsonPathMatcher(matchBehaviour, matchOperator, stringPatterns);
+            case "SystemTextJsonPathMatcher":
+                if (TypeLoader.TryLoadNewInstance<ISystemTextJsonPathMatcher>(out var systemTextJsonPathMatcher, matchBehaviour, matchOperator, stringPatterns))
+                {
+                    return systemTextJsonPathMatcher;
+                }
+
+                throw new InvalidOperationException("The 'SystemTextJsonPathMatcher' cannot be loaded. Please install the WireMock.Net.Matchers.SystemTextJsonPath package.");
 
             case nameof(JmesPathMatcher):
                 return new JmesPathMatcher(matchBehaviour, matchOperator, stringPatterns);

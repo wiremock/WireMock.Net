@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using AnyOfTypes;
 using Json.Path;
@@ -11,11 +12,10 @@ using WireMock.Util;
 namespace WireMock.Matchers;
 
 /// <summary>
-/// SystemTextJsonPathMatcher - behaves the same as <see cref="JsonPathMatcher"/> but uses System.Text.Json instead of Newtonsoft.Json.
+/// SystemTextJsonPathMatcher - behaves the same as JsonPathMatcher but uses System.Text.Json and Json.Path instead of Newtonsoft.Json.
 /// </summary>
-/// <seealso cref="IStringMatcher" />
-/// <seealso cref="IObjectMatcher" />
-public class SystemTextJsonPathMatcher : IStringMatcher, IObjectMatcher
+/// <seealso cref="ISystemTextJsonPathMatcher" />
+public class SystemTextJsonPathMatcher : ISystemTextJsonPathMatcher
 {
     private readonly AnyOf<string, StringPattern>[] _patterns;
 
@@ -97,7 +97,7 @@ public class SystemTextJsonPathMatcher : IStringMatcher, IObjectMatcher
                 {
                     JsonNode jsonNode => jsonNode,
                     string str => JsonNode.Parse(str),
-                    _ => JsonNode.Parse(System.Text.Json.JsonSerializer.Serialize(input))
+                    _ => JsonNode.Parse(JsonSerializer.Serialize(input))
                 };
 
                 score = IsMatchInternal(node);
