@@ -414,6 +414,7 @@ public partial class WireMockServer : IWireMockServer
         _options.CorsPolicyOptions = _settings.CorsPolicyOptions;
         _options.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
         _options.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
+        _options.DefaultJsonSerializer = _settings.DefaultJsonSerializer;
 
         _httpServer = new AspNetCoreSelfHost(_options, urlOptions);
         var startTask = _httpServer.StartAsync();
