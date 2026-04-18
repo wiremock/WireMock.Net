@@ -5,7 +5,6 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WireMock.Matchers;
-using WireMock.Net.Tests.WebSockets;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
