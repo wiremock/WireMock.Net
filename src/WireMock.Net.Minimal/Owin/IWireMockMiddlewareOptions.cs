@@ -2,6 +2,7 @@
 
 using System.Collections.Concurrent;
 using System.Security.Cryptography.X509Certificates;
+using JsonConverter.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
@@ -99,4 +100,12 @@ internal interface IWireMockMiddlewareOptions
     /// WebSocket settings.
     /// </summary>
     WebSocketSettings? WebSocketSettings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default JSON converter used for serialization.
+    /// </summary>
+    /// <remarks>
+    /// Set this property to customize how objects are serialized to and deserialized from JSON during mapping.
+    /// </remarks>
+    IJsonConverter DefaultJsonSerializer { get; set; }
 }
