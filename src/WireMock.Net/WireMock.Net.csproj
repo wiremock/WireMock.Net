@@ -34,6 +34,6 @@
         <ProjectReference Include="../WireMock.Net.GraphQL/WireMock.Net.GraphQL.csproj" />
         <ProjectReference Include="../WireMock.Net.ProtoBuf/WireMock.Net.ProtoBuf.csproj" />
         <ProjectReference Include="../WireMock.Net.OpenTelemetry/WireMock.Net.OpenTelemetry.csproj" />
-        <ProjectReference Include="..\WireMock.Net.Matchers.SystemTextJsonPath\WireMock.Net.Matchers.SystemTextJsonPath.csproj" />
+        <ProjectReference Include="../WireMock.Net.Matchers.SystemTextJsonPath/WireMock.Net.Matchers.SystemTextJsonPath.csproj" />
     </ItemGroup>
 </Project>
