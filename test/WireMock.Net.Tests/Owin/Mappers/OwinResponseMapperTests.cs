@@ -9,6 +9,8 @@ using WireMock.Util;
 using WireMock.Owin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using JsonConverter.Newtonsoft.Json;
+using JsonConverter.System.Text.Json;
 
 namespace WireMock.Net.Tests.Owin.Mappers;
 
@@ -34,6 +36,7 @@ public class OwinResponseMapperTests
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
         _optionsMock.SetupGet(o => o.FileSystemHandler).Returns(_fileSystemHandlerMock.Object);
+        _optionsMock.SetupGet(o => o.DefaultJsonSerializer).Returns(new NewtonsoftJsonConverter());
 
         _headers = new Mock<IHeaderDictionary>();
         _headers.SetupAllProperties();
@@ -186,7 +189,7 @@ public class OwinResponseMapperTests
     }
 
     [Fact]
-    public async Task OwinResponseMapper_MapAsync_BodyAsJson()
+    public async Task OwinResponseMapper_MapAsync_BodyAsJson_UsingNewtonsoftJson()
     {
         // Arrange
         var json = new { t = "x", i = (string?)null };
@@ -195,6 +198,25 @@ public class OwinResponseMapperTests
             Headers = new Dictionary<string, WireMockList<string>>(),
             BodyData = new BodyData { DetectedBodyType = BodyType.Json, BodyAsJson = json, BodyAsJsonIndented = false }
         };
+
+        // Act
+        await _sut.MapAsync(responseMessage, _responseMock.Object);
+
+        // Assert
+        _stream.Verify(s => s.WriteAsync(new byte[] { 123, 34, 116, 34, 58, 34, 120, 34, 125 }, 0, 9, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task OwinResponseMapper_MapAsync_BodyAsJson_UsingSystemTextJson()
+    {
+        // Arrange
+        var json = new { t = "x", i = (string?)null };
+        var responseMessage = new ResponseMessage
+        {
+            Headers = new Dictionary<string, WireMockList<string>>(),
+            BodyData = new BodyData { DetectedBodyType = BodyType.Json, BodyAsJson = json, BodyAsJsonIndented = false }
+        };
+        _optionsMock.SetupGet(o => o.DefaultJsonSerializer).Returns(new SystemTextJsonConverter());
 
         // Act
         await _sut.MapAsync(responseMessage, _responseMock.Object);

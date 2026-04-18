@@ -2,6 +2,8 @@
 
 using System.Collections.Concurrent;
 using System.Security.Cryptography.X509Certificates;
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using WireMock.Handlers;
@@ -108,5 +110,9 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
     /// <inheritdoc />
     public ConcurrentDictionary<Guid, WebSocketConnectionRegistry> WebSocketRegistries { get; } = new();
 
+    /// <inheritdoc />
     public WebSocketSettings? WebSocketSettings { get; set; }
+
+    /// <inheritdoc />
+    public IJsonConverter DefaultJsonSerializer { get; set; } = new NewtonsoftJsonConverter();
 }
