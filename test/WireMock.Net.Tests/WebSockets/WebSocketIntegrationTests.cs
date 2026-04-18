@@ -750,8 +750,6 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         {
             await client.SendAsync(testMessage, cancellationToken: _ct);
 
-            await Task.Delay(500, _ct);
-
             var received = await client.ReceiveAsTextAsync(cancellationToken: _ct);
             received.Should().Be(testMessage, $"message '{testMessage}' should be proxied and echoed back");
         }
