@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Description>A SystemTextJsonPathMatcher which can be used to match WireMock.Net Requests using JSONPath with System.Text.Json.</Description>
+        <Description>A SystemTextJsonPathMatcher which can be used to match WireMock.Net Requests using JsonPath.Net.</Description>
         <AssemblyTitle>WireMock.Net.Matchers.SystemTextJsonPath</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
         <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>

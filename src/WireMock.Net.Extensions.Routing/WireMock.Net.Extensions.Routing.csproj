@@ -25,7 +25,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="JsonConverter.Abstractions" Version="0.9.0" />
+      <PackageReference Include="JsonConverter.Abstractions" Version="0.10.0" />
     </ItemGroup>
 
     <ItemGroup>

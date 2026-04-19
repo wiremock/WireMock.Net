@@ -14,11 +14,17 @@ internal static class JsonSerializationConstants
         IgnoreNullValues = true
     };
 
-    //internal static readonly JsonSerializerSettings JsonSerializerSettingsDefault = new()
-    //{
-    //    Formatting = Formatting.Indented,
-    //    NullValueHandling = NullValueHandling.Ignore
-    //};
+    internal static readonly JsonConverterOptions JsonConverterOptionsIncludeNullValues = new()
+    {
+        WriteIndented = true,
+        IgnoreNullValues = false
+    };
+
+    internal static readonly JsonConverterOptions JsonConverterOptionsWithDateParsingNone = new()
+    {
+        WriteIndented = true,
+        DateParseHandling = 0
+    };
 
     internal static readonly JsonSerializerSettings JsonSerializerSettingsIncludeNullValues = new()
     {

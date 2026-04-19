@@ -338,7 +338,7 @@ public partial class WireMockServer
             }
 
             o.CorsPolicyOptions = corsPolicyOptions;
-            o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode) _settings.ClientCertificateMode;
+            o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
             o.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
         });
 
@@ -834,6 +834,18 @@ public partial class WireMockServer
         };
     }
 
+    private T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
+    {
+        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
+        {
+            var bodyAsJson = requestMessage.BodyData.BodyAsJson!;
+
+            return _mappingSerializer.DeserializeObjectToArray<T>(bodyAsJson);
+        }
+
+        throw new NotSupportedException();
+    }
+
     private static Encoding? ToEncoding(EncodingModel? encodingModel)
     {
         return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
@@ -851,18 +863,6 @@ public partial class WireMockServer
             StatusCode = (int)HttpStatusCode.OK,
             Headers = new Dictionary<string, WireMockList<string>> { { HttpKnownHeaderNames.ContentType, new WireMockList<string>(WireMockConstants.ContentTypeTextPlain) } }
         };
-    }
-
-    private static T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
-    {
-        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
-        {
-            var bodyAsJson = requestMessage.BodyData.BodyAsJson!;
-
-            return MappingSerializer.DeserializeObjectToArray<T>(bodyAsJson);
-        }
-
-        throw new NotSupportedException();
     }
 
     private static T DeserializeObject<T>(IRequestMessage requestMessage)
