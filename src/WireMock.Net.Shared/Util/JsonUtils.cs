@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -35,7 +34,7 @@ internal static class JsonUtils
 
         try
         {
-            // Try to convert this string into a JToken
+            // Try to convert this string into a JObject
             value = JObject.Parse(strInput!);
             return true;
         }
@@ -43,11 +42,6 @@ internal static class JsonUtils
         {
             return false;
         }
-    }
-
-    public static string Serialize(object value)
-    {
-        return JsonConvert.SerializeObject(value, JsonSerializationConstants.JsonSerializerSettingsIncludeNullValues);
     }
 
     public static byte[] SerializeAsPactFile(object value)
