@@ -128,11 +128,11 @@ internal static class BodyParser
     {
         Guard.NotNull(settings);
 
-        var bodyWithContentEncoding = await ReadBytesAsync(settings.Stream, settings.ContentEncoding, settings.DecompressGZipAndDeflate).ConfigureAwait(false);
+        var (ContentType, Bytes) = await ReadBytesAsync(settings.Stream, settings.ContentEncoding, settings.DecompressGZipAndDeflate).ConfigureAwait(false);
         var data = new BodyData
         {
-            BodyAsBytes = bodyWithContentEncoding.Bytes,
-            DetectedCompression = bodyWithContentEncoding.ContentType,
+            BodyAsBytes = Bytes,
+            DetectedCompression = ContentType,
             DetectedBodyType = BodyType.Bytes,
             DetectedBodyTypeFromContentType = DetectBodyTypeFromContentType(settings.ContentType)
         };
@@ -168,17 +168,17 @@ internal static class BodyParser
                 data.DetectedBodyType = BodyType.FormUrlEncoded;
             }
 
-            // If string is not null or empty, try to deserialize the string to a JObject
-            if (settings.DeserializeJson && JsonUtils.IsJson(data.BodyAsString))
+            // If string is not null or empty, try to deserialize the string
+            if (settings.DeserializeJson && settings.DefaultJsonConverter.IsValidJson(data.BodyAsString))
             {
                 try
                 {
-                    data.BodyAsJson = JsonUtils.DeserializeObject(data.BodyAsString);
+                    data.BodyAsJson = settings.DefaultJsonConverter.Deserialize<object>(data.BodyAsString);
                     data.DetectedBodyType = BodyType.Json;
                 }
                 catch
                 {
-                    // JsonConvert failed, just ignore.
+                    // JsonConverter failed, just ignore.
                 }
             }
         }
@@ -201,7 +201,7 @@ internal static class BodyParser
         return (null, data);
     }
 
-    public static bool IsProbablyText(byte[] data)
+    private static bool IsProbablyText(byte[] data)
     {
         if (data.Length == 0)
         {

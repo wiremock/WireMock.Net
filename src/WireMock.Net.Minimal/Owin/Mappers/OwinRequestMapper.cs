@@ -53,7 +53,8 @@ internal class OwinRequestMapper : IOwinRequestMapper
                 ContentType = request.ContentType,
                 DeserializeJson = !options.DisableJsonBodyParsing.GetValueOrDefault(false),
                 ContentEncoding = contentEncodingHeader?.FirstOrDefault(),
-                DecompressGZipAndDeflate = !options.DisableRequestBodyDecompressing.GetValueOrDefault(false)
+                DecompressGZipAndDeflate = !options.DisableRequestBodyDecompressing.GetValueOrDefault(false),
+                DefaultJsonConverter = options.DefaultJsonSerializer
             };
 
             body = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);

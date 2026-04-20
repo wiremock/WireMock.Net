@@ -1,7 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
+using Newtonsoft.Json;
 using WireMock.Matchers.Helpers;
 using WireMock.Models.Mime;
 using WireMock.Util;
@@ -14,6 +15,8 @@ namespace WireMock.Matchers;
 public class MimePartMatcher : IMimePartMatcher
 {
     private readonly IList<(string Name, Func<IMimePartData, MatchResult> func)> _matcherFunctions;
+
+    private readonly IJsonConverter _jsonConverter;
 
     /// <inheritdoc />
     public string Name => nameof(MimePartMatcher);
@@ -41,7 +44,8 @@ public class MimePartMatcher : IMimePartMatcher
         IStringMatcher? contentTypeMatcher,
         IStringMatcher? contentDispositionMatcher,
         IStringMatcher? contentTransferEncodingMatcher,
-        IMatcher? contentMatcher
+        IMatcher? contentMatcher,
+        IJsonConverter? jsonConverter = null
     )
     {
         MatchBehaviour = matchBehaviour;
@@ -49,6 +53,7 @@ public class MimePartMatcher : IMimePartMatcher
         ContentDispositionMatcher = contentDispositionMatcher;
         ContentTransferEncodingMatcher = contentTransferEncodingMatcher;
         ContentMatcher = contentMatcher;
+        _jsonConverter = jsonConverter ?? new NewtonsoftJsonConverter();
 
         _matcherFunctions = [];
         if (ContentTypeMatcher != null)
@@ -107,7 +112,8 @@ public class MimePartMatcher : IMimePartMatcher
             ContentType = GetContentTypeAsString(mimePart.ContentType),
             DeserializeJson = true,
             ContentEncoding = null, // mimePart.ContentType?.CharsetEncoding.ToString(),
-            DecompressGZipAndDeflate = true
+            DecompressGZipAndDeflate = true,
+            DefaultJsonConverter = _jsonConverter
         };
 
         var bodyData = BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false).GetAwaiter().GetResult();
