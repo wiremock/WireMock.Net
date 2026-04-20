@@ -1,5 +1,12 @@
-# 2.2.0 (30 March 2026)
-- #1433 Add comments for ScenarioStateStore related code [refactor]
-- #1434 Upgrade Scriban.Signed [security]
+# 2.3.0 (20 April 2026)
+- #1436 Moving Scenario state change before global response delay is set [feature]
+- #1440 Bump log4net from 2.0.15 to 3.3.0 [dependencies]
+- #1443 Fix ExactMatcher and JsonMatcher not working for ISO dates as string [bug]
+- #1444 Update instructions.md [refactor]
+- #1448 Use DefaultJsonSerializer for BodyAsJson-Response [bug]
+- #1205 System.Private.Uri 4.3.0 Blackduck security High vulnerability [bug]
+- #1260 Scenario state change before a response delay timeout ends [bug]
+- #1441 ExactMatcher and JsonMatcher not working for ISO dates in v2.2.0 [bug]
+- #1446 WithBodyAsJson does not return correctly formatted json when using SystemTextJsonConverter [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

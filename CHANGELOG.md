@@ -1,3 +1,14 @@
+# 2.3.0 (20 April 2026)
+- [#1436](https://github.com/wiremock/WireMock.Net/pull/1436) - Moving Scenario state change before global response delay is set [feature] contributed by [jayaraman-venkatesan](https://github.com/jayaraman-venkatesan)
+- [#1440](https://github.com/wiremock/WireMock.Net/pull/1440) - Bump log4net from 2.0.15 to 3.3.0 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1443](https://github.com/wiremock/WireMock.Net/pull/1443) - Fix ExactMatcher and JsonMatcher not working for ISO dates as string [bug] contributed by [StefH](https://github.com/StefH)
+- [#1444](https://github.com/wiremock/WireMock.Net/pull/1444) - Update instructions.md [refactor] contributed by [StefH](https://github.com/StefH)
+- [#1448](https://github.com/wiremock/WireMock.Net/pull/1448) - Use DefaultJsonSerializer for BodyAsJson-Response [bug] contributed by [StefH](https://github.com/StefH)
+- [#1205](https://github.com/wiremock/WireMock.Net/issues/1205) - System.Private.Uri 4.3.0 Blackduck security High vulnerability [bug]
+- [#1260](https://github.com/wiremock/WireMock.Net/issues/1260) - Scenario state change before a response delay timeout ends [bug]
+- [#1441](https://github.com/wiremock/WireMock.Net/issues/1441) - ExactMatcher and JsonMatcher not working for ISO dates in v2.2.0 [bug]
+- [#1446](https://github.com/wiremock/WireMock.Net/issues/1446) - WithBodyAsJson does not return correctly formatted json when using SystemTextJsonConverter [bug]
+
 # 2.2.0 (30 March 2026)
 - [#1433](https://github.com/wiremock/WireMock.Net/pull/1433) - Add comments for ScenarioStateStore related code [refactor] contributed by [StefH](https://github.com/StefH)
 - [#1434](https://github.com/wiremock/WireMock.Net/pull/1434) - Upgrade Scriban.Signed [security] contributed by [StefH](https://github.com/StefH)
