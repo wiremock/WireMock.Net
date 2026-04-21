@@ -62,9 +62,9 @@ public class MappingModel
     public int? TimesInSameState { get; set; }
 
     /// <summary>
-    /// Value to determing if the mapping is active
+    /// Value to determine if the mapping is disabled. Defaults to <c>null</c> (not disabled).
     /// </summary>
-    public bool? IsEnabled { get; set; }
+    public bool? IsDisabled { get; set; }
 
     /// <summary>
     /// The request model.

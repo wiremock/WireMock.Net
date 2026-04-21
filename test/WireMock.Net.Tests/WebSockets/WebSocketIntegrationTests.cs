@@ -813,9 +813,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
 
         var receivedData = await client.ReceiveAsBytesAsync(cancellationToken: _ct);
 
-        // Assert immediately — receivedData is already in memory, no delay needed.
-        // Delaying here gives the proxy time to tear down its upstream connection, which
-        // causes the close handshake below to fail intermittently.
+        await Task.Delay(500, _ct);
+
+        // Assert
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);

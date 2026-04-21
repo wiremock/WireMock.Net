@@ -37,7 +37,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
     private int _timesInSameState = 1;
     private bool? _useWebhookFireAndForget;
     private double? _probability;
-    private bool _isEnabled = true;
+    private bool _isDisabled = false;
     private GraphQLSchemaDetails? _graphQLSchemaDetails; // Future Use.
 
     public Guid Guid { get; private set; }
@@ -109,9 +109,9 @@ internal class RespondWithAProvider : IRespondWithAProvider
             mapping.WithProbability(_probability.Value);
         }
 
-        if (!_isEnabled)
+        if (_isDisabled)
         {
-            mapping.IsEnabled = false;
+            mapping.IsDisabled = true;
         }
 
         if (ProtoDefinition != null)
@@ -361,9 +361,9 @@ internal class RespondWithAProvider : IRespondWithAProvider
     }
 
     /// <inheritdoc />
-    public IRespondWithAProvider WithIsEnabled(bool isEnabled)
+    public IRespondWithAProvider WithIsDisabled(bool isDisabled)
     {
-        _isEnabled = isEnabled;
+        _isDisabled = isDisabled;
         return this;
     }
 

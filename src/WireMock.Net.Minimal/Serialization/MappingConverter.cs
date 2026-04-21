@@ -275,7 +275,7 @@ internal class MappingConverter(MatcherMapper mapper)
             TimesInSameState = !string.IsNullOrWhiteSpace(mapping.NextState) ? mapping.TimesInSameState : null,
             Data = mapping.Data,
             Probability = mapping.Probability,
-            IsEnabled = mapping.IsEnabled ? null : false,
+            IsDisabled = mapping.IsDisabled ? true : null,
             Request = new RequestModel
             {
                 Headers = headerMatchers.Any() ? headerMatchers.Select(hm => new HeaderModel

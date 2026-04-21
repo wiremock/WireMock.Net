@@ -19,7 +19,7 @@ internal class MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDou
         var possibleMappings = new List<MappingMatcherResult>();
 
         var mappings = _options.Mappings.Values
-            .Where(m=>m.IsEnabled)
+            .Where(m => !m.IsDisabled)
             .Where(m => m.TimeSettings.IsValid())
             .Where(m => m.Probability is null || _randomizerDoubleBetween0And1.Generate() <= m.Probability)
             .ToArray();

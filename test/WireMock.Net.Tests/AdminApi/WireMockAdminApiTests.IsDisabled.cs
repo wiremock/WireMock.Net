@@ -10,7 +10,7 @@ namespace WireMock.Net.Tests.AdminApi;
 public partial class WireMockAdminApiTests
 {
     [Fact]
-    public async Task IWireMockAdminApi_PostMappingAsync_WithIsEnabledFalse_DoesNotMatchRequests()
+    public async Task IWireMockAdminApi_PostMappingAsync_WithIsDisabledTrue_DoesNotMatchRequests()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -22,7 +22,7 @@ public partial class WireMockAdminApiTests
         {
             Request = new RequestModel { Path = "/foo", Methods = ["GET"] },
             Response = new ResponseModel { Body = "hello", StatusCode = 200 },
-            IsEnabled = false
+            IsDisabled = true
         };
 
         // Act — POST the disabled mapping
@@ -33,8 +33,8 @@ public partial class WireMockAdminApiTests
         var response = await httpClient.GetAsync("/foo", ct);
         ((int)response.StatusCode).Should().Be(404);
 
-        // Assert — mapping exists but IsEnabled is false
-        server.Mappings.Where(m => !m.IsAdminInterface).Should().ContainSingle(m => m.IsEnabled == false);
+        // Assert — mapping exists but IsDisabled is true
+        server.Mappings.Where(m => !m.IsAdminInterface).Should().ContainSingle(m => m.IsDisabled == true);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public partial class WireMockAdminApiTests
         {
             Request = new RequestModel { Path = "/baz", Methods = ["GET"] },
             Response = new ResponseModel { Body = "re-enabled", StatusCode = 200 },
-            IsEnabled = false
+            IsDisabled = true
         };
         var postResult = await api.PostMappingAsync(model, ct);
         var guid = postResult.Guid!.Value;
@@ -99,7 +99,7 @@ public partial class WireMockAdminApiTests
     }
 
     [Fact]
-    public async Task IWireMockAdminApi_GetMappingAsync_ReturnsIsEnabledFalse_WhenDisabled()
+    public async Task IWireMockAdminApi_GetMappingAsync_ReturnsIsDisabledTrue_WhenDisabled()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -110,7 +110,7 @@ public partial class WireMockAdminApiTests
         {
             Request = new RequestModel { Path = "/check-disabled" },
             Response = new ResponseModel { Body = "x", StatusCode = 200 },
-            IsEnabled = false
+            IsDisabled = true
         };
         var enabledModel = new MappingModel
         {
@@ -125,10 +125,10 @@ public partial class WireMockAdminApiTests
         var disabledGot = await api.GetMappingAsync(disabledPost.Guid!.Value, ct);
         var enabledGot = await api.GetMappingAsync(enabledPost.Guid!.Value, ct);
 
-        // Assert — disabled mapping serializes IsEnabled = false
-        disabledGot.IsEnabled.Should().BeFalse();
+        // Assert — disabled mapping serializes IsDisabled = true
+        disabledGot.IsDisabled.Should().BeTrue();
 
-        // Assert — enabled mapping omits IsEnabled (null = default true)
-        enabledGot.IsEnabled.Should().BeNull();
+        // Assert — enabled mapping omits IsDisabled (null = default not disabled)
+        enabledGot.IsDisabled.Should().BeNull();
     }
 }

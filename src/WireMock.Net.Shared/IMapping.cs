@@ -109,12 +109,12 @@ public interface IMapping
     bool IsProxy { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this mapping is a Proxy Mapping.
+    /// Gets a value indicating whether this mapping is disabled.
     /// </summary>
     /// <value>
-    /// <c>true</c> if this mapping is a Proxy Mapping; otherwise, <c>false</c>.
+    /// <c>true</c> if this mapping is disabled; otherwise, <c>false</c>.
     /// </value>
-    bool IsEnabled { get; set; }
+    bool IsDisabled { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether this mapping to be logged.

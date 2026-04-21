@@ -56,7 +56,7 @@ public class MappingMatcherTests
     {
         // Assign
         var mappingMock = new Mock<IMapping>();
-        mappingMock.SetupGet(m => m.IsEnabled).Returns(true);
+        mappingMock.SetupGet(m => m.IsDisabled).Returns(false);
         mappingMock.Setup(m => m.GetRequestMatchResult(It.IsAny<RequestMessage>(), It.IsAny<string>())).Throws<Exception>();
 
         var mappings = new ConcurrentDictionary<Guid, IMapping>();
@@ -237,7 +237,7 @@ public class MappingMatcherTests
         var guid = Guid.Parse("00000000-0000-0000-0000-000000000001");
         var mappingMock = new Mock<IMapping>();
         mappingMock.SetupGet(m => m.Guid).Returns(guid);
-        mappingMock.SetupGet(m => m.IsEnabled).Returns(false);
+        mappingMock.SetupGet(m => m.IsDisabled).Returns(true);
         mappingMock.SetupGet(m => m.Probability).Returns((double?)null);
 
         var matchResult = new RequestMatchResult();
@@ -267,7 +267,7 @@ public class MappingMatcherTests
         {
             var mappingMock = new Mock<IMapping>();
             mappingMock.SetupGet(m => m.Guid).Returns(match.guid);
-            mappingMock.SetupGet(m => m.IsEnabled).Returns(true);
+            mappingMock.SetupGet(m => m.IsDisabled).Returns(false);
 
             var requestMatchResult = new RequestMatchResult();
             foreach (var score in match.scores)

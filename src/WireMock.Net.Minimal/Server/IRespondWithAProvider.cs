@@ -235,11 +235,11 @@ public interface IRespondWithAProvider
     IRespondWithAProvider WithProbability(double probability);
 
     /// <summary>
-    /// Define whether this mapping is enabled. Defaults to <c>true</c>.
+    /// Define whether this mapping is disabled. Defaults to <c>false</c>.
     /// </summary>
-    /// <param name="isEnabled">Whether this mapping is enabled.</param>
+    /// <param name="isDisabled">Whether this mapping is disabled.</param>
     /// <returns>The <see cref="IRespondWithAProvider"/>.</returns>
-    IRespondWithAProvider WithIsEnabled(bool isEnabled);
+    IRespondWithAProvider WithIsDisabled(bool isDisabled);
 
     /// <summary>
     /// Define a Grpc ProtoDefinition which is used for the request and the response.

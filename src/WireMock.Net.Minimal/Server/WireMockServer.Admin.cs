@@ -451,7 +451,7 @@ public partial class WireMockServer
             var mapping = Mappings.FirstOrDefault(m => !m.IsAdminInterface && m.Guid == guid);
             if (mapping != null)
             {
-                mapping.IsEnabled = true;
+                mapping.IsDisabled = false;
                 return ResponseMessageBuilder.Create(HttpStatusCode.OK, "Mapping enabled", guid);
             }
         }
@@ -467,7 +467,7 @@ public partial class WireMockServer
             var mapping = Mappings.FirstOrDefault(m => !m.IsAdminInterface && m.Guid == guid);
             if (mapping != null)
             {
-                mapping.IsEnabled = false;
+                mapping.IsDisabled = true;
                 return ResponseMessageBuilder.Create(HttpStatusCode.OK, "Mapping disabled", guid);
             }
         }

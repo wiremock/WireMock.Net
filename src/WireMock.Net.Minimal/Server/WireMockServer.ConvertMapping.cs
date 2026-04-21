@@ -120,9 +120,9 @@ public partial class WireMockServer
             respondProvider.WithProbability(mappingModel.Probability.Value);
         }
 
-        if (mappingModel.IsEnabled == false)
+        if (mappingModel.IsDisabled == true)
         {
-            respondProvider.WithIsEnabled(false);
+            respondProvider.WithIsDisabled(true);
         }
 
         // ProtoDefinition is defined at Mapping level
