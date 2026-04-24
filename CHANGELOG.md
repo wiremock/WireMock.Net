@@ -1,3 +1,8 @@
+# 2.4.0 (24 April 2026)
+- [#1437](https://github.com/wiremock/WireMock.Net/pull/1437) - Added feature to enable and disable mappings [feature] contributed by [jayaraman-venkatesan](https://github.com/jayaraman-venkatesan)
+- [#1450](https://github.com/wiremock/WireMock.Net/pull/1450) - Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.x [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1421](https://github.com/wiremock/WireMock.Net/issues/1421) - Deactivate mapping without deleting it [feature]
+
 # 2.3.0 (20 April 2026)
 - [#1436](https://github.com/wiremock/WireMock.Net/pull/1436) - Moving Scenario state change before global response delay is set [feature] contributed by [jayaraman-venkatesan](https://github.com/jayaraman-venkatesan)
 - [#1440](https://github.com/wiremock/WireMock.Net/pull/1440) - Bump log4net from 2.0.15 to 3.3.0 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)

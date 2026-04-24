@@ -55,11 +55,16 @@ public class MappingModel
     /// In case the value is null state will not be changed.
     /// </summary>
     public string? SetStateTo { get; set; }
-    
+
     /// <summary>
     /// The number of times this match should be matched before the state will be changed to the specified one.
     /// </summary>
     public int? TimesInSameState { get; set; }
+
+    /// <summary>
+    /// Value to determine if the mapping is disabled. Defaults to <c>null</c> (not disabled).
+    /// </summary>
+    public bool? IsDisabled { get; set; }
 
     /// <summary>
     /// The request model.
@@ -100,7 +105,7 @@ public class MappingModel
     /// </summary>
     public object? Data { get; set; }
 
-    /// <summary> 
+    /// <summary>
     /// The probability when this request should be matched. Value is between 0 and 1. [Optional]
     /// </summary>
     public double? Probability { get; set; }
