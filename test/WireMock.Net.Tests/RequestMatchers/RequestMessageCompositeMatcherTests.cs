@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using Moq;
+using WireMock.Constants;
 using WireMock.Matchers.Request;
 using WireMock.Models;
 
@@ -10,8 +11,12 @@ public class RequestMessageCompositeMatcherTests
 {
     private class Helper : RequestMessageCompositeMatcher
     {
-        public Helper(IEnumerable<IRequestMatcher> requestMatchers, CompositeMatcherType type = CompositeMatcherType.And) : base(requestMatchers, type)
+        public Helper(
+            IEnumerable<IRequestMatcher> requestMatchers,
+            CompositeMatcherType type = CompositeMatcherType.And,
+            Func<IEnumerable<IRequestMatcher>, IRequestMatcher?>? earlyMatcherSelector = null) : base(requestMatchers, type)
         {
+            EarlyMatcherSelector = earlyMatcherSelector;
         }
     }
 
@@ -76,5 +81,32 @@ public class RequestMessageCompositeMatcherTests
         // Verify
         requestMatcher1Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Once);
         requestMatcher2Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Once);
+    }
+
+    [Fact]
+    public void RequestMessageCompositeMatcher_GetMatchingScore_EarlyMismatch()
+    {
+        // Assign
+        var requestMatcher1Mock = new Mock<IRequestMatcher>();
+        requestMatcher1Mock.Setup(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>())).Returns(1.0d);
+        var requestMatcher2Mock = new Mock<IRequestMatcher>();
+        requestMatcher2Mock.Setup(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>())).Returns(0.8d);
+        var postMatcher = new RequestMessageMethodMatcher(HttpRequestMethod.POST);
+
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), HttpRequestMethod.GET, "127.0.0.1");
+        var matcher = new Helper(
+            [requestMatcher1Mock.Object, requestMatcher2Mock.Object, postMatcher],
+            earlyMatcherSelector: m => m.OfType<RequestMessageMethodMatcher>().FirstOrDefault());
+
+        // Act
+        var result = new RequestMatchResult();
+        double score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(0.0d);
+
+        // Verify
+        requestMatcher1Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Never);
+        requestMatcher2Mock.Verify(rm => rm.GetMatchingScore(It.IsAny<RequestMessage>(), It.IsAny<RequestMatchResult>()), Times.Never);
     }
 }
