@@ -164,6 +164,22 @@ public interface IWireMockAdminApi
     Task<StatusModel> PutMappingAsync([Path] Guid guid, [Body] MappingModel mapping, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Enable a mapping based on the guid.
+    /// </summary>
+    /// <param name="guid">The Guid.</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Put("mappings/{guid}/enable")]
+    Task<StatusModel> EnableMappingAsync([Path] Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Disable a mapping based on the guid.
+    /// </summary>
+    /// <param name="guid">The Guid.</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Put("mappings/{guid}/disable")]
+    Task<StatusModel> DisableMappingAsync([Path] Guid guid, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Delete a mapping based on the guid
     /// </summary>
     /// <param name="guid">The Guid</param>

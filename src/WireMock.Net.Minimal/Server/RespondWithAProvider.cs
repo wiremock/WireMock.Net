@@ -37,6 +37,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
     private int _timesInSameState = 1;
     private bool? _useWebhookFireAndForget;
     private double? _probability;
+    private bool _isDisabled = false;
     private GraphQLSchemaDetails? _graphQLSchemaDetails; // Future Use.
 
     public Guid Guid { get; private set; }
@@ -106,6 +107,11 @@ internal class RespondWithAProvider : IRespondWithAProvider
         if (_probability != null)
         {
             mapping.WithProbability(_probability.Value);
+        }
+
+        if (_isDisabled)
+        {
+            mapping.IsDisabled = true;
         }
 
         if (ProtoDefinition != null)
@@ -351,6 +357,13 @@ internal class RespondWithAProvider : IRespondWithAProvider
     public IRespondWithAProvider WithProbability(double probability)
     {
         _probability = Guard.Condition(probability, p => p is >= 0 and <= 1.0);
+        return this;
+    }
+
+    /// <inheritdoc />
+    public IRespondWithAProvider WithIsDisabled(bool isDisabled)
+    {
+        _isDisabled = isDisabled;
         return this;
     }
 
