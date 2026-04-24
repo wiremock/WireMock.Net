@@ -81,6 +81,14 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
         return this;
     }
 
+    /// <inheritdoc />
+    public IRequestBuilder WithEarlyMismatch(
+        Func<IEnumerable<IRequestMatcher>, IRequestMatcher?> earlyMatcherSelector)
+    {
+        EarlyMatcherSelector = earlyMatcherSelector;
+        return this;
+    }
+
     internal bool TryGetProtoBufMatcher([NotNullWhen(true)] out IProtoBufMatcher? protoBufMatcher)
     {
         protoBufMatcher = GetRequestMessageMatcher<RequestMessageProtoBufMatcher>()?.Matcher;

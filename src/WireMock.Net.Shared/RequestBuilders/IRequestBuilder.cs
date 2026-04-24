@@ -21,4 +21,12 @@ public interface IRequestBuilder : IClientIPRequestBuilder
     /// The link back to the Mapping.
     /// </summary>
     IMapping Mapping { get; set; }
+
+    /// <summary>
+    /// Chooses <see cref="IRequestMatcher"/> which immediately returns a mismatch during mappings enumeration.
+    /// </summary>
+    /// <param name="earlyMatcherSelector">Function to select the matcher from available list.</param>
+    /// <returns>The current <see cref="IRequestBuilder"/> instance.</returns>
+    IRequestBuilder WithEarlyMismatch(
+        Func<IEnumerable<IRequestMatcher>, IRequestMatcher?> earlyMatcherSelector);
 }
