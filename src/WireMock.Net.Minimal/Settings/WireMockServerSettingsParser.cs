@@ -10,6 +10,7 @@ using WireMock.Constants;
 using WireMock.Logging;
 using WireMock.Models;
 using WireMock.Types;
+using WireMock.Transformers;
 using WireMock.Util;
 
 namespace WireMock.Settings;
@@ -73,6 +74,8 @@ public static class WireMockServerSettingsParser
             WatchStaticMappings = parser.GetBoolValue(nameof(WireMockServerSettings.WatchStaticMappings)),
             WatchStaticMappingsInSubdirectories = parser.GetBoolValue(nameof(WireMockServerSettings.WatchStaticMappingsInSubdirectories)),
         };
+
+        settings.DefaultJsonBodyTransformer = new NewtonsoftJsonBodyTransformer(settings);
 
 #if USE_ASPNETCORE
         settings.CorsPolicyOptions = parser.GetEnumValue(nameof(WireMockServerSettings.CorsPolicyOptions), CorsPolicyOptions.None);

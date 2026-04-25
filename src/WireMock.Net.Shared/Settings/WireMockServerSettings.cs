@@ -14,6 +14,7 @@ using WireMock.Logging;
 using WireMock.Matchers;
 using WireMock.Models;
 using WireMock.RegularExpressions;
+using WireMock.Transformers;
 using WireMock.Types;
 
 namespace WireMock.Settings;
@@ -362,11 +363,31 @@ public class WireMockServerSettings
     /// Default is <see cref="NewtonsoftJsonConverter"/>.
     /// </remarks>
     [PublicAPI]
-    public IJsonConverter DefaultJsonSerializer { get; set; } = new NewtonsoftJsonConverter();
+    public IJsonConverter DefaultJsonSerializer { get; set; }
+
+    /// <summary>
+    /// Gets or sets the default JSON body transformer used for template-based JSON body transformations.
+    /// </summary>
+    /// <remarks>
+    /// Set this property to provide a custom implementation for transforming JSON and ProtoBuf body content.
+    /// Default is <see cref="NewtonsoftJsonBodyTransformer"/>.
+    /// </remarks>
+    [PublicAPI]
+    [JsonIgnore]
+    public IJsonBodyTransformer DefaultJsonBodyTransformer { get; set; }
 
     /// <summary>
     /// WebSocket settings.
     /// </summary>
     [PublicAPI]
     public WebSocketSettings? WebSocketSettings { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WireMockServerSettings"/> class.
+    /// </summary>
+    public WireMockServerSettings()
+    {
+        DefaultJsonSerializer = new NewtonsoftJsonConverter();
+        DefaultJsonBodyTransformer = new NewtonsoftJsonBodyTransformer(this);
+    }
 }
