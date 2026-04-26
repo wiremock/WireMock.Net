@@ -5,9 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using HandlebarsDotNet.Helpers.Models;
 using JetBrains.Annotations;
-using JsonConverter.Abstractions;
 using JsonConverter.System.Text.Json;
-using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -16,11 +14,10 @@ namespace WireMock.Transformers;
 /// <summary>
 /// JSON body transformer implementation based on System.Text.Json.
 /// </summary>
-/// <param name="settings">The server settings used to configure JSON transformation behavior.</param>
 [PublicAPI]
-public class SystemTextJsonBodyTransformer(WireMockServerSettings settings) : IJsonBodyTransformer
+public class SystemTextJsonBodyTransformer() : IJsonBodyTransformer
 {
-    private readonly IJsonConverter _jsonConverter = new SystemTextJsonConverter();
+    private readonly SystemTextJsonConverter _jsonConverter = new();
 
     /// <inheritdoc />
     public BodyData TransformBodyAsJson(

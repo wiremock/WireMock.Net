@@ -3,7 +3,6 @@
 using System.Collections;
 using HandlebarsDotNet.Helpers.Models;
 using JetBrains.Annotations;
-using JsonConverter.Abstractions;
 using JsonConverter.Newtonsoft.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,7 +22,7 @@ namespace WireMock.Transformers;
 [PublicAPI]
 public class NewtonsoftJsonBodyTransformer(WireMockServerSettings settings) : IJsonBodyTransformer
 {
-    private readonly IJsonConverter _jsonConverter = new NewtonsoftJsonConverter();
+    private readonly NewtonsoftJsonConverter _jsonConverter = new();
 
     /// <inheritdoc />
     public BodyData TransformBodyAsJson(
