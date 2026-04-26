@@ -19,18 +19,18 @@ public class JsonBodyTransformerTests
     {
         get
         {
-            return new TheoryData<JsonBodyTransformerTestContext>
-            {
+            return
+            [
                 new JsonBodyTransformerTestContext(
                     () => new NewtonsoftJsonBodyTransformer(new WireMockServerSettings()),
                     JObject.Parse,
                     body => ((JToken)body).ToString(Formatting.None)),
 
                 new JsonBodyTransformerTestContext(
-                    () => new SystemTextJsonBodyTransformer(new WireMockServerSettings()),
+                    () => new SystemTextJsonBodyTransformer(),
                     json => JsonNode.Parse(json)!,
                     body => ((JsonNode)body).ToJsonString())
-            };
+            ];
         }
     }
 
@@ -105,7 +105,7 @@ public class JsonBodyTransformerTests
 
         var transformerContext = new FakeTransformerContext(
             text => text,
-            text => text == "{{list}}" ? new WireMockList<string>(new[] { "a", "b" }) : text);
+            text => text == "{{list}}" ? new WireMockList<string>(["a", "b"]) : text);
 
         // Act
         var result = transformer.TransformBodyAsJson(transformerContext, ReplaceNodeOptions.EvaluateAndTryToConvert, new { }, bodyData);
@@ -147,30 +147,18 @@ public class JsonBodyTransformerTests
         }
     }
 
-    private sealed class FakeTransformerContext : ITransformerContext
+    private sealed class FakeTransformerContext(Func<string, string> parseAndRender, Func<string, object> parseAndEvaluate) : ITransformerContext
     {
-        private readonly Func<string, string> _parseAndRender;
-        private readonly Func<string, object> _parseAndEvaluate;
-
-        public FakeTransformerContext(
-            Func<string, string> parseAndRender,
-            Func<string, object> parseAndEvaluate)
-        {
-            _parseAndRender = parseAndRender;
-            _parseAndEvaluate = parseAndEvaluate;
-            FileSystemHandler = Mock.Of<IFileSystemHandler>();
-        }
-
-        public IFileSystemHandler FileSystemHandler { get; private set; }
+        public IFileSystemHandler FileSystemHandler { get; private set; } = Mock.Of<IFileSystemHandler>();
 
         public string ParseAndRender(string text, object model)
         {
-            return _parseAndRender(text);
+            return parseAndRender(text);
         }
 
         public object ParseAndEvaluate(string text, object model)
         {
-            return _parseAndEvaluate(text);
+            return parseAndEvaluate(text);
         }
     }
 }
