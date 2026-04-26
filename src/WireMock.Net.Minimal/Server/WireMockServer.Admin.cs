@@ -914,16 +914,16 @@ public partial class WireMockServer
         };
     }
 
-    private static T DeserializeObject<T>(IRequestMessage requestMessage)
+    private T DeserializeObject<T>(IRequestMessage requestMessage)
     {
         switch (requestMessage.BodyData?.DetectedBodyType)
         {
-            case BodyType.String:
-            case BodyType.FormUrlEncoded:
-                return JsonUtils.DeserializeObject<T>(requestMessage.BodyData.BodyAsString!);
+            case BodyType.String when requestMessage.BodyData?.BodyAsString != null:
+            case BodyType.FormUrlEncoded when requestMessage.BodyData?.BodyAsString != null:
+                return _settings.DefaultJsonSerializer.Deserialize<T>(requestMessage.BodyData.BodyAsString)!;
 
             case BodyType.Json when requestMessage.BodyData?.BodyAsJson != null:
-                return ((JObject)requestMessage.BodyData.BodyAsJson).ToObject<T>()!;
+                return _settings.DefaultJsonSerializer.ParseJsonToken<T>(requestMessage.BodyData.BodyAsJson)!;
 
             default:
                 throw new NotSupportedException();

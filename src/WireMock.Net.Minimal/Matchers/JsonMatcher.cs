@@ -1,10 +1,12 @@
 // Copyright © WireMock.Net
 
+using System.Collections;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
 using WireMock.Extensions;
+using WireMock.Serialization;
 using WireMock.Util;
-using JsonUtils = WireMock.Util.JsonUtils;
 
 namespace WireMock.Matchers;
 
@@ -68,7 +70,7 @@ public class JsonMatcher : IJsonMatcher
         Regex = regex;
 
         Value = value;
-        _valueAsJToken = JsonUtils.ConvertValueToJToken(value);
+        _valueAsJToken = ConvertValueToJToken(value);
     }
 
     /// <inheritdoc />
@@ -82,7 +84,7 @@ public class JsonMatcher : IJsonMatcher
         {
             try
             {
-                var inputAsJToken = JsonUtils.ConvertValueToJToken(input);
+                var inputAsJToken = ConvertValueToJToken(input);
 
                 var match = IsMatch(RenameJToken(_valueAsJToken), RenameJToken(inputAsJToken));
                 score = MatchScores.ToScore(match);
@@ -102,7 +104,7 @@ public class JsonMatcher : IJsonMatcher
         return $"new {Name}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " + 
+               $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(Regex)}" +
                $")";
@@ -238,6 +240,18 @@ public class JsonMatcher : IJsonMatcher
     {
         var renamedProperties = obj.Properties().Select(RenameJProperty);
         return new JObject(renamedProperties);
+    }
+
+    private static JToken ConvertValueToJToken(object value)
+    {
+        // Check if JToken, string, IEnumerable or object
+        return value switch
+        {
+            JToken tokenValue => tokenValue,
+            string stringValue => JsonConvert.DeserializeObject<JToken>(stringValue, JsonSerializationConstants.JsonDeserializerSettingsWithDateParsingNone)!,
+            IEnumerable enumerableValue => JArray.FromObject(enumerableValue),
+            _ => JObject.FromObject(value),
+        };
     }
 
     private static string? ToUpper(string? input)
