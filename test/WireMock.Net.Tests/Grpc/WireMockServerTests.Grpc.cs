@@ -761,8 +761,8 @@ message Other {
                 .UsingPost()
                 .WithHttpVersion("2")
                 .WithPath("/greet.Greeter/SayHello")
-                .WithEarlyMismatch(matchers => withEarlyMismatch
-                    ? matchers.OfType<RequestMessagePathMatcher>().FirstOrDefault()
+                .WithEarlyMismatch(withEarlyMismatch
+                    ? RequestMatcherType.Path
                     : null)
                 .WithBodyAsProtoBuf("greet.HelloRequest", new JsonMatcher(new { name = "stef" })))
             .WithProtoDefinition(greeterId)
@@ -782,8 +782,8 @@ message Other {
                 .UsingPost()
                 .WithHttpVersion("2")
                 .WithPath("/Policy.PolicyService/GetVersion")
-                .WithEarlyMismatch(matchers => withEarlyMismatch
-                    ? matchers.OfType<RequestMessagePathMatcher>().FirstOrDefault()
+                .WithEarlyMismatch(withEarlyMismatch
+                    ? RequestMatcherType.Path
                     : null)
                 .WithBodyAsProtoBuf("ExampleIntegrationTest.Lookup.GetVersionRequest", new NotNullOrEmptyMatcher()))
             .WithProtoDefinition(policyId)

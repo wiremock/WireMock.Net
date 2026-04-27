@@ -14,9 +14,9 @@ public class RequestMessageCompositeMatcherTests
         public Helper(
             IEnumerable<IRequestMatcher> requestMatchers,
             CompositeMatcherType type = CompositeMatcherType.And,
-            Func<IEnumerable<IRequestMatcher>, IRequestMatcher?>? earlyMatcherSelector = null) : base(requestMatchers, type)
+            RequestMatcherType? earlyMatcherType = null) : base(requestMatchers, type)
         {
-            EarlyMatcherSelector = earlyMatcherSelector;
+            EarlyMatcherType = earlyMatcherType;
         }
     }
 
@@ -96,7 +96,7 @@ public class RequestMessageCompositeMatcherTests
         var requestMessage = new RequestMessage(new UrlDetails("http://localhost"), HttpRequestMethod.GET, "127.0.0.1");
         var matcher = new Helper(
             [requestMatcher1Mock.Object, requestMatcher2Mock.Object, postMatcher],
-            earlyMatcherSelector: m => m.OfType<RequestMessageMethodMatcher>().FirstOrDefault());
+            earlyMatcherType: RequestMatcherType.Method);
 
         // Act
         var result = new RequestMatchResult();

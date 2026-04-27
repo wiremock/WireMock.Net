@@ -21,9 +21,9 @@ public abstract class RequestMessageCompositeMatcher : IRequestMatcher
     private IEnumerable<IRequestMatcher> RequestMatchers { get; }
 
     /// <summary>
-    /// Function to select the matcher from <see cref="RequestMatchers"/> which will immediately return a mismatch.
+    /// Selected type to choose the matcher from <see cref="RequestMatchers"/> which will immediately return a mismatch.
     /// </summary>
-    protected Func<IEnumerable<IRequestMatcher>, IRequestMatcher?>? EarlyMatcherSelector = null;
+    protected RequestMatcherType? EarlyMatcherType = null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestMessageCompositeMatcher"/> class.
@@ -47,7 +47,9 @@ public abstract class RequestMessageCompositeMatcher : IRequestMatcher
             return MatchScores.Mismatch;
         }
 
-        var earlyMatcher = EarlyMatcherSelector?.Invoke(RequestMatchers);
+        var earlyMatcher = EarlyMatcherType is null
+            ? null
+            : RequestMatchers.FirstOrDefault(m => m.Type == EarlyMatcherType);
         var earlyMatchResult = earlyMatcher?.GetMatchingScore(requestMessage, requestMatchResult) ?? MatchScores.Perfect;
         if (!MatchScores.IsPerfect(earlyMatchResult))
         {

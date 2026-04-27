@@ -82,10 +82,9 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
     }
 
     /// <inheritdoc />
-    public IRequestBuilder WithEarlyMismatch(
-        Func<IEnumerable<IRequestMatcher>, IRequestMatcher?> earlyMatcherSelector)
+    public IRequestBuilder WithEarlyMismatch(RequestMatcherType? earlyMatcherType)
     {
-        EarlyMatcherSelector = earlyMatcherSelector;
+        EarlyMatcherType = earlyMatcherType;
         return this;
     }
 
