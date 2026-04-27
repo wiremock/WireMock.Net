@@ -56,6 +56,9 @@ public class RequestMessageMultiPartMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.MultiPart;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var matchDetail = MatchResult.From(Name).ToMatchDetail();
