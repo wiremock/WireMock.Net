@@ -1,5 +1,6 @@
 ﻿builder
     .Given(Request.Create()
+        .WithEarlyMismatch(RequestMatcherType.Method)
         .UsingMethod("GET")
         .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/test_path", false, WireMock.Matchers.MatchOperator.Or))
         .WithParam("q", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "42"))

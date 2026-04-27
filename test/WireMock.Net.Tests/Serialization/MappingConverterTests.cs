@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using WireMock.Matchers;
+using WireMock.Matchers.Request;
 using WireMock.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -538,7 +539,7 @@ message HelloReply {
    id:ID!
    firstName:String
    lastName:String
-   fullName:String 
+   fullName:String
   }";
         var request = Request.Create().WithGraphQLSchema(schema);
         var response = Response.Create();
@@ -636,6 +637,27 @@ message HelloReply {
 
         // Assert
         model.Should().NotBeNull();
+
+        // Verify
+        return Verify(model);
+    }
+
+    [Fact]
+    public Task ToMappingModel_Request_WithEarlyMismatch_ReturnsCorrectModel()
+    {
+        // Arrange
+        var request = Request.Create().WithEarlyMismatch(RequestMatcherType.ClientIP)
+            .WithHeader("x1", "y")
+            .WithClientIP("1.2.3.4");
+        var response = Response.Create();
+        var mapping = new Mapping(_guid, _updatedAt, string.Empty, string.Empty, null, _settings, request, response, 42, null, null, null, null, null, false, null, null);
+
+        // Act
+        var model = _sut.ToMappingModel(mapping);
+
+        // Assert
+        model.Should().NotBeNull();
+        model.Request.EarlyMatcherType.Should().Be(nameof(RequestMatcherType.ClientIP));
 
         // Verify
         return Verify(model);

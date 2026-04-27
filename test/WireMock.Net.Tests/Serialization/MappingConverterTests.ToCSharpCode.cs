@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using WireMock.Matchers.Request;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -101,6 +102,7 @@ public partial class MappingConverterTests
         var guid = new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc");
         var request = Request.Create()
             .UsingGet()
+            .WithEarlyMismatch(RequestMatcherType.Method)
             .WithPath("/test_path")
             .WithParam("q", "42")
             .WithClientIP("112.123.100.99")
