@@ -268,6 +268,9 @@ public partial class WireMockServer
             }
         }
 
+        requestBuilder = requestBuilder.WithEarlyMismatch(
+            StringUtils.ParseRequestMatcherType(requestModel.EarlyMatcherType));
+
         return requestBuilder;
     }
 

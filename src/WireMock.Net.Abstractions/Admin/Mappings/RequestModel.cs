@@ -61,9 +61,15 @@ public class RequestModel
     /// Gets or sets the Params.
     /// </summary>
     public IList<ParamModel>? Params { get; set; }
-        
+
     /// <summary>
     /// Gets or sets the body.
     /// </summary>
     public BodyModel? Body { get; set; }
+
+    /// <summary>
+    /// Type of the request matcher to return an immediate mismatch during mapping processing.
+    /// Optional.
+    /// </summary>
+    public string? EarlyMatcherType { get; set; }
 }

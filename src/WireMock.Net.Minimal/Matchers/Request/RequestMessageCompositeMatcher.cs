@@ -23,7 +23,7 @@ public abstract class RequestMessageCompositeMatcher : IRequestMatcher
     /// <summary>
     /// Selected type to choose the matcher from <see cref="RequestMatchers"/> which will immediately return a mismatch.
     /// </summary>
-    protected RequestMatcherType? EarlyMatcherType = null;
+    internal RequestMatcherType? EarlyMatcherType { get; private protected set; } = null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RequestMessageCompositeMatcher"/> class.
