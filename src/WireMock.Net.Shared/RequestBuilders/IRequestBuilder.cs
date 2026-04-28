@@ -10,7 +10,8 @@ namespace WireMock.RequestBuilders;
 public interface IRequestBuilder : IClientIPRequestBuilder
 {
     /// <summary>
-    /// Adds a request matcher to the builder.
+    /// Adds a request matcher to the builder.<br/>
+    /// If the request matcher is already present, it will be replaced.
     /// </summary>
     /// <typeparam name="T">The type of the request matcher.</typeparam>
     /// <param name="requestMatcher">The request matcher to add.</param>

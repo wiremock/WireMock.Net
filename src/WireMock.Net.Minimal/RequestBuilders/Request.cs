@@ -34,7 +34,7 @@ public partial class Request : RequestMessageCompositeMatcher, IRequestBuilder
     /// Initializes a new instance of the <see cref="Request"/> class.
     /// </summary>
     /// <param name="requestMatchers">The request matchers.</param>
-    private Request(IList<IRequestMatcher> requestMatchers) : base(requestMatchers)
+    internal Request(IList<IRequestMatcher> requestMatchers) : base(requestMatchers)
     {
         _requestMatchers = Guard.NotNull(requestMatchers);
     }
