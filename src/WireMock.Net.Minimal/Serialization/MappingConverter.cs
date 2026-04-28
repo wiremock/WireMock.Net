@@ -69,7 +69,7 @@ internal class MappingConverter(MatcherMapper mapper)
 
         if (request.EarlyMatcherType != null)
         {
-            sb.AppendLine($"        .WithEarlyMismatch(RequestMatcherType.{request.EarlyMatcherType})");
+            sb.AppendLine($"        .WithEarlyMismatch({request.EarlyMatcherType.Value.GetFullyQualifiedEnumValue()})");
         }
 
         sb.AppendLine($"        .UsingMethod({To1Or2Or3Arguments(methodMatcher?.MatchBehaviour, methodMatcher?.MatchOperator, methodMatcher?.Methods, HttpRequestMethod.GET)})");
@@ -308,7 +308,7 @@ internal class MappingConverter(MatcherMapper mapper)
                     Matchers = _mapper.Map(pm.Matchers)
                 }).ToList() : null,
 
-                EarlyMatcherType = request.EarlyMatcherType?.ToString()
+                EarlyMatcherType = request.EarlyMatcherType
             },
             Response = new ResponseModel()
         };

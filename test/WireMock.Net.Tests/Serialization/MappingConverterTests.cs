@@ -657,7 +657,7 @@ message HelloReply {
 
         // Assert
         model.Should().NotBeNull();
-        model.Request.EarlyMatcherType.Should().Be(nameof(RequestMatcherType.ClientIP));
+        model.Request.EarlyMatcherType.Should().Be(RequestMatcherType.ClientIP);
 
         // Verify
         return Verify(model);

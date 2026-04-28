@@ -1,5 +1,7 @@
 // Copyright © WireMock.Net
 
+using WireMock.Matchers.Request;
+
 namespace WireMock.Admin.Mappings;
 
 /// <summary>
@@ -71,5 +73,5 @@ public class RequestModel
     /// Type of the request matcher to return an immediate mismatch during mapping processing.
     /// Optional.
     /// </summary>
-    public string? EarlyMatcherType { get; set; }
+    public RequestMatcherType? EarlyMatcherType { get; set; }
 }
