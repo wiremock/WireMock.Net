@@ -22,7 +22,7 @@ internal sealed class RequestMessageEarlyMatcher(
             .Where(m => m.Type == earlyMatcherType)
             .ToList();
 
-        if (earlyMatchers is [])
+        if (earlyMatchers.Count is 0)
             return MatchScores.Perfect;
 
         var compositeMatcher = new RequestBuilders.Request(earlyMatchers);
