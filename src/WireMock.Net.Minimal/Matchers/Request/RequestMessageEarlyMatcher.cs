@@ -16,14 +16,18 @@ internal sealed class RequestMessageEarlyMatcher(
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         if (earlyMatcherType is null)
+        {
             return MatchScores.Perfect;
+        }
 
         var earlyMatchers = requestMatchers
             .Where(m => m.Type == earlyMatcherType)
             .ToList();
 
         if (earlyMatchers.Count is 0)
+        {
             return MatchScores.Perfect;
+        }
 
         var compositeMatcher = new RequestBuilders.Request(earlyMatchers);
         return compositeMatcher.GetMatchingScore(requestMessage, requestMatchResult);

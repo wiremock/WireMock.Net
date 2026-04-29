@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using WireMock.Matchers;
-using WireMock.Matchers.Request;
 
 namespace WireMock.Util;
 
@@ -57,13 +56,6 @@ internal static class StringUtils
         return value != null && Enum.TryParse<MatchOperator>(value, out var matchOperator)
             ? matchOperator
             : MatchOperator.Or;
-    }
-
-    public static RequestMatcherType? ParseRequestMatcherType(string? value)
-    {
-        return !string.IsNullOrWhiteSpace(value) && Enum.TryParse<RequestMatcherType>(value, out var matchOperator)
-            ? matchOperator
-            : null;
     }
 
     public static bool TryParseQuotedString(string? value, [NotNullWhen(true)] out string? result, out char quote)
