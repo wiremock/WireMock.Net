@@ -26,12 +26,6 @@ internal static class JsonSerializationConstants
         DateParseHandling = 0
     };
 
-    internal static readonly JsonSerializerSettings JsonSerializerSettingsIncludeNullValues = new()
-    {
-        Formatting = Formatting.Indented,
-        NullValueHandling = NullValueHandling.Include
-    };
-
     internal static readonly JsonSerializerSettings JsonDeserializerSettingsWithDateParsingNone = new()
     {
         DateParseHandling = DateParseHandling.None

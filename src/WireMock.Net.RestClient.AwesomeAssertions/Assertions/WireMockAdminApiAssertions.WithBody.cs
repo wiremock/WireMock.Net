@@ -32,15 +32,15 @@ public partial class WireMockAdminApiAssertions
     }
 
     [CustomAssertion]
-    public AndConstraint<WireMockAdminApiAssertions> WithBodyAsJson(object body, string because = "", params object[] becauseArgs)
+    public AndConstraint<WireMockAdminApiAssertions> WithBodyAsJson(object body, IJsonMatcher? jsonMatcher = null, string because = "", params object[] becauseArgs)
     {
-        return WithBodyAsJson(new JsonMatcher(body), because, becauseArgs);
+        return WithBodyAsJson(jsonMatcher ?? new JsonMatcher(body), because, becauseArgs);
     }
 
     [CustomAssertion]
-    public AndConstraint<WireMockAdminApiAssertions> WithBodyAsJson(string body, string because = "", params object[] becauseArgs)
+    public AndConstraint<WireMockAdminApiAssertions> WithBodyAsJson(string body, IJsonMatcher? jsonMatcher = null, string because = "", params object[] becauseArgs)
     {
-        return WithBodyAsJson(new JsonMatcher(body), because, becauseArgs);
+        return WithBodyAsJson(jsonMatcher ?? new JsonMatcher(body), because, becauseArgs);
     }
 
     [CustomAssertion]
@@ -127,15 +127,44 @@ public partial class WireMockAdminApiAssertions
 
     private static string? FormatBody(object? body)
     {
-        return body switch
+        if (body == null)
         {
-            null => null,
-            string str => str,
-            AnyOf<string, StringPattern>[] stringPatterns => FormatBodies(stringPatterns.Select(p => p.GetPattern())),
-            byte[] bytes => $"byte[{bytes.Length}] {{...}}",
-            JToken jToken => jToken.ToString(Formatting.None),
-            _ => JToken.FromObject(body).ToString(Formatting.None)
-        };
+            return null;
+        }
+
+        if (body is string str)
+        {
+            return str;
+        }
+
+        if (body is AnyOf<string, StringPattern>[] stringPatterns)
+        {
+            return FormatBodies(stringPatterns.Select(p => p.GetPattern()));
+        }
+
+        if (body is byte[] bytes)
+        {
+            return $"byte[{bytes.Length}] {{...}}";
+        }
+
+        if (body is JToken jToken)
+        {
+            return jToken.ToString(Formatting.None);
+        }
+
+        // System.IO.FileNotFoundException : Could not load file or assembly 'System.Text.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51'. The system cannot find the file specified.
+        var typeName = body.GetType().FullName;
+        if (typeName == "System.Text.Json.JsonElement")
+        {
+            return ((dynamic)body).GetRawText();
+        }
+
+        if (typeName == "System.Text.Json.JsonDocument")
+        {
+            return ((dynamic)body).RootElement.GetRawText();
+        }
+
+        return JToken.FromObject(body).ToString(Formatting.None);
     }
 
     private static string? FormatBodies(IEnumerable<object?> bodies)
