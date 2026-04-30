@@ -60,17 +60,6 @@ internal static class JsonUtils
         return JsonConvert.DeserializeObject(json, JsonSerializationConstants.JsonDeserializerSettingsWithDateParsingNone)!;
     }
 
-    /// <summary>
-    /// Deserializes the JSON to the specified .NET type.
-    /// Using : DateParseHandling = DateParseHandling.None
-    /// </summary>
-    /// <param name="json">A System.String that contains JSON.</param>
-    /// <returns>The deserialized object from the JSON string.</returns>
-    public static T DeserializeObject<T>(string json)
-    {
-        return JsonConvert.DeserializeObject<T>(json, JsonSerializationConstants.JsonDeserializerSettingsWithDateParsingNone)!;
-    }
-
     public static T? TryDeserializeObject<T>(string json)
     {
         try

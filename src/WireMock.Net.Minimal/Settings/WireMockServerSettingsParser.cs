@@ -3,14 +3,15 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using JetBrains.Annotations;
+using JsonConverter.Newtonsoft.Json;
+using JsonConverter.System.Text.Json;
 using Stef.Validation;
 using WireMock.Constants;
 using WireMock.Logging;
 using WireMock.Models;
-using WireMock.Types;
 using WireMock.Transformers;
+using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.Settings;
@@ -58,11 +59,9 @@ public static class WireMockServerSettingsParser
             DisableRequestBodyDecompressing = parser.GetBoolValue(nameof(WireMockServerSettings.DisableRequestBodyDecompressing)),
             DisableDeserializeFormUrlEncoded = parser.GetBoolValue(nameof(WireMockServerSettings.DisableDeserializeFormUrlEncoded)),
             DoNotSaveDynamicResponseInLogEntry = parser.GetBoolValue(nameof(WireMockServerSettings.DoNotSaveDynamicResponseInLogEntry)),
-            GraphQLSchemas = parser.GetObjectValueFromJson<Dictionary<string, GraphQLSchemaDetails>>(nameof(settings.GraphQLSchemas)),
             HandleRequestsSynchronously = parser.GetBoolValue(nameof(WireMockServerSettings.HandleRequestsSynchronously)),
             HostingScheme = parser.GetEnumValue<HostingScheme>(nameof(WireMockServerSettings.HostingScheme)),
             MaxRequestLogCount = parser.GetIntValue(nameof(WireMockServerSettings.MaxRequestLogCount)),
-            ProtoDefinitions = parser.GetObjectValueFromJson<Dictionary<string, string[]>>(nameof(settings.ProtoDefinitions)),
             QueryParameterMultipleValueSupport = parser.GetEnumValue<QueryParameterMultipleValueSupport>(nameof(WireMockServerSettings.QueryParameterMultipleValueSupport)),
             ReadStaticMappings = parser.GetBoolValue(nameof(WireMockServerSettings.ReadStaticMappings)),
             RequestLogExpirationDuration = parser.GetIntValue(nameof(WireMockServerSettings.RequestLogExpirationDuration)),
@@ -75,14 +74,13 @@ public static class WireMockServerSettingsParser
             WatchStaticMappingsInSubdirectories = parser.GetBoolValue(nameof(WireMockServerSettings.WatchStaticMappingsInSubdirectories)),
         };
 
-        settings.DefaultJsonBodyTransformer = new NewtonsoftJsonBodyTransformer(settings);
-
 #if USE_ASPNETCORE
         settings.CorsPolicyOptions = parser.GetEnumValue(nameof(WireMockServerSettings.CorsPolicyOptions), CorsPolicyOptions.None);
         settings.ClientCertificateMode = parser.GetEnumValue(nameof(WireMockServerSettings.ClientCertificateMode), ClientCertificateMode.NoCertificate);
         settings.AcceptAnyClientCertificate = parser.GetBoolValue(nameof(WireMockServerSettings.AcceptAnyClientCertificate));
 #endif
 
+        ParseJsonSerializerSettings(settings, parser);
         ParseLoggerSettings(settings, logger, parser);
         ParsePortSettings(settings, parser);
         ParseProxyAndRecordSettings(settings, parser);
@@ -90,6 +88,9 @@ public static class WireMockServerSettingsParser
         ParseHandlebarsSettings(settings, parser);
         ParseActivityTracingSettings(settings, parser);
         ParseWebSocketSettings(settings, parser);
+
+        settings.GraphQLSchemas = parser.GetObjectValueFromJson<Dictionary<string, GraphQLSchemaDetails>>(nameof(settings.GraphQLSchemas), settings.DefaultJsonSerializer);
+        settings.ProtoDefinitions = parser.GetObjectValueFromJson<Dictionary<string, string[]>>(nameof(settings.ProtoDefinitions), settings.DefaultJsonSerializer);
 
         return true;
     }
@@ -261,5 +262,22 @@ public static class WireMockServerSettingsParser
                 KeepAliveIntervalSeconds = parser.GetIntValue(nameof(WebSocketSettings) + '.' + nameof(WebSocketSettings.KeepAliveIntervalSeconds), WebSocketConstants.DefaultKeepAliveIntervalSeconds),
             };
         }
+    }
+
+    private static void ParseJsonSerializerSettings(WireMockServerSettings settings, SimpleSettingsParser parser)
+    {
+        var defaultJsonSerializer = parser.GetStringValue(nameof(WireMockServerSettings.DefaultJsonSerializer));
+        settings.DefaultJsonSerializer = defaultJsonSerializer switch
+        {
+            nameof(SystemTextJsonConverter) => new SystemTextJsonConverter(),
+            _ => new NewtonsoftJsonConverter(),
+        };
+
+        var defaultJsonBodyTransformer = parser.GetStringValue(nameof(WireMockServerSettings.DefaultJsonBodyTransformer));
+        settings.DefaultJsonBodyTransformer = defaultJsonBodyTransformer switch
+        {
+            nameof(SystemTextJsonBodyTransformer) => new SystemTextJsonBodyTransformer(),
+            _ => new NewtonsoftJsonBodyTransformer(settings),
+        };
     }
 }
