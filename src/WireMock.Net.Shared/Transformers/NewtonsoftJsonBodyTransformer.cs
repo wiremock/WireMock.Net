@@ -22,7 +22,7 @@ namespace WireMock.Transformers;
 [PublicAPI]
 public class NewtonsoftJsonBodyTransformer(WireMockServerSettings settings) : IJsonBodyTransformer
 {
-    private readonly NewtonsoftJsonConverter _jsonConverter = new();
+    private static readonly NewtonsoftJsonConverter _jsonConverter = new();
 
     /// <inheritdoc />
     public BodyData TransformBodyAsJson(

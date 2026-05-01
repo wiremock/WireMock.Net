@@ -17,7 +17,7 @@ namespace WireMock.Transformers;
 [PublicAPI]
 public class SystemTextJsonBodyTransformer() : IJsonBodyTransformer
 {
-    private readonly SystemTextJsonConverter _jsonConverter = new();
+    private static readonly SystemTextJsonConverter _jsonConverter = new();
 
     /// <inheritdoc />
     public BodyData TransformBodyAsJson(
