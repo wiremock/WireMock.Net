@@ -276,7 +276,7 @@ public static class WireMockServerSettingsParser
         var defaultJsonBodyTransformer = parser.GetStringValue(nameof(WireMockServerSettings.DefaultJsonBodyTransformer));
         settings.DefaultJsonBodyTransformer = defaultJsonBodyTransformer switch
         {
-            nameof(SystemTextJsonBodyTransformer) => new SystemTextJsonBodyTransformer(),
+            nameof(SystemTextJsonBodyTransformer) => new SystemTextJsonBodyTransformer(settings),
             _ => new NewtonsoftJsonBodyTransformer(settings),
         };
     }

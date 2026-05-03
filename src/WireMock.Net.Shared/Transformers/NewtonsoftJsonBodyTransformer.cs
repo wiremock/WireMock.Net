@@ -86,6 +86,7 @@ public class NewtonsoftJsonBodyTransformer(WireMockServerSettings settings) : IJ
             }
             catch
             {
+                settings.Logger.Warn("Failed to parse string ''{0}'' as JSON. Returning the original string value.", stringValue);
             }
         }
 

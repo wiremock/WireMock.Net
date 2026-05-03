@@ -19,15 +19,17 @@ public class JsonBodyTransformerTests
     {
         get
         {
+            var settings = new WireMockServerSettings();
+
             return
             [
                 new JsonBodyTransformerTestContext(
-                    () => new NewtonsoftJsonBodyTransformer(new WireMockServerSettings()),
+                    () => new NewtonsoftJsonBodyTransformer(settings),
                     JObject.Parse,
                     body => ((JToken)body).ToString(Formatting.None)),
 
                 new JsonBodyTransformerTestContext(
-                    () => new SystemTextJsonBodyTransformer(),
+                    () => new SystemTextJsonBodyTransformer(settings),
                     json => JsonNode.Parse(json)!,
                     body => ((JsonNode)body).ToJsonString())
             ];

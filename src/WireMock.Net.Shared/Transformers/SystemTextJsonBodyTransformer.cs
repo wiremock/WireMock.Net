@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using HandlebarsDotNet.Helpers.Models;
 using JetBrains.Annotations;
 using JsonConverter.System.Text.Json;
+using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -15,7 +16,7 @@ namespace WireMock.Transformers;
 /// JSON body transformer implementation based on System.Text.Json.
 /// </summary>
 [PublicAPI]
-public class SystemTextJsonBodyTransformer() : IJsonBodyTransformer
+public class SystemTextJsonBodyTransformer(WireMockServerSettings settings) : IJsonBodyTransformer
 {
     private static readonly SystemTextJsonConverter _jsonConverter = new();
 
@@ -85,7 +86,7 @@ public class SystemTextJsonBodyTransformer() : IJsonBodyTransformer
             }
             catch
             {
-                // Ignore and return as string.
+                settings.Logger.Warn("Failed to parse string ''{0}'' as JSON. Returning the original string value.", stringValue);
             }
         }
 
