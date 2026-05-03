@@ -19,7 +19,7 @@
    id:ID!
    firstName:String
    lastName:String
-   fullName:String 
+   fullName:String
   }
       }
     }

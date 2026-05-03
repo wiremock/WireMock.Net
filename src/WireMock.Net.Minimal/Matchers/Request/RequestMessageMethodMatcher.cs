@@ -47,6 +47,9 @@ internal class RequestMessageMethodMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.Method;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var scores = Methods.Select(m => string.Equals(m, requestMessage.Method, StringComparison.OrdinalIgnoreCase)).ToArray();

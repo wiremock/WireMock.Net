@@ -31,6 +31,9 @@ public class RequestMessageProtoBufMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.ProtoBuf;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var (score, exception) = GetMatchResult(requestMessage).Expand();

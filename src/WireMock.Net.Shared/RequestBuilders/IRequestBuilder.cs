@@ -10,7 +10,8 @@ namespace WireMock.RequestBuilders;
 public interface IRequestBuilder : IClientIPRequestBuilder
 {
     /// <summary>
-    /// Adds a request matcher to the builder.
+    /// Adds a request matcher to the builder.<br/>
+    /// If the request matcher is already present, it will be replaced.
     /// </summary>
     /// <typeparam name="T">The type of the request matcher.</typeparam>
     /// <param name="requestMatcher">The request matcher to add.</param>
@@ -21,4 +22,11 @@ public interface IRequestBuilder : IClientIPRequestBuilder
     /// The link back to the Mapping.
     /// </summary>
     IMapping Mapping { get; set; }
+
+    /// <summary>
+    /// Chooses the <see cref="IRequestMatcher"/> which immediately returns a mismatch during mappings enumeration.
+    /// </summary>
+    /// <param name="earlyMatcherType">Selected type to choose the matcher from available list.</param>
+    /// <returns>The current <see cref="IRequestBuilder"/> instance.</returns>
+    IRequestBuilder WithEarlyMismatch(RequestMatcherType? earlyMatcherType);
 }

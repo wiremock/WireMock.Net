@@ -1,0 +1,34 @@
+﻿{
+  Guid: Guid_1,
+  UpdatedAt: DateTime_1,
+  Title: ,
+  Description: ,
+  Priority: 42,
+  Request: {
+    Path: {
+      Matchers: [
+        {
+          Name: WildcardMatcher,
+          Pattern: 1.2.3.4,
+          IgnoreCase: false
+        }
+      ]
+    },
+    Headers: [
+      {
+        Name: x1,
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: y,
+            IgnoreCase: true
+          }
+        ],
+        IgnoreCase: true
+      }
+    ],
+    EarlyMatcherType: ClientIP
+  },
+  Response: {},
+  UseWebhooksFireAndForget: false
+}

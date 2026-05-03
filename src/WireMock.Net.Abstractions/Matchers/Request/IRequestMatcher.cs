@@ -8,6 +8,11 @@ namespace WireMock.Matchers.Request;
 public interface IRequestMatcher
 {
     /// <summary>
+    /// Gets the request matcher's type.
+    /// </summary>
+    public RequestMatcherType Type { get; }
+
+    /// <summary>
     /// Determines whether the specified RequestMessage is match.
     /// </summary>
     /// <param name="requestMessage">The RequestMessage.</param>

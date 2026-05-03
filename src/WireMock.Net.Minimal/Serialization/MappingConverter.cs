@@ -66,6 +66,12 @@ internal class MappingConverter(MatcherMapper mapper)
 
         // Request
         sb.AppendLine("    .Given(Request.Create()");
+
+        if (request.EarlyMatcherType != null)
+        {
+            sb.AppendLine($"        .WithEarlyMismatch({request.EarlyMatcherType.Value.GetFullyQualifiedEnumValue()})");
+        }
+
         sb.AppendLine($"        .UsingMethod({To1Or2Or3Arguments(methodMatcher?.MatchBehaviour, methodMatcher?.MatchOperator, methodMatcher?.Methods, HttpRequestMethod.GET)})");
 
         if (pathMatcher?.Matchers != null)
@@ -300,7 +306,9 @@ internal class MappingConverter(MatcherMapper mapper)
                     IgnoreCase = pm.IgnoreCase ? true : null,
                     RejectOnMatch = pm.MatchBehaviour == MatchBehaviour.RejectOnMatch ? true : null,
                     Matchers = _mapper.Map(pm.Matchers)
-                }).ToList() : null
+                }).ToList() : null,
+
+                EarlyMatcherType = request.EarlyMatcherType
             },
             Response = new ResponseModel()
         };
