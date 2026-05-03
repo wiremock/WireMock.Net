@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Stef.Validation;
 using WireMock.Types;
 
@@ -12,7 +11,7 @@ namespace WireMock.Matchers.Request;
 /// <inheritdoc cref="IRequestMatcher"/>
 public class RequestMessageHeaderMatcher : IRequestMatcher
 {
-    private const string _name = nameof(RequestMessageCookieMatcher);
+    private const string _name = nameof(RequestMessageHeaderMatcher);
 
     /// <summary>
     /// MatchBehaviour
