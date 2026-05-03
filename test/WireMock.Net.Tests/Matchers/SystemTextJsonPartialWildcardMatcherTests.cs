@@ -60,7 +60,8 @@ public class SystemTextJsonPartialWildcardMatcherTests
         var matcher = new SystemTextJsonPartialWildcardMatcher("{}");
 
         // Act
-        var result = matcher.IsMatch(new MemoryStream());
+        using var stream = new MemoryStream();
+        var result = matcher.IsMatch(stream);
 
         // Assert
         result.Score.Should().Be(MatchScores.Mismatch);
