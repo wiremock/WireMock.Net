@@ -142,6 +142,9 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.Body;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var (score, exception) = CalculateMatchResult(requestMessage).Expand();

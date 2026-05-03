@@ -107,6 +107,9 @@ public class RequestMessageHeaderMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.Header;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var (score, exception) = GetMatchResult(requestMessage).Expand();

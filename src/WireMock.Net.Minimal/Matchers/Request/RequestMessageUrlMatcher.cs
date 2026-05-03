@@ -73,6 +73,9 @@ public class RequestMessageUrlMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.Url;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var (score, exception) = GetMatchResult(requestMessage).Expand();

@@ -8,8 +8,11 @@ using ExampleIntegrationTest.Lookup;
 using Google.Protobuf.WellKnownTypes;
 using Greet;
 using Grpc.Net.Client;
+using Moq;
 using WireMock.Constants;
 using WireMock.Matchers;
+using WireMock.Matchers.Request;
+using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -78,7 +81,7 @@ import ""google/protobuf/empty.proto"";
 
 service Greeter {
   rpc Nothing (google.protobuf.Empty) returns (google.protobuf.Empty);
-  
+
   rpc SayHello (HelloRequest) returns (HelloReply);
 
   rpc SayOther (Other) returns (HelloReply);
@@ -729,6 +732,93 @@ message Other {
         var reply = await When_GrpcClient_Calls_SayHelloAsync(server.Urls[1], cancellationToken);
 
         Then_ReplyMessage_Should_BeCorrect(reply);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task WireMockServer_WithBodyAsProtoBuf_WithEarlyMismatch_ErrorLogs_Issue1442(
+        bool withEarlyMismatch)
+    {
+        // Arrange
+        var greeterId = $"test-greeter-{Guid.NewGuid()}";
+        var policyId = $"test-policy-{Guid.NewGuid()}";
+        var ct = TestContext.Current.CancellationToken;
+
+        var greeterProtoDefinition = ProtoDefinition;
+        var policyProtoDefinition = File.ReadAllText("./Grpc/policy.proto");
+
+        var mockTestOutputHelper = new Mock<ITestOutputHelper>();
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            UseHttp2 = true,
+            Logger = new TestOutputHelperWireMockLogger(mockTestOutputHelper.Object)
+        });
+
+        server
+            .AddProtoDefinition(greeterId, greeterProtoDefinition)
+            .Given(Request.Create()
+                .UsingPost()
+                .WithHttpVersion("2")
+                .WithPath("/greet.Greeter/SayHello")
+                .WithEarlyMismatch(withEarlyMismatch
+                    ? RequestMatcherType.Path
+                    : null)
+                .WithBodyAsProtoBuf("greet.HelloRequest", new JsonMatcher(new { name = "stef" })))
+            .WithProtoDefinition(greeterId)
+            .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/grpc")
+                .WithTrailingHeader("grpc-status", "0")
+                .WithBodyAsProtoBuf("greet.HelloReply",
+                    new
+                    {
+                        message = "hello {{request.BodyAsJson.name}} {{request.method}}"
+                    })
+                .WithTransformer());
+
+        server
+            .AddProtoDefinition(policyId, policyProtoDefinition)
+            .Given(Request.Create()
+                .UsingPost()
+                .WithHttpVersion("2")
+                .WithPath("/Policy.PolicyService/GetVersion")
+                .WithEarlyMismatch(withEarlyMismatch
+                    ? RequestMatcherType.Path
+                    : null)
+                .WithBodyAsProtoBuf("ExampleIntegrationTest.Lookup.GetVersionRequest", new NotNullOrEmptyMatcher()))
+            .WithProtoDefinition(policyId)
+            .RespondWith(Response.Create()
+                .WithHeader("Content-Type", "application/grpc")
+                .WithTrailingHeader("grpc-status", "0")
+                .WithBodyAsProtoBuf("ExampleIntegrationTest.Lookup.GetVersionResponse",
+                    new GetVersionResponse
+                    {
+                        Version = "test",
+                        DateHired = new Timestamp
+                        {
+                            Seconds = 1722301323,
+                            Nanos = 12300
+                        },
+                        Client = new ExampleIntegrationTest.Lookup.Client
+                        {
+                            ClientName = ExampleIntegrationTest.Lookup.Client.Types.Clients.Test,
+                            CorrelationId = "correlation"
+                        }
+                    })
+                .WithTransformer());
+
+        // Act
+        var channel = GrpcChannel.ForAddress(server.Url!);
+        var policyServiceClient = new PolicyService.PolicyServiceClient(channel);
+        var greeterClient = new Greeter.GreeterClient(channel);
+
+        _ = await policyServiceClient.GetVersionAsync(new GetVersionRequest(), cancellationToken: ct);
+        _ = await greeterClient.SayHelloAsync(new HelloRequest { Name = "stef" }, cancellationToken: ct);
+
+        mockTestOutputHelper.Verify(
+            x => x.WriteLine(
+                It.Is<string>(log => log.Contains("[Error]") && log.Contains("Exception"))),
+            withEarlyMismatch ? Times.Never : Times.AtLeastOnce);
     }
 
     private static WireMockServer Given_When_ServerStarted_And_RunningOnHttpAndGrpc()

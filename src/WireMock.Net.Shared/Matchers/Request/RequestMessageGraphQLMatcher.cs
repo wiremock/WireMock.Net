@@ -70,6 +70,9 @@ public class RequestMessageGraphQLMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.GraphQL;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var results = CalculateMatchResults(requestMessage);

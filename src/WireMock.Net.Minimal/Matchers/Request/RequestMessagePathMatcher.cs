@@ -73,6 +73,9 @@ public class RequestMessagePathMatcher : IRequestMatcher
     }
 
     /// <inheritdoc />
+    public RequestMatcherType Type => RequestMatcherType.Path;
+
+    /// <inheritdoc />
     public double GetMatchingScore(IRequestMessage requestMessage, IRequestMatchResult requestMatchResult)
     {
         var matchDetail = GetMatchResult(requestMessage).ToMatchDetail();
