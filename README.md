@@ -64,6 +64,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 | | | |
 | &nbsp;&nbsp;**WireMock.Net.Extensions.Routing** | [![NuGet Badge WireMock.Net.Extensions.Routing](https://img.shields.io/nuget/v/WireMock.Net.Extensions.Routing)](https://www.nuget.org/packages/WireMock.Net.Extensions.Routing) | [![MyGet Badge WireMock.Net.Extensions.Routing](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Extensions.Routing?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Extensions.Routing)
 | &nbsp;&nbsp;**WireMock.Net.Matchers.CSharpCode** | [![NuGet Badge WireMock.Net.Matchers.CSharpCode](https://img.shields.io/nuget/v/WireMock.Net.Matchers.CSharpCode)](https://www.nuget.org/packages/WireMock.Net.Matchers.CSharpCode) | [![MyGet Badge WireMock.Net.Matchers.CSharpCode](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Matchers.CSharpCode?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Matchers.CSharpCode)
+| &nbsp;&nbsp;**WireMock.Net.Matchers.SystemTextJsonPath** | [![NuGet Badge WireMock.Net.Matchers.SystemTextJsonPath](https://img.shields.io/nuget/v/WireMock.Net.Matchers.SystemTextJsonPath)](https://www.nuget.org/packages/WireMock.Net.Matchers.SystemTextJsonPath) | [![MyGet Badge WireMock.Net.Matchers.SystemTextJsonPath](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.Matchers.SystemTextJsonPath?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.Matchers.SystemTextJsonPath)
 | &nbsp;&nbsp;**WireMock.Net.OpenApiParser** | [![NuGet Badge WireMock.Net.OpenApiParser](https://img.shields.io/nuget/v/WireMock.Net.OpenApiParser)](https://www.nuget.org/packages/WireMock.Net.OpenApiParser) | [![MyGet Badge WireMock.Net.OpenApiParser](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.OpenApiParser?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.OpenApiParser)
 | &nbsp;&nbsp;**WireMock.Net.MimePart** | [![NuGet Badge WireMock.Net.MimePart](https://img.shields.io/nuget/v/WireMock.Net.MimePart)](https://www.nuget.org/packages/WireMock.Net.MimePart) | [![MyGet Badge WireMock.Net.MimePart](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.MimePart?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.MimePart)
 | &nbsp;&nbsp;**WireMock.Net.GraphQL** | [![NuGet Badge WireMock.Net.GraphQL](https://img.shields.io/nuget/v/WireMock.Net.GraphQL)](https://www.nuget.org/packages/WireMock.Net.GraphQL) | [![MyGet Badge WireMock.Net.GraphQL](https://img.shields.io/myget/wiremock-net/vpre/WireMock.Net.GraphQL?includePreReleases=true&label=MyGet)](https://www.myget.org/feed/wiremock-net/package/nuget/WireMock.Net.GraphQL)
@@ -76,7 +77,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 
 <br />
 
-🔺 **WireMock.Net.Minimal** does not include *WireMock.Net.MimePart*, *WireMock.Net.GraphQL*, *WireMock.Net.ProtoBuf* and *WireMock.Net.OpenTelemetry*.
+🔺 **WireMock.Net.Minimal** does not include *WireMock.Net.MimePart*, *WireMock.Net.GraphQL*, *WireMock.Net.ProtoBuf*, *WireMock.Net.OpenTelemetry* and *WireMock.Net.Matchers.SystemTextJsonPath*.
 
 ---
 

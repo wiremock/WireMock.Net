@@ -1,7 +1,8 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using NJsonSchema.Extensions;
 using NSwag;
@@ -281,7 +282,7 @@ internal static class SwaggerMapper
         if (matcher is { Name: nameof(JsonMatcher) })
         {
             var pattern = GetPatternAsStringFromMatcher(matcher);
-            if (JsonUtils.TryParseAsJObject(pattern, out var jObject))
+            if (TryParseAsJObject(pattern, out var jObject))
             {
                 return jObject;
             }
@@ -290,6 +291,39 @@ internal static class SwaggerMapper
         }
 
         return null;
+    }
+
+    private static bool IsJson(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        value = value!.Trim();
+
+        return (value.StartsWith("{") && value.EndsWith("}")) || (value.StartsWith("[") && value.EndsWith("]"));
+    }
+
+    private static bool TryParseAsJObject(string? strInput, [NotNullWhen(true)] out JObject? value)
+    {
+        value = null;
+
+        if (!IsJson(strInput))
+        {
+            return false;
+        }
+
+        try
+        {
+            // Try to convert this string into a JObject
+            value = JObject.Parse(strInput!);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static string GetContentType(RequestModel request)

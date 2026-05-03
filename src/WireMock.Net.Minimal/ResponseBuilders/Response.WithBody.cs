@@ -2,8 +2,10 @@
 
 using System.Text;
 using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 using Stef.Validation;
 using WireMock.Models;
+using WireMock.Serialization;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -119,11 +121,13 @@ public partial class Response
     }
 
     /// <inheritdoc />
-    public IResponseBuilder WithBody(string body, string? destination = BodyDestinationFormat.SameAsSource, Encoding? encoding = null)
+    public IResponseBuilder WithBody(string body, string? destination = BodyDestinationFormat.SameAsSource, Encoding? encoding = null, IJsonConverter? jsonConverter = null, JsonConverterOptions? options = null)
     {
         Guard.NotNull(body);
 
         encoding ??= Encoding.UTF8;
+        jsonConverter ??= new NewtonsoftJsonConverter();
+        options ??= JsonSerializationConstants.JsonConverterOptionsWithDateParsingNone;
 
         ResponseMessage.BodyDestination = destination;
         ResponseMessage.BodyData = new BodyData
@@ -140,7 +144,7 @@ public partial class Response
 
             case BodyDestinationFormat.Json:
                 ResponseMessage.BodyData.DetectedBodyType = BodyType.Json;
-                ResponseMessage.BodyData.BodyAsJson = JsonUtils.DeserializeObject(body);
+                ResponseMessage.BodyData.BodyAsJson = jsonConverter.Deserialize<object>(body, options);
                 break;
 
             default:

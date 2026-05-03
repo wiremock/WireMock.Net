@@ -106,8 +106,28 @@ internal class MatcherMapper
                 var valueForJsonPartialWildcardMatcher = matcherModel.Pattern ?? matcherModel.Patterns;
                 return new JsonPartialWildcardMatcher(matchBehaviour, valueForJsonPartialWildcardMatcher!, ignoreCase, useRegex);
 
+            case nameof(SystemTextJsonMatcher):
+                var valueForSystemTextJsonMatcher = matcherModel.Pattern ?? matcherModel.Patterns;
+                return new SystemTextJsonMatcher(matchBehaviour, valueForSystemTextJsonMatcher!, ignoreCase, useRegex);
+
+            case nameof(SystemTextJsonPartialMatcher):
+                var valueForSystemTextJsonPartialMatcher = matcherModel.Pattern ?? matcherModel.Patterns;
+                return new SystemTextJsonPartialMatcher(matchBehaviour, valueForSystemTextJsonPartialMatcher!, ignoreCase, useRegex);
+
+            case nameof(SystemTextJsonPartialWildcardMatcher):
+                var valueForSystemTextJsonPartialWildcardMatcher = matcherModel.Pattern ?? matcherModel.Patterns;
+                return new SystemTextJsonPartialWildcardMatcher(matchBehaviour, valueForSystemTextJsonPartialWildcardMatcher!, ignoreCase, useRegex);
+
             case nameof(JsonPathMatcher):
                 return new JsonPathMatcher(matchBehaviour, matchOperator, stringPatterns);
+
+            case "SystemTextJsonPathMatcher":
+                if (TypeLoader.TryLoadNewInstance<ISystemTextJsonPathMatcher>(out var systemTextJsonPathMatcher, matchBehaviour, matchOperator, stringPatterns))
+                {
+                    return systemTextJsonPathMatcher;
+                }
+
+                throw new InvalidOperationException("The 'SystemTextJsonPathMatcher' cannot be loaded. Please install the WireMock.Net.Matchers.SystemTextJsonPath package.");
 
             case nameof(JmesPathMatcher):
                 return new JmesPathMatcher(matchBehaviour, matchOperator, stringPatterns);
@@ -169,6 +189,10 @@ internal class MatcherMapper
         {
             case JsonMatcher jsonMatcher:
                 model.Regex = jsonMatcher.Regex;
+                break;
+
+            case SystemTextJsonMatcher stjMatcher:
+                model.Regex = stjMatcher.Regex;
                 break;
 
             case XPathMatcher xpathMatcher:

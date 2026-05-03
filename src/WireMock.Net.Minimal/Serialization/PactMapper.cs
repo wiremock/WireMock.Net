@@ -1,6 +1,8 @@
 // Copyright © WireMock.Net
 
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using WireMock.Admin.Mappings;
 using WireMock.Extensions;
 using WireMock.Pact.Models.V2;
@@ -49,7 +51,7 @@ internal static class PactMapper
             pact.Interactions.Add(interaction);
         }
 
-        return (filename, JsonUtils.SerializeAsPactFile(pact));
+        return (filename, SerializeAsPactFile(pact));
     }
 
     private static PactRequest MapRequest(RequestModel request, string path)
@@ -152,7 +154,7 @@ internal static class PactMapper
     /// </summary>
     private static object? TryDeserializeJsonStringAsObject(string? value)
     {
-        return value != null ? JsonUtils.TryDeserializeObject<object?>(value) ?? value : null;
+        return value != null ? TryDeserializeObject<object?>(value) ?? value : null;
     }
 
     //private static string GetPatternAsStringFromMatchers(MatcherModel[]? matchers, string defaultValue)
@@ -164,4 +166,22 @@ internal static class PactMapper
 
     //    return defaultValue;
     //}
+
+    private static byte[] SerializeAsPactFile(object value)
+    {
+        var json = JsonConvert.SerializeObject(value, JsonSerializationConstants.JsonSerializerSettingsPact);
+        return Encoding.UTF8.GetBytes(json);
+    }
+
+    private static T? TryDeserializeObject<T>(string json)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<T>(json);
+        }
+        catch
+        {
+            return default;
+        }
+    }
 }

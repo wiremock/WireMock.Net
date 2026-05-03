@@ -11,6 +11,7 @@ using WireMock.Server;
 
 namespace WireMock.Net.Tests.Pact;
 
+[Collection(nameof(PactTests))]
 public class PactTests
 {
     [Fact]

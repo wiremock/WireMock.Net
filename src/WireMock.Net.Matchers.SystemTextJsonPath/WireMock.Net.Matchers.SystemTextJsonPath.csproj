@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>A SystemTextJsonPathMatcher which can be used to match WireMock.Net Requests using JsonPath.Net.</Description>
+        <AssemblyTitle>WireMock.Net.Matchers.SystemTextJsonPath</AssemblyTitle>
+        <Authors>Stef Heyenrath</Authors>
+        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageTags>wiremock;matchers;matcher;jsonpath;systemtextjson</PackageTags>
+        <RootNamespace>WireMock</RootNamespace>
+        <PackageId>WireMock.Net.Matchers.SystemTextJsonPath</PackageId>
+        <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>../WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
+        <!--<DelaySign>true</DelaySign>-->
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug - Sonar'">
+        <CodeAnalysisRuleSet>../WireMock.Net/WireMock.Net.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\WireMock.Net.Shared\WireMock.Net.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JsonPath.Net" Version="3.0.2" />
+    </ItemGroup>
+
+</Project>

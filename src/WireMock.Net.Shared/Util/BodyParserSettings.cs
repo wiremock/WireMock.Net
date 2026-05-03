@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.IO;
+using JsonConverter.Abstractions;
+using JsonConverter.Newtonsoft.Json;
 
 namespace WireMock.Util;
 
@@ -35,4 +36,13 @@ internal class BodyParserSettings
     /// Try to deserialize the body as FormUrlEncoded.
     /// </summary>
     public bool DeserializeFormUrlEncoded { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the default JSON converter used for deserialization.
+    /// </summary>
+    /// <remarks>
+    /// Set this property to customize how objects are serialized to and deserialized from JSON during mapping.
+    /// Default is <see cref="NewtonsoftJsonConverter"/>.
+    /// </remarks>
+    public IJsonConverter DefaultJsonConverter { get; set; } = new NewtonsoftJsonConverter();
 }

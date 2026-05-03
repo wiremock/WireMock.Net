@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
 using WireMock.Matchers;
@@ -153,7 +152,7 @@ public partial class WireMockServer
             }
             else
             {
-                var clientIPModel = JsonUtils.ParseJTokenToObject<ClientIPModel>(requestModel.ClientIP);
+                var clientIPModel = _settings.DefaultJsonSerializer.ParseJsonToken<ClientIPModel>(requestModel.ClientIP);
                 if (clientIPModel.Matchers != null)
                 {
                     requestBuilder = requestBuilder.WithPath(clientIPModel.Matchers.Select(_matcherMapper.Map).OfType<IStringMatcher>().ToArray());
@@ -169,7 +168,7 @@ public partial class WireMockServer
             }
             else
             {
-                var pathModel = JsonUtils.ParseJTokenToObject<PathModel>(requestModel.Path);
+                var pathModel = _settings.DefaultJsonSerializer.ParseJsonToken<PathModel>(requestModel.Path);
                 if (pathModel.Matchers != null)
                 {
                     var matchOperator = StringUtils.ParseMatchOperator(pathModel.MatchOperator);
@@ -185,7 +184,7 @@ public partial class WireMockServer
             }
             else
             {
-                var urlModel = JsonUtils.ParseJTokenToObject<UrlModel>(requestModel.Url);
+                var urlModel = _settings.DefaultJsonSerializer.ParseJsonToken<UrlModel>(requestModel.Url);
                 if (urlModel.Matchers != null)
                 {
                     var matchOperator = StringUtils.ParseMatchOperator(urlModel.MatchOperator);
@@ -273,7 +272,7 @@ public partial class WireMockServer
         return requestBuilder;
     }
 
-    private static IResponseBuilder InitResponseBuilder(ResponseModel responseModel)
+    private IResponseBuilder InitResponseBuilder(ResponseModel responseModel)
     {
         var responseBuilder = Response.Create();
 
@@ -338,7 +337,7 @@ public partial class WireMockServer
                 }
                 else
                 {
-                    var headers = JsonUtils.ParseJTokenToObject<string[]>(entry.Value);
+                    var headers = _settings.DefaultJsonSerializer.ParseJsonToken<string[]>(entry.Value);
                     responseBuilder.WithHeader(entry.Key, headers);
                 }
             }
@@ -364,7 +363,7 @@ public partial class WireMockServer
                 }
                 else
                 {
-                    var headers = JsonUtils.ParseJTokenToObject<string[]>(entry.Value);
+                    var headers = _settings.DefaultJsonSerializer.ParseJsonToken<string[]>(entry.Value);
                     responseBuilder.WithTrailingHeader(entry.Key, headers);
                 }
             }
