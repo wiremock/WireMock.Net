@@ -58,9 +58,10 @@ public class SystemTextJsonPartialMatcherTests
     {
         // Assign
         var matcher = new SystemTextJsonPartialMatcher("{}");
+        using var stream = new MemoryStream();
 
         // Act
-        var result = matcher.IsMatch(new MemoryStream());
+        var result = matcher.IsMatch(stream);
 
         // Assert
         result.Score.Should().Be(MatchScores.Mismatch);
