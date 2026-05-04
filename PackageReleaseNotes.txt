@@ -1,6 +1,7 @@
-# 2.4.0 (24 April 2026)
-- #1437 Added feature to enable and disable mappings [feature]
-- #1450 Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.x [dependencies, .NET]
-- #1421 Deactivate mapping without deleting it [feature]
+# 2.5.0 (04 May 2026)
+- #1451 Feature/early mismatch [feature]
+- #1452 Bump log4net from 2.0.15 to 3.3.0 in example console app [dependencies, .NET]
+- #1453 Fix CVE-2026-40021: upgrade log4net to 3.3.0 in examples/WireMock.Net.Service/packages.config [dependencies]
+- #1442 Bug: [grpc] WithBodyAsProtoBuf exception on match [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
