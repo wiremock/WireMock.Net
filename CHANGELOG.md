@@ -1,3 +1,9 @@
+# 2.5.0 (04 May 2026)
+- [#1451](https://github.com/wiremock/WireMock.Net/pull/1451) - Feature/early mismatch [feature] contributed by [Stepami](https://github.com/Stepami)
+- [#1452](https://github.com/wiremock/WireMock.Net/pull/1452) - Bump log4net from 2.0.15 to 3.3.0 in example console app [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1453](https://github.com/wiremock/WireMock.Net/pull/1453) - Fix CVE-2026-40021: upgrade log4net to 3.3.0 in examples/WireMock.Net.Service/packages.config [dependencies] contributed by [Copilot](https://github.com/apps/copilot-swe-agent)
+- [#1442](https://github.com/wiremock/WireMock.Net/issues/1442) - Bug: [grpc] WithBodyAsProtoBuf exception on match [bug]
+
 # 2.4.0 (24 April 2026)
 - [#1437](https://github.com/wiremock/WireMock.Net/pull/1437) - Added feature to enable and disable mappings [feature] contributed by [jayaraman-venkatesan](https://github.com/jayaraman-venkatesan)
 - [#1450](https://github.com/wiremock/WireMock.Net/pull/1450) - Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.x [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
