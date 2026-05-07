@@ -3,6 +3,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using WireMock.Admin.Mappings;
@@ -38,6 +39,7 @@ public class WireMockMiddlewareTests
     private readonly Mock<HttpContext> _contextMock;
     private readonly Mock<IGuidUtils> _guidUtilsMock;
     private readonly Mock<IDateTimeUtils> _dateTimeUtilsMock;
+    private readonly IResponseMessageBuilder _responseMessageBuilderMock;
 
     private readonly WireMockMiddleware _sut;
 
@@ -50,6 +52,8 @@ public class WireMockMiddlewareTests
 
         _dateTimeUtilsMock = new Mock<IDateTimeUtils>();
         _dateTimeUtilsMock.Setup(d => d.UtcNow).Returns(UtcNow);
+
+        _responseMessageBuilderMock = new ResponseMessageBuilder(_dateTimeUtilsMock.Object);
 
         _optionsMock = new Mock<IWireMockMiddlewareOptions>();
         _optionsMock.SetupAllProperties();
@@ -90,7 +94,8 @@ public class WireMockMiddlewareTests
             _matcherMock.Object,
             wireMockMiddlewareLoggerMock.Object,
             _guidUtilsMock.Object,
-            _dateTimeUtilsMock.Object
+            _dateTimeUtilsMock.Object,
+            _responseMessageBuilderMock
         );
     }
 
@@ -103,7 +108,10 @@ public class WireMockMiddlewareTests
         // Assert and Verify
         _optionsMock.Verify(o => o.Logger.Warn(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
 
-        Expression<Func<ResponseMessage, bool>> match = r => (int)r.StatusCode! == 404 && ((StatusModel)r.BodyData!.BodyAsJson!).Status == "No matching mapping found";
+        Expression<Func<ResponseMessage, bool>> match = r =>
+            (int)r.StatusCode! == 404 &&
+            ((StatusModel)r.BodyData!.BodyAsJson!).Status == "No matching mapping found" &&
+            r.DateTime == UtcNow;
         _responseMapperMock.Verify(m => m.MapAsync(It.Is(match), It.IsAny<HttpResponse>()), Times.Once);
     }
 

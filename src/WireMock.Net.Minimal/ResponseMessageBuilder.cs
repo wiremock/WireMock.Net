@@ -9,29 +9,38 @@ using WireMock.Util;
 
 namespace WireMock;
 
-internal static class ResponseMessageBuilder
+internal interface IResponseMessageBuilder
+{
+    ResponseMessage Create(HttpStatusCode statusCode, string? status, Guid? guid = null);
+    ResponseMessage Create(int statusCode, string? status, Guid? guid = null);
+    ResponseMessage Create(int statusCode, string? status, string? error, Guid? guid = null);
+    ResponseMessage Create(HttpStatusCode statusCode);
+}
+
+internal class ResponseMessageBuilder(IDateTimeUtils dateTimeUtils) : IResponseMessageBuilder
 {
     private static readonly IDictionary<string, WireMockList<string>> ContentTypeJsonHeaders = new Dictionary<string, WireMockList<string>>
     {
         { HttpKnownHeaderNames.ContentType, new WireMockList<string> { WireMockConstants.ContentTypeJson } }
     };
 
-    internal static ResponseMessage Create(HttpStatusCode statusCode, string? status, Guid? guid = null)
+    public ResponseMessage Create(HttpStatusCode statusCode, string? status, Guid? guid = null)
     {
-        return Create((int)statusCode, status, guid);
+        return Create((int)statusCode, status, null, guid);
     }
 
-    internal static ResponseMessage Create(int statusCode, string? status, Guid? guid = null)
+    public ResponseMessage Create(int statusCode, string? status, Guid? guid = null)
     {
         return Create(statusCode, status, null, guid);
     }
 
-    internal static ResponseMessage Create(int statusCode, string? status, string? error, Guid? guid = null)
+    public ResponseMessage Create(int statusCode, string? status, string? error, Guid? guid = null)
     {
         var response = new ResponseMessage
         {
             StatusCode = statusCode,
-            Headers = ContentTypeJsonHeaders
+            Headers = ContentTypeJsonHeaders,
+            DateTime = dateTimeUtils.UtcNow
         };
 
         if (status != null || error != null)
@@ -51,7 +60,7 @@ internal static class ResponseMessageBuilder
         return response;
     }
 
-    internal static ResponseMessage Create(HttpStatusCode statusCode)
+    public ResponseMessage Create(HttpStatusCode statusCode)
     {
         return new ResponseMessage
         {

@@ -19,7 +19,7 @@ public partial class WireMockServer
         catch (Exception e)
         {
             _settings.Logger.Error("HttpStatusCode set to {0} {1}", HttpStatusCode.BadRequest, e);
-            return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
+            return _responseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
         }
     }
 
@@ -35,12 +35,12 @@ public partial class WireMockServer
 
             ConvertMappingsAndRegisterAsRespondProvider(mappingModels);
 
-            return ResponseMessageBuilder.Create(HttpStatusCode.Created, "OpenApi document converted to Mappings");
+            return _responseMessageBuilder.Create(HttpStatusCode.Created, "OpenApi document converted to Mappings");
         }
         catch (Exception e)
         {
             _settings.Logger.Error("HttpStatusCode set to {0} {1}", HttpStatusCode.BadRequest, e);
-            return ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
+            return _responseMessageBuilder.Create(HttpStatusCode.BadRequest, e.Message);
         }
     }
 }

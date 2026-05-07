@@ -27,6 +27,7 @@ public class MappingBuilder : IMappingBuilder
     private readonly MappingToFileSaver _mappingToFileSaver;
     private readonly IGuidUtils _guidUtils;
     private readonly IDateTimeUtils _dateTimeUtils;
+    private readonly IResponseMessageBuilder _responseMessageBuilder;
 
     /// <summary>
     /// Create a MappingBuilder
@@ -43,6 +44,7 @@ public class MappingBuilder : IMappingBuilder
 
         _guidUtils = new GuidUtils();
         _dateTimeUtils = new DateTimeUtils();
+        _responseMessageBuilder = new ResponseMessageBuilder(_dateTimeUtils);
     }
 
     internal MappingBuilder(
@@ -51,7 +53,8 @@ public class MappingBuilder : IMappingBuilder
         MappingConverter mappingConverter,
         MappingToFileSaver mappingToFileSaver,
         IGuidUtils guidUtils,
-        IDateTimeUtils dateTimeUtils
+        IDateTimeUtils dateTimeUtils,
+        IResponseMessageBuilder responseMessageBuilder
     )
     {
         _settings = Guard.NotNull(settings);
@@ -60,12 +63,13 @@ public class MappingBuilder : IMappingBuilder
         _mappingToFileSaver = Guard.NotNull(mappingToFileSaver);
         _guidUtils = Guard.NotNull(guidUtils);
         _dateTimeUtils = Guard.NotNull(dateTimeUtils);
+        _responseMessageBuilder = Guard.NotNull(responseMessageBuilder);
     }
 
     /// <inheritdoc />
     public IRespondWithAProvider Given(IRequestMatcher requestMatcher, bool saveToFile = false)
     {
-        return new RespondWithAProvider(RegisterMapping, Guard.NotNull(requestMatcher), _settings, _guidUtils, _dateTimeUtils, saveToFile);
+        return new RespondWithAProvider(RegisterMapping, Guard.NotNull(requestMatcher), _settings, _guidUtils, _dateTimeUtils, _responseMessageBuilder, saveToFile);
     }
 
     /// <inheritdoc />

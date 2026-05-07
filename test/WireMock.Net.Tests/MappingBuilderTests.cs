@@ -59,7 +59,8 @@ public class MappingBuilderTests
             mappingConverter,
             mappingToFileSaver,
             guidUtilsMock.Object,
-            dateTimeUtilsMock.Object
+            dateTimeUtilsMock.Object,
+            new ResponseMessageBuilder(dateTimeUtilsMock.Object)
         );
 
         _sut.Given(Request.Create()

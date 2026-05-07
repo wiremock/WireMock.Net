@@ -5,6 +5,7 @@ using Moq;
 using WireMock.Logging;
 using WireMock.Owin;
 using WireMock.Owin.Mappers;
+using WireMock.Util;
 
 namespace WireMock.Net.Tests.Owin;
 
@@ -12,6 +13,7 @@ public class GlobalExceptionMiddlewareTests
 {
     private readonly Mock<IWireMockMiddlewareOptions> _optionsMock;
     private readonly Mock<IOwinResponseMapper> _responseMapperMock;
+    private readonly IResponseMessageBuilder _responseMessageBuilder;
 
     private readonly GlobalExceptionMiddleware _sut;
 
@@ -23,7 +25,9 @@ public class GlobalExceptionMiddlewareTests
         _responseMapperMock = new Mock<IOwinResponseMapper>();
         _responseMapperMock.Setup(m => m.MapAsync(It.IsAny<ResponseMessage?>(), It.IsAny<HttpResponse>())).Returns(Task.FromResult(true));
 
-        _sut = new GlobalExceptionMiddleware(_ => Task.CompletedTask, _optionsMock.Object, _responseMapperMock.Object);
+        _responseMessageBuilder = new ResponseMessageBuilder(new DateTimeUtils());
+
+        _sut = new GlobalExceptionMiddleware(_ => Task.CompletedTask, _optionsMock.Object, _responseMapperMock.Object, _responseMessageBuilder);
     }
 
     [Fact]
@@ -37,7 +41,7 @@ public class GlobalExceptionMiddlewareTests
     public void GlobalExceptionMiddleware_Invoke_InvalidNext_ShouldCallResponseMapperWith500()
     {
         // Arrange
-        var sut = new GlobalExceptionMiddleware(_ => throw new ArgumentException(), _optionsMock.Object, _responseMapperMock.Object);
+        var sut = new GlobalExceptionMiddleware(_ => throw new ArgumentException(), _optionsMock.Object, _responseMapperMock.Object, _responseMessageBuilder);
 
         // Act
         sut.Invoke(Mock.Of<HttpContext>());
