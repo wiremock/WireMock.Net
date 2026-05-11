@@ -26,7 +26,8 @@ internal class WireMockMiddleware(
     IMappingMatcher mappingMatcher,
     IWireMockMiddlewareLogger logger,
     IGuidUtils guidUtils,
-    IDateTimeUtils dateTimeUtils
+    IDateTimeUtils dateTimeUtils,
+    IResponseMessageBuilder responseMessageBuilder
 )
 {
     private readonly object _lock = new();
@@ -97,7 +98,7 @@ internal class WireMockMiddleware(
             {
                 logRequest = true;
                 options.Logger.Warn("HttpStatusCode set to 404 : No matching mapping found");
-                response = ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound);
+                response = responseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound);
                 return;
             }
 
@@ -109,7 +110,7 @@ internal class WireMockMiddleware(
                 if (!authorizationHeaderPresent)
                 {
                     options.Logger.Error("HttpStatusCode set to 401, authorization header is missing.");
-                    response = ResponseMessageBuilder.Create(HttpStatusCode.Unauthorized, null);
+                    response = responseMessageBuilder.Create(HttpStatusCode.Unauthorized, null);
                     return;
                 }
 
@@ -117,7 +118,7 @@ internal class WireMockMiddleware(
                 if (!MatchScores.IsPerfect(authorizationHeaderMatchResult.Score))
                 {
                     options.Logger.Error("HttpStatusCode set to 401, authentication failed.", authorizationHeaderMatchResult.Exception ?? throw new WireMockException("Authentication failed"));
-                    response = ResponseMessageBuilder.Create(HttpStatusCode.Unauthorized, null);
+                    response = responseMessageBuilder.Create(HttpStatusCode.Unauthorized, null);
                     return;
                 }
             }
@@ -165,7 +166,7 @@ internal class WireMockMiddleware(
             options.Logger.Error($"Providing a Response for Mapping '{result.Match?.Mapping.Guid}' failed. HttpStatusCode set to 500. Exception: {ex}");
             WireMockActivitySource.RecordException(activity, ex);
 
-            response = ResponseMessageBuilder.Create(500, ex.Message);
+            response = responseMessageBuilder.Create(500, ex.Message);
         }
         finally
         {
@@ -179,7 +180,7 @@ internal class WireMockMiddleware(
             {
                 options.Logger.Error("HttpStatusCode set to 404 : No matching mapping found", ex);
 
-                var notFoundResponse = ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound);
+                var notFoundResponse = responseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound);
                 await responseMapper.MapAsync(notFoundResponse, ctx.Response).ConfigureAwait(false);
             }
         }
