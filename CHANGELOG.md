@@ -1,3 +1,7 @@
+# 2.6.0 (11 May 2026)
+- [#1455](https://github.com/wiremock/WireMock.Net/pull/1455) - Fix request storing when RequestLogExpirationDuration is set [bug]  [bug] contributed by [pbenko-xitaso](https://github.com/pbenko-xitaso)
+- [#1454](https://github.com/wiremock/WireMock.Net/issues/1454) - No requests stored in Standalone when RequestLogExpirationDuration is set [bug]
+
 # 2.5.0 (04 May 2026)
 - [#1451](https://github.com/wiremock/WireMock.Net/pull/1451) - Feature/early mismatch [feature] contributed by [Stepami](https://github.com/Stepami)
 - [#1452](https://github.com/wiremock/WireMock.Net/pull/1452) - Bump log4net from 2.0.15 to 3.3.0 in example console app [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
