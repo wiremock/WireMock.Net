@@ -52,7 +52,7 @@ public partial class WireMockServer
             if (mappingModels.Length == 1)
             {
                 var guid = ConvertWireMockOrgMappingAndRegisterAsRespondProvider(mappingModels[0]);
-                return ResponseMessageBuilder.Create(201, "Mapping added", guid);
+                return _responseMessageBuilder.Create(201, "Mapping added", guid);
             }
 
             foreach (var mappingModel in mappingModels)
@@ -60,17 +60,17 @@ public partial class WireMockServer
                 ConvertWireMockOrgMappingAndRegisterAsRespondProvider(mappingModel);
             }
 
-            return ResponseMessageBuilder.Create(201, "Mappings added");
+            return _responseMessageBuilder.Create(201, "Mappings added");
         }
         catch (ArgumentException a)
         {
             _settings.Logger.Error("HttpStatusCode set to 400 {0}", a);
-            return ResponseMessageBuilder.Create(400, a.Message);
+            return _responseMessageBuilder.Create(400, a.Message);
         }
         catch (Exception e)
         {
             _settings.Logger.Error("HttpStatusCode set to 500 {0}", e);
-            return ResponseMessageBuilder.Create(500, e.ToString());
+            return _responseMessageBuilder.Create(500, e.ToString());
         }
     }
 

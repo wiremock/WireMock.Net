@@ -42,6 +42,7 @@ public partial class WireMockServer : IWireMockServer
     private readonly MappingBuilder _mappingBuilder;
     private readonly IGuidUtils _guidUtils = new GuidUtils();
     private readonly IDateTimeUtils _dateTimeUtils = new DateTimeUtils();
+    private readonly IResponseMessageBuilder _responseMessageBuilder;
     private readonly MappingSerializer _mappingSerializer;
 
     /// <inheritdoc />
@@ -354,6 +355,8 @@ public partial class WireMockServer : IWireMockServer
     {
         _settings = Guard.NotNull(settings);
 
+        _responseMessageBuilder = new ResponseMessageBuilder(_dateTimeUtils);
+
         _mappingSerializer = new MappingSerializer(settings.DefaultJsonSerializer ?? new NewtonsoftJsonConverter());
 
         // Set default values if not provided
@@ -407,7 +410,8 @@ public partial class WireMockServer : IWireMockServer
             _mappingConverter,
             _mappingToFileSaver,
             _guidUtils,
-            _dateTimeUtils
+            _dateTimeUtils,
+            _responseMessageBuilder
         );
 
         _options.AdditionalServiceRegistration = _settings.AdditionalServiceRegistration;
@@ -471,7 +475,7 @@ public partial class WireMockServer : IWireMockServer
         Given(Request.Create().WithPath("/*").UsingAnyMethod())
             .WithGuid(Guid.Parse("90008000-0000-4444-a17e-669cd84f1f05"))
             .AtPriority(1000)
-            .RespondWith(new DynamicResponseProvider((_, _) => ResponseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound)));
+            .RespondWith(new DynamicResponseProvider((_, _) => _responseMessageBuilder.Create(HttpStatusCode.NotFound, WireMockConstants.NoMatchingFound)));
     }
 
     /// <inheritdoc cref="IWireMockServer.Reset" />

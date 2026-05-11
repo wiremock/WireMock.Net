@@ -16,7 +16,7 @@ using WireMock.WebSockets;
 
 namespace WireMock.ResponseProviders;
 
-internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils guidUtils, IDateTimeUtils dateTimeUtils) : IResponseProvider
+internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils guidUtils, IDateTimeUtils dateTimeUtils, IResponseMessageBuilder responseMessageBuilder) : IResponseProvider
 {
     public async Task<(IResponseMessage Message, IMapping? Mapping)> ProvideResponseAsync(
         IMapping mapping,
@@ -27,7 +27,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
         // Check if this is a WebSocket upgrade request
         if (!context.WebSockets.IsWebSocketRequest)
         {
-            return (ResponseMessageBuilder.Create(HttpStatusCode.BadRequest, "Bad Request: Not a WebSocket upgrade request"), null);
+            return (responseMessageBuilder.Create(HttpStatusCode.BadRequest, "Bad Request: Not a WebSocket upgrade request"), null);
         }
 
         if (!context.Items.TryGetValue<IWireMockMiddlewareOptions>(nameof(IWireMockMiddlewareOptions), out var options))
@@ -110,7 +110,7 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
             // If we haven't upgraded yet, we can return HTTP error
             if (!context.Response.HasStarted)
             {
-                return (ResponseMessageBuilder.Create(HttpStatusCode.InternalServerError, $"WebSocket error: {ex.Message}"), null);
+                return (responseMessageBuilder.Create(HttpStatusCode.InternalServerError, $"WebSocket error: {ex.Message}"), null);
             }
 
             // Already upgraded - return marker

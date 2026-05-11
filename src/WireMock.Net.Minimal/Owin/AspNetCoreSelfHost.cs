@@ -72,6 +72,7 @@ internal partial class AspNetCoreSelfHost
                 services.AddSingleton<IOwinResponseMapper, OwinResponseMapper>();
                 services.AddSingleton<IGuidUtils, GuidUtils>();
                 services.AddSingleton<IDateTimeUtils, DateTimeUtils>();
+                services.AddSingleton<IResponseMessageBuilder, ResponseMessageBuilder>();
                 services.AddSingleton<LogEntryMapper>();
                 services.AddSingleton<IWireMockMiddlewareLogger, WireMockMiddlewareLogger>();
 

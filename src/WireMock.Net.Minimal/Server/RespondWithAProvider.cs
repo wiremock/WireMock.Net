@@ -24,6 +24,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
     private readonly WireMockServerSettings _settings;
     private readonly IDateTimeUtils _dateTimeUtils;
     private readonly IGuidUtils _guidUtils;
+    private readonly IResponseMessageBuilder _responseMessageBuilder;
 
     private readonly bool _saveToFile;
 
@@ -56,6 +57,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
         WireMockServerSettings settings,
         IGuidUtils guidUtils,
         IDateTimeUtils dateTimeUtils,
+        IResponseMessageBuilder responseMessageBuilder,
         bool saveToFile = false
     )
     {
@@ -64,6 +66,7 @@ internal class RespondWithAProvider : IRespondWithAProvider
         _settings = Guard.NotNull(settings);
         _dateTimeUtils = Guard.NotNull(dateTimeUtils);
         _guidUtils = Guard.NotNull(guidUtils);
+        _responseMessageBuilder = Guard.NotNull(responseMessageBuilder);
 
         _saveToFile = saveToFile;
 
@@ -79,7 +82,8 @@ internal class RespondWithAProvider : IRespondWithAProvider
             provider = new WebSocketResponseProvider(
                 response.WebSocketBuilder,
                 _guidUtils,
-                _dateTimeUtils
+                _dateTimeUtils,
+                _responseMessageBuilder
             );
         }
 
