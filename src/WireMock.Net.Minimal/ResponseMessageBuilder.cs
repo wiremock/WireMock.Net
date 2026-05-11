@@ -9,14 +9,6 @@ using WireMock.Util;
 
 namespace WireMock;
 
-internal interface IResponseMessageBuilder
-{
-    ResponseMessage Create(HttpStatusCode statusCode, string? status, Guid? guid = null);
-    ResponseMessage Create(int statusCode, string? status, Guid? guid = null);
-    ResponseMessage Create(int statusCode, string? status, string? error, Guid? guid = null);
-    ResponseMessage Create(HttpStatusCode statusCode);
-}
-
 internal class ResponseMessageBuilder(IDateTimeUtils dateTimeUtils) : IResponseMessageBuilder
 {
     private static readonly IDictionary<string, WireMockList<string>> ContentTypeJsonHeaders = new Dictionary<string, WireMockList<string>>
