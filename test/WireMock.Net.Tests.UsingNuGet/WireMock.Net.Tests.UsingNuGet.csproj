@@ -30,6 +30,7 @@
 
     <ItemGroup>
         <PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />
+        <PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
         <PackageReference Update="SonarAnalyzer.CSharp" Version="10.11.0.117924" />
     </ItemGroup>
 
