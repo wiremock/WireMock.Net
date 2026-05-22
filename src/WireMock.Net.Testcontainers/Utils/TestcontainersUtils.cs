@@ -22,8 +22,8 @@ public static class TestcontainersUtils
             throw new InvalidOperationException($"The {nameof(TestcontainersSettings.OS.DockerEndpointAuthConfig)} is null. Check if Docker is started.");
         }
 
-        using var dockerClientConfig = TestcontainersSettings.OS.DockerEndpointAuthConfig.GetDockerClientConfiguration();
-        using var dockerClient = dockerClientConfig.CreateClient();
+        var dockerClientBuilder = TestcontainersSettings.OS.DockerEndpointAuthConfig.GetDockerClientBuilder();
+        using var dockerClient = dockerClientBuilder.Build();
 
         var version = await dockerClient.System.GetVersionAsync();
         return version.Os.IndexOf("Windows", StringComparison.OrdinalIgnoreCase) >= 0 ? OSPlatform.Windows : OSPlatform.Linux;
