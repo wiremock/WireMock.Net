@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Api" Version="1.15.3" />
     <PackageReference Include="WireMock.Net" Version="1.25.0" />
   </ItemGroup>
 
