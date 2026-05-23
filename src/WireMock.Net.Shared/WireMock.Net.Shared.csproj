@@ -34,14 +34,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Handlebars.Net.Helpers" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers" Version="2.5.5" />
         <!--<PackageReference Include="Handlebars.Net.Helpers.DynamicLinq" Version="2.5.2" />-->
-        <PackageReference Include="Handlebars.Net.Helpers.Humanizer" Version="2.5.2" />
-        <PackageReference Include="Handlebars.Net.Helpers.Json" Version="2.5.2" />
-        <PackageReference Include="Handlebars.Net.Helpers.Random" Version="2.5.2" />
-        <PackageReference Include="Handlebars.Net.Helpers.Xeger" Version="2.5.2" />
-        <PackageReference Include="Handlebars.Net.Helpers.XPath" Version="2.5.2" />
-        <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.5.2" />
+        <PackageReference Include="Handlebars.Net.Helpers.Humanizer" Version="2.5.5" />
+        <PackageReference Include="Handlebars.Net.Helpers.Json" Version="2.5.5" />
+        <PackageReference Include="Handlebars.Net.Helpers.Random" Version="2.5.5" />
+        <PackageReference Include="Handlebars.Net.Helpers.Xeger" Version="2.5.5" />
+        <PackageReference Include="Handlebars.Net.Helpers.XPath" Version="2.5.5" />
+        <PackageReference Include="Handlebars.Net.Helpers.Xslt" Version="2.5.5" />
     </ItemGroup>
 
     <ItemGroup>
