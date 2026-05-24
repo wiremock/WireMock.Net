@@ -1,16 +1,23 @@
+# 2.7.0 (24 May 2026)
+- [#1457](https://github.com/wiremock/WireMock.Net/pull/1457) - Update OpenTelemetry.Api from 1.14.0 to 1.15.3 in unit test project [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1459](https://github.com/wiremock/WireMock.Net/pull/1459) - chore: update Handlebars 2.5.2 to 2.5.5 [dependencies] contributed by [kamisoft-fr](https://github.com/kamisoft-fr)
+- [#1461](https://github.com/wiremock/WireMock.Net/pull/1461) - Update Testcontainers nuget package to 4.12.0 [dependencies] contributed by [MD-V](https://github.com/MD-V)
+- [#1462](https://github.com/wiremock/WireMock.Net/pull/1462) - Update Scriban.Signed to latest [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1458](https://github.com/wiremock/WireMock.Net/issues/1458) - update Handlebars Humanizer package version [feature]
+
 # 2.6.0 (11 May 2026)
 - [#1455](https://github.com/wiremock/WireMock.Net/pull/1455) - Fix request storing when RequestLogExpirationDuration is set [bug]  [bug] contributed by [pbenko-xitaso](https://github.com/pbenko-xitaso)
 - [#1454](https://github.com/wiremock/WireMock.Net/issues/1454) - No requests stored in Standalone when RequestLogExpirationDuration is set [bug]
 
 # 2.5.0 (04 May 2026)
 - [#1451](https://github.com/wiremock/WireMock.Net/pull/1451) - Feature/early mismatch [feature] contributed by [Stepami](https://github.com/Stepami)
-- [#1452](https://github.com/wiremock/WireMock.Net/pull/1452) - Bump log4net from 2.0.15 to 3.3.0 in example console app [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1452](https://github.com/wiremock/WireMock.Net/pull/1452) - Bump log4net from 2.0.15 to 3.3.0 in example console app [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#1453](https://github.com/wiremock/WireMock.Net/pull/1453) - Fix CVE-2026-40021: upgrade log4net to 3.3.0 in examples/WireMock.Net.Service/packages.config [dependencies] contributed by [Copilot](https://github.com/apps/copilot-swe-agent)
 - [#1442](https://github.com/wiremock/WireMock.Net/issues/1442) - Bug: [grpc] WithBodyAsProtoBuf exception on match [bug]
 
 # 2.4.0 (24 April 2026)
 - [#1437](https://github.com/wiremock/WireMock.Net/pull/1437) - Added feature to enable and disable mappings [feature] contributed by [jayaraman-venkatesan](https://github.com/jayaraman-venkatesan)
-- [#1450](https://github.com/wiremock/WireMock.Net/pull/1450) - Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.x [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1450](https://github.com/wiremock/WireMock.Net/pull/1450) - Bump OpenTelemetry.Exporter.OpenTelemetryProtocol from 1.14.0 to 1.15.x [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#1421](https://github.com/wiremock/WireMock.Net/issues/1421) - Deactivate mapping without deleting it [feature]
 
 # 2.3.0 (20 April 2026)

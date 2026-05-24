@@ -1,5 +1,8 @@
-# 2.6.0 (11 May 2026)
-- #1455 Fix request storing when RequestLogExpirationDuration is set [bug]  [bug]
-- #1454 No requests stored in Standalone when RequestLogExpirationDuration is set [bug]
+# 2.7.0 (24 May 2026)
+- #1457 Update OpenTelemetry.Api from 1.14.0 to 1.15.3 in unit test project [dependencies]
+- #1459 chore: update Handlebars 2.5.2 to 2.5.5 [dependencies]
+- #1461 Update Testcontainers nuget package to 4.12.0 [dependencies]
+- #1462 Update Scriban.Signed to latest [dependencies]
+- #1458 update Handlebars Humanizer package version [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
