@@ -21,10 +21,10 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Build solution
-      run: dotnet build src/**/*.csproj -c Release
+      run: dotnet build "**/src/**/*.csproj" -c Release
 
     - name: Pack projects
-      run: dotnet pack src/**/*.csproj -c Release --no-build -o ./packages
+      run: dotnet pack "**/src/**/*.csproj" -c Release --no-build -o ./packages
 
     - name: NuGet login (OIDC → temp API key)
       uses: NuGet/login@v1
@@ -33,4 +33,4 @@ jobs:
         user: ${{ secrets.NUGET_USER }}
 
     - name: Push to NuGet
-      run: dotnet nuget push "./packages/*.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
+      run: dotnet nuget push "**/packages/*.nupkg" --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source "https://api.nuget.org/v3/index.json" --skip-duplicate
