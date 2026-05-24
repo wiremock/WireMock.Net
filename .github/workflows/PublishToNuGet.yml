@@ -15,16 +15,26 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: '8.0.x'
+    # - name: Setup .NET
+    #   uses: actions/setup-dotnet@v5
+    #   with:
+    #     dotnet-version: '8.0.x'
 
-    - name: Build solution
-      run: dotnet build "**/src/**/*.csproj" -c Release
+    - name: Build projects
+      shell: pwsh
+      run: |
+        Get-ChildItem ./src -Recurse -Filter *.csproj |
+        ForEach-Object {
+          dotnet build $_.FullName -c Release
+        }
 
     - name: Pack projects
-      run: dotnet pack "**/src/**/*.csproj" -c Release --no-build -o ./packages
+      shell: pwsh
+      run: |
+        Get-ChildItem ./src -Recurse -Filter *.csproj |
+        ForEach-Object {
+          dotnet build $_.FullName -c Release --no-build -o ./packages
+        }
 
     - name: NuGet login (OIDC → temp API key)
       uses: NuGet/login@v1
