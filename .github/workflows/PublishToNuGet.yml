@@ -2,7 +2,6 @@ name: Publish to NuGet
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   publish:
@@ -33,7 +32,7 @@ jobs:
       run: |
         Get-ChildItem ./src -Recurse -Filter *.csproj |
         ForEach-Object {
-          dotnet build $_.FullName -c Release --no-build -o ./packages
+          dotnet pack $_.FullName -c Release --no-build -o ./packages
         }
 
     - name: NuGet login (OIDC → temp API key)
