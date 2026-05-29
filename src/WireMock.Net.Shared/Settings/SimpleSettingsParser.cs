@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Collections;
+using JsonConverter.Abstractions;
 using WireMock.Extensions;
 using WireMock.Util;
 
@@ -191,9 +192,9 @@ internal class SimpleSettingsParser
         return GetValue(name, values => values.FirstOrDefault());
     }
 
-    public T? GetObjectValueFromJson<T>(string name)
+    public T? GetObjectValueFromJson<T>(string name, IJsonConverter jsonConverter)
     {
         var value = GetValue(name, values => values.FirstOrDefault());
-        return string.IsNullOrWhiteSpace(value) ? default : JsonUtils.DeserializeObject<T>(value!);
+        return string.IsNullOrWhiteSpace(value) ? default : jsonConverter.Deserialize<T>(value!);
     }
 }

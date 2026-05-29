@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Text;
-using System.Threading.Tasks;
 using JsonConverter.Abstractions;
 using WireMock.Models;
 
@@ -19,8 +17,10 @@ public interface IBodyResponseBuilder : IFaultResponseBuilder
     /// <param name="body">The body.</param>
     /// <param name="destination">The Body Destination format (SameAsSource, String or Bytes).</param>
     /// <param name="encoding">The body encoding.</param>
+    /// <param name="jsonConverter">The JSON converter.</param>
+    /// <param name="options">The JSON converter options.</param>
     /// <returns>A <see cref="IResponseBuilder"/>.</returns>
-    IResponseBuilder WithBody(string body, string? destination = BodyDestinationFormat.SameAsSource, Encoding? encoding = null);
+    IResponseBuilder WithBody(string body, string? destination = BodyDestinationFormat.SameAsSource, Encoding? encoding = null, IJsonConverter? jsonConverter = null, JsonConverterOptions? options = null);
 
     /// <summary>
     /// WithBody : Create a ... response based on a callback function.

@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Newtonsoft.Json.Linq;
 using WireMock.Util;
 

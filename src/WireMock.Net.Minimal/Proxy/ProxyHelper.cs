@@ -48,7 +48,8 @@ internal class ProxyHelper(WireMockServerSettings settings)
             originalUri,
             deserializeJson,
             decompressGzipAndDeflate,
-            deserializeFormUrlEncoded
+            deserializeFormUrlEncoded,
+            _settings.DefaultJsonSerializer
         ).ConfigureAwait(false);
 
         IMapping? newMapping = null;

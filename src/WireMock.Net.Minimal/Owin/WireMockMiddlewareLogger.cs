@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics;
-using System.Linq;
 using WireMock.Logging;
 using WireMock.Owin.ActivityTracing;
 using WireMock.Serialization;
@@ -42,7 +41,7 @@ internal class WireMockMiddlewareLogger(
             if (_options.SaveUnmatchedRequests == true && match?.RequestMatchResult is not { IsPerfectMatch: true })
             {
                 var filename = $"{logEntry.Guid}.LogEntry.json";
-                _options.FileSystemHandler?.WriteUnmatchedRequest(filename, JsonUtils.Serialize(logEntry));
+                _options.FileSystemHandler?.WriteUnmatchedRequest(filename, _options.DefaultJsonSerializer.Serialize(logEntry));
             }
         }
         catch

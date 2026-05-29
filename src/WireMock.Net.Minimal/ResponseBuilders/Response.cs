@@ -197,7 +197,7 @@ public partial class Response : IResponseBuilder
 
         if (ProxyAndRecordSettings != null && _httpClientForProxy != null)
         {
-            string RemoveFirstOccurrence(string source, string find)
+            static string RemoveFirstOccurrence(string source, string find)
             {
                 int place = source.IndexOf(find, StringComparison.OrdinalIgnoreCase);
                 return place >= 0 ? source.Remove(place, find.Length) : source;
@@ -265,7 +265,7 @@ public partial class Response : IResponseBuilder
                     var decoded = await protoBufMatcher.DecodeAsync(requestMessage.BodyData?.BodyAsBytes).ConfigureAwait(false);
                     if (decoded != null)
                     {
-                        requestMessageImplementation.BodyAsJson = JsonUtils.ConvertValueToJToken(decoded);
+                        requestMessageImplementation.BodyAsJson = settings.DefaultJsonSerializer.ToJsonToken(decoded);
                     }
                 }
             }

@@ -3,7 +3,6 @@
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Models;
@@ -323,7 +322,7 @@ public class RequestBuilderWithBodyTests
     }
 
     [Fact]
-    public void Request_WithBodyJson_PathMatcher_false()
+    public void Request_WithBodyJson_JsonPathMatcher_false()
     {
         // Arrange
         var spec = Request.Create().UsingAnyMethod().WithBody(new JsonPathMatcher("$.things[?(@.name == 'RequiredThing')]"));
@@ -368,10 +367,10 @@ public class RequestBuilderWithBodyTests
     public void Request_WithBody_Array_JsonPathMatcher_1()
     {
         // Arrange
-        var spec = Request.Create().UsingAnyMethod().WithBody(new JsonPathMatcher("$..books[?(@.price < 10)]"));
+        var spec = Request.Create().UsingAnyMethod().WithBody(new JsonPathMatcher("$[?(@.Id == 1)]"));
 
         // Act
-        string jsonString = "{ \"books\": [ { \"category\": \"test1\", \"price\": 8.95 }, { \"category\": \"test2\", \"price\": 20 } ] }";
+        string jsonString = "[{\"Id\": 1, \"Name\": \"Test\"}, {\"Id\": 2, \"Name\": \"Test2\"}]";
         var bodyData = new BodyData
         {
             BodyAsJson = JsonConvert.DeserializeObject(jsonString),
@@ -391,10 +390,10 @@ public class RequestBuilderWithBodyTests
     public void Request_WithBody_Array_JsonPathMatcher_2()
     {
         // Arrange
-        var spec = Request.Create().UsingAnyMethod().WithBody(new JsonPathMatcher("$..[?(@.Id == 1)]"));
+        var spec = Request.Create().UsingAnyMethod().WithBody(new JsonPathMatcher("$.test"));
 
         // Act
-        string jsonString = "{ \"Id\": 1, \"Name\": \"Test\" }";
+        string jsonString = "{\"name\": \"PathSelectorTest\", \"test\": \"test\", \"test2\": \"test2\", \"arr\": [{\"line1\": \"line1\"}]}";
         var bodyData = new BodyData
         {
             BodyAsJson = JsonConvert.DeserializeObject(jsonString),
@@ -478,6 +477,133 @@ public class RequestBuilderWithBodyTests
         // Assert
         var requestMatchResult = new RequestMatchResult();
         requestBuilder.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBody_SystemTextJsonPathMatcher_true()
+    {
+        // Arrange
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$..things[?(@.name == 'RequiredThing')]"));
+
+        // Act
+        var body = new BodyData
+        {
+            BodyAsString = "{ \"things\": [ { \"name\": \"RequiredThing\" }, { \"name\": \"Wiremock\" } ] }",
+            DetectedBodyType = BodyType.String
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, body);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBodyJson_SystemTextJsonPathMatcher_false()
+    {
+        // Arrange
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$.things[?(@.name == 'RequiredThing')]"));
+
+        // Act
+        var body = new BodyData
+        {
+            BodyAsString = "{ \"things\": { \"name\": \"Wiremock\" } }",
+            DetectedBodyType = BodyType.String
+        };
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, body);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBody_Object_SystemTextJsonPathMatcher_true()
+    {
+        // Arrange
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$.arr[0].line1"));
+
+        // Act
+        string jsonString = "{\"name\": \"PathSelectorTest\", \"test\": \"test\", \"test2\": \"test2\", \"arr\": [{\"line1\": \"line1\"}]}";
+        var bodyData = new BodyData
+        {
+            BodyAsString = jsonString,
+            Encoding = Encoding.UTF8,
+            DetectedBodyType = BodyType.String
+        };
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, bodyData);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBody_Array_SystemTextJsonPathMatcher_1()
+    {
+        // Arrange - RFC 9535: filter expression requires an array context
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$[?(@.Id == 1)]"));
+
+        // Act
+        string jsonString = "[{\"Id\": 1, \"Name\": \"Test\"}, {\"Id\": 2, \"Name\": \"Test2\"}]";
+        var bodyData = new BodyData
+        {
+            BodyAsString = jsonString,
+            Encoding = Encoding.UTF8,
+            DetectedBodyType = BodyType.String
+        };
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, bodyData);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBody_Array_SystemTextJsonPathMatcher_2()
+    {
+        // Arrange
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$.test"));
+
+        // Act
+        string jsonString = "{\"name\": \"PathSelectorTest\", \"test\": \"test\", \"test2\": \"test2\", \"arr\": [{\"line1\": \"line1\"}]}";
+        var bodyData = new BodyData
+        {
+            BodyAsString = jsonString,
+            Encoding = Encoding.UTF8,
+            DetectedBodyType = BodyType.String
+        };
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, bodyData);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        double result = spec.GetMatchingScore(request, requestMatchResult);
+        result.Should().Be(1.0);
+    }
+
+    [Fact]
+    public void Request_WithBody_SystemTextJsonPathMatcher_false()
+    {
+        // Arrange
+        var spec = Request.Create().UsingAnyMethod().WithBody(new SystemTextJsonPathMatcher("$.nonexistent"));
+
+        // Act
+        string jsonString = "{\"name\": \"Test\", \"arr\": [{\"line1\": \"line1\"}]}";
+        var bodyData = new BodyData
+        {
+            BodyAsString = jsonString,
+            Encoding = Encoding.UTF8,
+            DetectedBodyType = BodyType.String
+        };
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "PUT", ClientIp, bodyData);
+
+        // Assert
+        var requestMatchResult = new RequestMatchResult();
+        spec.GetMatchingScore(request, requestMatchResult).Should().NotBe(1.0);
     }
 }
 

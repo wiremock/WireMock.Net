@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using JsonConverter.Newtonsoft.Json;
 using WireMock.Settings;
 using WireMock.Types;
 
@@ -18,7 +19,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_Arguments()
     {
         // Assign
-        _parser.Parse(new[] { "--test1", "one", "--test2", "2", "--test3", "3", "--test4", "true", "--test5", "Https" });
+        _parser.Parse(["--test1", "one", "--test2", "2", "--test3", "3", "--test4", "true", "--test5", "Https"]);
 
         // Act
         string? stringValue = _parser.GetStringValue("test1");
@@ -46,7 +47,7 @@ public class SimpleSettingsParserTests
             { "WireMockServerSettings__test1", "one" },
             { "WireMockServerSettings__test2", "two" }
         };
-        _parser.Parse(new string[0], env);
+        _parser.Parse([], env);
 
         // Act
         string? value1 = _parser.GetStringValue("test1");
@@ -61,7 +62,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_ArgumentsAsCombinedKeyAndValue()
     {
         // Assign
-        _parser.Parse(new[] { "--test1 one", "--test2 two", "--test3 three" });
+        _parser.Parse(["--test1 one", "--test2 two", "--test3 three"]);
 
         // Act
         string? value1 = _parser.GetStringValue("test1");
@@ -78,7 +79,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_ArgumentsMixed()
     {
         // Assign
-        _parser.Parse(new[] { "--test1 one", "--test2", "two", "--test3 three" });
+        _parser.Parse(["--test1 one", "--test2", "two", "--test3 three"]);
 
         // Act
         string? value1 = _parser.GetStringValue("test1");
@@ -95,7 +96,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_GetBoolValue()
     {
         // Assign
-        _parser.Parse(new[] { "'--test1", "false'", "--test2 true" });
+        _parser.Parse(["'--test1", "false'", "--test2 true"]);
 
         // Act
         bool value1 = _parser.GetBoolValue("test1");
@@ -112,7 +113,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_GetBoolWithDefault()
     {
         // Assign
-        _parser.Parse(new[] { "--test1", "true", "--test2", "false" });
+        _parser.Parse(["--test1", "true", "--test2", "false"]);
 
         // Act
         bool value1 = _parser.GetBoolWithDefault("test1", "test1_fallback", defaultValue: false);
@@ -134,7 +135,7 @@ public class SimpleSettingsParserTests
             { "WireMockServerSettings__test1", "false" },
             { "WireMockServerSettings__test2", "true" }
         };
-        _parser.Parse(new string[0], env);
+        _parser.Parse([], env);
 
         // Act
         bool value1 = _parser.GetBoolValue("test1");
@@ -151,7 +152,7 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_GetIntValue()
     {
         // Assign
-        _parser.Parse(new[] { "--test1", "42", "--test2 55" });
+        _parser.Parse(["--test1", "42", "--test2 55"]);
 
         // Act
         int? value1 = _parser.GetIntValue("test1");
@@ -175,7 +176,7 @@ public class SimpleSettingsParserTests
             { "WireMockServerSettings__test1", "42" },
             { "WireMockServerSETTINGS__TEST2", "55" }
         };
-        _parser.Parse(new string[0], env);
+        _parser.Parse([], env);
 
         // Act
         int? value1 = _parser.GetIntValue("test1");
@@ -194,10 +195,10 @@ public class SimpleSettingsParserTests
     public void SimpleCommandLineParser_Parse_GetObjectValueFromJson()
     {
         // Assign
-        _parser.Parse(new[] { @"--json {""k1"":""v1"",""k2"":""v2""}" });
+        _parser.Parse([@"--json {""k1"":""v1"",""k2"":""v2""}"]);
 
         // Act
-        var value = _parser.GetObjectValueFromJson<Dictionary<string, string>>("json");
+        var value = _parser.GetObjectValueFromJson<Dictionary<string, string>>("json", new NewtonsoftJsonConverter());
 
         // Assert
         var expected = new Dictionary<string, string>

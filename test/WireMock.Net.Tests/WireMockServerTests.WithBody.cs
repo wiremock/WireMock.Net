@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using JsonConverter.System.Text.Json;
 using WireMock.Matchers;
+using WireMock.Net.Xunit;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -232,9 +233,13 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithBodyAsJson_Using_PostAsync_And_JsonPartialWildcardMatcher_And_SystemTextJson_ShouldMatch()
     {
         // Arrange
-        using var server = WireMockServer.Start(x => x.DefaultJsonSerializer = new SystemTextJsonConverter());
+        using var server = WireMockServer.Start(settings =>
+        {
+            settings.Logger = new TestOutputHelperWireMockLogger(testOutputHelper);
+            settings.DefaultJsonSerializer = new SystemTextJsonConverter();
+        });
 
-        var matcher = new JsonPartialWildcardMatcher(new { id = "^[a-f0-9]{32}-[0-9]$" }, ignoreCase: true, regex: true);
+        var matcher = new SystemTextJsonPartialWildcardMatcher(new { id = "^[a-f0-9]{32}-[0-9]$" }, ignoreCase: true, regex: true);
         server.Given(Request.Create()
             .WithHeader("Content-Type", "application/json*")
             .UsingPost()

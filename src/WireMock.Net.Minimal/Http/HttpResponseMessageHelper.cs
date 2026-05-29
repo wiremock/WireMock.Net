@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using System.Net;
-using System.Net.Http;
+using JsonConverter.Abstractions;
 using WireMock.Util;
 
 namespace WireMock.Http;
@@ -15,7 +14,8 @@ internal static class HttpResponseMessageHelper
         Uri originalUri,
         bool deserializeJson,
         bool decompressGzipAndDeflate,
-        bool deserializeFormUrlEncoded)
+        bool deserializeFormUrlEncoded,
+        IJsonConverter jsonConverter)
     {
         var responseMessage = new ResponseMessage { StatusCode = (int)httpResponseMessage.StatusCode };
 
@@ -45,7 +45,8 @@ internal static class HttpResponseMessageHelper
                     DeserializeJson = deserializeJson,
                     ContentEncoding = contentEncodingHeader?.FirstOrDefault(),
                     DecompressGZipAndDeflate = decompressGzipAndDeflate,
-                    DeserializeFormUrlEncoded = deserializeFormUrlEncoded
+                    DeserializeFormUrlEncoded = deserializeFormUrlEncoded,
+                    DefaultJsonConverter = jsonConverter
                 };
                 responseMessage.BodyData = await BodyParser.ParseAsync(bodyParserSettings).ConfigureAwait(false);
             }

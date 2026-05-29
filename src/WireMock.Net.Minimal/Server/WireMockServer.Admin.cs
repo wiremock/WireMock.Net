@@ -346,7 +346,7 @@ public partial class WireMockServer
             }
 
             o.CorsPolicyOptions = corsPolicyOptions;
-            o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode) _settings.ClientCertificateMode;
+            o.ClientCertificateMode = (Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode)_settings.ClientCertificateMode;
             o.AcceptAnyClientCertificate = _settings.AcceptAnyClientCertificate;
         });
 
@@ -883,6 +883,18 @@ public partial class WireMockServer
         };
     }
 
+    private T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
+    {
+        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
+        {
+            var bodyAsJson = requestMessage.BodyData.BodyAsJson!;
+
+            return _mappingSerializer.DeserializeObjectToArray<T>(bodyAsJson);
+        }
+
+        throw new NotSupportedException();
+    }
+
     private static Encoding? ToEncoding(EncodingModel? encodingModel)
     {
         return encodingModel != null ? Encoding.GetEncoding(encodingModel.CodePage) : null;
@@ -902,28 +914,16 @@ public partial class WireMockServer
         };
     }
 
-    private static T[] DeserializeRequestMessageToArray<T>(IRequestMessage requestMessage)
-    {
-        if (requestMessage.BodyData?.DetectedBodyType == BodyType.Json && requestMessage.BodyData.BodyAsJson != null)
-        {
-            var bodyAsJson = requestMessage.BodyData.BodyAsJson!;
-
-            return MappingSerializer.DeserializeObjectToArray<T>(bodyAsJson);
-        }
-
-        throw new NotSupportedException();
-    }
-
-    private static T DeserializeObject<T>(IRequestMessage requestMessage)
+    private T DeserializeObject<T>(IRequestMessage requestMessage)
     {
         switch (requestMessage.BodyData?.DetectedBodyType)
         {
-            case BodyType.String:
-            case BodyType.FormUrlEncoded:
-                return JsonUtils.DeserializeObject<T>(requestMessage.BodyData.BodyAsString!);
+            case BodyType.String when requestMessage.BodyData?.BodyAsString != null:
+            case BodyType.FormUrlEncoded when requestMessage.BodyData?.BodyAsString != null:
+                return _settings.DefaultJsonSerializer.Deserialize<T>(requestMessage.BodyData.BodyAsString)!;
 
             case BodyType.Json when requestMessage.BodyData?.BodyAsJson != null:
-                return ((JObject)requestMessage.BodyData.BodyAsJson).ToObject<T>()!;
+                return _settings.DefaultJsonSerializer.ParseJsonToken<T>(requestMessage.BodyData.BodyAsJson)!;
 
             default:
                 throw new NotSupportedException();
