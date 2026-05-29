@@ -523,4 +523,134 @@ public class JsonMatcherTests
         // Assert
         Assert.Equal(1.0, score);
     }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jArray = new JArray
+        {
+            "c",
+            "a",
+            "b"
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_Array_WithIgnoreArrayOrderFalse_DifferentOrder_ShouldNotMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: false);
+
+        // Act
+        var jArray = new JArray
+        {
+            "c",
+            "a",
+            "b"
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(MatchScores.Mismatch, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_SameOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jArray = new JArray
+        {
+            "a",
+            "b",
+            "c"
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_DifferentLength_ShouldNotMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jArray = new JArray
+        {
+            "a",
+            "b"
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(MatchScores.Mismatch, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_ObjectWithArray_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new { Items = new[] { "x", "y", "z" } }, ignoreArrayOrder: true);
+
+        // Act
+        var jObject = new JObject
+        {
+            { "Items", new JArray("z", "x", "y") }
+        };
+        var score = matcher.IsMatch(jObject).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_ArrayAsString_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher("[ \"a\", \"b\", \"c\" ]", ignoreArrayOrder: true);
+
+        // Act
+        var jArray = new JArray
+        {
+            "c",
+            "b",
+            "a"
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void JsonMatcher_IsMatch_ArrayOfNumbers_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new JsonMatcher(new[] { 1, 2, 3 }, ignoreArrayOrder: true);
+
+        // Act
+        var jArray = new JArray
+        {
+            3,
+            1,
+            2
+        };
+        var score = matcher.IsMatch(jArray).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
 }

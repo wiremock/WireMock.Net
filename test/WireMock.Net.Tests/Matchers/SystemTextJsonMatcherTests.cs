@@ -367,4 +367,101 @@ public class SystemTextJsonMatcherTests
         // Assert
         Assert.Equal(1.0, match);
     }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ \"c\", \"a\", \"b\" ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_Array_WithIgnoreArrayOrderFalse_DifferentOrder_ShouldNotMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: false);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ \"c\", \"a\", \"b\" ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(MatchScores.Mismatch, score);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_SameOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ \"a\", \"b\", \"c\" ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_Array_WithIgnoreArrayOrderTrue_DifferentLength_ShouldNotMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new[] { "a", "b", "c" }, ignoreArrayOrder: true);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ \"a\", \"b\" ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(MatchScores.Mismatch, score);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_ObjectWithArray_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new { Items = new[] { "x", "y", "z" } }, ignoreArrayOrder: true);
+
+        // Act
+        var match = matcher.IsMatch("{ \"Items\" : [ \"z\", \"x\", \"y\" ] }").Score;
+
+        // Assert
+        Assert.Equal(1.0, match);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_ArrayAsString_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher("[ \"a\", \"b\", \"c\" ]", ignoreArrayOrder: true);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ \"c\", \"b\", \"a\" ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
+
+    [Fact]
+    public void SystemTextJsonMatcher_IsMatch_ArrayOfNumbers_WithIgnoreArrayOrderTrue_DifferentOrder_ShouldMatch()
+    {
+        // Assign
+        var matcher = new SystemTextJsonMatcher(new[] { 1, 2, 3 }, ignoreArrayOrder: true);
+
+        // Act
+        var jsonElement = JsonDocument.Parse("[ 3, 1, 2 ]").RootElement;
+        var score = matcher.IsMatch(jsonElement).Score;
+
+        // Assert
+        Assert.Equal(1.0, score);
+    }
 }
