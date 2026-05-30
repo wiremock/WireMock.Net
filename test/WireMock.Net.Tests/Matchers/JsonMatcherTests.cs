@@ -653,4 +653,21 @@ public class JsonMatcherTests
         // Assert
         Assert.Equal(1.0, score);
     }
+
+    [Theory]
+    [InlineData(MatchBehaviour.AcceptOnMatch, false, false, false)]
+    [InlineData(MatchBehaviour.AcceptOnMatch, true, false, true)]
+    [InlineData(MatchBehaviour.RejectOnMatch, true, true, false)]
+    public void JsonMatcher_GetCSharpCodeArguments_ShouldIncludeAllConstructorArguments(MatchBehaviour matchBehaviour, bool ignoreCase, bool regex, bool ignoreArrayOrder)
+    {
+        // Assign
+        var matcher = new JsonMatcher(matchBehaviour, "{ \"id\": 1 }", ignoreCase, regex, ignoreArrayOrder);
+
+        // Act
+        var result = matcher.GetCSharpCodeArguments();
+
+        // Assert
+        result.Should().StartWith($"new JsonMatcher(WireMock.Matchers.MatchBehaviour.{matchBehaviour},");
+        result.Should().EndWith($", {ignoreCase.ToString().ToLowerInvariant()}, {regex.ToString().ToLowerInvariant()}, {ignoreArrayOrder.ToString().ToLowerInvariant()})");
+    }
 }
