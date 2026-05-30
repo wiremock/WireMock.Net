@@ -35,6 +35,11 @@ public class SystemTextJsonMatcher : IJsonMatcher
     /// </summary>
     public bool Regex { get; }
 
+    /// <summary>
+    /// Ignore array order when comparing
+    /// </summary>
+    public bool IgnoreArrayOrder { get; }
+
     private readonly JsonElement _valueAsJsonElement;
 
     /// <summary>
@@ -43,8 +48,9 @@ public class SystemTextJsonMatcher : IJsonMatcher
     /// <param name="value">The string value to check for equality.</param>
     /// <param name="ignoreCase">Ignore the case from the PropertyName and PropertyValue (string only).</param>
     /// <param name="regex">Support Regex.</param>
-    public SystemTextJsonMatcher(string value, bool ignoreCase = false, bool regex = false)
-        : this(MatchBehaviour.AcceptOnMatch, value, ignoreCase, regex)
+    /// <param name="ignoreArrayOrder">Ignore array element order when comparing.</param>
+    public SystemTextJsonMatcher(string value, bool ignoreCase = false, bool regex = false, bool ignoreArrayOrder = false)
+        : this(MatchBehaviour.AcceptOnMatch, value, ignoreCase, regex, ignoreArrayOrder)
     {
     }
 
@@ -54,8 +60,9 @@ public class SystemTextJsonMatcher : IJsonMatcher
     /// <param name="value">The object value to check for equality.</param>
     /// <param name="ignoreCase">Ignore the case from the PropertyName and PropertyValue (string only).</param>
     /// <param name="regex">Support Regex.</param>
-    public SystemTextJsonMatcher(object value, bool ignoreCase = false, bool regex = false)
-        : this(MatchBehaviour.AcceptOnMatch, value, ignoreCase, regex)
+    /// <param name="ignoreArrayOrder">Ignore array element order when comparing.</param>
+    public SystemTextJsonMatcher(object value, bool ignoreCase = false, bool regex = false, bool ignoreArrayOrder = false)
+        : this(MatchBehaviour.AcceptOnMatch, value, ignoreCase, regex, ignoreArrayOrder)
     {
     }
 
@@ -66,13 +73,15 @@ public class SystemTextJsonMatcher : IJsonMatcher
     /// <param name="value">The value to check for equality.</param>
     /// <param name="ignoreCase">Ignore the case from the PropertyName and PropertyValue (string only).</param>
     /// <param name="regex">Support Regex.</param>
-    public SystemTextJsonMatcher(MatchBehaviour matchBehaviour, object value, bool ignoreCase = false, bool regex = false)
+    /// <param name="ignoreArrayOrder">Ignore array element order when comparing.</param>
+    public SystemTextJsonMatcher(MatchBehaviour matchBehaviour, object value, bool ignoreCase = false, bool regex = false, bool ignoreArrayOrder = false)
     {
         Guard.NotNull(value);
 
         MatchBehaviour = matchBehaviour;
         IgnoreCase = ignoreCase;
         Regex = regex;
+        IgnoreArrayOrder = ignoreArrayOrder;
 
         Value = value;
         _valueAsJsonElement = ConvertToJsonElement(value);
@@ -111,7 +120,8 @@ public class SystemTextJsonMatcher : IJsonMatcher
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
-               $"{CSharpFormatter.ToCSharpBooleanLiteral(Regex)}" +
+               $"{CSharpFormatter.ToCSharpBooleanLiteral(Regex)}, " +
+               $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreArrayOrder)}" +
                $")";
     }
 
@@ -200,6 +210,13 @@ public class SystemTextJsonMatcher : IJsonMatcher
                     if (valueArray.Length != inputArray.Length)
                     {
                         return false;
+                    }
+
+                    if (IgnoreArrayOrder)
+                    {
+                        // Sort both arrays by their string representation and compare
+                        valueArray = valueArray.OrderBy(e => e.GetRawText()).ToArray();
+                        inputArray = inputArray.OrderBy(e => e.GetRawText()).ToArray();
                     }
 
                     return !valueArray.Where((valueToken, index) => !IsMatch(valueToken, inputArray[index])).Any();
