@@ -21,7 +21,13 @@ internal class WireMockLifecycleSubscriber(ILoggerFactory loggerFactory) : IDist
 
                 var endpoint = wireMockServerResource.GetEndpoint();
                 Debug.Assert(endpoint.IsAllocated);
+            }
+        });
 
+        eventing.Subscribe<ResourceReadyEvent>(async (@event, ct) =>
+        {
+            if (@event.Resource is WireMockServerResource wireMockServerResource)
+            {
                 await wireMockServerResource.WaitForHealthAsync(ct);
 
                 await wireMockServerResource.CallAddProtoDefinitionsAsync(ct);
