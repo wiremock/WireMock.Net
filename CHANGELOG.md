@@ -1,3 +1,16 @@
+# 2.9.0 (02 June 2026)
+- [#1470](https://github.com/wiremock/WireMock.Net/pull/1470) - Fix WireMock.Net.Aspire project when using Aspire 13.4.0 [bug] contributed by [StefH](https://github.com/StefH)
+- [#1469](https://github.com/wiremock/WireMock.Net/issues/1469) - WireMock.Net doesn't play well with Aspire 13.4.0 [bug]
+
+# 2.8.0 (31 May 2026)
+- [#1447](https://github.com/wiremock/WireMock.Net/pull/1447) - Add SystemTextJsonMatchers [feature] contributed by [StefH](https://github.com/StefH)
+- [#1466](https://github.com/wiremock/WireMock.Net/pull/1466) - Bump System.Text.RegularExpressions from 4.3.0 to 4.3.1 in Aspire Example project [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1467](https://github.com/wiremock/WireMock.Net/pull/1467) - Bump System.Net.Http from 4.3.0 to 4.3.4 in Aspire Example project [dependencies, .NET] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1468](https://github.com/wiremock/WireMock.Net/pull/1468) - Update JsonMatcher to support IgnoreArrayOrder [feature] contributed by [StefH](https://github.com/StefH)
+- [#1439](https://github.com/wiremock/WireMock.Net/issues/1439) - JSON reference properties cannot be used when using System.Text.Json serialization [bug]
+- [#1445](https://github.com/wiremock/WireMock.Net/issues/1445) - Configurable JSON DE-serialization support (Newtonsoft.Json vs System.Text.Json) [feature]
+- [#1460](https://github.com/wiremock/WireMock.Net/issues/1460) - Option to ignore array order when comparing json body [feature]
+
 # 2.7.0 (24 May 2026)
 - [#1457](https://github.com/wiremock/WireMock.Net/pull/1457) - Update OpenTelemetry.Api from 1.14.0 to 1.15.3 in unit test project [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#1459](https://github.com/wiremock/WireMock.Net/pull/1459) - chore: update Handlebars 2.5.2 to 2.5.5 [dependencies] contributed by [kamisoft-fr](https://github.com/kamisoft-fr)
