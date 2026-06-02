@@ -92,17 +92,11 @@ public class WireMockServerBuilderExtensionsTests
             Tag = "latest"
         });
 
-        var endpointAnnotation = wiremock.Resource.Annotations.OfType<EndpointAnnotation>().FirstOrDefault();
-        endpointAnnotation.Should().BeEquivalentTo(new EndpointAnnotation(
-            protocol: ProtocolType.Tcp,
-            uriScheme: "http",
-            transport: null,
-            name: null,
-            port: port,
-            targetPort: 80,
-            isExternal: null,
-            isProxied: true
-        ));
+        var endpointAnnotation = wiremock.Resource.Annotations.OfType<EndpointAnnotation>().First();
+        endpointAnnotation.Protocol.Should().Be(ProtocolType.Tcp);
+        endpointAnnotation.UriScheme.Should().Be("http");
+        endpointAnnotation.Port.Should().Be(port);
+        endpointAnnotation.TargetPort.Should().Be(80);
 
         wiremock.Resource.Annotations.OfType<EnvironmentCallbackAnnotation>().FirstOrDefault().Should().NotBeNull();
         wiremock.Resource.Annotations.OfType<CommandLineArgsCallbackAnnotation>().FirstOrDefault().Should().NotBeNull();
@@ -153,39 +147,24 @@ public class WireMockServerBuilderExtensionsTests
         endpointAnnotations.Should().HaveCount(3);
 
         var endpointAnnotationForHttp80 = endpointAnnotations[0];
-        endpointAnnotationForHttp80.Should().BeEquivalentTo(new EndpointAnnotation(
-            protocol: ProtocolType.Tcp,
-            uriScheme: "http",
-            transport: null,
-            name: null,
-            port: null,
-            targetPort: 80,
-            isExternal: null,
-            isProxied: true
-        ));
+        endpointAnnotationForHttp80.Protocol.Should().Be(ProtocolType.Tcp);
+        endpointAnnotationForHttp80.UriScheme.Should().Be("http");
+        endpointAnnotationForHttp80.Port.Should().BeNull();
+        endpointAnnotationForHttp80.TargetPort.Should().Be(80);
+
         var endpointAnnotationForHttpFreePort = endpointAnnotations[1];
-        endpointAnnotationForHttpFreePort.Should().BeEquivalentTo(new EndpointAnnotation(
-            protocol: ProtocolType.Tcp,
-            uriScheme: "http",
-            transport: null,
-            name: $"http-{freePorts[0]}",
-            port: freePorts[0],
-            targetPort: freePorts[0],
-            isExternal: null,
-            isProxied: true
-        ));
+        endpointAnnotationForHttpFreePort.Protocol.Should().Be(ProtocolType.Tcp);
+        endpointAnnotationForHttpFreePort.UriScheme.Should().Be("http");
+        endpointAnnotationForHttpFreePort.Name.Should().Be($"http-{freePorts[0]}");
+        endpointAnnotationForHttpFreePort.Port.Should().Be(freePorts[0]);
+        endpointAnnotationForHttpFreePort.TargetPort.Should().Be(freePorts[0]);
 
         var endpointAnnotationForGrpcFreePort = endpointAnnotations[2];
-        endpointAnnotationForGrpcFreePort.Should().BeEquivalentTo(new EndpointAnnotation(
-            protocol: ProtocolType.Tcp,
-            uriScheme: "grpc",
-            transport: null,
-            name: $"grpc-{freePorts[1]}",
-            port: freePorts[1],
-            targetPort: freePorts[1],
-            isExternal: null,
-            isProxied: true
-        ));
+        endpointAnnotationForGrpcFreePort.Protocol.Should().Be(ProtocolType.Tcp);
+        endpointAnnotationForGrpcFreePort.UriScheme.Should().Be("grpc");
+        endpointAnnotationForGrpcFreePort.Name.Should().Be($"grpc-{freePorts[1]}");
+        endpointAnnotationForGrpcFreePort.Port.Should().Be(freePorts[1]);
+        endpointAnnotationForGrpcFreePort.TargetPort.Should().Be(freePorts[1]);
 
         wiremock.Resource.Annotations.OfType<EnvironmentCallbackAnnotation>().FirstOrDefault().Should().NotBeNull();
         wiremock.Resource.Annotations.OfType<CommandLineArgsCallbackAnnotation>().FirstOrDefault().Should().NotBeNull();

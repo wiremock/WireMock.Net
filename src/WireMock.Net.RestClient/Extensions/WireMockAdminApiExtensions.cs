@@ -65,6 +65,7 @@ public static class WireMockAdminApiExtensions
             waitTime = (int)(InitialWaitingTimeInMilliSeconds * Math.Pow(2, retries));
             await Task.Delay(waitTime, cancellationToken);
             isHealthy = await IsHealthyAsync(adminApi, cancellationToken);
+
             retries++;
             totalWaitTime += waitTime;
         }
