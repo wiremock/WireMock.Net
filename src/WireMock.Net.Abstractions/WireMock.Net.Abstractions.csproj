@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>Commonly used interfaces, models, enumerations and types.</Description>
@@ -39,10 +39,11 @@
     </ItemGroup>-->
 
     <ItemGroup>
-        <PackageReference Include="FluentBuilder" Version="0.14.0">
+        <PackageReference Include="FluentBuilder" Version="0.15.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Google.Protobuf" Version="3.35.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' ">
