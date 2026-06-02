@@ -13,7 +13,7 @@ internal class WireMockLifecycleSubscriber(ILoggerFactory loggerFactory) : IDist
 {
     public Task SubscribeAsync(IDistributedApplicationEventing eventing, DistributedApplicationExecutionContext executionContext, CancellationToken cancellationToken)
     {
-        eventing.Subscribe<ResourceEndpointsAllocatedEvent>(async (@event, ct) =>
+        eventing.Subscribe<ResourceEndpointsAllocatedEvent>((@event, ct) =>
         {
             if (@event.Resource is WireMockServerResource wireMockServerResource)
             {
@@ -22,16 +22,35 @@ internal class WireMockLifecycleSubscriber(ILoggerFactory loggerFactory) : IDist
                 var endpoint = wireMockServerResource.GetEndpoint();
                 Debug.Assert(endpoint.IsAllocated);
 
-                await wireMockServerResource.WaitForHealthAsync(ct);
-
-                await wireMockServerResource.CallAddProtoDefinitionsAsync(ct);
-
-                await wireMockServerResource.CallApiMappingBuilderActionAsync(ct);
-
-                wireMockServerResource.StartWatchingStaticMappings(ct);
+                var logger = loggerFactory.CreateLogger<WireMockLifecycleSubscriber>();
+                _ = Task.Run(() => ConfigureWireMockServerAsync(wireMockServerResource, logger, ct), CancellationToken.None);
             }
+
+            return Task.CompletedTask;
         });
 
         return Task.CompletedTask;
+    }
+
+    private static async Task ConfigureWireMockServerAsync(WireMockServerResource wireMockServerResource, ILogger logger, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await wireMockServerResource.WaitForHealthAsync(cancellationToken);
+
+            await wireMockServerResource.CallAddProtoDefinitionsAsync(cancellationToken);
+
+            await wireMockServerResource.CallApiMappingBuilderActionAsync(cancellationToken);
+
+            wireMockServerResource.StartWatchingStaticMappings(cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // AppHost is stopping.
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Error configuring WireMock.Net resource {ResourceName}.", wireMockServerResource.Name);
+        }
     }
 }
