@@ -306,12 +306,6 @@ public class WireMockServerSettings
     public IDictionary<string, Func<MatcherModel, IMatcher>>? CustomMatcherMappings { get; set; }
 
     /// <summary>
-    /// The <see cref="JsonSerializerSettings"/> used when the JSON response is generated.
-    /// </summary>
-    [PublicAPI, JsonIgnore]
-    public JsonSerializerSettings? JsonSerializerSettings { get; set; }
-
-    /// <summary>
     /// The Culture to use.
     /// Currently used for:
     /// - Handlebars Transformer
