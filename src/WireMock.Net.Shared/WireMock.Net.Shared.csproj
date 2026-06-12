@@ -27,7 +27,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.9" />
-        <PackageReference Include="Stef.Validation" Version="0.2.0" />
+        <PackageReference Include="Stef.Validation" Version="0.3.0" />
         <PackageReference Include="AnyOf" Version="0.5.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
         <PackageReference Include="JsonConverter.Newtonsoft.Json" Version="0.13.0" />

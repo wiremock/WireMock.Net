@@ -36,7 +36,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Stef.Validation" Version="0.2.0" />
+        <PackageReference Include="Stef.Validation" Version="0.3.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">

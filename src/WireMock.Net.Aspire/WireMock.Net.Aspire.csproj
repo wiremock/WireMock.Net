@@ -45,7 +45,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting" Version="13.4.0" />
+        <PackageReference Include="Aspire.Hosting" Version="13.4.3" />
+
+        <!-- CVE-2026-48109 -->
+        <PackageReference Include="MessagePack" Version="2.5.302" />
     </ItemGroup>
 
     <ItemGroup>
