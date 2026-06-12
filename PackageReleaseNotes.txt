@@ -1,4 +1,6 @@
-# 2.10.0 (07 June 2026)
-- #1472 Update JsonConverter to 0.13.0 [bug]
+# 2.11.0 (12 June 2026)
+- #1475 Update NuGet packages (Aspire, MessagePack and more) [security]
+- #1476 Fix BodyParser [bug]
+- #1473 JsonPartialWildCardMatcher With DateTime Regex Stopped Matching (Regression?) [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
