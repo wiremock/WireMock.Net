@@ -5,6 +5,7 @@ using System.Text;
 using Stef.Validation;
 using WireMock.Constants;
 using WireMock.Matchers;
+using WireMock.Serialization;
 using WireMock.Types;
 
 namespace WireMock.Util;
@@ -25,7 +26,7 @@ internal static class BodyParser
         CONNECT - No defined body semantics
         PATCH - Body supported.
     */
-    private static readonly IDictionary<string, bool> BodyAllowedForMethods = new Dictionary<string, bool>
+    private static readonly Dictionary<string, bool> BodyAllowedForMethods = new()
     {
         { HttpRequestMethod.HEAD, false },
         { HttpRequestMethod.GET, false },
@@ -173,7 +174,7 @@ internal static class BodyParser
             {
                 try
                 {
-                    data.BodyAsJson = settings.DefaultJsonConverter.Deserialize<object>(data.BodyAsString);
+                    data.BodyAsJson = settings.DefaultJsonConverter.Deserialize<object>(data.BodyAsString, JsonSerializationConstants.JsonConverterOptionsWithDateParsingNone);
                     data.DetectedBodyType = BodyType.Json;
                 }
                 catch

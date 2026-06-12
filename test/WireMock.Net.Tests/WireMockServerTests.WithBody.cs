@@ -54,6 +54,81 @@ public partial class WireMockServerTests
     }
 
     [Fact]
+    public async Task WireMockServer_WithBodyAsJson_WithJsonPartialWildcardMatcher()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(testOutputHelper)
+        });
+        server
+            .Given(
+                Request.Create()
+                    .WithPath("/test")
+                    .UsingPost()
+                    .WithBody(new JsonPartialWildcardMatcher(
+                        new
+                        {
+                            date = @"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$",
+                            id = 1
+                        },
+                        ignoreCase: true,
+                        regex: true
+                    )
+                )
+            )
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("matched"));
+
+        // Act
+        var requestUri = new Uri($"http://localhost:{server.Port}/test");
+
+        var response = await server.CreateClient().PostAsync(requestUri, new StringContent("{\"date\":\"2026-06-09T22:23:18.53421+00:00\",\"id\":1}"), _ct);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        server.Stop();
+    }
+
+    [Fact]
+    public async Task WireMockServer_WithBodyAsJson_WithSystemTextJsonPartialWildcardMatcher()
+    {
+        // Arrange
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            Logger = new TestOutputHelperWireMockLogger(testOutputHelper),
+            DefaultJsonSerializer = new SystemTextJsonConverter()
+        });
+        server
+            .Given(
+                Request.Create()
+                    .WithPath("/test")
+                    .UsingPost()
+                    .WithBody(new SystemTextJsonPartialWildcardMatcher(
+                        new
+                        {
+                            date = @"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$",
+                            id = 1
+                        },
+                        ignoreCase: true,
+                        regex: true
+                    )
+                )
+            )
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("matched"));
+
+        // Act
+        var requestUri = new Uri($"http://localhost:{server.Port}/test");
+
+        var response = await server.CreateClient().PostAsync(requestUri, new StringContent("{\"date\":\"2026-06-09T22:23:18.53421+00:00\",\"id\":1}"), _ct);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        server.Stop();
+    }
+
+    [Fact]
     public async Task WireMockServer_WithBodyAsJson_Using_PostAsJsonAsync_And_MultipleJmesPathMatchers_ShouldMatch()
     {
         // Arrange

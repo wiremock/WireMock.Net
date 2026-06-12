@@ -366,17 +366,33 @@ public class SystemTextJsonPartialWildcardMatcherTests
         Assert.Equal(1.0, match);
     }
 
-    [Fact]
-    public void SystemTextJsonPartialWildcardMatcher_IsMatch_JsonElement_ShouldMatch()
-    {
-        // Assign
-        var matcher = new SystemTextJsonPartialWildcardMatcher(new { Id = 1, Name = "Test" });
+        [Fact]
+        public void SystemTextJsonPartialWildcardMatcher_IsMatch_JsonElement_ShouldMatch()
+        {
+            // Assign
+            var matcher = new SystemTextJsonPartialWildcardMatcher(new { Id = 1, Name = "Test" });
 
-        // Act
-        var jsonElement = JsonDocument.Parse("{ \"Id\" : 1, \"Name\" : \"Test\", \"Extra\" : \"value\" }").RootElement;
-        var match = matcher.IsMatch(jsonElement).Score;
+            // Act
+            var jsonElement = JsonDocument.Parse("{ \"Id\" : 1, \"Name\" : \"Test\", \"Extra\" : \"value\" }").RootElement;
+            var match = matcher.IsMatch(jsonElement).Score;
 
-        // Assert
-        Assert.Equal(1.0, match);
+            // Assert
+            Assert.Equal(1.0, match);
+        }
+
+        [Fact]
+        public void SystemTextJsonPartialWildcardMatcher_IsMatch_WithRegexTrue_DateFormat_ShouldMatch()
+        {
+            // Assign
+            var matcher = new SystemTextJsonPartialWildcardMatcher(
+                new { date = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$", id = 1 },
+                ignoreCase: false,
+                regex: true);
+
+            // Act
+            var match = matcher.IsMatch("{\"date\":\"2026-06-09T22:23:18.53421+00:00\",\"id\":1}").Score;
+
+            // Assert
+            Assert.Equal(1.0, match);
+        }
     }
-}
