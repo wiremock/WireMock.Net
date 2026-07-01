@@ -159,7 +159,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         };
     }
 
-    private static bool TryGetContent(IDictionary<string, OpenApiMediaType>? contents, [NotNullWhen(true)] out OpenApiMediaType? openApiMediaType, [NotNullWhen(true)] out string? contentType)
+    private static bool TryGetContent(IDictionary<string, IOpenApiMediaType>? contents, [NotNullWhen(true)] out IOpenApiMediaType? openApiMediaType, [NotNullWhen(true)] out string? contentType)
     {
         openApiMediaType = null;
         contentType = null;
