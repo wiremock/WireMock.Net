@@ -8,7 +8,7 @@ namespace WireMock.Owin;
 internal sealed class AdminPaths(string? adminPath) : IAdminPaths
 {
     private const string DefaultAdminPathPrefix = "/__admin";
-    
+
     private readonly string _prefix = adminPath ?? DefaultAdminPathPrefix;
 
     public string Files => $"{_prefix}/files";
