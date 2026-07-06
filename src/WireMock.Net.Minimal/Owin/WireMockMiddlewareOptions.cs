@@ -115,4 +115,7 @@ internal class WireMockMiddlewareOptions : IWireMockMiddlewareOptions
 
     /// <inheritdoc />
     public IJsonConverter DefaultJsonSerializer { get; set; } = new NewtonsoftJsonConverter();
+
+    /// <inheritdoc />
+    public IAdminPaths AdminPaths { get; set; } = new AdminPaths(null);
 }
