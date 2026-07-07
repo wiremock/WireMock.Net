@@ -9,16 +9,17 @@ using WireMock.Util;
 namespace WireMock.Owin;
 
 internal class WireMockMiddlewareLogger(
-    IWireMockMiddlewareOptions _options,
-    LogEntryMapper _logEntryMapper,
-    IGuidUtils _guidUtils
+    IWireMockMiddlewareOptions options,
+    LogEntryMapper logEntryMapper,
+    IGuidUtils guidUtils,
+    IDateTimeUtils dateTimeUtils
 ) : IWireMockMiddlewareLogger
 {
     public void LogRequestAndResponse(bool logRequest, RequestMessage request, IResponseMessage? response, MappingMatcherResult? match, MappingMatcherResult? partialMatch, Activity? activity)
     {
         var logEntry = new LogEntry
         {
-            Guid = _guidUtils.NewGuid(),
+            Guid = guidUtils.NewGuid(),
             RequestMessage = request,
             ResponseMessage = response,
 
@@ -31,17 +32,17 @@ internal class WireMockMiddlewareLogger(
             PartialMatchResult = partialMatch?.RequestMatchResult
         };
 
-        WireMockActivitySource.EnrichWithLogEntry(activity, logEntry, _options.ActivityTracingOptions);
+        WireMockActivitySource.EnrichWithLogEntry(activity, logEntry, options.ActivityTracingOptions);
         activity?.Dispose();
 
         LogLogEntry(logEntry, logRequest);
 
         try
         {
-            if (_options.SaveUnmatchedRequests == true && match?.RequestMatchResult is not { IsPerfectMatch: true })
+            if (options.SaveUnmatchedRequests == true && match?.RequestMatchResult is not { IsPerfectMatch: true })
             {
                 var filename = $"{logEntry.Guid}.LogEntry.json";
-                _options.FileSystemHandler?.WriteUnmatchedRequest(filename, _options.DefaultJsonSerializer.Serialize(logEntry));
+                options.FileSystemHandler?.WriteUnmatchedRequest(filename, options.DefaultJsonSerializer.Serialize(logEntry));
             }
         }
         catch
@@ -52,34 +53,34 @@ internal class WireMockMiddlewareLogger(
 
     public void LogLogEntry(LogEntry entry, bool addRequest)
     {
-        _options.Logger.DebugRequestResponse(_logEntryMapper.Map(entry), entry.RequestMessage?.Path.StartsWith("/__admin/") == true);
+        options.Logger.DebugRequestResponse(logEntryMapper.Map(entry), entry.RequestMessage?.Path.StartsWith("/__admin/") == true);
 
         // If addRequest is set to true and MaxRequestLogCount is null or does have a value greater than 0, try to add a new request log.
-        if (addRequest && _options.MaxRequestLogCount is null or > 0)
+        if (addRequest && options.MaxRequestLogCount is null or > 0)
         {
             TryAddLogEntry(entry);
         }
 
 
         // In case MaxRequestLogCount has a value greater than 0, try to delete existing request logs based on the count.
-        if (_options.MaxRequestLogCount is > 0)
+        if (options.MaxRequestLogCount is > 0)
         {
-            var logEntries = _options.LogEntries.ToList();
+            var logEntries = options.LogEntries.ToList();
 
             foreach (var logEntry in logEntries
                 .OrderBy(le => le.RequestMessage?.DateTime ?? le.ResponseMessage?.DateTime)
-                .Take(logEntries.Count - _options.MaxRequestLogCount.Value))
+                .Take(logEntries.Count - options.MaxRequestLogCount.Value))
             {
                 TryRemoveLogEntry(logEntry);
             }
         }
 
         // In case RequestLogExpirationDuration has a value greater than 0, try to delete existing request logs based on the date.
-        if (_options.RequestLogExpirationDuration is > 0)
+        if (options.RequestLogExpirationDuration is > 0)
         {
-            var logEntries = _options.LogEntries.ToList();
+            var logEntries = options.LogEntries.ToList();
 
-            var checkTime = DateTime.UtcNow.AddHours(-_options.RequestLogExpirationDuration.Value);
+            var checkTime = dateTimeUtils.UtcNow.AddHours(-options.RequestLogExpirationDuration.Value);
             foreach (var logEntry in logEntries.Where(le => le.RequestMessage?.DateTime < checkTime || le.ResponseMessage?.DateTime < checkTime))
             {
                 TryRemoveLogEntry(logEntry);
@@ -91,7 +92,7 @@ internal class WireMockMiddlewareLogger(
     {
         try
         {
-            _options.LogEntries.Add(logEntry);
+            options.LogEntries.Add(logEntry);
         }
         catch
         {
@@ -103,7 +104,7 @@ internal class WireMockMiddlewareLogger(
     {
         try
         {
-            _options.LogEntries.Remove(logEntry);
+            options.LogEntries.Remove(logEntry);
         }
         catch
         {
