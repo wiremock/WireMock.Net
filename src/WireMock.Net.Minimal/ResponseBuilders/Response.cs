@@ -11,7 +11,6 @@ using WireMock.RequestBuilders;
 using WireMock.Settings;
 using WireMock.Transformers;
 using WireMock.Types;
-using WireMock.Util;
 
 namespace WireMock.ResponseBuilders;
 
@@ -86,7 +85,11 @@ public partial class Response : IResponseBuilder
     [PublicAPI]
     public static IResponseBuilder Create(ResponseMessage? responseMessage = null)
     {
-        var message = responseMessage ?? new ResponseMessage();
+        var message = responseMessage ?? new ResponseMessage
+        {
+            DateTime = DateTime.UtcNow // We set it here to the current time.
+        };
+
         return new Response(message);
     }
 
