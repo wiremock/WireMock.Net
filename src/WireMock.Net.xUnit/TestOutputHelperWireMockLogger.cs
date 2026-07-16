@@ -13,7 +13,7 @@ namespace WireMock.Net.Xunit;
 /// </summary>
 public sealed class TestOutputHelperWireMockLogger : IWireMockLogger
 {
-    private readonly Func<ITestOutputHelper> _testOutputHelperFactory;
+    private readonly Func<ITestOutputHelper?> _testOutputHelperFactory;
 
     /// <summary>
     /// Create a new instance on the <see cref="TestOutputHelperWireMockLogger"/>.
@@ -29,7 +29,7 @@ public sealed class TestOutputHelperWireMockLogger : IWireMockLogger
     /// Create a new instance on the <see cref="TestOutputHelperWireMockLogger"/>.
     /// </summary>
     /// <param name="testOutputHelperFactory">Represents a factory to provide current test output.</param>
-    public TestOutputHelperWireMockLogger(Func<ITestOutputHelper> testOutputHelperFactory)
+    public TestOutputHelperWireMockLogger(Func<ITestOutputHelper?> testOutputHelperFactory)
     {
         _testOutputHelperFactory = Guard.NotNull(testOutputHelperFactory);
     }
