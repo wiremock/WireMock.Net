@@ -1,0 +1,510 @@
+openapi: 3.0.1
+info:
+  title: WireMock.Net Admin API
+  description: >-
+    WireMock.Net is a flexible library for stubbing and mocking web HTTP
+    responses using requests matching and response templating.
+  version: 1.4.24
+servers:
+  - url: http://localhost/
+  - url: https://localhost/
+security:
+  - basicAuth: []
+paths:
+  /__admin/settings:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SettingsModel'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: settings
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsModel'
+        required: true
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: settings
+  /__admin/mappings:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingModel'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MappingModel'
+        required: true
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: mapping
+  /__admin/files/{filename}:
+    get:
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '404':
+          description: Not Found
+          content: {}
+    put:
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              format: binary
+        required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content: {}
+      x-codegen-request-body-name: content
+    post:
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              format: binary
+        required: false
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: content
+    delete:
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content: {}
+    head:
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OK
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+components:
+  schemas:
+    BodyModel:
+      type: object
+      properties:
+        Matcher:
+          $ref: '#/components/schemas/MatcherModel'
+      description: Body Model
+    ClientIPModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: ClientIPModel
+    CookieModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: Cookie Model
+    EncodingModel:
+      type: object
+      properties:
+        CodePage:
+          type: integer
+          description: Encoding CodePage
+          format: int32
+        EncodingName:
+          type: string
+          description: Encoding EncodingName
+        WebName:
+          type: string
+          description: Encoding WebName
+      description: EncodingModel
+    HeaderModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: Header Model
+    MappingModel:
+      type: object
+      properties:
+        Guid:
+          type: string
+          description: Gets or sets the unique identifier.
+          format: guid
+        Title:
+          type: string
+          description: The unique title.
+        Priority:
+          type: integer
+          description: The priority.
+          format: int32
+        Scenario:
+          type: string
+          description: The Scenario.
+        WhenStateIs:
+          type: string
+          description: Execution state condition for the current mapping.
+        SetStateTo:
+          type: string
+          description: >-
+            The next state which will be signaled after the current mapping
+            execution.\nIn case the value is null state will not be changed.
+        TimeSettings:
+          $ref: '#/components/schemas/TimeSettingsModel'
+        Request:
+          $ref: '#/components/schemas/RequestModel'
+        Response:
+          $ref: '#/components/schemas/ResponseModel'
+      description: MappingModel
+    MatcherModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Pattern:
+          type: string
+          description: Gets or sets the pattern. Can be a string (default) or an object.
+        Patterns:
+          type: array
+          description: >-
+            Gets or sets the patterns. Can be array of strings (default) or an
+            array of objects.
+          items:
+            type: string
+        PatternAsFile:
+          type: string
+          description: Gets the pattern from a file.
+        IgnoreCase:
+          type: boolean
+          description: Gets or sets the ignore case.
+        RejectOnMatch:
+          type: boolean
+          description: Reject on match.
+      description: MatcherModel
+    ParamModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: Param Model
+    PathModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: PathModel
+    RequestModel:
+      type: object
+      properties:
+        ClientIP:
+          type: string
+          description: Gets or sets the ClientIP. (Can be a string or a ClientIPModel)
+        Path:
+          type: string
+          description: Gets or sets the Path. (Can be a string or a PathModel)
+        Url:
+          type: string
+          description: Gets or sets the Url. (Can be a string or a UrlModel)
+        Methods:
+          type: array
+          description: The methods
+          items:
+            type: string
+        Headers:
+          type: array
+          description: Gets or sets the Headers.
+          items:
+            $ref: '#/components/schemas/HeaderModel'
+        Cookies:
+          type: array
+          description: Gets or sets the Cookies.
+          items:
+            $ref: '#/components/schemas/CookieModel'
+        Params:
+          type: array
+          description: Gets or sets the Params.
+          items:
+            $ref: '#/components/schemas/ParamModel'
+        Body:
+          $ref: '#/components/schemas/BodyModel'
+      description: RequestModel
+    ResponseModel:
+      type: object
+      properties:
+        StatusCode:
+          type: integer
+          description: Gets or sets the HTTP status.
+          format: int32
+        BodyDestination:
+          type: string
+          description: Gets or sets the body destination (SameAsSource String or Bytes).
+        Body:
+          type: string
+          description: Gets or sets the body.
+        BodyFromBase64:
+          type: string
+          description: Gets or sets the body.
+        BodyAsJson:
+          type: object
+          properties: {}
+          description: Gets or sets the body (as JSON object).
+        BodyAsJsonIndented:
+          type: boolean
+          description: >-
+            Gets or sets a value indicating whether child objects to be indented
+            according to the Newtonsoft.Json.JsonTextWriter.Indentation and
+            Newtonsoft.Json.JsonTextWriter.IndentChar settings.
+        BodyAsBytes:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          description: Gets or sets the body (as bytearray).
+          format: byte
+        BodyAsFile:
+          type: string
+          description: Gets or sets the body as a file.
+        BodyAsFileIsCached:
+          type: boolean
+          description: Is the body as file cached?
+        BodyEncoding:
+          $ref: '#/components/schemas/EncodingModel'
+        UseTransformer:
+          type: boolean
+          description: Gets or sets a value indicating whether [use transformer].
+        Headers:
+          type: object
+          properties: {}
+          description: Gets or sets the headers.
+        HeadersRaw:
+          type: string
+          description: Gets or sets the Headers (Raw).
+        Delay:
+          type: integer
+          description: Gets or sets the delay in milliseconds.
+          format: int32
+        ProxyUrl:
+          type: string
+          description: Gets or sets the Proxy URL.
+        X509Certificate2ThumbprintOrSubjectName:
+          type: string
+          description: The client X509Certificate2 Thumbprint or SubjectName to use.
+      description: ResponseModel
+    SettingsModel:
+      type: object
+      properties:
+        GlobalProcessingDelay:
+          type: integer
+          description: Gets or sets the global delay in milliseconds.
+          format: int32
+        AllowPartialMapping:
+          type: boolean
+          description: Gets or sets if partial mapping is allowed.
+        RequestLogExpirationDuration:
+          type: integer
+          description: Gets or sets the RequestLog expiration in hours
+          format: int32
+        MaxRequestLogCount:
+          type: integer
+          description: Gets or sets the MaxRequestLog count.
+          format: int32
+      description: Settings
+    StatusModel:
+      type: object
+      properties:
+        Guid:
+          type: string
+          description: The optional guid.
+          format: guid
+        Status:
+          type: string
+          description: The status (can also contain the error message).
+      description: Status
+    WebhookModel:
+      type: object
+      properties:
+        Request:
+          $ref: '#/components/schemas/WebhookRequestModel'
+      description: Webhook
+    WebhookRequestModel:
+      type: object
+      properties:
+        Url:
+          type: string
+        Method:
+          type: string
+        Headers:
+          type: array
+          description: Gets or sets the Headers.
+          items:
+            $ref: '#/components/schemas/HeaderModel'
+        Body:
+          type: string
+        BodyAsJson:
+          type: object
+          properties: {}
+        UseTransformer:
+          type: boolean
+          description: Gets or sets a value indicating whether to use transformer.
+        TransformerType:
+          type: string
+    UrlModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+      description: UrlModel
+    TimeSettingsModel:
+      type: object
+      properties:
+        Start:
+          type: string
+          description: >-
+            Gets or sets the DateTime from which this mapping should be used. In
+            case this is not defined, it's used (default behavior).
+          format: datetime
+        End:
+          type: string
+          description: >-
+            Gets or sets the DateTime from until this mapping should be used. In
+            case this is not defined, it's used forever (default behavior).
+          format: datetime
+        TTL:
+          type: integer
+          description: >-
+            Gets or sets the TTL (Time To Live) in seconds for this mapping. In
+            case this is not defined, it's used (default behavior).
+          format: int32
+      description: TimeSettings
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
