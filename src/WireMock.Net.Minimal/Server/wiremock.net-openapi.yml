@@ -4,7 +4,7 @@ info:
   description: >-
     WireMock.Net is a flexible library for stubbing and mocking web HTTP
     responses using requests matching and response templating.
-  version: 1.6.0
+  version: 2.12.0
 servers:
   - url: http://localhost/
   - url: https://localhost/
