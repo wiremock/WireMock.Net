@@ -95,7 +95,15 @@ paths:
                 $ref: '#/components/schemas/StatusModel'
       x-codegen-request-body-name: mapping
     delete:
-      summary: Delete all mappings
+      summary: Delete all mappings, or specific mappings when a body with GUIDs is provided
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MappingModel'
+        required: false
       responses:
         '200':
           description: OK
@@ -125,6 +133,14 @@ paths:
   /__admin/mappings/reset:
     post:
       summary: Reset all mappings to the default state
+      parameters:
+        - name: reloadStaticMappings
+          in: query
+          required: false
+          description: Whether to reload static mappings after the reset.
+          schema:
+            type: boolean
+            default: false
       responses:
         '200':
           description: OK
