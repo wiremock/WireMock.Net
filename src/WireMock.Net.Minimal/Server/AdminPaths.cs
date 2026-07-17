@@ -15,7 +15,7 @@ internal sealed class AdminPaths(string? adminPath) : IAdminPaths
     public string Health => $"{_prefix}/health";
     public string Mappings => $"{_prefix}/mappings";
     public string MappingsCode => $"{_prefix}/mappings/code";
-    public string MappingsWireMockOrg => $"{_prefix}mappings/wiremock.org";
+    public string MappingsWireMockOrg => $"{_prefix}/mappings/wiremock.org";
     public string Requests => $"{_prefix}/requests";
     public string Settings => $"{_prefix}/settings";
     public string Scenarios => $"{_prefix}/scenarios";
