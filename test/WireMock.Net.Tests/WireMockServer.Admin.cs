@@ -648,4 +648,24 @@ public class WireMockServerAdminTests(ITestOutputHelper output, ITestContextAcce
         // Assert
         settings.Should().NotBeNull();
     }
+
+    [Fact]
+    public async Task WireMockServer_WithCustomAdminPath_AdminRequestsNotInLogEntries()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+        using var server = WireMockServer.Start(w =>
+        {
+            w.Logger = new TestOutputHelperWireMockLogger(output);
+            w.StartAdminInterface = true;
+            w.AdminPath = "/custom/__admin";
+        });
+        var client = server.CreateClient();
+
+        // Act
+        await client.GetAsync($"{server.Url}/custom/__admin/settings", cancellationToken);
+
+        // Assert
+        server.LogEntries.Should().BeEmpty();
+    }
 }

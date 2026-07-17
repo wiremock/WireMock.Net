@@ -19,7 +19,6 @@ using WireMock.Owin;
 using WireMock.RequestBuilders;
 using WireMock.ResponseProviders;
 using WireMock.Serialization;
-using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
 
@@ -28,50 +27,16 @@ namespace WireMock.Server;
 public partial class WireMockServer
 {
     private const int EnhancedFileSystemWatcherTimeoutMs = 1000;
-    private const string DefaultAdminPathPrefix = "/__admin";
     private const string QueryParamReloadStaticMappings = "reloadStaticMappings";
     private static readonly Guid ProxyMappingGuid = new("e59914fd-782e-428e-91c1-4810ffb86567");
     private static readonly RegexMatcher AdminRequestContentTypeJson = new ContentTypeMatcher(WireMockConstants.ContentTypeJson, true);
     private EnhancedFileSystemWatcher? _enhancedFileSystemWatcher;
-    private AdminPaths? _adminPaths;
-
-    private sealed class AdminPaths
-    {
-        private readonly string _prefix;
-        private readonly string _prefixEscaped;
-
-        public AdminPaths(WireMockServerSettings settings)
-        {
-            _prefix = settings.AdminPath ?? DefaultAdminPathPrefix;
-            _prefixEscaped = _prefix.Replace("/", "\\/");
-        }
-
-        public string Files => $"{_prefix}/files";
-        public string Health => $"{_prefix}/health";
-        public string Mappings => $"{_prefix}/mappings";
-        public string MappingsCode => $"{_prefix}/mappings/code";
-        public string MappingsWireMockOrg => $"{_prefix}mappings/wiremock.org";
-        public string Requests => $"{_prefix}/requests";
-        public string Settings => $"{_prefix}/settings";
-        public string Scenarios => $"{_prefix}/scenarios";
-        public string OpenApi => $"{_prefix}/openapi";
-
-        public RegexMatcher MappingsGuidPathMatcher => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
-        public RegexMatcher MappingsGuidEnablePathMatcher  => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})\\/enable$");
-        public RegexMatcher MappingsGuidDisablePathMatcher => new($"^{_prefixEscaped}\\/mappings\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})\\/disable$");
-        public RegexMatcher MappingsCodeGuidPathMatcher => new($"^{_prefixEscaped}\\/mappings\\/code\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
-        public RegexMatcher RequestsGuidPathMatcher => new($"^{_prefixEscaped}\\/requests\\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
-        public RegexMatcher ScenariosNameMatcher => new($"^{_prefixEscaped}\\/scenarios\\/.+$");
-        public RegexMatcher ScenariosNameWithStateMatcher => new($"^{_prefixEscaped}\\/scenarios\\/.+\\/state$");
-        public RegexMatcher ScenariosNameWithResetMatcher => new($"^{_prefixEscaped}\\/scenarios\\/.+\\/reset$");
-        public RegexMatcher FilesFilenamePathMatcher => new($"^{_prefixEscaped}\\/files\\/.+$");
-        public RegexMatcher ProtoDefinitionsIdPathMatcher => new($"^{_prefixEscaped}\\/protodefinitions\\/.+$");
-    }
+    private IAdminPaths? _adminPaths;
 
     #region InitAdmin
     private void InitAdmin()
     {
-        _adminPaths = new AdminPaths(_settings);
+        _adminPaths = _options.AdminPaths;
 
         // __admin/health
         Given(Request.Create().WithPath(_adminPaths.Health).UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(HealthGet));
@@ -631,7 +596,7 @@ public partial class WireMockServer
     {
         if (TryParseGuidFromRequestMessage(requestMessage, out var guid))
         {
-            var entry = LogEntries.SingleOrDefault(r => r.RequestMessage != null && !r.RequestMessage.Path.StartsWith("/__admin/") && r.Guid == guid);
+            var entry = LogEntries.SingleOrDefault(r => r.RequestMessage != null && !_adminPaths!.Includes(r.RequestMessage.Path) && r.Guid == guid);
             if (entry is { })
             {
                 var model = new LogEntryMapper(_options).Map(entry);
@@ -660,7 +625,7 @@ public partial class WireMockServer
     {
         var logEntryMapper = new LogEntryMapper(_options);
         var result = LogEntries
-            .Where(r => r.RequestMessage != null && !r.RequestMessage.Path.StartsWith("/__admin/"))
+            .Where(r => r.RequestMessage != null && !_adminPaths!.Includes(r.RequestMessage.Path))
             .Select(logEntryMapper.Map);
 
         return ToJson(result);
@@ -682,7 +647,7 @@ public partial class WireMockServer
         var request = (Request)InitRequestBuilder(requestModel);
 
         var dict = new Dictionary<ILogEntry, RequestMatchResult>();
-        foreach (var logEntry in LogEntries.Where(le => le.RequestMessage != null && !le.RequestMessage.Path.StartsWith("/__admin/")))
+        foreach (var logEntry in LogEntries.Where(le => le.RequestMessage != null && !_adminPaths!.Includes(le.RequestMessage.Path)))
         {
             var requestMatchResult = new RequestMatchResult();
             if (request.GetMatchingScore(logEntry.RequestMessage!, requestMatchResult) > MatchScores.AlmostPerfect)
@@ -704,7 +669,7 @@ public partial class WireMockServer
             Guid.TryParse(value.ToString(), out var mappingGuid)
         )
         {
-            var logEntries = LogEntries.Where(le => le.RequestMessage != null && !le.RequestMessage.Path.StartsWith("/__admin/") && le.MappingGuid == mappingGuid);
+            var logEntries = LogEntries.Where(le => le.RequestMessage != null && !_adminPaths!.Includes(le.RequestMessage.Path) && le.MappingGuid == mappingGuid);
             var logEntryMapper = new LogEntryMapper(_options);
             var result = logEntries.Select(logEntryMapper.Map);
             return ToJson(result);

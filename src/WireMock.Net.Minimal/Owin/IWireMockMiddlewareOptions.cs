@@ -108,4 +108,6 @@ internal interface IWireMockMiddlewareOptions
     /// Set this property to customize how objects are serialized to and deserialized from JSON during mapping.
     /// </remarks>
     IJsonConverter DefaultJsonSerializer { get; set; }
+
+    IAdminPaths AdminPaths { get; set; }
 }

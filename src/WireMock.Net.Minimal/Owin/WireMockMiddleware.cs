@@ -21,6 +21,7 @@ internal class WireMockMiddleware(
     RequestDelegate next,
 #pragma warning restore CS9113 // Parameter is unread.
     IWireMockMiddlewareOptions options,
+    IAdminPaths adminPaths,
     IOwinRequestMapper requestMapper,
     IOwinResponseMapper responseMapper,
     IMappingMatcher mappingMatcher,
@@ -64,7 +65,7 @@ internal class WireMockMiddleware(
         Activity? activity = null;
 
         // Check if we should trace this request (optionally exclude admin requests)
-        var shouldTrace = tracingEnabled && !(excludeAdmin && request.Path.StartsWith("/__admin/"));
+        var shouldTrace = tracingEnabled && !(excludeAdmin && adminPaths.Includes(request.Path));
 
         if (shouldTrace)
         {
