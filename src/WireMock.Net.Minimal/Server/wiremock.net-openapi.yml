@@ -1,0 +1,1626 @@
+openapi: 3.0.1
+info:
+  title: WireMock.Net Admin API
+  description: >-
+    WireMock.Net is a flexible library for stubbing and mocking web HTTP
+    responses using requests matching and response templating.
+  version: 2.12.0
+servers:
+  - url: http://localhost/
+  - url: https://localhost/
+security:
+  - basicAuth: []
+paths:
+  /__admin/health:
+    get:
+      summary: Get health status
+      responses:
+        '200':
+          description: Healthy
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Healthy
+
+  /__admin/settings:
+    get:
+      summary: Get server settings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingsModel'
+    put:
+      summary: Update server settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: settings
+    post:
+      summary: Update server settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: settings
+
+  /__admin/mappings:
+    get:
+      summary: Get all mappings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingModel'
+    post:
+      summary: Create a new mapping
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MappingModel'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: mapping
+    delete:
+      summary: Delete all mappings, or specific mappings when a body with GUIDs is provided
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MappingModel'
+        required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/code:
+    get:
+      summary: Get all mappings as C# code
+      parameters:
+        - name: MappingConverterType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Server, Builder]
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /__admin/mappings/reset:
+    post:
+      summary: Reset all mappings to the default state
+      parameters:
+        - name: reloadStaticMappings
+          in: query
+          required: false
+          description: Whether to reload static mappings after the reset.
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/reloadStaticMappings:
+    post:
+      summary: Reload static mappings from disk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/save:
+    post:
+      summary: Save all mappings to disk as static mapping files
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/swagger:
+    get:
+      summary: Get the WireMock.Net Admin API OpenAPI specification
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /__admin/mappings/{guid}:
+    get:
+      summary: Get a mapping by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MappingModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+    put:
+      summary: Update a mapping by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MappingModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: mapping
+    delete:
+      summary: Delete a mapping by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/{guid}/enable:
+    put:
+      summary: Enable a mapping by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/{guid}/disable:
+    put:
+      summary: Disable a mapping by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/mappings/code/{guid}:
+    get:
+      summary: Get a mapping as C# code by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: MappingConverterType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Server, Builder]
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/requests:
+    get:
+      summary: Get all logged requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntryModel'
+    delete:
+      summary: Delete all logged requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/requests/reset:
+    post:
+      summary: Reset (delete) all logged requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/requests/{guid}:
+    get:
+      summary: Get a logged request by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogEntryModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+    delete:
+      summary: Delete a logged request by GUID
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/requests/find:
+    post:
+      summary: Find logged requests matching a request filter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntryModel'
+      x-codegen-request-body-name: requestFilter
+    get:
+      summary: Find logged requests by mapping GUID
+      parameters:
+        - name: mappingGuid
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntryModel'
+
+  /__admin/scenarios:
+    get:
+      summary: Get all scenarios
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScenarioStateModel'
+    delete:
+      summary: Reset all scenarios
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/scenarios/reset:
+    post:
+      summary: Reset all scenarios
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/scenarios/{name}:
+    delete:
+      summary: Reset a scenario by name
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/scenarios/{name}/reset:
+    post:
+      summary: Reset a scenario by name
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/scenarios/{name}/state:
+    put:
+      summary: Set the state of a scenario
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScenarioStateUpdateModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: scenarioState
+
+  /__admin/openapi/convert:
+    post:
+      summary: Convert an OpenAPI specification to WireMock.Net mappings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+          text/plain:
+            schema:
+              type: string
+          application/yaml:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MappingModel'
+
+  /__admin/openapi/save:
+    post:
+      summary: Convert an OpenAPI specification to WireMock.Net mappings and save them
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+          text/plain:
+            schema:
+              type: string
+          application/yaml:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/protodefinitions/{id}:
+    post:
+      summary: Add or update a Grpc proto definition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/files/{filename}:
+    get:
+      summary: Get a static file by filename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+        '404':
+          description: Not Found
+          content: {}
+    put:
+      summary: Create or update a static file by filename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              format: binary
+        required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content: {}
+      x-codegen-request-body-name: content
+    post:
+      summary: Create a static file by filename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              format: binary
+        required: false
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+      x-codegen-request-body-name: content
+    delete:
+      summary: Delete a static file by filename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content: {}
+    head:
+      summary: Check whether a static file exists by filename
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: File exists
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    BodyModel:
+      type: object
+      properties:
+        Matcher:
+          $ref: '#/components/schemas/MatcherModel'
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: Body Model
+
+    ClientIPModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: ClientIPModel
+
+    CookieModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: Cookie Model
+
+    EncodingModel:
+      type: object
+      properties:
+        CodePage:
+          type: integer
+          description: Encoding CodePage
+          format: int32
+        EncodingName:
+          type: string
+          description: Encoding EncodingName
+        WebName:
+          type: string
+          description: Encoding WebName
+      description: EncodingModel
+
+    FaultModel:
+      type: object
+      properties:
+        Type:
+          type: string
+          description: >-
+            The fault type. Can be null, "", NONE, EMPTY_RESPONSE or
+            MALFORMED_RESPONSE_CHUNK.
+        Percentage:
+          type: number
+          description: Gets or sets the fault percentage.
+          format: double
+      description: Fault Model
+
+    HeaderModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: Header Model
+
+    LogEntryModel:
+      type: object
+      properties:
+        Guid:
+          type: string
+          description: The unique identifier.
+          format: uuid
+        Request:
+          $ref: '#/components/schemas/LogRequestModel'
+        Response:
+          $ref: '#/components/schemas/LogResponseModel'
+        MappingGuid:
+          type: string
+          description: The mapping unique identifier.
+          format: uuid
+        MappingTitle:
+          type: string
+          description: The mapping unique title.
+        RequestMatchResult:
+          $ref: '#/components/schemas/LogRequestMatchModel'
+        PartialMappingGuid:
+          type: string
+          description: The partial mapping unique identifier.
+          format: uuid
+        PartialMappingTitle:
+          type: string
+          description: The partial mapping unique title.
+        PartialRequestMatchResult:
+          $ref: '#/components/schemas/LogRequestMatchModel'
+      description: Log Entry Model
+
+    LogRequestMatchModel:
+      type: object
+      properties:
+        TotalScore:
+          type: number
+          description: Gets or sets the match-score.
+          format: double
+        TotalNumber:
+          type: integer
+          description: Gets or sets the total number of matches.
+          format: int32
+        IsPerfectMatch:
+          type: boolean
+          description: Gets or sets a value indicating whether this instance is a perfect match.
+        AverageTotalScore:
+          type: number
+          description: Gets the match percentage.
+          format: double
+        MatchDetails:
+          type: array
+          description: Gets the match details.
+          items:
+            type: object
+            additionalProperties: true
+      description: Log Request Match Model
+
+    LogRequestModel:
+      type: object
+      properties:
+        ClientIP:
+          type: string
+          description: The Client IP Address.
+        DateTime:
+          type: string
+          description: The DateTime.
+          format: date-time
+        Path:
+          type: string
+          description: The Path.
+        AbsolutePath:
+          type: string
+          description: The Absolute Path.
+        Url:
+          type: string
+          description: Gets the url (relative).
+        AbsoluteUrl:
+          type: string
+          description: The absolute URL.
+        ProxyUrl:
+          type: string
+          description: The ProxyUrl (if a proxy is used).
+        Query:
+          type: object
+          description: The query parameters.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        Method:
+          type: string
+          description: The method.
+        HttpVersion:
+          type: string
+          description: The HTTP Version.
+        Headers:
+          type: object
+          description: The Headers.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        Cookies:
+          type: object
+          description: The Cookies.
+          additionalProperties:
+            type: string
+        Body:
+          type: string
+          description: The body (as string).
+        BodyAsJson:
+          type: object
+          description: The body (as JSON object).
+          additionalProperties: true
+        BodyAsBytes:
+          type: string
+          description: The body (as bytearray).
+          format: byte
+        BodyEncoding:
+          $ref: '#/components/schemas/EncodingModel'
+        DetectedBodyType:
+          type: string
+          description: The DetectedBodyType (None, String, Json, Bytes).
+        DetectedBodyTypeFromContentType:
+          type: string
+          description: The DetectedBodyTypeFromContentType (None, String, Json, Bytes).
+      description: Log Request Model
+
+    LogResponseModel:
+      type: object
+      properties:
+        StatusCode:
+          description: Gets or sets the status code.
+          oneOf:
+            - type: integer
+            - type: string
+        Headers:
+          type: object
+          description: Gets the headers.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        BodyDestination:
+          type: string
+          description: Gets or sets the body destination (SameAsSource, String or Bytes).
+        Body:
+          type: string
+          description: The body (as string).
+        BodyAsJson:
+          type: object
+          description: The body (as JSON object).
+          additionalProperties: true
+        BodyAsBytes:
+          type: string
+          description: The body (as bytearray).
+          format: byte
+        BodyAsFile:
+          type: string
+          description: Gets or sets the body as file.
+        BodyAsFileIsCached:
+          type: boolean
+          description: Is the body as file cached?
+        BodyOriginal:
+          type: string
+          description: Gets or sets the original body.
+        BodyEncoding:
+          $ref: '#/components/schemas/EncodingModel'
+        DetectedBodyType:
+          type: string
+          description: The detected body type (detection based on body content).
+        DetectedBodyTypeFromContentType:
+          type: string
+          description: The detected body type (detection based on Content-Type).
+        FaultType:
+          type: string
+          description: The FaultType.
+        FaultPercentage:
+          type: number
+          description: Gets or sets the Fault percentage.
+          format: double
+        DateTime:
+          type: string
+          description: The DateTime.
+          format: date-time
+        Method:
+          type: string
+          description: The method.
+      description: Log Response Model
+
+    MappingModel:
+      type: object
+      properties:
+        Guid:
+          type: string
+          description: Gets or sets the unique identifier.
+          format: uuid
+        UpdatedAt:
+          type: string
+          description: The datetime when this mapping was created or updated.
+          format: date-time
+        Title:
+          type: string
+          description: The unique title.
+        Description:
+          type: string
+          description: The description.
+        Priority:
+          type: integer
+          description: The priority (a low value means higher priority).
+          format: int32
+        Scenario:
+          type: string
+          description: The Scenario.
+        WhenStateIs:
+          type: string
+          description: Execution state condition for the current mapping.
+        SetStateTo:
+          type: string
+          description: >-
+            The next state which will be signaled after the current mapping
+            execution. In case the value is null state will not be changed.
+        TimesInSameState:
+          type: integer
+          description: >-
+            The number of times this match should be matched before the state
+            will be changed to the specified one.
+          format: int32
+        IsDisabled:
+          type: boolean
+          description: Value to determine if the mapping is disabled.
+        TimeSettings:
+          $ref: '#/components/schemas/TimeSettingsModel'
+        Request:
+          $ref: '#/components/schemas/RequestModel'
+        Response:
+          $ref: '#/components/schemas/ResponseModel'
+        SaveToFile:
+          type: boolean
+          description: Saves this mapping as a static mapping file.
+        Webhook:
+          $ref: '#/components/schemas/WebhookModel'
+        Webhooks:
+          type: array
+          description: The Webhooks.
+          items:
+            $ref: '#/components/schemas/WebhookModel'
+        UseWebhooksFireAndForget:
+          type: boolean
+          description: Fire and forget for webhooks.
+        Data:
+          type: object
+          description: Data Object which can be used when WithTransformer is used.
+          additionalProperties: true
+        Probability:
+          type: number
+          description: >-
+            The probability when this request should be matched. Value is
+            between 0 and 1.
+          format: double
+        ProtoDefinition:
+          type: string
+          description: The Grpc ProtoDefinition which is used for this mapping.
+        ProtoDefinitions:
+          type: array
+          description: The Grpc ProtoDefinitions which are used for this mapping.
+          items:
+            type: string
+      description: MappingModel
+
+    MatcherModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Pattern:
+          type: string
+          description: Gets or sets the pattern. Can be a string (default) or an object.
+        Patterns:
+          type: array
+          description: >-
+            Gets or sets the patterns. Can be array of strings (default) or an
+            array of objects.
+          items:
+            type: string
+        PatternAsFile:
+          type: string
+          description: Gets the pattern from a file.
+        IgnoreCase:
+          type: boolean
+          description: Gets or sets the ignore case.
+        RejectOnMatch:
+          type: boolean
+          description: Reject on match.
+      description: MatcherModel
+
+    ParamModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+        IgnoreCase:
+          type: boolean
+          description: Gets or sets the ignore case.
+      description: Param Model
+
+    PathModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: PathModel
+
+    ProxyAndRecordSettingsModel:
+      type: object
+      properties:
+        Url:
+          type: string
+          description: The URL to proxy.
+        ClientX509Certificate2ThumbprintOrSubjectName:
+          type: string
+          description: The clientCertificate thumbprint or subject name fragment to use.
+        WebProxySettings:
+          $ref: '#/components/schemas/WebProxySettingsModel'
+        AllowAutoRedirect:
+          type: boolean
+          description: Proxy requests should follow redirection (30x).
+        SaveMapping:
+          type: boolean
+          description: >-
+            Save the mapping for each request/response to the internal
+            Mappings.
+        SaveMappingToFile:
+          type: boolean
+          description: >-
+            Save the mapping for each request/response also to a file.
+            (Note that SaveMapping must also be set to true.)
+        SaveMappingForStatusCodePattern:
+          type: string
+          description: >-
+            Only save request/response to the internal Mappings if the status
+            code matches this pattern (e.g. "2xx", "200", "100-299,6xx").
+        ExcludedHeaders:
+          type: array
+          description: Headers to exclude from the saved mappings.
+          items:
+            type: string
+        ExcludedCookies:
+          type: array
+          description: Cookies to exclude from the saved mappings.
+          items:
+            type: string
+        UseDefinedRequestMatchers:
+          type: boolean
+          description: >-
+            When SaveMapping is true, use the defined mappings in the request
+            for the new mapping.
+        AppendGuidToSavedMappingFile:
+          type: boolean
+          description: Append a unique GUID to the filename from the saved mapping file.
+        PrefixForSavedMappingFile:
+          type: string
+          description: Set prefix for saved mapping file.
+        ReplaceSettings:
+          $ref: '#/components/schemas/ProxyUrlReplaceSettingsModel'
+        ProxyAll:
+          type: boolean
+          description: Proxy all API calls, irrespective of any condition.
+      description: Proxy and Record Settings Model
+
+    ProxyUrlReplaceSettingsModel:
+      type: object
+      properties:
+        OldValue:
+          type: string
+          description: The old path value to be replaced by the new path value.
+        NewValue:
+          type: string
+          description: The new path value to replace the old value with.
+        IgnoreCase:
+          type: boolean
+          description: Defines if the case should be ignored when replacing.
+        TransformTemplate:
+          type: string
+          description: Holds the transformation template.
+        TransformerType:
+          type: string
+          description: The transformer type.
+      description: Proxy URL Replace Settings Model
+
+    RequestModel:
+      type: object
+      properties:
+        ClientIP:
+          description: Gets or sets the ClientIP. (Can be a string or a ClientIPModel)
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/ClientIPModel'
+        Path:
+          description: Gets or sets the Path. (Can be a string or a PathModel)
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/PathModel'
+        Url:
+          description: Gets or sets the Url. (Can be a string or a UrlModel)
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/UrlModel'
+        Methods:
+          type: array
+          description: The methods.
+          items:
+            type: string
+        Headers:
+          type: array
+          description: Gets or sets the Headers.
+          items:
+            $ref: '#/components/schemas/HeaderModel'
+        Cookies:
+          type: array
+          description: Gets or sets the Cookies.
+          items:
+            $ref: '#/components/schemas/CookieModel'
+        Params:
+          type: array
+          description: Gets or sets the Params.
+          items:
+            $ref: '#/components/schemas/ParamModel'
+        Body:
+          $ref: '#/components/schemas/BodyModel'
+      description: RequestModel
+
+    ResponseModel:
+      type: object
+      properties:
+        StatusCode:
+          description: Gets or sets the HTTP status. (Can be an integer or a string)
+          oneOf:
+            - type: integer
+            - type: string
+        BodyDestination:
+          type: string
+          description: Gets or sets the body destination (SameAsSource, String or Bytes).
+        Body:
+          type: string
+          description: Gets or sets the body.
+        BodyFromBase64:
+          type: string
+          description: Gets or sets the body (from Base64).
+        BodyAsJson:
+          type: object
+          description: Gets or sets the body (as JSON object).
+          additionalProperties: true
+        BodyAsJsonIndented:
+          type: boolean
+          description: >-
+            Gets or sets a value indicating whether the JSON body should be
+            indented.
+        BodyAsBytes:
+          type: string
+          description: Gets or sets the body (as bytearray).
+          format: byte
+          pattern: '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$'
+        BodyAsFile:
+          type: string
+          description: Gets or sets the body as a file.
+        BodyAsFileIsCached:
+          type: boolean
+          description: Is the body as file cached?
+        BodyEncoding:
+          $ref: '#/components/schemas/EncodingModel'
+        UseTransformer:
+          type: boolean
+          description: >-
+            Gets or sets a value indicating whether to use the response
+            transformer.
+        TransformerType:
+          type: string
+          description: Gets the type of the transformer.
+        UseTransformerForBodyAsFile:
+          type: boolean
+          description: Use the transformer for the content from the referenced BodyAsFile.
+        TransformerReplaceNodeOptions:
+          type: string
+          description: The ReplaceNodeOptions to use when transforming a JSON node.
+        Headers:
+          type: object
+          description: Gets or sets the headers.
+          additionalProperties: true
+        HeadersRaw:
+          type: string
+          description: Gets or sets the Headers (Raw).
+        TrailingHeaders:
+          type: object
+          description: Gets or sets the Trailing Headers.
+          additionalProperties: true
+        Delay:
+          type: integer
+          description: Gets or sets the delay in milliseconds.
+          format: int32
+        MinimumRandomDelay:
+          type: integer
+          description: Gets or sets the minimum random delay in milliseconds.
+          format: int32
+        MaximumRandomDelay:
+          type: integer
+          description: Gets or sets the maximum random delay in milliseconds.
+          format: int32
+        ProxyUrl:
+          type: string
+          description: Gets or sets the Proxy URL.
+        ProxyUrlReplaceSettings:
+          $ref: '#/components/schemas/ProxyUrlReplaceSettingsModel'
+        X509Certificate2ThumbprintOrSubjectName:
+          type: string
+          description: The client X509Certificate2 Thumbprint or SubjectName to use.
+        Fault:
+          $ref: '#/components/schemas/FaultModel'
+        WebProxy:
+          $ref: '#/components/schemas/WebProxyModel'
+        ProtoDefinition:
+          type: string
+          description: Gets or sets the proto definition.
+        ProtoDefinitions:
+          type: array
+          description: Gets or sets the proto definitions.
+          items:
+            type: string
+        ProtoBufMessageType:
+          type: string
+          description: >-
+            Gets or sets the full type of the protobuf message object. Format
+            is "{package-name}.{type-name}".
+      description: ResponseModel
+
+    ScenarioStateModel:
+      type: object
+      properties:
+        Name:
+          type: string
+          description: Gets or sets the name.
+        NextState:
+          type: string
+          description: Gets or sets the NextState.
+        Started:
+          type: boolean
+          description: Gets or sets a value indicating whether this scenario is started.
+        Finished:
+          type: boolean
+          description: Gets or sets a value indicating whether this scenario is finished.
+        Counter:
+          type: integer
+          description: Gets or sets the state counter.
+          format: int32
+      description: Scenario State Model
+
+    ScenarioStateUpdateModel:
+      type: object
+      properties:
+        State:
+          type: string
+          description: Gets or sets the next state.
+      description: Scenario State Update Model
+
+    SettingsModel:
+      type: object
+      properties:
+        GlobalProcessingDelay:
+          type: integer
+          description: Gets or sets the global delay in milliseconds.
+          format: int32
+        AllowPartialMapping:
+          type: boolean
+          description: Gets or sets if partial mapping is allowed.
+        RequestLogExpirationDuration:
+          type: integer
+          description: Gets or sets the RequestLog expiration in hours.
+          format: int32
+        MaxRequestLogCount:
+          type: integer
+          description: Gets or sets the MaxRequestLog count.
+          format: int32
+        AllowBodyForAllHttpMethods:
+          type: boolean
+          description: Allow a Body for all HTTP Methods (default false).
+        AllowOnlyDefinedHttpStatusCodeInResponse:
+          type: boolean
+          description: >-
+            Allow only an HttpStatusCode in the response which is defined
+            (default false).
+        DisableJsonBodyParsing:
+          type: boolean
+          description: >-
+            Set to true to disable JSON deserialization when processing
+            requests (default false).
+        DisableRequestBodyDecompressing:
+          type: boolean
+          description: >-
+            Disable support for GZip and Deflate request body decompression
+            (default false).
+        DisableDeserializeFormUrlEncoded:
+          type: boolean
+          description: >-
+            Set to true to disable FormUrlEncoded deserializing when
+            processing requests (default false).
+        HandleRequestsSynchronously:
+          type: boolean
+          description: Handle all requests synchronously (default false).
+        UseRegexExtended:
+          type: boolean
+          description: >-
+            Use the RegexExtended instead of the default Regex (default
+            true).
+        SaveUnmatchedRequests:
+          type: boolean
+          description: >-
+            Save unmatched requests to a file using the IFileSystemHandler
+            (default false).
+        ReadStaticMappings:
+          type: boolean
+          description: Gets or sets if the static mappings should be read at startup.
+        WatchStaticMappings:
+          type: boolean
+          description: >-
+            Watch the static mapping files + folder for changes when
+            running.
+        WatchStaticMappingsInSubdirectories:
+          type: boolean
+          description: >-
+            A value indicating whether subdirectories within the static
+            mappings path should be monitored.
+        CorsPolicyOptions:
+          type: string
+          description: >-
+            Policies to use when using CORS. By default CORS is disabled.
+        ProxyAndRecordSettings:
+          $ref: '#/components/schemas/ProxyAndRecordSettingsModel'
+        HostingScheme:
+          type: string
+          description: Defines on which scheme (http/https) to host.
+        DoNotSaveDynamicResponseInLogEntry:
+          type: boolean
+          description: >-
+            Don't save the response-string in the LogEntry when
+            WithBody(Func) is used (default false).
+        QueryParameterMultipleValueSupport:
+          type: string
+          description: Default value = "All".
+        ProtoDefinitions:
+          type: object
+          description: A list of Grpc ProtoDefinitions which can be used.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        ClientCertificateMode:
+          type: string
+          description: Server client certificate mode.
+        AcceptAnyClientCertificate:
+          type: boolean
+          description: Whether to accept any client certificate.
+      description: Settings Model
+
+    StatusModel:
+      type: object
+      properties:
+        Guid:
+          type: string
+          description: The optional guid.
+          format: uuid
+        Status:
+          type: string
+          description: The status (can also contain the error message).
+      description: Status Model
+
+    TimeSettingsModel:
+      type: object
+      properties:
+        Start:
+          type: string
+          description: >-
+            Gets or sets the DateTime from which this mapping should be used.
+            If not defined, it is always used (default behavior).
+          format: date-time
+        End:
+          type: string
+          description: >-
+            Gets or sets the DateTime until which this mapping should be used.
+            If not defined, it is used forever (default behavior).
+          format: date-time
+        TTL:
+          type: integer
+          description: >-
+            Gets or sets the TTL (Time To Live) in seconds for this mapping.
+            If not defined, it is used forever (default behavior).
+          format: int32
+      description: Time Settings Model
+
+    UrlModel:
+      type: object
+      properties:
+        Matchers:
+          type: array
+          description: Gets or sets the matchers.
+          items:
+            $ref: '#/components/schemas/MatcherModel'
+        MatchOperator:
+          type: string
+          description: The operator to use when matchers are defined (or, and, average).
+      description: UrlModel
+
+    WebhookModel:
+      type: object
+      properties:
+        Request:
+          $ref: '#/components/schemas/WebhookRequestModel'
+      description: Webhook Model
+
+    WebhookRequestModel:
+      type: object
+      properties:
+        Url:
+          type: string
+          description: Gets or sets the Url.
+        Method:
+          type: string
+          description: The method.
+        Headers:
+          type: object
+          description: Gets or sets the headers.
+          additionalProperties:
+            type: string
+        Body:
+          type: string
+          description: Gets or sets the body.
+        UseTransformer:
+          type: boolean
+          description: Use the response transformer.
+        TransformerType:
+          type: string
+          description: The transformer type.
+      description: Webhook Request Model
+
+    WebProxyModel:
+      type: object
+      properties:
+        Address:
+          type: string
+          description: A string instance that contains the address of the proxy server.
+        UserName:
+          type: string
+          description: The user name associated with the credentials.
+        Password:
+          type: string
+          description: The password for the user name associated with the credentials.
+      description: WebProxy Model
+
+    WebProxySettingsModel:
+      type: object
+      properties:
+        Address:
+          type: string
+          description: A string instance that contains the address of the proxy server.
+        UserName:
+          type: string
+          description: The user name associated with the credentials.
+        Password:
+          type: string
+          description: The password for the user name associated with the credentials.
+      description: WebProxy Settings Model
