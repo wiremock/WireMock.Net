@@ -50,6 +50,9 @@ public class WireMockMiddlewareTests
         _guidUtilsMock = new Mock<IGuidUtils>();
         _guidUtilsMock.Setup(g => g.NewGuid()).Returns(NewGuid);
 
+        var adminPathsMock = new Mock<IAdminPaths>();
+        adminPathsMock.Setup(a => a.Includes(It.IsAny<string?>())).Returns((string? path) => path?.StartsWith("/__admin/") == true);
+
         _dateTimeUtilsMock = new Mock<IDateTimeUtils>();
         _dateTimeUtilsMock.Setup(d => d.UtcNow).Returns(UtcNow);
 
@@ -89,6 +92,7 @@ public class WireMockMiddlewareTests
         _sut = new WireMockMiddleware(
             _ => Task.CompletedTask,
             _optionsMock.Object,
+            adminPathsMock.Object,
             _requestMapperMock.Object,
             _responseMapperMock.Object,
             _matcherMock.Object,

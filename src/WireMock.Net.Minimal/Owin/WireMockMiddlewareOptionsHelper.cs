@@ -34,6 +34,7 @@ internal static class WireMockMiddlewareOptionsHelper
         options.QueryParameterMultipleValueSupport = settings.QueryParameterMultipleValueSupport;
         options.RequestLogExpirationDuration = settings.RequestLogExpirationDuration;
         options.SaveUnmatchedRequests = settings.SaveUnmatchedRequests;
+        options.AdminPaths = new AdminPaths(settings.AdminPath);
 
 #if USE_ASPNETCORE
         options.AdditionalServiceRegistration = settings.AdditionalServiceRegistration;

@@ -12,23 +12,27 @@ internal class WireMockMiddlewareLogger(
     IWireMockMiddlewareOptions options,
     LogEntryMapper logEntryMapper,
     IGuidUtils guidUtils,
+    IAdminPaths adminPaths,
     IDateTimeUtils dateTimeUtils
 ) : IWireMockMiddlewareLogger
 {
     public void LogRequestAndResponse(bool logRequest, RequestMessage request, IResponseMessage? response, MappingMatcherResult? match, MappingMatcherResult? partialMatch, Activity? activity)
     {
+        var mapping = match?.Mapping;
+        var partialMapping = partialMatch?.Mapping;
+
         var logEntry = new LogEntry
         {
             Guid = guidUtils.NewGuid(),
             RequestMessage = request,
             ResponseMessage = response,
 
-            MappingGuid = match?.Mapping?.Guid,
-            MappingTitle = match?.Mapping?.Title,
+            MappingGuid = mapping?.Guid,
+            MappingTitle = mapping?.Title,
             RequestMatchResult = match?.RequestMatchResult,
 
-            PartialMappingGuid = partialMatch?.Mapping?.Guid,
-            PartialMappingTitle = partialMatch?.Mapping?.Title,
+            PartialMappingGuid = partialMapping?.Guid,
+            PartialMappingTitle = partialMapping?.Title,
             PartialMatchResult = partialMatch?.RequestMatchResult
         };
 
@@ -53,7 +57,8 @@ internal class WireMockMiddlewareLogger(
 
     public void LogLogEntry(LogEntry entry, bool addRequest)
     {
-        options.Logger.DebugRequestResponse(logEntryMapper.Map(entry), entry.RequestMessage?.Path.StartsWith("/__admin/") == true);
+        var isAdminRequest = adminPaths.Includes(entry.RequestMessage?.Path);
+        options.Logger.DebugRequestResponse(logEntryMapper.Map(entry), isAdminRequest);
 
         // If addRequest is set to true and MaxRequestLogCount is null or does have a value greater than 0, try to add a new request log.
         if (addRequest && options.MaxRequestLogCount is null or > 0)
