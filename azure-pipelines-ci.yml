@@ -1,3 +1,9 @@
+parameters:
+- name: runWindowsReleaseToMyGet
+  displayName: Run Windows Release to MyGet
+  type: boolean
+  default: false
+
 variables:
   Prerelease: 'ci'
   buildId: "1$(Build.BuildId)"
@@ -131,6 +137,7 @@ jobs:
 
 - job: Windows_Release_to_MyGet
   dependsOn: Windows_Build_Test
+  condition: and(succeeded(), ${{ parameters.runWindowsReleaseToMyGet }})
 
   pool:
     vmImage: 'windows-2025'
