@@ -1115,7 +1115,7 @@ namespace WireMock.Net.ConsoleApplication
                     {
                         BodyData = new BodyData
                         {
-                            BodyAsString = "random200or505:" + code + ", HeadersFromRequest = " + string.Join(",", request.Headers),
+                            BodyAsString = "random200or505:" + code + ", HeadersFromRequest = " + request.Headers != null ? string.Join(",", request.Headers!.Select(h => $"{h.Key}:{h.Value}")) : "none",
                             DetectedBodyType = BodyType.String,
                         },
                         StatusCode = code

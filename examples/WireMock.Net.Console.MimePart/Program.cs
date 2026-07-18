@@ -9,7 +9,7 @@ namespace WireMock.Net.Console.MimePart;
 
 static class Program
 {
-    private static readonly ILoggerRepository LogRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+    private static readonly ILoggerRepository LogRepository = LogManager.GetRepository(Assembly.GetEntryAssembly()!);
     private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
 
     static async Task Main(params string[] args)
