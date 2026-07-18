@@ -1,11 +1,11 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
-
 namespace WireMock.Types;
 
 /// <summary>
-/// A special List which overrides the ToString() to return first value.
+/// A special List which overrides the ToString() to return first value in case of a single element.
+/// Else it will return a comma separated list of all values.
+/// If null or empty, it will return an empty string.
 /// </summary>
 /// <typeparam name="T">The generic type</typeparam>
 /// <seealso cref="List{T}" />
@@ -61,11 +61,11 @@ public class WireMockList<T> : List<T>
                 {
                     return strValue;
                 }
-
-                return this[0]?.ToString();
+               
+                return this[0]?.ToString() ?? string.Empty;
 
             default:
-                var strings = this.Select(x => x as string ?? x?.ToString());
+                var strings = this.Select(x => x as string ?? x?.ToString() ?? string.Empty);
                 return string.Join(", ", strings);
         }
     }
