@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using log4net;
 using log4net.Config;
 using log4net.Repository;
@@ -12,8 +10,7 @@ namespace WireMock.Net.Console.NET8;
 
 static class Program
 {
-    private static readonly ILoggerRepository LogRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-    private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
+    private static readonly ILoggerRepository LogRepository = LogManager.GetRepository(Assembly.GetEntryAssembly()!);
 
     static async Task Main(params string[] args)
     {

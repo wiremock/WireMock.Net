@@ -1,16 +1,16 @@
 // Copyright © WireMock.Net
 
+using JsonConverter.Newtonsoft.Json;
+using JsonConverter.System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using WireMock.Handlers;
+using WireMock.Owin;
 using WireMock.Owin.Mappers;
 using WireMock.ResponseBuilders;
 using WireMock.Types;
 using WireMock.Util;
-using WireMock.Owin;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
-using JsonConverter.Newtonsoft.Json;
-using JsonConverter.System.Text.Json;
 
 namespace WireMock.Net.Tests.Owin.Mappers;
 
@@ -40,11 +40,11 @@ public class OwinResponseMapperTests
 
         _headers = new Mock<IHeaderDictionary>();
         _headers.SetupAllProperties();
-#if NET452
-        _headers.Setup(h => h.AppendValues(It.IsAny<string>(), It.IsAny<string[]>()));
-#else
+
+        // Extension methods(here: HeaderDictionaryExtensions.Append) may not be used in setup / verification expressions.
+#pragma warning disable ASP0019
         _headers.Setup(h => h.Add(It.IsAny<string>(), It.IsAny<StringValues>()));
-#endif
+#pragma warning restore ASP0019
 
         _responseMock = new Mock<HttpResponse>();
         _responseMock.SetupAllProperties();
@@ -238,12 +238,8 @@ public class OwinResponseMapperTests
         await _sut.MapAsync(responseMessage, _responseMock.Object);
 
         // Assert
-#if NET452
-        _headers.Verify(h => h.AppendValues("h", new string[] { "x", "y" }), Times.Once);
-#else
         var v = new StringValues();
         _headers.Verify(h => h.TryGetValue("h", out v), Times.Once);
-#endif
     }
 
     [Fact]

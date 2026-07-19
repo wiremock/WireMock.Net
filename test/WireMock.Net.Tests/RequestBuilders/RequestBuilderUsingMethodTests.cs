@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-
 using WireMock.Matchers.Request;
 using WireMock.RequestBuilders;
 
@@ -17,7 +16,7 @@ public class RequestBuilderUsingMethodTests
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
         matchers.Count.Should().Be(1);
-        (matchers[0] as RequestMessageMethodMatcher).Methods.Should().ContainSingle("CONNECT");
+        matchers[0].Should().BeOfType<RequestMessageMethodMatcher>().Which.Methods.Should().ContainSingle("CONNECT");
     }
 
     [Fact]
@@ -29,7 +28,7 @@ public class RequestBuilderUsingMethodTests
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
         matchers.Count.Should().Be(1);
-        (matchers[0] as RequestMessageMethodMatcher).Methods.Should().ContainSingle("OPTIONS");
+        matchers[0].Should().BeOfType<RequestMessageMethodMatcher>().Which.Methods.Should().ContainSingle("OPTIONS");
     }
 
     [Fact]
@@ -41,7 +40,7 @@ public class RequestBuilderUsingMethodTests
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
         matchers.Count.Should().Be(1);
-        (matchers[0] as RequestMessageMethodMatcher).Methods.Should().ContainSingle("PATCH");
+        matchers[0].Should().BeOfType<RequestMessageMethodMatcher>().Which.Methods.Should().ContainSingle("PATCH");
     }
 
     [Fact]
@@ -53,7 +52,7 @@ public class RequestBuilderUsingMethodTests
         // Assert
         var matchers = requestBuilder.GetPrivateFieldValue<IList<IRequestMatcher>>("_requestMatchers");
         matchers.Count.Should().Be(1);
-        (matchers[0] as RequestMessageMethodMatcher).Methods.Should().ContainSingle("TRACE");
+        matchers[0].Should().BeOfType<RequestMessageMethodMatcher>().Which.Methods.Should().ContainSingle("TRACE");
     }
 
     [Fact]
