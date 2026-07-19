@@ -1,3 +1,8 @@
+# 2.13.0 (19 July 2026)
+- [#1488](https://github.com/wiremock/WireMock.Net/pull/1488) - feat(xunit logging): TestOutputHelperWireMockLogger [feature] contributed by [Stepami](https://github.com/Stepami)
+- [#1490](https://github.com/wiremock/WireMock.Net/pull/1490) - Fix: Fully respect configured custom admin path (merge PR #1483) [feature] contributed by [Copilot](https://github.com/apps/copilot-swe-agent)
+- [#1482](https://github.com/wiremock/WireMock.Net/issues/1482) - WireMock.Minimal.Owin does not respect custom pathing for determining admin paths [bug]
+
 # 2.12.0 (07 July 2026)
 - [#1479](https://github.com/wiremock/WireMock.Net/pull/1479) - Upgrade Microsoft.OpenApi to 3.7.0 and YamlDotNet to 18.1.0 [security] contributed by [StefH](https://github.com/StefH)
 - [#1480](https://github.com/wiremock/WireMock.Net/pull/1480) - Upgrade RamlToOpenApiConverter.SourceOnly to 0.21.0 [feature] contributed by [StefH](https://github.com/StefH)

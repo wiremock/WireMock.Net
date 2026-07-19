@@ -1,8 +1,6 @@
-# 2.12.0 (07 July 2026)
-- #1479 Upgrade Microsoft.OpenApi to 3.7.0 and YamlDotNet to 18.1.0 [security]
-- #1480 Upgrade RamlToOpenApiConverter.SourceOnly to 0.21.0 [feature]
-- #1484 Update Scriban.Signed package version to 7.2.5 [security]
-- #1487 Response.Create() sets the DateTime to UtcNow [bug]
-- #1486 ResponseMessage.DateTime defaults to DateTime.MinValue, causing premature log entry purging for *matched* requests [bug]
+# 2.13.0 (19 July 2026)
+- #1488 feat(xunit logging): TestOutputHelperWireMockLogger [feature]
+- #1490 Fix: Fully respect configured custom admin path (merge PR #1483) [feature]
+- #1482 WireMock.Minimal.Owin does not respect custom pathing for determining admin paths [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
