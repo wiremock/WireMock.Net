@@ -155,7 +155,8 @@ public partial class WireMockServer
                 var clientIPModel = _settings.DefaultJsonSerializer.ParseJsonToken<ClientIPModel>(requestModel.ClientIP);
                 if (clientIPModel.Matchers != null)
                 {
-                    requestBuilder = requestBuilder.WithPath(clientIPModel.Matchers.Select(_matcherMapper.Map).OfType<IStringMatcher>().ToArray());
+                    var matchOperator = StringUtils.ParseMatchOperator(clientIPModel.MatchOperator);
+                    requestBuilder = requestBuilder.WithClientIP(matchOperator, clientIPModel.Matchers.Select(_matcherMapper.Map).OfType<IStringMatcher>().ToArray());
                 }
             }
         }

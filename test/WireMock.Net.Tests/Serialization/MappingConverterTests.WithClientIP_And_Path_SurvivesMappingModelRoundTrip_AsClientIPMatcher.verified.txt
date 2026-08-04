@@ -1,0 +1,29 @@
+﻿[
+  {
+    Guid: Guid_1,
+    UpdatedAt: DateTime_1,
+    Request: {
+      ClientIP: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: 1.2.3.4,
+            IgnoreCase: false
+          }
+        ]
+      },
+      Path: {
+        Matchers: [
+          {
+            Name: WildcardMatcher,
+            Pattern: /foo,
+            IgnoreCase: false
+          }
+        ]
+      }
+    },
+    Response: {
+      StatusCode: 200
+    }
+  }
+]

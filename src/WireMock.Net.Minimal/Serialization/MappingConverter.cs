@@ -342,7 +342,7 @@ internal class MappingConverter(MatcherMapper mapper)
         if (clientIPMatcher?.Matchers != null)
         {
             var clientIPMatchers = _mapper.Map(clientIPMatcher.Matchers);
-            mappingModel.Request.Path = new ClientIPModel
+            mappingModel.Request.ClientIP = new ClientIPModel
             {
                 Matchers = clientIPMatchers,
                 MatchOperator = clientIPMatchers?.Length > 1 ? clientIPMatcher.MatchOperator.ToString() : null
