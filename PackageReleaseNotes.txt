@@ -1,6 +1,5 @@
-# 2.13.0 (19 July 2026)
-- #1488 feat(xunit logging): TestOutputHelperWireMockLogger [feature]
-- #1490 Fix: Fully respect configured custom admin path (merge PR #1483) [feature]
-- #1482 WireMock.Minimal.Owin does not respect custom pathing for determining admin paths [bug]
+# 2.14.0 (06 August 2026)
+- #1493 Fix #1492: Serialize WithClientIP matcher to Request.ClientIP [bug]
+- #1492 `WithClientIP` matcher is lost / corrupted when a mapping is serialized [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

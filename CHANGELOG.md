@@ -1,3 +1,7 @@
+# 2.14.0 (06 August 2026)
+- [#1493](https://github.com/wiremock/WireMock.Net/pull/1493) - Fix #1492: Serialize WithClientIP matcher to Request.ClientIP [bug] contributed by [Bafyn](https://github.com/Bafyn)
+- [#1492](https://github.com/wiremock/WireMock.Net/issues/1492) - `WithClientIP` matcher is lost / corrupted when a mapping is serialized [bug]
+
 # 2.13.0 (19 July 2026)
 - [#1488](https://github.com/wiremock/WireMock.Net/pull/1488) - feat(xunit logging): TestOutputHelperWireMockLogger [feature] contributed by [Stepami](https://github.com/Stepami)
 - [#1490](https://github.com/wiremock/WireMock.Net/pull/1490) - Fix: Fully respect configured custom admin path (merge PR #1483) [feature] contributed by [Copilot](https://github.com/apps/copilot-swe-agent)
