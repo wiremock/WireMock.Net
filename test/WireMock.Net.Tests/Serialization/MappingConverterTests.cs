@@ -6,6 +6,7 @@ using WireMock.Models;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Serialization;
+using WireMock.Server;
 using WireMock.Settings;
 using WireMock.Types;
 using WireMock.Util;
@@ -374,6 +375,47 @@ message HelloReply {
 
         // Verify
         return Verify(model);
+    }
+
+    [Fact]
+    public Task ToMappingModel_Request_WithClientIP_And_Path_MapsClientIPToClientIPModel_NotPath()
+    {
+        // Arrange: a request that gates on BOTH ClientIP and Path.
+        var request = Request.Create().WithPath("/foo").WithClientIP("1.2.3.4");
+        var response = Response.Create();
+        var mapping = new Mapping(_guid, _updatedAt, string.Empty, string.Empty, null, _settings, request, response, 42, null, null, null, null, null, false, null, null);
+
+        // Act
+        var model = _sut.ToMappingModel(mapping);
+
+        // Assert
+        model.Should().NotBeNull();
+
+        // Verify
+        return Verify(model);
+    }
+
+    [Fact]
+    public Task WithClientIP_And_Path_SurvivesMappingModelRoundTrip_AsClientIPMatcher()
+    {
+        // Arrange: a server with a mapping that gates on BOTH ClientIP and Path.
+        using var source = WireMockServer.Start();
+        source
+            .Given(Request.Create().WithPath("/foo").WithClientIP("1.2.3.4"))
+            .RespondWith(Response.Create().WithSuccess());
+
+        var models = source.MappingModels.ToArray();
+        models.Should().ContainSingle();
+
+        // Act
+        using var target = WireMockServer.Start();
+        target.WithMapping(models);
+
+        // Assert
+        var request = (Request)target.Mappings.Single(m => !m.IsAdminInterface).RequestMatcher;
+
+        // Verify
+        return Verify(target.MappingModels);
     }
 
     [Fact]

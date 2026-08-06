@@ -14,20 +14,15 @@
         }
       ]
     },
-    Headers: [
-      {
-        Name: x1,
-        Matchers: [
-          {
-            Name: WildcardMatcher,
-            Pattern: y,
-            IgnoreCase: true
-          }
-        ],
-        IgnoreCase: true
-      }
-    ],
-    EarlyMatcherType: ClientIP
+    Path: {
+      Matchers: [
+        {
+          Name: WildcardMatcher,
+          Pattern: /foo,
+          IgnoreCase: false
+        }
+      ]
+    }
   },
   Response: {},
   UseWebhooksFireAndForget: false
