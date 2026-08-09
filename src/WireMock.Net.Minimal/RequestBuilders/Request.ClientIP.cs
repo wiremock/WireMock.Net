@@ -19,7 +19,7 @@ public partial class Request
     {
         Guard.NotNullOrEmpty(matchers);
 
-        _requestMatchers.Add(new RequestMessageClientIPMatcher(MatchBehaviour.AcceptOnMatch, MatchOperator.Or, matchers));
+        _requestMatchers.Add(new RequestMessageClientIPMatcher(MatchBehaviour.AcceptOnMatch, matchOperator, matchers));
         return this;
     }
 

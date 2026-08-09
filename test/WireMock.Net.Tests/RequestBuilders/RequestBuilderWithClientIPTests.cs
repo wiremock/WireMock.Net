@@ -64,4 +64,23 @@ public class RequestBuilderWithClientIPTests
         var requestMatchResult = new RequestMatchResult();
         spec.GetMatchingScore(request, requestMatchResult).Should().Be(1.0);
     }
+
+    [Fact]
+    public void Request_WithClientIP_MatchOperator_And_RequiresAllMatchers()
+    {
+        // given: two matchers combined with And (the client IP must satisfy BOTH)
+        var spec = Request.Create().WithClientIP(MatchOperator.And, new WildcardMatcher("1.2.*"), new WildcardMatcher("*.3.4"));
+
+        // when: an IP matching both matchers -> perfect match
+        var matchesBoth = new RequestMessage(new UrlDetails("http://localhost"), "GET", "1.2.3.4");
+        spec.GetMatchingScore(matchesBoth, new RequestMatchResult()).Should().Be(1.0);
+
+        // when: an IP matching only the first matcher -> mismatch
+        var matchesFirstOnly = new RequestMessage(new UrlDetails("http://localhost"), "GET", "1.2.9.9");
+        spec.GetMatchingScore(matchesFirstOnly, new RequestMatchResult()).Should().Be(0.0);
+
+        // when: an IP matching only the second matcher -> mismatch
+        var matchesSecondOnly = new RequestMessage(new UrlDetails("http://localhost"), "GET", "9.3.4");
+        spec.GetMatchingScore(matchesSecondOnly, new RequestMatchResult()).Should().Be(0.0);
+    }
 }
