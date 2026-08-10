@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using Stef.Validation;
 using WireMock.Types;
 
@@ -54,7 +53,10 @@ public class RequestMessageParamMatcher : IRequestMatcher
     /// <param name="ignoreCase">Defines if the key should be matched using case-ignore.</param>
     /// <param name="values">The values.</param>
     public RequestMessageParamMatcher(MatchBehaviour matchBehaviour, string key, bool ignoreCase, params string[]? values) :
-        this(matchBehaviour, key, ignoreCase, values?.Select(value => new ExactMatcher(matchBehaviour, ignoreCase, MatchOperator.And, value)).Cast<IStringMatcher>().ToArray())
+        // Note: the inner ExactMatcher must use AcceptOnMatch.
+        // The MatchBehaviour (e.g. RejectOnMatch) is applied once by this matcher's GetMatchingScore.
+        // Passing matchBehaviour here as well would apply the conversion twice and invert RejectOnMatch.
+        this(matchBehaviour, key, ignoreCase, values?.Select(value => new ExactMatcher(MatchBehaviour.AcceptOnMatch, ignoreCase, MatchOperator.And, value)).Cast<IStringMatcher>().ToArray())
     {
     }
 
