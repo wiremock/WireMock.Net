@@ -209,5 +209,79 @@ public class RequestMessageParamMatcherTests
         // Assert
         score.Should().Be(1.0);
     }
-}
 
+    [Fact]
+    public void RequestMessageParamMatcher_RejectOnMatch_WhenValuePresentMatchesPattern_ReturnsMismatch()
+    {
+        // Assign: the param value in the URL matches the reject pattern -> the mapping must be rejected (score 0.0).
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost?key=abc"), "GET", "127.0.0.1");
+        var matcher = new RequestMessageParamMatcher(MatchBehaviour.RejectOnMatch, "key", false, new[] { "abc" });
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(0.0d);
+    }
+
+    [Fact]
+    public void RequestMessageParamMatcher_RejectOnMatch_WhenValuePresentDoesNotMatchPattern_ReturnsPerfect()
+    {
+        // Assign: the param value in the URL does NOT match the reject pattern -> the mapping is accepted (score 1.0).
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost?key=xyz"), "GET", "127.0.0.1");
+        var matcher = new RequestMessageParamMatcher(MatchBehaviour.RejectOnMatch, "key", false, new[] { "abc" });
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(1.0d);
+    }
+
+    [Fact]
+    public void RequestMessageParamMatcher_RejectOnMatch_WithIgnoreCase_WhenValueMatchesCaseInsensitively_ReturnsMismatch()
+    {
+        // Assign: ignoreCase must still be honored on the inner matcher after the fix.
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost?key=ABC"), "GET", "127.0.0.1");
+        var matcher = new RequestMessageParamMatcher(MatchBehaviour.RejectOnMatch, "key", true, new[] { "abc" });
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(0.0d);
+    }
+
+    [Fact]
+    public void RequestMessageParamMatcher_AcceptOnMatch_WhenValuePresentMatchesPattern_ReturnsPerfect()
+    {
+        // Assign
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost?key=abc"), "GET", "127.0.0.1");
+        var matcher = new RequestMessageParamMatcher(MatchBehaviour.AcceptOnMatch, "key", false, new[] { "abc" });
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(1.0d);
+    }
+
+    [Fact]
+    public void RequestMessageParamMatcher_AcceptOnMatch_WhenValuePresentDoesNotMatchPattern_ReturnsMismatch()
+    {
+        // Assign
+        var requestMessage = new RequestMessage(new UrlDetails("http://localhost?key=xyz"), "GET", "127.0.0.1");
+        var matcher = new RequestMessageParamMatcher(MatchBehaviour.AcceptOnMatch, "key", false, new[] { "abc" });
+
+        // Act
+        var result = new RequestMatchResult();
+        var score = matcher.GetMatchingScore(requestMessage, result);
+
+        // Assert
+        score.Should().Be(0.0d);
+    }
+}

@@ -94,6 +94,54 @@ public partial class WireMockServerTests
     }
 
     [Fact]
+    public async Task WireMockServer_WithParam_RejectOnMatch_WithValue_WhenValueMatches_ShouldNotMatch_Returns404()
+    {
+        // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
+        var server = WireMockServer.Start();
+        server.Given(
+            Request.Create()
+                .WithPath("/x")
+                .WithParam("k", MatchBehaviour.RejectOnMatch, "abc")
+                .UsingGet()
+            )
+            .ThenRespondWithOK();
+
+        // Act
+        var requestUri = new Uri($"http://localhost:{server.Port}/x?k=abc");
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        server.Stop();
+    }
+
+    [Fact]
+    public async Task WireMockServer_WithParam_RejectOnMatch_WithValue_WhenValueDoesNotMatch_ShouldMatch_Returns200()
+    {
+        // Arrange
+        var cancelationToken = TestContext.Current.CancellationToken;
+        var server = WireMockServer.Start();
+        server.Given(
+            Request.Create()
+                .WithPath("/x")
+                .WithParam("k", MatchBehaviour.RejectOnMatch, "abc")
+                .UsingGet()
+            )
+            .ThenRespondWithOK();
+
+        // Act
+        var requestUri = new Uri($"http://localhost:{server.Port}/x?k=xyz");
+        var response = await server.CreateClient().GetAsync(requestUri, cancelationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        server.Stop();
+    }
+
+    [Fact]
     public async Task WireMockServer_WithParam_AcceptOnMatch_OnNonMatchingParam_ShouldReturnMappingOk()
     {
         // Arrange
