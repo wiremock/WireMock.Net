@@ -1,3 +1,10 @@
+# 2.15.0 (15 August 2026)
+- [#1495](https://github.com/wiremock/WireMock.Net/pull/1495) - Fix #1494: `WithClientIP(MatchOperator, params IStringMatcher[])` ignores the MatchOperator argument [bug] contributed by [Bafyn](https://github.com/Bafyn)
+- [#1497](https://github.com/wiremock/WireMock.Net/pull/1497) - Fix WithParam RejectOnMatch inverting the match result #1496 [bug] contributed by [Bafyn](https://github.com/Bafyn)
+- [#1499](https://github.com/wiremock/WireMock.Net/pull/1499) - Update Testcontainers [bug] contributed by [StefH](https://github.com/StefH)
+- [#1494](https://github.com/wiremock/WireMock.Net/issues/1494) - `WithClientIP(MatchOperator, params IStringMatcher[])` ignores the `MatchOperator` argument [bug]
+- [#1496](https://github.com/wiremock/WireMock.Net/issues/1496) - `WithParam(key, MatchBehaviour.RejectOnMatch, values)` inverts the match result [bug]
+
 # 2.14.0 (06 August 2026)
 - [#1493](https://github.com/wiremock/WireMock.Net/pull/1493) - Fix #1492: Serialize WithClientIP matcher to Request.ClientIP [bug] contributed by [Bafyn](https://github.com/Bafyn)
 - [#1492](https://github.com/wiremock/WireMock.Net/issues/1492) - `WithClientIP` matcher is lost / corrupted when a mapping is serialized [bug]
