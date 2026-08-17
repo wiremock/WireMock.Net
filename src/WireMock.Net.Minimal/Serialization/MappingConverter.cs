@@ -167,9 +167,15 @@ internal class MappingConverter(MatcherMapper mapper)
         {
             sb.AppendLine($"    .InScenario({ToCSharpStringLiteral(mapping.Scenario)})");
         }
+        if (!string.IsNullOrEmpty(mapping.ExecutionConditionState))
+        {
+            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.ExecutionConditionState)})");
+        }
         if (!string.IsNullOrEmpty(mapping.NextState))
         {
-            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
+            sb.AppendLine(mapping.TimesInSameState > 1
+                ? $"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})"
+                : $"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)})");
         }
 
         if (mapping.Probability != null)

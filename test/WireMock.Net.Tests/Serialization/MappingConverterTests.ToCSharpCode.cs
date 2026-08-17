@@ -97,6 +97,67 @@ public partial class MappingConverterTests
         return Verify(code, VerifySettings);
     }
 
+    [Fact]
+    public Task ToCSharpCode_With_ScenarioAndState_Emits_WhenStateIs_And_WillSetStateTo()
+    {
+        // Assign: a stateful mapping that gates on state "Begin" and moves to "End" after 3 hits.
+        var mapping = CreateScenarioMapping("Ordering", executionConditionState: "Begin", nextState: "End", timesInSameState: 3);
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    [Fact]
+    public Task ToCSharpCode_With_NextStateOnly_Emits_WillSetStateTo_Without_Times()
+    {
+        // Assign: a start-state mapping that only sets the next state (no execution condition, default times).
+        var mapping = CreateScenarioMapping("Ordering", executionConditionState: null, nextState: "Begin", timesInSameState: null);
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    private Mapping CreateScenarioMapping(string scenario, string? executionConditionState, string? nextState, int? timesInSameState)
+    {
+        var request = Request.Create().UsingGet().WithPath("/test_path");
+        var response = Response.Create().WithSuccess();
+
+        return new Mapping
+        (
+            new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc"),
+            _updatedAt,
+            string.Empty,
+            string.Empty,
+            null,
+            _settings,
+            request,
+            response,
+            0,
+            scenario,
+            executionConditionState,
+            nextState,
+            timesInSameState,
+            null,
+            false,
+            null,
+            data: null
+        );
+    }
+
     private IMapping CreateMapping()
     {
         var guid = new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc");

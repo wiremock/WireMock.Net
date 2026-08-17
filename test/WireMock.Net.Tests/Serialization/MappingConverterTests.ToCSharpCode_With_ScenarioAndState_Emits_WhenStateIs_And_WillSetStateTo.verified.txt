@@ -1,0 +1,12 @@
+﻿server
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/test_path", false, WireMock.Matchers.MatchOperator.Or))
+    )
+    .WithGuid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc")
+    .InScenario("Ordering")
+    .WhenStateIs("Begin")
+    .WillSetStateTo("End", 3)
+    .RespondWith(Response.Create()
+        .WithStatusCode(200)
+    );

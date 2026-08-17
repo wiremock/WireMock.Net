@@ -73,7 +73,7 @@ server
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931005")
     .InScenario("To do list")
-    .WhenStateIs("TodoList State Started", 2)
+    .WillSetStateTo("TodoList State Started", 2)
     .RespondWith(Response.Create()
         .WithBody("Buy milk")
     );
