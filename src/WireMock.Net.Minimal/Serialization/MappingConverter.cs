@@ -162,7 +162,7 @@ internal class MappingConverter(MatcherMapper mapper)
         // Guid
         sb.AppendLine($"    .WithGuid(\"{mapping.Guid}\")");
 
-        // Scenario + State
+        // Scenario, ExecutionConditionState, NextState and StateTimes
         if (!string.IsNullOrEmpty(mapping.Scenario))
         {
             sb.AppendLine($"    .InScenario({ToCSharpStringLiteral(mapping.Scenario)})");
@@ -173,9 +173,7 @@ internal class MappingConverter(MatcherMapper mapper)
         }
         if (!string.IsNullOrEmpty(mapping.NextState))
         {
-            sb.AppendLine(mapping.TimesInSameState > 1
-                ? $"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})"
-                : $"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)})");
+            sb.AppendLine($"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
         }
 
         if (mapping.Probability != null)

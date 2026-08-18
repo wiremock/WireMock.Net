@@ -1,5 +1,6 @@
 // Copyright © WireMock.Net
 
+using WireMock.Matchers;
 using WireMock.Matchers.Request;
 using WireMock.Net.Tests.VerifyExtensions;
 using WireMock.RequestBuilders;
@@ -131,6 +132,106 @@ public partial class MappingConverterTests
         return Verify(code, VerifySettings);
     }
 
+    [Fact]
+    public Task ToCSharpCode_WithPath_RegexMatcher_MultiplePatterns()
+    {
+        // Assign
+        var mapping = CreateMappingWithRequest(Request.Create()
+            .UsingGet()
+            .WithPath(new RegexMatcher(MatchBehaviour.AcceptOnMatch, ["/a", "/b"])));
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    [Fact]
+    public Task ToCSharpCode_WithPath_SimMetricsMatcher_MultiplePatterns()
+    {
+        // Assign
+        var mapping = CreateMappingWithRequest(Request.Create()
+            .UsingGet()
+            .WithPath(new SimMetricsMatcher(["/a", "/b"])));
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    [Fact]
+    public Task ToCSharpCode_WithPath_ContentTypeMatcher_MultiplePatterns()
+    {
+        // Assign
+        var mapping = CreateMappingWithRequest(Request.Create()
+            .UsingGet()
+            .WithPath(new ContentTypeMatcher(["text/a", "text/b"])));
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    [Fact]
+    public Task ToCSharpCode_WithPath_FormUrlEncodedMatcher_MultiplePatterns()
+    {
+        // Assign
+        var mapping = CreateMappingWithRequest(Request.Create()
+            .UsingGet()
+            .WithPath(new FormUrlEncodedMatcher(["a=1", "b=2"])));
+
+        // Act
+        var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings
+        {
+            AddStart = false,
+            ConverterType = MappingConverterType.Server
+        });
+
+        // Verify
+        return Verify(code, VerifySettings);
+    }
+
+    private Mapping CreateMappingWithRequest(IRequestBuilder requestBuilder)
+    {
+        return new Mapping
+        (
+            guid: new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc"),
+            updatedAt: _updatedAt,
+            title: string.Empty,
+            description: string.Empty,
+            path: null,
+            settings: _settings,
+            requestMatcher: (IRequestMatcher)requestBuilder,
+            provider: Response.Create().WithSuccess(),
+            priority: 0,
+            scenario: null,
+            executionConditionState: null,
+            nextState: null,
+            stateTimes: null,
+            webhooks: null,
+            useWebhooksFireAndForget: false,
+            timeSettings: null,
+            data: null
+        );
+    }
+
     private Mapping CreateScenarioMapping(string scenario, string? executionConditionState, string? nextState, int? timesInSameState)
     {
         var request = Request.Create().UsingGet().WithPath("/test_path");
@@ -138,22 +239,22 @@ public partial class MappingConverterTests
 
         return new Mapping
         (
-            new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc"),
-            _updatedAt,
-            string.Empty,
-            string.Empty,
-            null,
-            _settings,
-            request,
-            response,
-            0,
-            scenario,
-            executionConditionState,
-            nextState,
-            timesInSameState,
-            null,
-            false,
-            null,
+            guid: new Guid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc"),
+            updatedAt: _updatedAt,
+            title: string.Empty,
+            description: string.Empty,
+            path: null,
+            settings: _settings,
+            requestMatcher: request,
+            provider: response,
+            priority: 0,
+            scenario: scenario,
+            executionConditionState: executionConditionState,
+            nextState: nextState,
+            stateTimes: timesInSameState,
+            webhooks: null,
+            useWebhooksFireAndForget: false,
+            timeSettings: null,
             data: null
         );
     }
@@ -178,22 +279,22 @@ public partial class MappingConverterTests
 
         return new Mapping
         (
-            guid,
-            _updatedAt,
-            string.Empty,
-            string.Empty,
-            null,
-            _settings,
-            request,
-            response,
-            42,
-            null,
-            null,
-            null,
-            null,
-            null,
-            false,
-            null,
+            guid: guid,
+            updatedAt: _updatedAt,
+            title: string.Empty,
+            description: string.Empty,
+            path: null,
+            settings: _settings,
+            requestMatcher: request,
+            provider: response,
+            priority: 42,
+            scenario: null,
+            executionConditionState: null,
+            nextState: null,
+            stateTimes: null,
+            webhooks: null,
+            useWebhooksFireAndForget: false,
+            timeSettings: null,
             data: null
         ).WithProbability(0.3);
     }

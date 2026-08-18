@@ -170,7 +170,7 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
         return $"new {Name}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOf<string, StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +
                $")";

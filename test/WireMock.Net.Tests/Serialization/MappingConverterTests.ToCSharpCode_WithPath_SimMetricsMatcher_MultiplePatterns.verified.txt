@@ -1,0 +1,9 @@
+﻿server
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new SimMetricsMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/a", "/b" }, SimMetrics.Net.SimMetricType.Levenstein, WireMock.Matchers.MatchOperator.Average))
+    )
+    .WithGuid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc")
+    .RespondWith(Response.Create()
+        .WithStatusCode(200)
+    );

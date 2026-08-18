@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using System.Text.RegularExpressions;
 using AnyOfTypes;
 using Stef.Validation;
@@ -77,7 +76,7 @@ public class WildcardMatcher : RegexMatcher
         return $"new {Name}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOf<string, StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +
                $")";
