@@ -119,7 +119,7 @@ public class JmesPathMatcher : IStringMatcher, IObjectMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(JmesPathMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +

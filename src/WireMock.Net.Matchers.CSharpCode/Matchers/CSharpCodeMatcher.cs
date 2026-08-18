@@ -70,7 +70,7 @@ public class CSharpCodeMatcher : ICSharpCodeMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(CSharpCodeMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +

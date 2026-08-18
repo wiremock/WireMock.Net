@@ -2,8 +2,8 @@
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/foo" }, false, WireMock.Matchers.MatchOperator.Or))
-        .WithParam("test", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.Or, "abc"))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/foo" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithParam("test", new WireMock.Matchers.ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.Or, "abc"))
     )
     .WithGuid("41372914-1838-4c67-916b-b9aacdd096ce")
     .RespondWith(Response.Create()
@@ -13,8 +13,8 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/users/post1" }, false, WireMock.Matchers.MatchOperator.Or))
-        .WithBody(new JsonMatcher(
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/users/post1" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithBody(new WireMock.Matchers.JsonMatcher(
             value: new
             {
                 Request = "Hello?"
@@ -30,8 +30,8 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/users/post2" }, false, WireMock.Matchers.MatchOperator.Or))
-        .WithBody(new JsonMatcher(
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/users/post2" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithBody(new WireMock.Matchers.JsonMatcher(
             value: new
             {
                 city = "Amsterdam",
@@ -48,7 +48,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/form-urlencoded" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/form-urlencoded" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithHeader("Content-Type", "application/x-www-form-urlencoded", true)
         .WithBody("name=John Doe")
     )
@@ -59,8 +59,8 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/regex" }, false, WireMock.Matchers.MatchOperator.Or))
-        .WithParam("foo", new RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { ".*" }, false, true, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/regex" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithParam("foo", new WireMock.Matchers.RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { ".*" }, false, true, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931004")
     .RespondWith(Response.Create()
@@ -69,7 +69,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/todo/items" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/todo/items" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931005")
     .InScenario("To do list")
@@ -81,7 +81,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/delay" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/delay" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931006")
     .RespondWith(Response.Create()
@@ -91,7 +91,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/random-delay" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/random-delay" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931007")
     .RespondWith(Response.Create()
@@ -101,7 +101,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/prob" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/prob" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931008")
     .WithProbability(0.1)
@@ -112,7 +112,7 @@ builder
 builder
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/prob" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/prob" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("98fae52e-76df-47d9-876f-2ee32e931009")
     .WithProbability(0.9)

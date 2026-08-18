@@ -257,7 +257,7 @@ public class FuncMatcherTests
         var code = matcher.GetCSharpCodeArguments();
 
         // Assert
-        code.Should().Be("new FuncMatcher(/* Func<string?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
+        code.Should().Be("new WireMock.Matchers.FuncMatcher(/* Func<string?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public class FuncMatcherTests
         var code = matcher.GetCSharpCodeArguments();
 
         // Assert
-        code.Should().Be("new FuncMatcher(/* Func<byte[]?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
+        code.Should().Be("new WireMock.Matchers.FuncMatcher(/* Func<byte[]?, bool> function */, WireMock.Matchers.MatchBehaviour.AcceptOnMatch)");
     }
 
     [Fact]

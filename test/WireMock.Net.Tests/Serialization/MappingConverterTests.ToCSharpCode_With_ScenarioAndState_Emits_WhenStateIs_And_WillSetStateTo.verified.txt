@@ -1,7 +1,7 @@
 ﻿server
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/test_path" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/test_path" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc")
     .InScenario("Ordering")

@@ -167,10 +167,10 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(FormUrlEncodedMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"new AnyOf<string, StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +
                $")";

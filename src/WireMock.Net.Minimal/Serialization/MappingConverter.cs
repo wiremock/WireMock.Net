@@ -146,7 +146,7 @@ internal class MappingConverter(MatcherMapper mapper)
 
                 case JsonMatcher jsonMatcher:
                     {
-                        var matcherType = jsonMatcher.GetType().Name;
+                        var matcherType = jsonMatcher.GetType().FullName;
                         sb.AppendLine($"        .WithBody(new {matcherType}(");
                         sb.AppendLine($"            value: {ConvertToAnonymousObjectDefinition(jsonMatcher.Value, 3)},");
                         sb.AppendLine($"            ignoreCase: {ToCSharpBooleanLiteral(jsonMatcher.IgnoreCase)},");

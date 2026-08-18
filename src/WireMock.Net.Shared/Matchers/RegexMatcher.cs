@@ -130,10 +130,10 @@ public class RegexMatcher : IStringMatcher, IIgnoreCaseMatcher
     /// <inheritdoc />
     public virtual string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(RegexMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"new AnyOf<string, StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(_useRegexExtended)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +

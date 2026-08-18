@@ -76,7 +76,7 @@ public class FuncMatcher : IFuncMatcher
     public string GetCSharpCodeArguments()
     {
         var funcType = _stringFunc != null ? "Func<string?, bool>" : "Func<byte[]?, bool>";
-        return $"new {Name}" +
+        return $"new {typeof(FuncMatcher).FullName}" +
                $"(" +
                $"/* {funcType} function */, " +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}" +
