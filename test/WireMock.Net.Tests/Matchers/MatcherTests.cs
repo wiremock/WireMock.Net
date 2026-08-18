@@ -14,7 +14,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new ContentTypeMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"application/json\", false)");
+        result.Should().Be("new ContentTypeMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { \"application/json\" }, false)");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new FormUrlEncodedMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"key=value\", false, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new FormUrlEncodedMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { \"key=value\" }, false, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"pattern\", false, true, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { \"pattern\" }, false, true, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new SimMetricsMatcher.Levenstein(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"test\", SimMetrics.Net.SimMetricType.Levenstein, WireMock.Matchers.MatchOperator.Average)");
+        result.Should().Be("new SimMetricsMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { \"test\" }, SimMetrics.Net.SimMetricType.Levenstein, WireMock.Matchers.MatchOperator.Average)");
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"pattern\", false, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { \"pattern\" }, false, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]

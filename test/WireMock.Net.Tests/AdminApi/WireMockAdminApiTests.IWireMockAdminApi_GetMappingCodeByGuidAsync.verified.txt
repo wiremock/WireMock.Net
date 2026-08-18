@@ -2,7 +2,7 @@
 server
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/foo1", false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/foo1" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithParam("p1", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "xyz"))
     )
     .WithGuid("90356dba-b36c-469a-a17e-669cd84f1f05")

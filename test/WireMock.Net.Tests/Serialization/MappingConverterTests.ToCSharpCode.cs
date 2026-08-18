@@ -157,7 +157,7 @@ public partial class MappingConverterTests
         // Assign
         var mapping = CreateMappingWithRequest(Request.Create()
             .UsingGet()
-            .WithPath(new SimMetricsMatcher(["/a", "/b"])));
+            .WithPath(new SimMetricsMatcher(new AnyOfTypes.AnyOf<string, Models.StringPattern>[] { "/a", "/b" })));
 
         // Act
         var code = _sut.ToCSharpCode(mapping, new MappingConverterSettings

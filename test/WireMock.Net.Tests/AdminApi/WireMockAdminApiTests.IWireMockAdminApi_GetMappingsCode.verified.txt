@@ -2,7 +2,7 @@
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/users/post2", false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/users/post2" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithBody(new JsonPartialMatcher(
             value: new
             {
@@ -22,7 +22,7 @@ Some ""value"" in Line2")
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/foo2", false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/foo2" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithParam("p2", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "abc"))
         .WithHeader("h1", "W/\"234f2q3r\"", true)
     )
@@ -37,7 +37,7 @@ server
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/users/post1", false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/users/post1" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithBody(new JsonMatcher(
             value: new
             {
@@ -55,7 +55,7 @@ server
 server
     .Given(Request.Create()
         .UsingMethod("DELETE")
-        .WithUrl(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "https://localhost/test", false, WireMock.Matchers.MatchOperator.Or))
+        .WithUrl(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "https://localhost/test" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("c9929240-7ae8-4a5d-8ed8-0913479f6eeb")
     .RespondWith(Response.Create()
@@ -99,7 +99,7 @@ text
 server
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/foo1", false, WireMock.Matchers.MatchOperator.Or))
+        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOf<string, StringPattern>[] { "/foo1" }, false, WireMock.Matchers.MatchOperator.Or))
         .WithParam("p1", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "xyz"))
     )
     .WithGuid("f74fd144-df53-404f-8e35-da22a640bd5f")
