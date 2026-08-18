@@ -2,6 +2,7 @@
 
 using Stef.Validation;
 using WireMock.Matchers.Helpers;
+using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.Matchers.Request;
@@ -34,7 +35,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// <summary>
     /// The body data function for FormUrlEncoded
     /// </summary>
-    public Func<IDictionary<string, string>?, bool>? MatchOnBodyAsFormUrlEncodedFunc { get; }
+    public Func<IDictionary<string, WireMockList<string>>?, bool>? MatchOnBodyAsFormUrlEncodedFunc { get; }
 
     /// <summary>
     /// The matchers.
@@ -116,7 +117,7 @@ public class RequestMessageBodyMatcher : IRequestMatcher
     /// Initializes a new instance of the <see cref="RequestMessageBodyMatcher"/> class.
     /// </summary>
     /// <param name="func">The function.</param>
-    public RequestMessageBodyMatcher(Func<IDictionary<string, string>?, bool> func)
+    public RequestMessageBodyMatcher(Func<IDictionary<string, WireMockList<string>>?, bool> func)
     {
         MatchOnBodyAsFormUrlEncodedFunc = Guard.NotNull(func);
     }

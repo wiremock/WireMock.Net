@@ -22,7 +22,7 @@ public class BodyData : IBodyData
     public string? BodyAsString { get; set; }
 
     /// <inheritdoc />
-    public IDictionary<string, string>? BodyAsFormUrlEncoded { get; set; }
+    public IDictionary<string, WireMockList<string>>? BodyAsFormUrlEncoded { get; set; }
 
     /// <inheritdoc />
     public object? BodyAsJson { get; set; }

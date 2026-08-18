@@ -1,9 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Net;
 using WireMock.Types;
 
@@ -16,7 +13,7 @@ internal static class QueryStringParser
 {
     private static readonly Dictionary<string, WireMockList<string>> Empty = new();
 
-    public static bool TryParse(string? queryString, bool caseIgnore, [NotNullWhen(true)] out IDictionary<string, string>? nameValueCollection)
+    public static bool TryParse(string? queryString, bool caseIgnore, [NotNullWhen(true)] out IDictionary<string, WireMockList<string>>? nameValueCollection)
     {
         if (queryString == null)
         {
@@ -29,12 +26,22 @@ internal static class QueryStringParser
             .Select(parameter => parameter.Split('='))
             .Distinct();
 
-        nameValueCollection = caseIgnore ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) : new Dictionary<string, string>();
+        nameValueCollection = caseIgnore ? new Dictionary<string, WireMockList<string>>(StringComparer.OrdinalIgnoreCase) : new Dictionary<string, WireMockList<string>>();
         foreach (var part in parts)
         {
             if (part.Length == 2)
             {
-                nameValueCollection.Add(part[0], WebUtility.UrlDecode(part[1]));
+                var key = part[0];
+                var value = WebUtility.UrlDecode(part[1]);
+
+                if (!nameValueCollection.TryGetValue(key, out var stringList))
+                {
+                    nameValueCollection.Add(key, value);
+                }
+                else
+                {
+                    stringList.Add(value);
+                }
             }
         }
 

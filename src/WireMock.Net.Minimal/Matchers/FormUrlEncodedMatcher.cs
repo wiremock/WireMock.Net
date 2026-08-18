@@ -1,10 +1,10 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using AnyOfTypes;
 using Stef.Validation;
 using WireMock.Extensions;
 using WireMock.Models;
+using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.Matchers;
@@ -21,7 +21,7 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
     /// <inheritdoc />
     public MatchBehaviour MatchBehaviour { get; }
 
-    private readonly List<(WildcardMatcher Key, WildcardMatcher? Value)> _pairs = [];
+    private readonly List<(WildcardMatcher Key, WildcardMatcher[]? Values)> KeyValueMatchers = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FormUrlEncodedMatcher"/> class.
@@ -91,9 +91,10 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
             {
                 foreach (var nameValue in nameValueCollection)
                 {
-                    var keyMatcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, [nameValue.Key], ignoreCase, MatchOperator);
-                    var valueMatcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, [nameValue.Value], ignoreCase, MatchOperator);
-                    _pairs.Add((keyMatcher, valueMatcher));
+                    var keyMatcher = new WildcardMatcher(MatchBehaviour.AcceptOnMatch, nameValue.Key, ignoreCase);
+                    var valueMatchers = nameValue.Value.Select(value => new WildcardMatcher(MatchBehaviour.AcceptOnMatch, value, ignoreCase)).ToArray();
+
+                    KeyValueMatchers.Add((keyMatcher, valueMatchers));
                 }
             }
         }
@@ -116,37 +117,51 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
         var matches = GetMatches(inputNameValueCollection);
 
         var score = MatchScores.ToScore(matches, MatchOperator);
-        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
+        return MatchResult.From(Name, score);
     }
 
-    private bool[] GetMatches(IDictionary<string, string> inputNameValueCollection)
+    private List<double> GetMatches(IDictionary<string, WireMockList<string>> inputNameValueCollection)
     {
-        var matches = new List<bool>();
-        if (_pairs.Count > inputNameValueCollection.Count)
+        var inputPairs = inputNameValueCollection.ToArray();
+        var rowCount = inputPairs.Length;
+        var columnCount = KeyValueMatchers.Count;
+
+        if (rowCount == 0 && columnCount == 0)
         {
-            matches.AddRange(Enumerable.Repeat(false, _pairs.Count - inputNameValueCollection.Count));
+            return [];
         }
 
-        foreach (var inputKeyValuePair in inputNameValueCollection)
+        var matrix = new double[rowCount][];
+
+        for (var row = 0; row < rowCount; row++)
         {
-            var match = false;
-            foreach (var pair in _pairs)
+            matrix[row] = new double[columnCount];
+
+            var inputKeyValuePair = inputPairs[row];
+            var inputKey = inputKeyValuePair.Key;
+            var inputValues = inputKeyValuePair.Value;
+
+            for (var column = 0; column < columnCount; column++)
             {
-                var keyMatchResult = pair.Key.IsMatch(inputKeyValuePair.Key).IsPerfect();
-                if (keyMatchResult)
-                {
-                    match = pair.Value?.IsMatch(inputKeyValuePair.Value).IsPerfect() ?? false;
-                    if (match)
-                    {
-                        break;
-                    }
-                }
-            }
+                var (keyMatcher, valuesMatchers) = KeyValueMatchers[column];
 
-            matches.Add(match);
+                var keyScore = keyMatcher.IsMatch(inputKey).Score;
+                var valueScore = valuesMatchers != null ? MatchScores.ToScore(inputValues, valuesMatchers) : MatchScores.Perfect;
+
+                matrix[row][column] = Math.Min(keyScore, valueScore);
+            }
         }
 
-        return matches.ToArray();
+        var rowScores = rowCount == 0 ? [] : matrix.Select(row => row.Length == 0 ? MatchScores.Mismatch : row.Max()).ToList();
+
+        var columnScores = new List<double>();
+        for (var column = 0; column < columnCount; column++)
+        {
+            columnScores.Add(rowCount == 0 ? MatchScores.Mismatch : matrix.Max(row => row[column]));
+        }
+
+        rowScores.AddRange(columnScores);
+        return rowScores;
     }
 
     /// <inheritdoc />

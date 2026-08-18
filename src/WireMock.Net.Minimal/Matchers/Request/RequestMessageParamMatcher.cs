@@ -115,36 +115,6 @@ public class RequestMessageParamMatcher : IRequestMatcher
         }
 
         // Return the score based on Matchers and valuesPresentInRequestMessage
-        return CalculateScore(Matchers, valuesPresentInRequestMessage);
-    }
-
-    private static double CalculateScore(IReadOnlyList<IStringMatcher> matchers, WireMockList<string> valuesPresentInRequestMessage)
-    {
-        var total = new List<double>();
-
-        // If the total patterns in all matchers > values in message, use the matcher as base
-        if (matchers.Sum(m => m.GetPatterns().Length) > valuesPresentInRequestMessage.Count)
-        {
-            foreach (var matcher in matchers)
-            {
-                double score = 0d;
-                foreach (string valuePresentInRequestMessage in valuesPresentInRequestMessage)
-                {
-                    score += matcher.IsMatch(valuePresentInRequestMessage).Score / matcher.GetPatterns().Length;
-                }
-
-                total.Add(score);
-            }
-        }
-        else
-        {
-            foreach (string valuePresentInRequestMessage in valuesPresentInRequestMessage)
-            {
-                var score = matchers.Max(m => m.IsMatch(valuePresentInRequestMessage).Score);
-                total.Add(score);
-            }
-        }
-
-        return total.Any() ? MatchScores.ToScore(total, MatchOperator.Average) : 0;
+        return MatchScores.ToScore(valuesPresentInRequestMessage, Matchers.ToArray());
     }
 }

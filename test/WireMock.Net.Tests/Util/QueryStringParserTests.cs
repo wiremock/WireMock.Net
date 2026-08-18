@@ -7,27 +7,27 @@ namespace WireMock.Net.Tests.Util;
 
 public class QueryStringParserTests
 {
-    public static IEnumerable<object?[]> QueryStringTestData => new List<object?[]>
+    public static List<object?[]> QueryStringTestData => new()
     {
         new object?[] { null, false, false, null },
-        new object?[] { string.Empty, false, true, new Dictionary<string, string>() },
-        new object?[] { "test", false, true, new Dictionary<string, string>() },
-        new object?[] { "&", false, true, new Dictionary<string, string>() },
-        new object?[] { "&&", false, true, new Dictionary<string, string>() },
-        new object?[] { "a=", false, true, new Dictionary<string, string> { { "a", "" } } },
-        new object?[] { "&a", false, true, new Dictionary<string, string>() },
-        new object?[] { "&a=", false, true, new Dictionary<string, string> { { "a", "" } } },
-        new object?[] { "&key1=value1", false, true, new Dictionary<string, string> { { "key1", "value1" } } },
-        new object?[] { "key1=value1", false, true, new Dictionary<string, string> { { "key1", "value1" } } },
-        new object?[] { "key1=value1&key2=value2", false, true, new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } } },
-        new object?[] { "key1=value1&key2=value2&", false, true, new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } } },
-        new object?[] { "key1=value1&&key2=value2", false, true, new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } } },
-        new object?[] { "&key1=value1&key2=value2&&", false, true, new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } } },
+        new object?[] { string.Empty, false, true, new Dictionary<string, WireMockList<string>>() },
+        new object?[] { "test", false, true, new Dictionary<string, WireMockList<string>>() },
+        new object?[] { "&", false, true, new Dictionary<string, WireMockList<string>>() },
+        new object?[] { "&&", false, true, new Dictionary<string, WireMockList<string>>() },
+        new object?[] { "a=", false, true, new Dictionary<string, WireMockList<string>> { { "a", new WireMockList<string>("") } } },
+        new object?[] { "&a", false, true, new Dictionary<string, WireMockList<string>>() },
+        new object?[] { "&a=", false, true, new Dictionary<string, WireMockList<string>> { { "a", new WireMockList<string>("") } } },
+        new object?[] { "&key1=value1", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") } } },
+        new object?[] { "key1=value1", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") } } },
+        new object?[] { "key1=value1&key2=value2", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") }, { "key2", new WireMockList<string>("value2") } } },
+        new object?[] { "key1=value1&key2=value2&", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") }, { "key2", new WireMockList<string>("value2") } } },
+        new object?[] { "key1=value1&&key2=value2", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") }, { "key2", new WireMockList<string>("value2") } } },
+        new object?[] { "&key1=value1&key2=value2&&", false, true, new Dictionary<string, WireMockList<string>> { { "key1", new WireMockList<string>("value1") }, { "key2", new WireMockList<string>("value2") } } },
     };
 
     [Theory]
     [MemberData(nameof(QueryStringTestData))]
-    public void TryParse_Should_Parse_QueryString(string queryString, bool caseIgnore, bool expectedResult, IDictionary<string, string> expectedOutput)
+    public void TryParse_Should_Parse_QueryString(string queryString, bool caseIgnore, bool expectedResult, IDictionary<string, WireMockList<string>> expectedOutput)
     {
         // Act
         var result = QueryStringParser.TryParse(queryString, caseIgnore, out var actual);
@@ -49,7 +49,7 @@ public class QueryStringParserTests
 
         // Assert
         result.Should().BeTrue();
-        actual.Should().BeEquivalentTo(new Dictionary<string, string> { { "x", "rNaCP7hv8UOmS/JcujdvLw==" } });
+        actual.Should().BeEquivalentTo(new Dictionary<string, WireMockList<string>> { { "x", new WireMockList<string>("rNaCP7hv8UOmS/JcujdvLw==") } });
     }
 
     [Fact]

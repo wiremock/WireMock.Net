@@ -46,7 +46,7 @@ public interface IBodyData
     /// <summary>
     /// The body as Form UrlEncoded dictionary.
     /// </summary>
-    IDictionary<string, string>? BodyAsFormUrlEncoded { get; set; }
+    IDictionary<string, WireMockList<string>>? BodyAsFormUrlEncoded { get; set; }
 
     /// <summary>
     /// The detected body type (detection based on body content).

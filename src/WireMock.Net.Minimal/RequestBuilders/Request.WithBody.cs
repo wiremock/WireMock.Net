@@ -5,6 +5,7 @@
 using Stef.Validation;
 using WireMock.Matchers;
 using WireMock.Matchers.Request;
+using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.RequestBuilders;
@@ -84,7 +85,7 @@ public partial class Request
     }
 
     /// <inheritdoc />
-    public IRequestBuilder WithBody(Func<IDictionary<string, string>?, bool> func)
+    public IRequestBuilder WithBody(Func<IDictionary<string, WireMockList<string>>?, bool> func)
     {
         _requestMatchers.Add(new RequestMessageBodyMatcher(Guard.NotNull(func)));
         return this;
