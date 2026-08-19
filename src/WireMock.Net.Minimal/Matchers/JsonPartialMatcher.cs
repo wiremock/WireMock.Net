@@ -41,7 +41,7 @@ public class JsonPartialMatcher : AbstractJsonPartialMatcher
     /// <inheritdoc />
     public override string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(JsonPartialMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +

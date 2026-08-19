@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using System.Text.RegularExpressions;
 using AnyOfTypes;
 using Stef.Validation;
@@ -74,10 +73,10 @@ public class WildcardMatcher : RegexMatcher
     /// <inheritdoc />
     public override string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(WildcardMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +
                $")";

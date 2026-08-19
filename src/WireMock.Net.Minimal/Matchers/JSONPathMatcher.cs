@@ -119,7 +119,7 @@ public class JsonPathMatcher : IJsonPathMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(JsonPathMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +

@@ -41,7 +41,7 @@ public class SystemTextJsonPartialWildcardMatcher : AbstractSystemTextJsonPartia
     /// <inheritdoc />
     public override string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(SystemTextJsonPartialWildcardMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +

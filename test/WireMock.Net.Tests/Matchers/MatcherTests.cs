@@ -14,7 +14,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new ContentTypeMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"application/json\", false)");
+        result.Should().Be("new WireMock.Matchers.ContentTypeMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { \"application/json\" }, false)");
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.Or, \"test\")");
+        result.Should().Be("new WireMock.Matchers.ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.Or, \"test\")");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new FormUrlEncodedMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"key=value\", false, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new WireMock.Matchers.FormUrlEncodedMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { \"key=value\" }, false, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new JmesPathMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, \"expression\")");
+        result.Should().Be("new WireMock.Matchers.JmesPathMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, \"expression\")");
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().StartWith("new JsonMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
+        result.Should().StartWith("new WireMock.Matchers.JsonMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().StartWith("new JsonPartialMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
+        result.Should().StartWith("new WireMock.Matchers.JsonPartialMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().StartWith("new JsonPartialWildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
+        result.Should().StartWith("new WireMock.Matchers.JsonPartialWildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch,");
     }
 
     //[Fact]
@@ -118,7 +118,7 @@ public class MatcherTests
     //    var result = matcher.GetCSharpCodeArguments();
 
     //    // Assert
-    //    result.Should().Be("new LinqMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, \"it.Contains(\\\"test\\\"\")");
+    //    result.Should().Be("new WireMock.Matchers.LinqMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, \"it.Contains(\\\"test\\\"\")");
     //}
 
     [Fact]
@@ -131,7 +131,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"pattern\", false, true, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new WireMock.Matchers.RegexMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { \"pattern\" }, false, true, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new SimMetricsMatcher.Levenstein(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"test\", SimMetrics.Net.SimMetricType.Levenstein, WireMock.Matchers.MatchOperator.Average)");
+        result.Should().Be("new WireMock.Matchers.SimMetricsMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { \"test\" }, SimMetrics.Net.SimMetricType.Levenstein, WireMock.Matchers.MatchOperator.Average)");
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, \"pattern\", false, WireMock.Matchers.MatchOperator.Or)");
+        result.Should().Be("new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { \"pattern\" }, false, WireMock.Matchers.MatchOperator.Or)");
     }
 
     [Fact]
@@ -170,6 +170,6 @@ public class MatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().Be("new XPathMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, null, \"pattern1\")");
+        result.Should().Be("new WireMock.Matchers.XPathMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, WireMock.Matchers.MatchOperator.Or, null, \"pattern1\")");
     }
 }

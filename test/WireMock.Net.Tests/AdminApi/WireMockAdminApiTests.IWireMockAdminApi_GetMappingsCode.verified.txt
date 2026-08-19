@@ -2,8 +2,8 @@
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/users/post2", false, WireMock.Matchers.MatchOperator.Or))
-        .WithBody(new JsonPartialMatcher(
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/users/post2" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithBody(new WireMock.Matchers.JsonPartialMatcher(
             value: new
             {
                 city = "City",
@@ -22,8 +22,8 @@ Some ""value"" in Line2")
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/foo2", false, WireMock.Matchers.MatchOperator.Or))
-        .WithParam("p2", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "abc"))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/foo2" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithParam("p2", new WireMock.Matchers.ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "abc"))
         .WithHeader("h1", "W/\"234f2q3r\"", true)
     )
     .WithGuid("4126dec8-470b-4eff-93bb-c24f83b8b1fd")
@@ -37,8 +37,8 @@ server
 server
     .Given(Request.Create()
         .UsingMethod("POST")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/users/post1", false, WireMock.Matchers.MatchOperator.Or))
-        .WithBody(new JsonMatcher(
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/users/post1" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithBody(new WireMock.Matchers.JsonMatcher(
             value: new
             {
                 city = "Amsterdam",
@@ -55,7 +55,7 @@ server
 server
     .Given(Request.Create()
         .UsingMethod("DELETE")
-        .WithUrl(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "https://localhost/test", false, WireMock.Matchers.MatchOperator.Or))
+        .WithUrl(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "https://localhost/test" }, false, WireMock.Matchers.MatchOperator.Or))
     )
     .WithGuid("c9929240-7ae8-4a5d-8ed8-0913479f6eeb")
     .RespondWith(Response.Create()
@@ -99,8 +99,8 @@ text
 server
     .Given(Request.Create()
         .UsingMethod("GET")
-        .WithPath(new WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, "/foo1", false, WireMock.Matchers.MatchOperator.Or))
-        .WithParam("p1", new ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "xyz"))
+        .WithPath(new WireMock.Matchers.WildcardMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "/foo1" }, false, WireMock.Matchers.MatchOperator.Or))
+        .WithParam("p1", new WireMock.Matchers.ExactMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, false, WireMock.Matchers.MatchOperator.And, "xyz"))
     )
     .WithGuid("f74fd144-df53-404f-8e35-da22a640bd5f")
     .RespondWith(Response.Create()

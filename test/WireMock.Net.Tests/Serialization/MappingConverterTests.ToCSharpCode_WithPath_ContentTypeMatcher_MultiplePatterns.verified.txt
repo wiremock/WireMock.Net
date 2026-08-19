@@ -1,0 +1,9 @@
+﻿server
+    .Given(Request.Create()
+        .UsingMethod("GET")
+        .WithPath(new WireMock.Matchers.ContentTypeMatcher(WireMock.Matchers.MatchBehaviour.AcceptOnMatch, new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] { "text/a", "text/b" }, false))
+    )
+    .WithGuid("8e7b9ab7-e18e-4502-8bc9-11e6679811cc")
+    .RespondWith(Response.Create()
+        .WithStatusCode(200)
+    );

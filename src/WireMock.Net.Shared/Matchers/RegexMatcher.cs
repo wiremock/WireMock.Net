@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using AnyOfTypes;
 using JetBrains.Annotations;
@@ -132,10 +130,10 @@ public class RegexMatcher : IStringMatcher, IIgnoreCaseMatcher
     /// <inheritdoc />
     public virtual string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(RegexMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(_useRegexExtended)}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +

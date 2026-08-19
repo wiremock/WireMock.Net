@@ -101,7 +101,7 @@ public class XPathMatcher : IStringMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(XPathMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}, " +

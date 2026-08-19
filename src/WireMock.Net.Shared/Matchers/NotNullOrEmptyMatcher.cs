@@ -75,7 +75,7 @@ public class NotNullOrEmptyMatcher : IObjectMatcher, IStringMatcher
     /// <inheritdoc />
     public string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(NotNullOrEmptyMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}" +
                $")";

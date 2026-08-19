@@ -667,7 +667,7 @@ public class JsonMatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().StartWith($"new JsonMatcher(WireMock.Matchers.MatchBehaviour.{matchBehaviour},");
+        result.Should().StartWith($"new WireMock.Matchers.JsonMatcher(WireMock.Matchers.MatchBehaviour.{matchBehaviour},");
         result.Should().EndWith($", {ignoreCase.ToString().ToLowerInvariant()}, {regex.ToString().ToLowerInvariant()}, {ignoreArrayOrder.ToString().ToLowerInvariant()})");
     }
 }

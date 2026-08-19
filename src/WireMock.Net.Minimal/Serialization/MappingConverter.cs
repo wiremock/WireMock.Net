@@ -146,7 +146,7 @@ internal class MappingConverter(MatcherMapper mapper)
 
                 case JsonMatcher jsonMatcher:
                     {
-                        var matcherType = jsonMatcher.GetType().Name;
+                        var matcherType = jsonMatcher.GetType().FullName;
                         sb.AppendLine($"        .WithBody(new {matcherType}(");
                         sb.AppendLine($"            value: {ConvertToAnonymousObjectDefinition(jsonMatcher.Value, 3)},");
                         sb.AppendLine($"            ignoreCase: {ToCSharpBooleanLiteral(jsonMatcher.IgnoreCase)},");
@@ -162,14 +162,18 @@ internal class MappingConverter(MatcherMapper mapper)
         // Guid
         sb.AppendLine($"    .WithGuid(\"{mapping.Guid}\")");
 
-        // Scenario + State
+        // Scenario, ExecutionConditionState, NextState and StateTimes
         if (!string.IsNullOrEmpty(mapping.Scenario))
         {
             sb.AppendLine($"    .InScenario({ToCSharpStringLiteral(mapping.Scenario)})");
         }
+        if (!string.IsNullOrEmpty(mapping.ExecutionConditionState))
+        {
+            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.ExecutionConditionState)})");
+        }
         if (!string.IsNullOrEmpty(mapping.NextState))
         {
-            sb.AppendLine($"    .WhenStateIs({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
+            sb.AppendLine($"    .WillSetStateTo({ToCSharpStringLiteral(mapping.NextState)}, {ToCSharpIntLiteral(mapping.TimesInSameState)})");
         }
 
         if (mapping.Probability != null)

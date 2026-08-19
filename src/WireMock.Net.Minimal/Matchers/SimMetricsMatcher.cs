@@ -1,6 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Linq;
 using AnyOfTypes;
 using SimMetrics.Net;
 using SimMetrics.Net.API;
@@ -92,10 +91,10 @@ public class SimMetricsMatcher : IStringMatcher
     /// <inheritdoc />
     public virtual string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(SimMetricsMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{_simMetricType.GetFullyQualifiedEnumValue()}, " +
                $"{MatchOperator.GetFullyQualifiedEnumValue()}" +
                $")";

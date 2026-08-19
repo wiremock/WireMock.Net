@@ -110,7 +110,7 @@ public class JsonMatcher : IJsonMatcher
     /// <inheritdoc />
     public virtual string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(JsonMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +

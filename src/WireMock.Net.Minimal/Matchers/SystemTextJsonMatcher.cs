@@ -115,7 +115,7 @@ public class SystemTextJsonMatcher : IJsonMatcher
     /// <inheritdoc />
     public virtual string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(SystemTextJsonMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
                $"{CSharpFormatter.ConvertToAnonymousObjectDefinition(Value, 3)}, " +

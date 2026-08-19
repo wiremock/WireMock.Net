@@ -80,10 +80,10 @@ public class ContentTypeMatcher : WildcardMatcher
     /// <inheritdoc />
     public override string GetCSharpCodeArguments()
     {
-        return $"new {Name}" +
+        return $"new {typeof(ContentTypeMatcher).FullName}" +
                $"(" +
                $"{MatchBehaviour.GetFullyQualifiedEnumValue()}, " +
-               $"{MappingConverterUtils.ToCSharpCodeArguments(_patterns)}, " +
+               $"new AnyOfTypes.AnyOf<string, WireMock.Models.StringPattern>[] {{ {MappingConverterUtils.ToCSharpCodeArguments(_patterns)} }}, " +
                $"{CSharpFormatter.ToCSharpBooleanLiteral(IgnoreCase)}" +
                $")";
     }

@@ -478,7 +478,7 @@ public class SystemTextJsonMatcherTests
         var result = matcher.GetCSharpCodeArguments();
 
         // Assert
-        result.Should().StartWith($"new SystemTextJsonMatcher(WireMock.Matchers.MatchBehaviour.{matchBehaviour},");
+        result.Should().StartWith($"new WireMock.Matchers.SystemTextJsonMatcher(WireMock.Matchers.MatchBehaviour.{matchBehaviour},");
         result.Should().EndWith($", {ignoreCase.ToString().ToLowerInvariant()}, {regex.ToString().ToLowerInvariant()}, {ignoreArrayOrder.ToString().ToLowerInvariant()})");
     }
 }
