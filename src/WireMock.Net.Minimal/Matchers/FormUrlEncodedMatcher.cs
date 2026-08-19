@@ -117,7 +117,7 @@ public class FormUrlEncodedMatcher : IStringMatcher, IIgnoreCaseMatcher
         var matches = GetMatches(inputNameValueCollection);
 
         var score = MatchScores.ToScore(matches, MatchOperator);
-        return MatchResult.From(Name, score);
+        return MatchResult.From(Name, MatchBehaviourHelper.Convert(MatchBehaviour, score));
     }
 
     private List<double> GetMatches(IDictionary<string, WireMockList<string>> inputNameValueCollection)

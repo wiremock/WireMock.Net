@@ -33,7 +33,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_Single_Or(bool expected, params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
@@ -72,7 +72,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_Multiple_Or(bool expected, params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("name", "Stef"),
@@ -112,7 +112,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_Single_And(bool expected, params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
@@ -151,7 +151,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_Multiple_And(bool expected, params string[] patterns)
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("name", "Stef"),
@@ -172,7 +172,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_MissingRequiredKey_ShouldNotMatch()
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("name", "Stef"),
@@ -194,7 +194,7 @@ public class FormUrlEncodedMatcherTest
     public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_ConflictingEmailPatterns_ShouldNotMatch()
     {
         // Arrange
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("name", "Stef"),

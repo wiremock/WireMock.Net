@@ -55,7 +55,7 @@ public static class MatchScores
     /// <param name="values">The values.</param>
     /// <param name="matchOperator">The <see cref="MatchOperator"/>.</param>
     /// <returns>average score</returns>
-    public static double ToScore(IEnumerable<bool> values, MatchOperator matchOperator)
+    public static double ToScore(IReadOnlyList<bool> values, MatchOperator matchOperator)
     {
         return ToScore(values.Select(ToScore).ToArray(), matchOperator);
     }
@@ -66,9 +66,9 @@ public static class MatchScores
     /// <param name="values">The values.</param>
     /// <param name="matchOperator"></param>
     /// <returns>average score</returns>
-    public static double ToScore(IEnumerable<double> values, MatchOperator matchOperator)
+    public static double ToScore(IReadOnlyList<double> values, MatchOperator matchOperator)
     {
-        if (!values.Any())
+        if (values.Count == 0)
         {
             return Mismatch;
         }
