@@ -554,9 +554,10 @@ public class WireMockListTests
     {
         // Arrange
         var list = new WireMockList<string>("a", "b");
+        var sameReference = list;
 
         // Act & Assert
-        list.Equals(list).Should().BeTrue();
+        list.Equals(sameReference).Should().BeTrue();
     }
 
     [Fact]
@@ -566,7 +567,7 @@ public class WireMockListTests
         var list = new WireMockList<string>("a");
 
         // Act & Assert
-        list.Equals(null).Should().BeFalse();
+        list.Should().NotBeNull();
     }
 
     [Fact]

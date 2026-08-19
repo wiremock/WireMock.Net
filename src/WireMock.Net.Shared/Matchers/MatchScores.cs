@@ -96,7 +96,6 @@ public static class MatchScores
         }
 
         // For each value, how well was it matched by its best matcher?
-        var rowRange = Enumerable.Range(0, matchers.Length);
         var rowScore = matchOperator == MatchOperator.And ? matrix.Average(row => row.Max()) : matrix.Max(row => row.Max());
 
         // For each matcher, how well was it satisfied by its best value?

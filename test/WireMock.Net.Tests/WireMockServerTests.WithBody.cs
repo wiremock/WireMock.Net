@@ -355,8 +355,9 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
-        var response = await new HttpClient()
+        using var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
+        using var httpClient = new HttpClient();
+        var response = await httpClient
             .PostAsync($"{server.Url}/foo", content, _ct);
 
         // Assert
@@ -374,15 +375,16 @@ public partial class WireMockServerTests
             Request.Create()
                 .UsingPost()
                 .WithPath("/foo")
-                .WithBody((IDictionary<string, WireMockList<string>>? values) => values != null && values["key1"] == "value1")
+                .WithBody((IDictionary<string, WireMockList<string>>? values) => values != null && values.TryGetValue("key1", out var v) && v == "value1")
             )
             .RespondWith(
                 Response.Create()
             );
 
         // Act
-        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
-        var response = await new HttpClient()
+        using var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
+        using var httpClient = new HttpClient();
+        var response = await httpClient
             .PostAsync($"{server.Url}/foo", content, _ct);
 
         // Assert

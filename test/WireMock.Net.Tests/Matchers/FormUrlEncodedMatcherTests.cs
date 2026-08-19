@@ -169,7 +169,7 @@ public class FormUrlEncodedMatcherTest
     }
 
     [Fact]
-    public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_Test_1()
+    public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_MissingRequiredKey_ShouldNotMatch()
     {
         // Arrange
         var content = new FormUrlEncodedContent(
@@ -191,7 +191,7 @@ public class FormUrlEncodedMatcherTest
     }
 
     [Fact]
-    public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_Test_2()
+    public async Task FormUrlEncodedMatcher_IsMatch_And_MatchAllProperties_ConflictingEmailPatterns_ShouldNotMatch()
     {
         // Arrange
         var content = new FormUrlEncodedContent(
