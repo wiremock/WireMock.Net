@@ -142,12 +142,12 @@ public class RequestBuilderWithBodyTests
     public void Request_WithBody_FuncFormUrlEncoded()
     {
         // Assign
-        var requestBuilder = Request.Create().UsingAnyMethod().WithBody((IDictionary<string, string>? values) => values != null);
+        var requestBuilder = Request.Create().UsingAnyMethod().WithBody((IDictionary<string, WireMockList<string>>? values) => values != null);
 
         // Act
         var body = new BodyData
         {
-            BodyAsFormUrlEncoded = new Dictionary<string, string>(),
+            BodyAsFormUrlEncoded = new Dictionary<string, WireMockList<string>>(),
             DetectedBodyTypeFromContentType = BodyType.FormUrlEncoded,
             DetectedBodyType = BodyType.FormUrlEncoded
         };

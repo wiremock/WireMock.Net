@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using WireMock.Matchers;
+using WireMock.Types;
 using WireMock.Util;
 
 namespace WireMock.RequestBuilders;
@@ -100,5 +99,5 @@ public interface IBodyRequestBuilder : IMultiPartRequestBuilder
     /// </summary>
     /// <param name="func">The form-urlencoded values.</param>
     /// <returns>The <see cref="IRequestBuilder"/>.</returns>
-    IRequestBuilder WithBody(Func<IDictionary<string, string>?, bool> func);
+    IRequestBuilder WithBody(Func<IDictionary<string, WireMockList<string>>?, bool> func);
 }

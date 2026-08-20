@@ -408,4 +408,210 @@ public class WireMockListTests
     }
 
     #endregion
+
+    #region Equality Operator Tests
+
+    [Fact]
+    public void WireMockListOfString_EqualityOperator_ListToSingleValue_WhenSingleElementMatchesValue_ShouldBeTrue()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        (list == "hello").Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_EqualityOperator_ListToSingleValue_WhenSingleElementDoesNotMatchValue_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        (list == "world").Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_EqualityOperator_ListToSingleValue_WhenMultipleElements_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello", "world");
+
+        // Act & Assert
+        (list == "hello").Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_EqualityOperator_SingleValueToList_WhenSingleElementMatchesValue_ShouldBeTrue()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        ("hello" == list).Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_EqualityOperator_SingleValueToList_WhenSingleElementDoesNotMatchValue_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        ("world" == list).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_InequalityOperator_ListToSingleValue_WhenSingleElementMatchesValue_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        (list != "hello").Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_InequalityOperator_ListToSingleValue_WhenSingleElementDoesNotMatchValue_ShouldBeTrue()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        (list != "world").Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_InequalityOperator_SingleValueToList_WhenSingleElementMatchesValue_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        ("hello" != list).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_InequalityOperator_SingleValueToList_WhenSingleElementDoesNotMatchValue_ShouldBeTrue()
+    {
+        // Arrange
+        var list = new WireMockList<string>("hello");
+
+        // Act & Assert
+        ("world" != list).Should().BeTrue();
+    }
+
+    #endregion
+
+    #region Equals and GetHashCode Tests
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenBothListsHaveSameElements_ShouldBeTrue()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>("a", "b", "c");
+        var list2 = new WireMockList<string>("a", "b", "c");
+
+        // Act & Assert
+        list1.Equals(list2).Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenListsHaveDifferentElements_ShouldBeFalse()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>("a", "b");
+        var list2 = new WireMockList<string>("a", "x");
+
+        // Act & Assert
+        list1.Equals(list2).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenListsHaveDifferentCounts_ShouldBeFalse()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>("a", "b");
+        var list2 = new WireMockList<string>("a");
+
+        // Act & Assert
+        list1.Equals(list2).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenBothEmpty_ShouldBeTrue()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>();
+        var list2 = new WireMockList<string>();
+
+        // Act & Assert
+        list1.Equals(list2).Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenSameReference_ShouldBeTrue()
+    {
+        // Arrange
+        var list = new WireMockList<string>("a", "b");
+        var sameReference = list;
+
+        // Act & Assert
+        list.Equals(sameReference).Should().BeTrue();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenComparedToNull_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("a");
+
+        // Act & Assert
+        list.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void WireMockListOfString_Equals_WhenComparedToNonWireMockList_ShouldBeFalse()
+    {
+        // Arrange
+        var list = new WireMockList<string>("a");
+
+        // Act & Assert
+        list.Equals(new List<string> { "a" }).Should().BeFalse();
+    }
+
+    [Fact]
+    public void WireMockListOfString_GetHashCode_WhenListsHaveSameElements_ShouldBeEqual()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>("a", "b", "c");
+        var list2 = new WireMockList<string>("a", "b", "c");
+
+        // Act & Assert
+        list1.GetHashCode().Should().Be(list2.GetHashCode());
+    }
+
+    [Fact]
+    public void WireMockListOfString_GetHashCode_WhenListsHaveDifferentElements_ShouldNotBeEqual()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>("a", "b");
+        var list2 = new WireMockList<string>("x", "y");
+
+        // Act & Assert
+        list1.GetHashCode().Should().NotBe(list2.GetHashCode());
+    }
+
+    [Fact]
+    public void WireMockListOfString_GetHashCode_WhenEmpty_ShouldReturnConsistentValue()
+    {
+        // Arrange
+        var list1 = new WireMockList<string>();
+        var list2 = new WireMockList<string>();
+
+        // Act & Assert
+        list1.GetHashCode().Should().Be(list2.GetHashCode());
+    }
+
+    #endregion
 }

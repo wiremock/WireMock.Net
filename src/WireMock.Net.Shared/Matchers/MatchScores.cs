@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using WireMock.Types;
 
 namespace WireMock.Matchers;
 
@@ -57,7 +55,7 @@ public static class MatchScores
     /// <param name="values">The values.</param>
     /// <param name="matchOperator">The <see cref="MatchOperator"/>.</param>
     /// <returns>average score</returns>
-    public static double ToScore(IReadOnlyCollection<bool> values, MatchOperator matchOperator)
+    public static double ToScore(IReadOnlyList<bool> values, MatchOperator matchOperator)
     {
         return ToScore(values.Select(ToScore).ToArray(), matchOperator);
     }
@@ -68,9 +66,9 @@ public static class MatchScores
     /// <param name="values">The values.</param>
     /// <param name="matchOperator"></param>
     /// <returns>average score</returns>
-    public static double ToScore(IReadOnlyCollection<double> values, MatchOperator matchOperator)
+    public static double ToScore(IReadOnlyList<double> values, MatchOperator matchOperator)
     {
-        if (!values.Any())
+        if (values.Count == 0)
         {
             return Mismatch;
         }
@@ -81,5 +79,29 @@ public static class MatchScores
             MatchOperator.And => ToScore(values.All(IsPerfect)),
             _ => values.Average()
         };
+    }
+
+    internal static double ToScore(WireMockList<string> values, IStringMatcher[] matchers, MatchOperator matchOperator = MatchOperator.And)
+    {
+        // Create a matrix of scores where each row corresponds to a value and each column corresponds to a matcher.
+        var matrix = values
+            .Select(value => matchers
+                .Select(matcher => matcher.IsMatch(value).Score).ToArray()
+            )
+            .ToArray();
+
+        if (matrix.Length == 0 || matchers.Length == 0)
+        {
+            return Mismatch;
+        }
+
+        // For each value, how well was it matched by its best matcher?
+        var rowScore = matchOperator == MatchOperator.And ? matrix.Average(row => row.Max()) : matrix.Max(row => row.Max());
+
+        // For each matcher, how well was it satisfied by its best value?
+        var columnRange = Enumerable.Range(0, matchers.Length);
+        var columnScore = matchOperator == MatchOperator.And ? columnRange.Average(column => matrix.Max(row => row[column])) : columnRange.Max(column => matrix.Max(row => row[column]));
+
+        return matchOperator == MatchOperator.And ? Math.Min(rowScore, columnScore) : Math.Max(rowScore, columnScore);
     }
 }

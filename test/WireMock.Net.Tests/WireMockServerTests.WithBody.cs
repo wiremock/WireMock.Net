@@ -12,6 +12,7 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
+using WireMock.Types;
 
 namespace WireMock.Net.Tests;
 
@@ -339,7 +340,7 @@ public partial class WireMockServerTests
 #endif
 
     [Fact]
-    public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFunc()
+    public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFunc1()
     {
         // Arrange
         using var server = WireMockServer.Start();
@@ -354,8 +355,36 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
-        var response = await new HttpClient()
+        using var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
+        using var httpClient = new HttpClient();
+        var response = await httpClient
+            .PostAsync($"{server.Url}/foo", content, _ct);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        server.Stop();
+    }
+
+    [Fact]
+    public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFunc2()
+    {
+        // Arrange
+        using var server = WireMockServer.Start();
+        server.Given(
+            Request.Create()
+                .UsingPost()
+                .WithPath("/foo")
+                .WithBody((IDictionary<string, WireMockList<string>>? values) => values != null && values.TryGetValue("key1", out var v) && v == "value1")
+            )
+            .RespondWith(
+                Response.Create()
+            );
+
+        // Act
+        using var content = new FormUrlEncodedContent([new KeyValuePair<string, string>("key1", "value1")]);
+        using var httpClient = new HttpClient();
+        var response = await httpClient
             .PostAsync($"{server.Url}/foo", content, _ct);
 
         // Assert
@@ -382,7 +411,7 @@ public partial class WireMockServerTests
             );
 
         // Act
-        var content = new FormUrlEncodedContent(
+        using var content = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
@@ -400,7 +429,7 @@ public partial class WireMockServerTests
     public async Task WireMockServer_WithBodyAsFormUrlEncoded_Using_PostAsync_And_WithFormUrlEncodedMatcher()
     {
         // Arrange
-        var matcher = new FormUrlEncodedMatcher(["email=johndoe@example.com", "name=John Doe"]);
+        var matcher = new FormUrlEncodedMatcher(["email=johndoe@example.com", "name=John*"]);
         using var server = WireMockServer.Start();
         server.Given(
             Request.Create()
@@ -425,7 +454,7 @@ public partial class WireMockServerTests
             );
 
         // Act 1
-        var contentOrdered = new FormUrlEncodedContent(
+        using var contentOrdered = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("name", "John Doe"),
             new KeyValuePair<string, string>("email", "johndoe@example.com")
@@ -439,7 +468,7 @@ public partial class WireMockServerTests
 
 
         // Act 2
-        var contentUnordered = new FormUrlEncodedContent(
+        using var contentUnordered = new FormUrlEncodedContent(
         [
             new KeyValuePair<string, string>("email", "johndoe@example.com"),
             new KeyValuePair<string, string>("name", "John Doe"),
@@ -447,7 +476,6 @@ public partial class WireMockServerTests
         var responseUnordered = await new HttpClient()
             .PostAsync($"{server.Url}/bar", contentUnordered, _ct)
 ;
-
         // Assert 2
         responseUnordered.StatusCode.Should().Be(HttpStatusCode.OK);
 
