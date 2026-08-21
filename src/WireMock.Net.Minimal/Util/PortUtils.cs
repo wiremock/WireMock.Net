@@ -1,7 +1,6 @@
 // Copyright © WireMock.Net
 
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -14,7 +13,7 @@ namespace WireMock.Util;
 /// </summary>
 internal static class PortUtils
 {
-    private static readonly Regex UrlDetailsRegex = new(@"^((?<scheme>\w+)://)(?<host>[^/]+?):(?<port>\d+)\/?$", RegexOptions.Compiled, RegexConstants.DefaultTimeout);
+    private static readonly Regex UrlDetailsRegex = new(@"^((?<scheme>\w+)://)(?<host>[^/]+?)(:(?<port>\d+))?\/?$", RegexOptions.Compiled, RegexConstants.DefaultTimeout);
 
     /// <summary>
     /// Finds a random, free port to be listened on.
@@ -90,17 +89,44 @@ internal static class PortUtils
         host = null;
         port = 0;
 
-        var match = UrlDetailsRegex.Match(url);
-        if (match.Success)
-        {
-            scheme = match.Groups["scheme"].Value;
-            isHttps = scheme.StartsWith("https", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("grpcs", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("wss", StringComparison.OrdinalIgnoreCase);
-            isHttp2 = scheme.StartsWith("grpc", StringComparison.OrdinalIgnoreCase);
-            host = match.Groups["host"].Value;
+        var urlDetails = ExtractUrlDetails(url);
 
-            return int.TryParse(match.Groups["port"].Value, out port);
+        if (urlDetails is null || urlDetails.Value.Port < 0)
+        {
+            return false;
         }
 
-        return false;
+        scheme = urlDetails.Value.Scheme;
+        isHttps = scheme.StartsWith("https", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("grpcs", StringComparison.OrdinalIgnoreCase) || scheme.StartsWith("wss", StringComparison.OrdinalIgnoreCase);
+        isHttp2 = scheme.StartsWith("grpc", StringComparison.OrdinalIgnoreCase);
+        host = urlDetails.Value.Host;
+        port = urlDetails.Value.Port;
+
+        return true;
     }
+
+    private static (string Scheme, string Host, int Port)? ExtractUrlDetails(string url)
+    {
+        var match = UrlDetailsRegex.Match(url);
+
+        if (!match.Success)
+        {
+            return null;
+        }
+
+        var scheme = match.Groups["scheme"].Value;
+        var host = match.Groups["host"].Value;
+        var port = match.Groups["port"].Success && int.TryParse(match.Groups["port"].Value, out var parsedPort)
+            ? parsedPort
+            : MapPortFromScheme(scheme);
+
+        return (scheme, host, port);
+    }
+
+    private static int MapPortFromScheme(string scheme) => scheme switch
+    {
+        "http" => 80,
+        "https" => 443,
+        _ => -1,
+    };
 }
