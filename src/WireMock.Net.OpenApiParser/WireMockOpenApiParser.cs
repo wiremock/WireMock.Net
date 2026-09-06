@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using JetBrains.Annotations;
 using Microsoft.OpenApi;
@@ -11,14 +9,12 @@ using Microsoft.OpenApi.YamlReader;
 using RamlToOpenApiConverter;
 using WireMock.Admin.Mappings;
 using WireMock.Net.OpenApiParser.Mappers;
-using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
-using OpenApiDiagnostic = WireMock.Net.OpenApiParser.Models.OpenApiDiagnostic;
 
 namespace WireMock.Net.OpenApiParser;
 
 /// <summary>
-/// Parse a OpenApi/Swagger/V2/V3/V3.1 to WireMock.Net MappingModels.
+/// Parse a OpenApi/Swagger/V2/V3/V3.1/V3.2 to WireMock.Net MappingModels.
 /// </summary>
 public class WireMockOpenApiParser : IWireMockOpenApiParser
 {
@@ -32,8 +28,15 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
         _readerSettings = new OpenApiReaderSettings();
         _readerSettings.AddMicrosoftExtensionParsers();
         _readerSettings.AddJsonReader();
-        _readerSettings.TryAddReader(OpenApiConstants.Yaml, new OpenApiYamlReader());
-        _readerSettings.TryAddReader(OpenApiConstants.Yml, new OpenApiYamlReader());
+
+        var openApiYamlReaderSettings = new OpenApiYamlReaderSettings
+        {
+            MaxAliasExpansionNodeCount = 1_000_000
+        };
+        var openApiYamlReader = new OpenApiYamlReader(openApiYamlReaderSettings);
+
+        _readerSettings.TryAddReader(OpenApiConstants.Yaml, openApiYamlReader);
+        _readerSettings.TryAddReader(OpenApiConstants.Yml, openApiYamlReader);
     }
 
     /// <inheritdoc />
@@ -55,7 +58,12 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
         }
         else
         {
-            document = Read(File.OpenRead(path), out diagnostic);
+            if (!TryRead(File.OpenRead(path), out var documentFromYaml, out diagnostic))
+            {
+                return [];
+            }
+
+            document = documentFromYaml;
         }
 
         return FromDocument(document, settings);
@@ -74,14 +82,24 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
     [PublicAPI]
     public IReadOnlyList<MappingModel> FromStream(Stream stream, out OpenApiDiagnostic diagnostic)
     {
-        return FromDocument(Read(stream, out diagnostic));
+        if (TryRead(stream, out var openApiDocument, out diagnostic))
+        {
+            return FromDocument(openApiDocument);
+        }
+
+        return [];
     }
 
     /// <inheritdoc />
     [PublicAPI]
     public IReadOnlyList<MappingModel> FromStream(Stream stream, WireMockOpenApiParserSettings settings, out OpenApiDiagnostic diagnostic)
     {
-        return FromDocument(Read(stream, out diagnostic), settings);
+        if (TryRead(stream, out var openApiDocument, out diagnostic))
+        {
+            return FromDocument(openApiDocument, settings);
+        }
+
+        return [];
     }
 
     /// <inheritdoc  />
@@ -98,7 +116,7 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
         return FromStream(new MemoryStream(Encoding.UTF8.GetBytes(text)), settings, out diagnostic);
     }
 
-    private OpenApiDocument Read(Stream stream, out OpenApiDiagnostic diagnostic)
+    private bool TryRead(Stream stream, [NotNullWhen(true)] out OpenApiDocument? openApiDocument, out OpenApiDiagnostic diagnostic)
     {
         if (stream is not MemoryStream memoryStream)
         {
@@ -107,8 +125,9 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
 
         var result = OpenApiDocument.Load(memoryStream, settings: _readerSettings);
 
-        diagnostic = OpenApiMapper.Map(result.Diagnostic) ?? new OpenApiDiagnostic();
-        return result.Document ?? throw new InvalidOperationException("The document is null.");
+        diagnostic = result.Diagnostic ?? new OpenApiDiagnostic();
+        openApiDocument = result.Document;
+        return openApiDocument != null && !diagnostic.Errors.Any();
     }
 
     private static MemoryStream ReadStreamIntoMemoryStream(Stream stream)
