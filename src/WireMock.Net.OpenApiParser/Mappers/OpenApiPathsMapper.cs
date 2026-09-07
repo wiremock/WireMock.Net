@@ -96,7 +96,15 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
 
     private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse>? openApiResponse)
     {
-        var content = openApiResponse?.Value?.Content;
+        if (openApiResponse == null)
+        {
+            return new ResponseModel
+            {
+                StatusCode = 200
+            };
+        }
+
+        var content = openApiResponse.Value.Value.Content;
 
         TryGetContent(content, out var responseContent, out var contentType);
 
@@ -113,14 +121,13 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         {
             response = responseSchemaExample;
         }
-        else if (responseExamples != null)
+        else if (responseExamples.TryGetFirstValue(out var firstResponseFromExamples))
         {
-            response = responseExamples.FirstOrDefault().Value.Value;
+            response = firstResponseFromExamples?.Value;
         }
         else
         {
-            var responseSchema = content?.FirstOrDefault().Value?.Schema;
-            response = MapSchemaToObject(responseSchema);
+            response = content.TryGetFirstValue(out var firstContent) ? MapSchemaToObject(firstContent?.Schema) : null;
         }
 
         return new ResponseModel
