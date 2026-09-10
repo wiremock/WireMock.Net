@@ -1,10 +1,8 @@
 // Copyright © WireMock.Net
 
-using System.IO;
-using System.Linq;
 using JetBrains.Annotations;
+using Microsoft.OpenApi.Reader;
 using Stef.Validation;
-using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
 using WireMock.Server;
 
@@ -16,7 +14,8 @@ namespace WireMock.Net.OpenApiParser.Extensions;
 public static class WireMockServerExtensions
 {
     /// <summary>
-    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1 file.
+    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1/V3.2 file.
+    /// In case of an error, no mappings are registered and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="server">The WireMockServer instance</param>
     /// <param name="path">Path containing OpenAPI file to parse and use the mappings.</param>
@@ -28,7 +27,8 @@ public static class WireMockServerExtensions
     }
 
     /// <summary>
-    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1 file.
+    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1/V3.2 file.
+    /// In case of an error, no mappings are registered and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="server">The WireMockServer instance</param>
     /// <param name="path">Path containing OpenAPI file to parse and use the mappings.</param>
@@ -46,7 +46,8 @@ public static class WireMockServerExtensions
     }
 
     /// <summary>
-    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1 stream.
+    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1/V3.2 stream.
+    /// In case of an error, no mappings are registered and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="server">The WireMockServer instance</param>
     /// <param name="stream">Stream containing OpenAPI description to parse and use the mappings.</param>
@@ -58,7 +59,8 @@ public static class WireMockServerExtensions
     }
 
     /// <summary>
-    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1 stream.
+    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1/V3.2 stream.
+    /// In case of an error, no mappings are registered and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="server">The WireMockServer instance</param>
     /// <param name="stream">Stream containing OpenAPI description to parse and use the mappings.</param>
@@ -77,7 +79,8 @@ public static class WireMockServerExtensions
     }
 
     /// <summary>
-    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1 document.
+    /// Register the mappings via an OpenAPI (swagger) V2/V3/V3.1/V3.2 document.
+    /// In case of an error, no mappings are registered and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="server">The WireMockServer instance</param>
     /// <param name="document">The OpenAPI document to use as mappings.</param>

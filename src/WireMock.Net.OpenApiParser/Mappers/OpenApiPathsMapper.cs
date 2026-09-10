@@ -53,7 +53,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
                 Headers = MapRequestHeaders(requestHeaders),
                 Body = GetRequestBodyModel(operation.RequestBody)
             },
-            Response = GetResponseModel(operation.Responses?.FirstOrDefault())
+            Response = operation.Responses?.TryGetFirstOrDefault(out var firstResponse) == true ? GetResponseModel(firstResponse) : new ResponseModel { StatusCode = 200 }
         };
     }
 
@@ -70,8 +70,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
 
         var requestExample = requestContent?.Example;
         var requestExamples = requestContent?.Examples;
-        var requestSchemaExample = requestContent?.Schema?.Example;
-        var requestSchemaExamples = requestContent?.Schema?.Examples;
+        var requestSchemaExample = requestContent?.Schema.FindFirstExample();
 
         JsonNode? request;
         if (requestExample != null)
@@ -86,10 +85,6 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         {
             request = requestExamples.FirstOrDefault().Value.Value;
         }
-        else if (requestSchemaExamples != null)
-        {
-            request = requestSchemaExamples.FirstOrDefault();
-        }
         else
         {
             var requestSchema = content?.FirstOrDefault().Value.Schema;
@@ -99,16 +94,15 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         return MapRequestBody(request) ?? new BodyModel();
     }
 
-    private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse>? openApiResponse)
+    private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse> openApiResponse)
     {
-        var content = openApiResponse?.Value.Content;
+        var content = openApiResponse.Value.Content;
 
         TryGetContent(content, out var responseContent, out var contentType);
 
         var responseExample = responseContent?.Example;
         var responseExamples = responseContent?.Examples;
-        var responseSchemaExample = responseContent?.Schema?.Example;
-        var responseSchemaExamples = responseContent?.Schema?.Examples;
+        var responseSchemaExample = responseContent?.Schema.FindFirstExample();
 
         JsonNode? response;
         if (responseExample != null)
@@ -119,24 +113,19 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         {
             response = responseSchemaExample;
         }
-        else if (responseExamples != null)
+        else if (responseExamples.TryGetFirstValue(out var firstResponseFromExamples))
         {
-            response = responseExamples.FirstOrDefault().Value.Value;
-        }
-        else if (responseSchemaExamples != null)
-        {
-            response = responseSchemaExamples.FirstOrDefault();
+            response = firstResponseFromExamples?.Value;
         }
         else
         {
-            var responseSchema = content?.FirstOrDefault().Value?.Schema;
-            response = MapSchemaToObject(responseSchema);
+            response = content.TryGetFirstValue(out var firstContent) ? MapSchemaToObject(firstContent?.Schema) : null;
         }
 
         return new ResponseModel
         {
-            StatusCode = int.TryParse(openApiResponse?.Key, out var httpStatusCode) ? httpStatusCode : 200,
-            Headers = MapHeaders(contentType, openApiResponse?.Value.Headers),
+            StatusCode = int.TryParse(openApiResponse.Key, out var httpStatusCode) ? httpStatusCode : 200,
+            Headers = MapHeaders(contentType, openApiResponse.Value.Headers),
             BodyAsJson = response != null ? JsonConvert.DeserializeObject(SystemTextJsonSerializer.Serialize(response)) : null
         };
     }

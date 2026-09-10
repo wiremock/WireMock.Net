@@ -1,0 +1,12 @@
+openapi: 3.2.0
+info:
+  version: '1'
+  title: Invalid API
+  description: Invalid
+
+paths:
+  /funding-recipients:
+    summary: Create and manage funding recipients.
+    post:
+      tags:
+        - Funding recipients

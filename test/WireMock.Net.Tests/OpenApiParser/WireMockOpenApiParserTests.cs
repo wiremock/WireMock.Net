@@ -36,10 +36,36 @@ public class WireMockOpenApiParserTests
         var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "payroc-openapi-spec.yaml"));
 
         // Act
-        var mappings = _sut.FromText(openApiDocument, settings, out _);
+        var mappings = _sut.FromText(openApiDocument, settings, out var diagnostic);
+
+        // Assert
+        mappings.Should().NotBeEmpty();
+        diagnostic.Should().NotBeNull();
+        diagnostic.Errors.Should().BeEmpty();
 
         // Verify
         await Verify(mappings);
+    }
+
+    [Fact]
+    public void FromText_UsingInvalidYaml_ShouldReturnEmptyMappingsWithDiagnostic()
+    {
+        // Arrange
+        var settings = new WireMockOpenApiParserSettings
+        {
+            ExampleValues = _exampleValuesMock.Object
+        };
+
+        var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "invalid.yaml"));
+
+        // Act
+        var mappings = _sut.FromText(openApiDocument, settings, out var diagnostic);
+
+        // Assert
+        mappings.Should().BeEmpty();
+        diagnostic.Should().NotBeNull();
+        diagnostic.Errors.Should().HaveCount(1);
+        diagnostic.Errors[0].Message.Should().Be("Responses must contain at least one response");
     }
 
     [Fact]
@@ -54,7 +80,12 @@ public class WireMockOpenApiParserTests
         var openApiDocument = File.ReadAllText(Path.Combine("OpenApiParser", "oas-content-example.json"));
 
         // Act
-        var mappings = _sut.FromText(openApiDocument, settings, out _);
+        var mappings = _sut.FromText(openApiDocument, settings, out var diagnostic);
+
+        // Assert
+        mappings.Should().NotBeEmpty();
+        diagnostic.Should().NotBeNull();
+        diagnostic.Errors.Should().BeEmpty();
 
         // Verify
         await Verify(mappings);

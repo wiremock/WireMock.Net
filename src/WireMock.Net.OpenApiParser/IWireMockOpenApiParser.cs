@@ -1,9 +1,7 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.IO;
+using Microsoft.OpenApi.Reader;
 using WireMock.Admin.Mappings;
-using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
 
 namespace WireMock.Net.OpenApiParser;
@@ -15,6 +13,7 @@ public interface IWireMockOpenApiParser
 {
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a file-path.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="path">The path to read the OpenApi/Swagger/V2/V3/V31 or Raml file.</param>
     /// <param name="diagnostic">OpenApiDiagnostic output</param>
@@ -23,6 +22,7 @@ public interface IWireMockOpenApiParser
 
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a file-path.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="path">The path to read the OpenApi/Swagger/V2/V3/V31 or Raml file.</param>
     /// <param name="settings">Additional settings</param>
@@ -40,6 +40,7 @@ public interface IWireMockOpenApiParser
 
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a <seealso cref="Stream"/>.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="stream">The source stream</param>
     /// <param name="diagnostic">OpenApiDiagnostic output</param>
@@ -48,6 +49,7 @@ public interface IWireMockOpenApiParser
 
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a <seealso cref="Stream"/>.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="stream">The source stream</param>
     /// <param name="settings">Additional settings</param>
@@ -57,6 +59,7 @@ public interface IWireMockOpenApiParser
 
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a <seealso cref="string"/>.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="text">The source text</param>
     /// <param name="diagnostic">OpenApiDiagnostic output</param>
@@ -65,6 +68,7 @@ public interface IWireMockOpenApiParser
 
     /// <summary>
     /// Generate <see cref="IReadOnlyList{MappingModel}"/> from a <seealso cref="string"/>.
+    /// In case of an error, an empty list is returned and <see cref="OpenApiDiagnostic"/> contains the error details.
     /// </summary>
     /// <param name="text">The source text</param>
     /// <param name="settings">Additional settings</param>

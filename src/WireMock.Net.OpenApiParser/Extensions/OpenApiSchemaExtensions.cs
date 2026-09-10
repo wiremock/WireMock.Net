@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -56,37 +54,25 @@ internal static class OpenApiSchemaExtensions
 
     public static SchemaFormat GetSchemaFormat(this IOpenApiSchema? schema)
     {
-        switch (schema?.Format)
+        return (schema?.Format) switch
         {
-            case "float":
-                return SchemaFormat.Float;
+            "float" => SchemaFormat.Float,
+            "double" => SchemaFormat.Double,
+            "int32" => SchemaFormat.Int32,
+            "int64" => SchemaFormat.Int64,
+            "date" => SchemaFormat.Date,
+            "date-time" => SchemaFormat.DateTime,
+            "password" => SchemaFormat.Password,
+            "byte" => SchemaFormat.Byte,
+            "binary" => SchemaFormat.Binary,
+            _ => SchemaFormat.Undefined,
+        };
+    }
 
-            case "double":
-                return SchemaFormat.Double;
-
-            case "int32":
-                return SchemaFormat.Int32;
-
-            case "int64":
-                return SchemaFormat.Int64;
-
-            case "date":
-                return SchemaFormat.Date;
-
-            case "date-time":
-                return SchemaFormat.DateTime;
-
-            case "password":
-                return SchemaFormat.Password;
-
-            case "byte":
-                return SchemaFormat.Byte;
-
-            case "binary":
-                return SchemaFormat.Binary;
-
-            default:
-                return SchemaFormat.Undefined;
-        }
+    internal static JsonNode? FindFirstExample(this IOpenApiSchema? schema)
+    {
+#pragma warning disable CS0618 // Type or member is obsolete
+        return schema?.Examples?.FirstOrDefault() ?? schema?.Example;
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

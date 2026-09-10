@@ -39,7 +39,7 @@ internal class ExampleValueGenerator
 
     public JsonNode GetExampleValue(IOpenApiSchema? schema)
     {
-        var schemaExample = schema?.Example;
+        var schemaExample = schema?.FindFirstExample();
         var schemaEnum = schema?.Enum?.FirstOrDefault();
 
         _exampleValues.Schema = schema;

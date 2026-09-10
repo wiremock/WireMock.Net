@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>An OpenApi (swagger) parser to generate MappingModel or mapping.json file.</Description>
@@ -40,21 +40,9 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.21.0" />
-        <PackageReference Include="YamlDotNet" Version="18.1.0" />
+        <PackageReference Include="RamlToOpenApiConverter" Version="0.40.0" />
         <PackageReference Include="RandomDataGenerator.Net" Version="1.0.19.1" />
         <PackageReference Include="Stef.Validation" Version="0.3.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.OpenApi" Version="3.7.0" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" PrivateAssets="All" />
-        <PackageReference Include="SharpYaml" Version="2.1.5" />
     </ItemGroup>
 
     <ItemGroup>
