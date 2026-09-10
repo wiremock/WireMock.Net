@@ -133,7 +133,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         return new ResponseModel
         {
             StatusCode = int.TryParse(openApiResponse.Key, out var httpStatusCode) ? httpStatusCode : 200,
-            Headers = MapHeaders(contentType, openApiResponse.Value?.Headers),
+            Headers = MapHeaders(contentType, openApiResponse.Value.Headers),
             BodyAsJson = response != null ? JsonConvert.DeserializeObject(SystemTextJsonSerializer.Serialize(response)) : null
         };
     }
