@@ -53,7 +53,7 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
                 Headers = MapRequestHeaders(requestHeaders),
                 Body = GetRequestBodyModel(operation.RequestBody)
             },
-            Response = GetResponseModel(operation.Responses?.FirstOrDefault())
+            Response = operation.Responses?.TryGetFirstOrDefault(out var firstResponse) == true ? GetResponseModel(firstResponse) : new ResponseModel { StatusCode = 200 }
         };
     }
 
@@ -94,17 +94,9 @@ internal class OpenApiPathsMapper(WireMockOpenApiParserSettings settings)
         return MapRequestBody(request) ?? new BodyModel();
     }
 
-    private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse>? openApiResponse)
+    private ResponseModel GetResponseModel(KeyValuePair<string, IOpenApiResponse> openApiResponse)
     {
-        if (openApiResponse == null)
-        {
-            return new ResponseModel
-            {
-                StatusCode = 200
-            };
-        }
-
-        var content = openApiResponse.Value.Value.Content;
+        var content = openApiResponse.Value.Content;
 
         TryGetContent(content, out var responseContent, out var contentType);
 

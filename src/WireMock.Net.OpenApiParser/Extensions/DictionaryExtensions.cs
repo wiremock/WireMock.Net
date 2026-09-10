@@ -32,4 +32,16 @@ internal static class DictionaryExtensions
         value = default;
         return false;
     }
+
+    public static bool TryGetFirstOrDefault<TKey, TValue>(this IDictionary<TKey, TValue>? dictionary, out KeyValuePair<TKey, TValue> value)
+    {
+        if (dictionary != null && dictionary.Count > 0)
+        {
+            value = dictionary.First();
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
 }
