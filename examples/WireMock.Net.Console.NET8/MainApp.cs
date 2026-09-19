@@ -1,14 +1,8 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SharpYaml.Model;
 using WireMock.Logging;
 using WireMock.Matchers;
 using WireMock.Models;

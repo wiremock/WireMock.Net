@@ -1,3 +1,11 @@
+# 2.16.0 (19 September 2026)
+- [#1502](https://github.com/wiremock/WireMock.Net/pull/1502) - Fix #1501: Generate WhenStateIs/WillSetStateTo correctly in ToCSharpCode contributed by [Bafyn](https://github.com/Bafyn)
+- [#1503](https://github.com/wiremock/WireMock.Net/pull/1503) - Fix FormUrlEncodedMatcher (+ refactor values / matchers logic) contributed by [StefH](https://github.com/StefH)
+- [#1504](https://github.com/wiremock/WireMock.Net/pull/1504) - Update SharpYaml package to version 2.5.1 [dependencies] contributed by [johnthcall](https://github.com/johnthcall)
+- [#1505](https://github.com/wiremock/WireMock.Net/pull/1505) - Upgrade dependency RamlToOpenApiConverter to version 0.40.0 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1500](https://github.com/wiremock/WireMock.Net/issues/1500) - Sending a form-urlencoded body with a repeated field name returns HTTP 500 [bug]
+- [#1501](https://github.com/wiremock/WireMock.Net/issues/1501) - Generated C# code for stateful (Scenario) mappings does not compile and drops the WhenStateIs condition [bug]
+
 # 2.15.0 (15 August 2026)
 - [#1495](https://github.com/wiremock/WireMock.Net/pull/1495) - Fix #1494: `WithClientIP(MatchOperator, params IStringMatcher[])` ignores the MatchOperator argument [bug] contributed by [Bafyn](https://github.com/Bafyn)
 - [#1497](https://github.com/wiremock/WireMock.Net/pull/1497) - Fix WithParam RejectOnMatch inverting the match result #1496 [bug] contributed by [Bafyn](https://github.com/Bafyn)
