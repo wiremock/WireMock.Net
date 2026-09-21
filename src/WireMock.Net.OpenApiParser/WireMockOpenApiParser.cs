@@ -9,7 +9,9 @@ using Microsoft.OpenApi.YamlReader;
 using RamlToOpenApiConverter;
 using WireMock.Admin.Mappings;
 using WireMock.Net.OpenApiParser.Mappers;
+using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
+using OpenApiDiagnostic = WireMock.Net.OpenApiParser.Models.OpenApiDiagnostic;
 
 namespace WireMock.Net.OpenApiParser;
 
@@ -125,7 +127,7 @@ public class WireMockOpenApiParser : IWireMockOpenApiParser
 
         var result = OpenApiDocument.Load(memoryStream, settings: _readerSettings);
 
-        diagnostic = result.Diagnostic ?? new OpenApiDiagnostic();
+        diagnostic = OpenApiMapper.Map(result.Diagnostic) ?? new OpenApiDiagnostic();
         openApiDocument = result.Document;
         return openApiDocument != null && !diagnostic.Errors.Any();
     }
