@@ -1,9 +1,5 @@
-# 2.16.0 (19 September 2026)
-- #1502 Fix #1501: Generate WhenStateIs/WillSetStateTo correctly in ToCSharpCode
-- #1503 Fix FormUrlEncodedMatcher (+ refactor values / matchers logic)
-- #1504 Update SharpYaml package to version 2.5.1 [dependencies]
-- #1505 Upgrade dependency RamlToOpenApiConverter to version 0.40.0 [dependencies]
-- #1500 Sending a form-urlencoded body with a repeated field name returns HTTP 500 [bug]
-- #1501 Generated C# code for stateful (Scenario) mappings does not compile and drops the WhenStateIs condition [bug]
+# 2.17.0 (21 September 2026)
+- #1509 Revert to RamlToOpenApiConverter.SourceOnly [bug]
+- #1508 Transitive Dependency Conflict with Microsoft.OpenApi in 2.16.0 [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md

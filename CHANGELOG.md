@@ -1,3 +1,7 @@
+# 2.17.0 (21 September 2026)
+- [#1509](https://github.com/wiremock/WireMock.Net/pull/1509) - Revert to RamlToOpenApiConverter.SourceOnly [bug] contributed by [StefH](https://github.com/StefH)
+- [#1508](https://github.com/wiremock/WireMock.Net/issues/1508) - Transitive Dependency Conflict with Microsoft.OpenApi in 2.16.0 [bug]
+
 # 2.16.0 (19 September 2026)
 - [#1502](https://github.com/wiremock/WireMock.Net/pull/1502) - Fix #1501: Generate WhenStateIs/WillSetStateTo correctly in ToCSharpCode contributed by [Bafyn](https://github.com/Bafyn)
 - [#1503](https://github.com/wiremock/WireMock.Net/pull/1503) - Fix FormUrlEncodedMatcher (+ refactor values / matchers logic) contributed by [StefH](https://github.com/StefH)
