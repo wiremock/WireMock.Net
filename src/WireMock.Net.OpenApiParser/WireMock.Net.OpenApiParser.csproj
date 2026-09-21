@@ -23,7 +23,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1' ">
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
         <PackageReference Include="Required" Version="1.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -40,9 +40,25 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-        <PackageReference Include="RamlToOpenApiConverter" Version="0.40.0" />
         <PackageReference Include="RandomDataGenerator.Net" Version="1.0.19.1" />
         <PackageReference Include="Stef.Validation" Version="0.3.0" />
+    </ItemGroup>
+
+    <!-- https://github.com/wiremock/WireMock.Net/issues/1508 -->
+    <ItemGroup>
+        <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.40.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.10.2" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <!-- Keep at version 2.0.43 (https://github.com/ravibpatel/ILRepack.Lib.MSBuild.Task/issues/80) -->
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.OpenApi" Version="3.10.2" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.OpenApi.YamlReader" Version="3.10.2" PrivateAssets="All" />
+        <PackageReference Include="SharpYaml" Version="2.1.5" />
     </ItemGroup>
 
     <ItemGroup>
