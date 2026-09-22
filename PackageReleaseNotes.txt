@@ -1,5 +1,4 @@
-# 2.17.0 (21 September 2026)
-- #1509 Revert to RamlToOpenApiConverter.SourceOnly [bug]
-- #1508 Transitive Dependency Conflict with Microsoft.OpenApi in 2.16.0 [bug]
+# 2.18.0 (22 September 2026)
+- #1510 WireMock.Net.OpenApiParser: fix depencency on RamlToOpenApiConverter.SourceOnly [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
