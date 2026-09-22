@@ -46,7 +46,7 @@
 
     <!-- https://github.com/wiremock/WireMock.Net/issues/1508 -->
     <ItemGroup>
-        <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.40.0" />
+        <PackageReference Include="RamlToOpenApiConverter.SourceOnly" Version="0.50.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)' == 'Debug'">
