@@ -285,10 +285,20 @@ namespace WireMock.Net.ConsoleApplication
 
             var server = WireMockServer.Start(new WireMockServerSettings
             {
+                StartAdminInterface = true,
                 Logger = new WireMockConsoleLogger(),
-
                 Port = 9091
             });
+
+            server
+              .WhenRequest(r => r
+                  .WithPath("/test")
+                  .UsingAnyMethod()
+              )
+              .ThenRespondWith(r => r
+                  .WithStatusCode(HttpStatusCode.OK)
+                  .WithBody("OK")
+              );
 
             server
                .WhenRequest(r => r
