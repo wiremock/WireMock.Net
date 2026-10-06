@@ -18,6 +18,8 @@ namespace WireMock.WebSockets;
 /// </summary>
 public class WireMockWebSocketContext : IWebSocketContext
 {
+    private readonly IDateTimeUtils _dateTimeUtils;
+
     /// <inheritdoc />
     public Guid ConnectionId { get; }
 
@@ -50,7 +52,8 @@ public class WireMockWebSocketContext : IWebSocketContext
         WebSocketBuilder builder,
         IWireMockMiddlewareOptions options,
         IWireMockMiddlewareLogger logger,
-        IGuidUtils guidUtils
+        IGuidUtils guidUtils,
+        IDateTimeUtils dateTimeUtils
     )
     {
         HttpContext = httpContext;
@@ -61,6 +64,7 @@ public class WireMockWebSocketContext : IWebSocketContext
         Builder = builder;
         Options = options;
         Logger = logger;
+        _dateTimeUtils = dateTimeUtils;
 
         ConnectionId = guidUtils.NewGuid();
     }
@@ -169,7 +173,7 @@ public class WireMockWebSocketContext : IWebSocketContext
                 null
             )
             {
-                DateTime = DateTime.UtcNow
+                DateTime = _dateTimeUtils.UtcNow
             };
         }
         else
@@ -179,7 +183,7 @@ public class WireMockWebSocketContext : IWebSocketContext
             {
                 Method = method,
                 BodyData = bodyData,
-                DateTime = DateTime.UtcNow
+                DateTime = _dateTimeUtils.UtcNow
             };
         }
 
