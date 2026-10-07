@@ -21,7 +21,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         TimestampFormat = "yyy-MM-dd HH:mm:ss.fff"
     });
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_And_StartAsync_and_StopAsync()
     {
         // Act
@@ -57,7 +57,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_WithImage_And_StartAsync_and_StopAsync()
     {
         // Arrange
@@ -83,7 +83,7 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_WithImageAsText_And_StartAsync_and_StopAsync()
     {
         // Arrange

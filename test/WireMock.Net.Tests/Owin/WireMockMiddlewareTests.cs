@@ -106,6 +106,15 @@ public class WireMockMiddlewareTests
     [Fact]
     public async Task WireMockMiddleware_Invoke_NoMatch()
     {
+        // Arrange
+        var inititalDateTime = new DateTime(2027, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var responseDateTime = new DateTime(2027, 1, 1, 0, 0, 42, DateTimeKind.Utc);
+
+        _dateTimeUtilsMock.Reset();
+        _dateTimeUtilsMock.SetupSequence(d => d.UtcNow)
+            .Returns(inititalDateTime)
+            .Returns(responseDateTime);
+
         // Act
         await _sut.Invoke(_contextMock.Object);
 
@@ -115,7 +124,7 @@ public class WireMockMiddlewareTests
         Expression<Func<ResponseMessage, bool>> match = r =>
             (int)r.StatusCode! == 404 &&
             ((StatusModel)r.BodyData!.BodyAsJson!).Status == "No matching mapping found" &&
-            r.DateTime == UtcNow;
+            r.DateTime == responseDateTime;
         _responseMapperMock.Verify(m => m.MapAsync(It.Is(match), It.IsAny<HttpResponse>()), Times.Once);
     }
 

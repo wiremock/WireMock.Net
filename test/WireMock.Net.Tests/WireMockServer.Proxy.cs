@@ -18,6 +18,7 @@ using WireMock.Util;
 
 namespace WireMock.Net.Tests;
 
+[Collection(nameof(WireMockServerProxyTests))]
 public class WireMockServerProxyTests
 {
     private readonly CancellationToken _ct = TestContext.Current.CancellationToken;

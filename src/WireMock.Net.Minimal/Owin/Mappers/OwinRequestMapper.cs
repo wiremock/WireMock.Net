@@ -12,7 +12,7 @@ namespace WireMock.Owin.Mappers;
 /// <summary>
 /// OwinRequestMapper
 /// </summary>
-internal class OwinRequestMapper : IOwinRequestMapper
+internal class OwinRequestMapper(IDateTimeUtils dateTimeUtils) : IOwinRequestMapper
 {
     /// <inheritdoc />
     public async Task<RequestMessage> MapAsync(HttpContext context, IWireMockMiddlewareOptions options)
@@ -72,7 +72,7 @@ internal class OwinRequestMapper : IOwinRequestMapper
             await request.HttpContext.Connection.GetClientCertificateAsync()
         )
         {
-            DateTime = DateTime.UtcNow
+            DateTime = dateTimeUtils.UtcNow
         };
     }
 

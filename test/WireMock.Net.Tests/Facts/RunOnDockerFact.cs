@@ -8,10 +8,9 @@ using WireMock.Net.Testcontainers.Utils;
 namespace WireMock.Net.Tests.Facts;
 
 [ExcludeFromCodeCoverage]
-public sealed class RunOnDockerPlatformFact : FactAttribute
+public sealed class RunOnDockerFact : FactAttribute
 {
-    public RunOnDockerPlatformFact(
-        string platform,
+    public RunOnDockerFact(
         [CallerFilePath] string? sourceFilePath = null,
         [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
     {
@@ -24,12 +23,6 @@ public sealed class RunOnDockerPlatformFact : FactAttribute
         catch
         {
             Skip = $"Only run test when Docker is installed.";
-            return;
-        }
-
-        if (currentPlatform != OSPlatform.Create(platform))
-        {
-            Skip = $"Only run test when Docker OS Platform {platform} is used.";
         }
     }
 }
