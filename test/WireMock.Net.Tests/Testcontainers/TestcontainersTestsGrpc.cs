@@ -10,6 +10,7 @@ using Meziantou.Extensions.Logging.Xunit.v3;
 using Microsoft.Extensions.Logging;
 using WireMock.Constants;
 using WireMock.Net.Testcontainers;
+using WireMock.Net.Tests.Facts;
 using WireMock.Util;
 
 namespace WireMock.Net.Tests.Testcontainers;
@@ -25,7 +26,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         TimestampFormat = "yyy-MM-dd HH:mm:ss.fff"
     });
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls1()
     {
         // Arrange
@@ -82,7 +83,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_Grpc_TestPortsAndUrls2()
     {
         // Arrange
@@ -136,7 +137,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         }
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_Grpc_ProtoDefinitionFromJson_UsingGrpcGeneratedClient()
     {
         var wireMockContainer = await Given_WireMockContainerIsStartedForHttpAndGrpcAsync();
@@ -150,7 +151,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_Grpc_ProtoDefinitionAtServerLevel_UsingGrpcGeneratedClient()
     {
         var wireMockContainer = await Given_WireMockContainerWithProtoDefinitionAtServerLevelIsStartedForHttpAndGrpcAsync();
@@ -164,7 +165,7 @@ public class TestcontainersTestsGrpc(ITestOutputHelper testOutputHelper)
         await StopAsync(wireMockContainer);
     }
 
-    [Fact]
+    [RunOnDockerFact]
     public async Task WireMockContainer_Build_Grpc_ProtoDefinitionAtServerLevel_UsingGrpcGeneratedClient_AndWithWatchStaticMappings()
     {
         var wireMockContainer = await Given_WireMockContainerWithProtoDefinitionAtServerLevelWithWatchStaticMappingsIsStartedForHttpAndGrpcAsync();

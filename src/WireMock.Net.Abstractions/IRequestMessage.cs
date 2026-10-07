@@ -32,7 +32,7 @@ public interface IRequestMessage
     string? ProxyUrl { get; set; }
 
     /// <summary>
-    /// Gets the DateTime.
+    /// The DateTime when this request was done.
     /// </summary>
     DateTime DateTime { get; }
 

@@ -73,20 +73,20 @@ internal class WireMockMiddlewareLogger(
             var logEntries = options.LogEntries.ToList();
 
             foreach (var logEntry in logEntries
-                .OrderBy(le => le.RequestMessage?.DateTime ?? le.ResponseMessage?.DateTime)
+                .OrderBy(le => le.RequestMessage?.DateTime)
                 .Take(logEntries.Count - options.MaxRequestLogCount.Value))
             {
                 TryRemoveLogEntry(logEntry);
             }
         }
 
-        // In case RequestLogExpirationDuration has a value greater than 0, try to delete existing request logs based on the date.
+        // In case RequestLogExpirationDuration has a value greater than 0, try to delete existing request logs based on the RequestMessage date.
         if (options.RequestLogExpirationDuration is > 0)
         {
             var logEntries = options.LogEntries.ToList();
 
             var checkTime = dateTimeUtils.UtcNow.AddHours(-options.RequestLogExpirationDuration.Value);
-            foreach (var logEntry in logEntries.Where(le => le.RequestMessage?.DateTime < checkTime || le.ResponseMessage?.DateTime < checkTime))
+            foreach (var logEntry in logEntries.Where(le => le.RequestMessage?.DateTime < checkTime))
             {
                 TryRemoveLogEntry(logEntry);
             }
