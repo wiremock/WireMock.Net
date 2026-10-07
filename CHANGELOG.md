@@ -1,3 +1,8 @@
+# 2.19.0 (07 October 2026)
+- [#1512](https://github.com/wiremock/WireMock.Net/pull/1512) - Use IDateTimeUtils in WireMockWebSocketContext [bug] contributed by [StefH](https://github.com/StefH)
+- [#1514](https://github.com/wiremock/WireMock.Net/pull/1514) - Fix DateTime in Response [bug] contributed by [StefH](https://github.com/StefH)
+- [#1511](https://github.com/wiremock/WireMock.Net/issues/1511) - Incorrect response datetime for mapped response [bug]
+
 # 2.18.0 (22 September 2026)
 - [#1510](https://github.com/wiremock/WireMock.Net/pull/1510) - WireMock.Net.OpenApiParser: fix depencency on RamlToOpenApiConverter.SourceOnly [bug] contributed by [StefH](https://github.com/StefH)
 - [#1508](https://github.com/wiremock/WireMock.Net/issues/1508) - Transitive Dependency Conflict with Microsoft.OpenApi in 2.16.0 [bug]

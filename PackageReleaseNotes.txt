@@ -1,5 +1,6 @@
-# 2.18.0 (22 September 2026)
-- #1510 WireMock.Net.OpenApiParser: fix depencency on RamlToOpenApiConverter.SourceOnly [bug]
-- #1508 Transitive Dependency Conflict with Microsoft.OpenApi in 2.16.0 [bug]
+# 2.19.0 (07 October 2026)
+- #1512 Use IDateTimeUtils in WireMockWebSocketContext [bug]
+- #1514 Fix DateTime in Response [bug]
+- #1511 Incorrect response datetime for mapped response [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
