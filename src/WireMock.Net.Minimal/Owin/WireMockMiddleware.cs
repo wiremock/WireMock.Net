@@ -172,7 +172,10 @@ internal class WireMockMiddleware(
         finally
         {
             // Set the DateTime from the Response to the current DateTime
-            ((ResponseMessage?)response)?.DateTime = dateTimeUtils.UtcNow;
+            if (response is ResponseMessage responseMessage)
+            {
+                responseMessage.DateTime = dateTimeUtils.UtcNow;
+            }
 
             logger.LogRequestAndResponse(logRequest, request, response, result.Match, result.Partial, activity);
 
