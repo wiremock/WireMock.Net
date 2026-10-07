@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
         <ProjectReference Include="..\..\src\WireMock.Net.AspNetCore.Middleware\WireMock.Net.AspNetCore.Middleware.csproj" />
     </ItemGroup>
 
