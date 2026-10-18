@@ -1,14 +1,9 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SharpYaml.Model;
+using Scriban.Runtime;
 using WireMock.Logging;
 using WireMock.Matchers;
 using WireMock.Models;
@@ -291,10 +286,20 @@ namespace WireMock.Net.ConsoleApplication
 
             var server = WireMockServer.Start(new WireMockServerSettings
             {
+                StartAdminInterface = true,
                 Logger = new WireMockConsoleLogger(),
-
                 Port = 9091
             });
+
+            server
+              .WhenRequest(r => r
+                  .WithPath("/test")
+                  .UsingAnyMethod()
+              )
+              .ThenRespondWith(r => r
+                  .WithStatusCode(HttpStatusCode.OK)
+                  .WithBody("OK")
+              );
 
             server
                .WhenRequest(r => r
@@ -405,12 +410,26 @@ namespace WireMock.Net.ConsoleApplication
                     // handlebarsContext.RegisterHelper(transformer.Name, transformer.Render); TODO
                 },
 
+                ScribanRegistrationCallback = (scriptObject, fileSystemHandler) =>
+                {
+                    var globals = (ScriptObject)scriptObject;
+                    globals.Import("greet", new Func<string, string>(name => $"Hello {name}"));
+                },
+
                 // Uncomment below if you want to use the CustomFileSystemFileHandler
                 // FileSystemHandler = new CustomFileSystemFileHandler()
             });
             System.Console.WriteLine("WireMockServer listening at {0}", string.Join(",", server.Urls));
 
             server.SetBasicAuthentication("a", "b");
+
+            server
+                .Given(Request.Create().WithPath("/scriban/greet").UsingGet())
+                .RespondWith(Response.Create()
+                    .WithBody("{{ greet 'WireMock.Net' }}")
+                    .WithTransformer(TransformerType.Scriban)
+                );
+
             //server.SetAzureADAuthentication(Environment.GetEnvironmentVariable("WIREMOCK_AAD_TENANT")!, "api://e083d51a-01a6-446c-8ad5-0c5c7f002208");
 
             //var http = new HttpClient();

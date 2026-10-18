@@ -52,7 +52,7 @@ public interface IResponseMessage
     object? StatusCode { get; set; }
 
     /// <summary>
-    /// Gets the DateTime.
+    /// The DateTime when this response was sent.
     /// </summary>
     DateTime DateTime { get; }
 

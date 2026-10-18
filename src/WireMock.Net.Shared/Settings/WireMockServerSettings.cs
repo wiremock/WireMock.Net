@@ -195,6 +195,20 @@ public class WireMockServerSettings
     public Action<IHandlebars, IFileSystemHandler>? HandlebarsRegistrationCallback { get; set; }
 
     /// <summary>
+    /// Action which can be used to add additional Scriban registrations (functions, objects or variables). [Optional]
+    /// </summary>
+    /// <remarks>
+    /// The first argument is a <c>Scriban.Runtime.ScriptObject</c> from the <c>Scriban.Signed</c> package.
+    /// It is typed as <see cref="object"/> so that this package does not depend on Scriban.
+    /// Members added to it are available as globals in <see cref="TransformerType.Scriban"/> and <see cref="TransformerType.ScribanDotLiquid"/> templates.
+    /// On a name clash the template model (<c>request</c>, <c>response</c>, <c>mapping</c> and <c>data</c>) takes precedence.
+    /// The action is invoked each time a transformer context is created.
+    /// </remarks>
+    [PublicAPI]
+    [JsonIgnore]
+    public Action<object, IFileSystemHandler>? ScribanRegistrationCallback { get; set; }
+
+    /// <summary>
     /// Allow the usage of CSharpCodeMatcher (default is not allowed).
     /// </summary>
     [PublicAPI]

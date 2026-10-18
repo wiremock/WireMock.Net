@@ -1,8 +1,5 @@
 // Copyright © WireMock.Net
 
-
-using System.Diagnostics.CodeAnalysis;
-
 namespace System.Collections.Generic;
 
 internal static class DictionaryExtensions

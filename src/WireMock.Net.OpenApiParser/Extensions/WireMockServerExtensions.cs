@@ -1,8 +1,8 @@
 // Copyright © WireMock.Net
 
 using JetBrains.Annotations;
-using Microsoft.OpenApi.Reader;
 using Stef.Validation;
+using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
 using WireMock.Server;
 

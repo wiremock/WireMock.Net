@@ -1,9 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using WireMock.Logging;
 using WireMock.Net.StandAlone;
 using WireMock.RequestBuilders;

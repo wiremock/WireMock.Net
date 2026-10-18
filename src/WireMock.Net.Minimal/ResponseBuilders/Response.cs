@@ -87,7 +87,7 @@ public partial class Response : IResponseBuilder
     {
         var message = responseMessage ?? new ResponseMessage
         {
-            DateTime = DateTime.UtcNow // We set it here to the current time.
+            DateTime = DateTime.UtcNow // Initially, this is set to the current time, but will be updated to the real time once the response has been sent.
         };
 
         return new Response(message);

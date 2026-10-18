@@ -640,6 +640,8 @@ public partial class WireMockServerTests(ITestOutputHelper testOutputHelper)
     [Fact]
     public async Task WireMockServer_Should_respond_to_ipv6_loopback()
     {
+        Assert.SkipUnless(Socket.OSSupportsIPv6, "IPv6 is not supported on this machine.");
+
         // Assign
         var server = WireMockServer.Start();
 

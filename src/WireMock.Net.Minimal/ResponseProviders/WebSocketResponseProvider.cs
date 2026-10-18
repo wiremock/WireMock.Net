@@ -67,7 +67,8 @@ internal class WebSocketResponseProvider(WebSocketBuilder builder, IGuidUtils gu
                 builder,
                 options,
                 logger,
-                guidUtils
+                guidUtils,
+                dateTimeUtils
             );
 
             // Add to registry

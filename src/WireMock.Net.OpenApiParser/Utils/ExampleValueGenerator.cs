@@ -1,7 +1,5 @@
 // Copyright © WireMock.Net
 
-using System;
-using System.Linq;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
 using Stef.Validation;

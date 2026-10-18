@@ -46,5 +46,3 @@ public class WireMockServerProxy2Tests
         serverAsProxy.Dispose();
     }
 }
-
-

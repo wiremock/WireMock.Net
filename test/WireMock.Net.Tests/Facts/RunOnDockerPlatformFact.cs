@@ -15,7 +15,19 @@ public sealed class RunOnDockerPlatformFact : FactAttribute
         [CallerFilePath] string? sourceFilePath = null,
         [CallerLineNumber] int sourceLineNumber = -1) : base(sourceFilePath, sourceLineNumber)
     {
-        if (TestcontainersUtils.GetImageOSAsync.Value.Result != OSPlatform.Create(platform))
+
+        OSPlatform currentPlatform;
+        try
+        {
+            currentPlatform = TestcontainersUtils.GetImageOSAsync.Value.Result;
+        }
+        catch
+        {
+            Skip = $"Only run test when Docker is installed.";
+            return;
+        }
+
+        if (currentPlatform != OSPlatform.Create(platform))
         {
             Skip = $"Only run test when Docker OS Platform {platform} is used.";
         }

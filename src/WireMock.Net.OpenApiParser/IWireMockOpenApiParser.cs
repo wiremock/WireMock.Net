@@ -1,7 +1,7 @@
 // Copyright © WireMock.Net
 
-using Microsoft.OpenApi.Reader;
 using WireMock.Admin.Mappings;
+using WireMock.Net.OpenApiParser.Models;
 using WireMock.Net.OpenApiParser.Settings;
 
 namespace WireMock.Net.OpenApiParser;
