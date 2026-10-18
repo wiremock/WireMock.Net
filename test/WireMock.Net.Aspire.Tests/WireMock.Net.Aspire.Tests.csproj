@@ -33,8 +33,8 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <!-- CVE-2026-48109 -->
-        <PackageReference Include="MessagePack" Version="2.5.302" />
+        <!-- CVE-2026-48109 / CVE-2026-92707 -->
+        <PackageReference Include="MessagePack" Version="2.5.303" />
     </ItemGroup>
 
     <ItemGroup>
