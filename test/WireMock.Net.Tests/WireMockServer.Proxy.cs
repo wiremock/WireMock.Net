@@ -59,12 +59,13 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_AdminFalse_With_SaveMapping_Is_True_And_SaveMappingToFile_Is_False_Should_AddInternalMappingOnly()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var cancellationToken = TestContext.Current.CancellationToken;
         var settings = new WireMockServerSettings
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = true,
                 SaveMappingToFile = false,
                 ExcludedHeaders = ["Connection"] // Needed for .NET 4.5.x and 4.6.x
@@ -93,12 +94,13 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_AdminTrue_With_SaveMapping_Is_True_And_SaveMappingToFile_Is_False_Should_AddInternalMappingOnly()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var cancellationToken = TestContext.Current.CancellationToken;
         var settings = new WireMockServerSettings
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = true,
                 SaveMappingToFile = false,
                 ExcludedHeaders = ["Connection"] // Needed for .NET 4.5.x and 4.6.x
@@ -185,6 +187,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_With_SaveMapping_Is_False_And_SaveMappingToFile_Is_True_ShouldSaveMappingToFile()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var fileSystemHandlerMock = new Mock<IFileSystemHandler>();
         fileSystemHandlerMock.Setup(f => f.GetMappingFolder()).Returns("m");
 
@@ -192,7 +195,7 @@ public class WireMockServerProxyTests
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = false,
                 SaveMappingToFile = true
             },
@@ -221,6 +224,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_With_SaveMappingForStatusCodePattern_Is_False_Should_Not_SaveMapping()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var fileSystemHandlerMock = new Mock<IFileSystemHandler>();
         fileSystemHandlerMock.Setup(f => f.GetMappingFolder()).Returns("m");
 
@@ -228,7 +232,7 @@ public class WireMockServerProxyTests
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = true,
                 SaveMappingToFile = true,
                 SaveMappingForStatusCodePattern = "999" // Just make sure that we don't want this mapping
@@ -258,6 +262,7 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_With_DoNotSaveMappingForHttpMethod_Should_Not_SaveMapping()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var fileSystemHandlerMock = new Mock<IFileSystemHandler>();
         fileSystemHandlerMock.Setup(f => f.GetMappingFolder()).Returns("m");
 
@@ -265,7 +270,7 @@ public class WireMockServerProxyTests
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = true,
                 SaveMappingToFile = true,
                 SaveMappingSettings = new ProxySaveMappingSettings
@@ -298,11 +303,12 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_log_proxied_requests()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var settings = new WireMockServerSettings
         {
             ProxyAndRecordSettings = new ProxyAndRecordSettings
             {
-                Url = "http://www.google.com",
+                Url = target.Url!,
                 SaveMapping = true,
                 SaveMappingToFile = false
             }
@@ -328,12 +334,13 @@ public class WireMockServerProxyTests
     public async Task WireMockServer_Proxy_Should_proxy_responses()
     {
         // Assign
+        using var target = StartProxyTargetServer();
         var cancellationToken = TestContext.Current.CancellationToken;
         string path = $"/prx_{Guid.NewGuid()}";
         var server = WireMockServer.Start();
         server
             .Given(Request.Create().WithPath(path))
-            .RespondWith(Response.Create().WithProxy("http://www.google.com"));
+            .RespondWith(Response.Create().WithProxy(target.Url!));
 
         // Act
         var requestMessage = new HttpRequestMessage
@@ -349,7 +356,7 @@ public class WireMockServerProxyTests
         // Assert
         server.Mappings.Should().HaveCount(1);
         server.LogEntries.Should().HaveCount(1);
-        content.Should().Contain("google");
+        content.Should().Be(ProxyTargetBody);
 
         server.Stop();
     }
@@ -946,6 +953,20 @@ public class WireMockServerProxyTests
 
         server.LogEntries.Should().HaveCount(1);
         server.Stop();
+    }
+
+    private const string ProxyTargetBody = "response from proxy target";
+
+    private static WireMockServer StartProxyTargetServer()
+    {
+        var target = WireMockServer.Start();
+        target
+            .Given(Request.Create().WithPath("/*"))
+            .RespondWith(Response.Create()
+                .WithStatusCode(HttpStatusCode.OK)
+                .WithBody(ProxyTargetBody));
+
+        return target;
     }
 }
 

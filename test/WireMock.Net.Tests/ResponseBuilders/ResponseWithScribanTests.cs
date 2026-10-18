@@ -8,6 +8,8 @@ using WireMock.Util;
 using WireMock.Handlers;
 using Moq;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Scriban.Runtime;
 
 namespace WireMock.Net.Tests.ResponseBuilders;
 
@@ -64,6 +66,51 @@ public class ResponseWithScribanTests
 
         // Assert
         response.Message.BodyData.BodyAsString.Should().Be("test http://localhost/foo /foo POSt");
+    }
+
+    [Theory]
+    [InlineData(TransformerType.Scriban)]
+    [InlineData(TransformerType.ScribanDotLiquid)]
+    public async Task Response_ProvideResponse_WithScribanRegistrationCallback_UsesCustomFunctionInBodyAndHeaders(TransformerType transformerType)
+    {
+        // Arrange
+        _settings.ScribanRegistrationCallback = (scriptObject, _) =>
+            ((ScriptObject)scriptObject).Import("fake_name", new Func<string>(() => "Jane Doe"));
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", ClientIp);
+
+        var responseBuilder = Response.Create()
+            .WithBody("{{ fake_name }} {{ request.Path }}")
+            .WithHeader("x-name", "{{ fake_name }}")
+            .WithTransformer(transformerType);
+
+        // Act
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+
+        // Assert
+        response.Message.BodyData!.BodyAsString.Should().Be("Jane Doe /foo");
+        response.Message.Headers!["x-name"].Should().ContainSingle().Which.Should().Be("Jane Doe");
+    }
+
+    [Theory]
+    [InlineData(TransformerType.Scriban)]
+    [InlineData(TransformerType.ScribanDotLiquid)]
+    public async Task Response_ProvideResponse_WithScribanRegistrationCallback_UsesCustomFunctionInBodyAsJson(TransformerType transformerType)
+    {
+        // Arrange
+        _settings.WithScribanRegistration((scriptObject, _) => scriptObject.Import("fake_name", new Func<string>(() => "Jane Doe")));
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", ClientIp);
+
+        var responseBuilder = Response.Create()
+            .WithBodyAsJson(new { name = "{{ fake_name }}", path = "{{ request.Path }}" })
+            .WithTransformer(transformerType);
+
+        // Act
+        var response = await responseBuilder.ProvideResponseAsync(_mappingMock.Object, Mock.Of<HttpContext>(), request, _settings);
+
+        // Assert
+        JsonConvert.SerializeObject(response.Message.BodyData!.BodyAsJson).Should().Be("{\"name\":\"Jane Doe\",\"path\":\"/foo\"}");
     }
 }
 

@@ -1,24 +1,32 @@
 // Copyright © WireMock.Net
 
-using WireMock.Handlers;
-using WireMock.Types;
+using Scriban.Runtime;
 using Stef.Validation;
+using WireMock.Settings;
+using WireMock.Types;
 
 namespace WireMock.Transformers.Scriban;
 
 internal class ScribanContextFactory : ITransformerContextFactory
 {
-    private readonly IFileSystemHandler _fileSystemHandler;
+    private readonly WireMockServerSettings _settings;
     private readonly TransformerType _transformerType;
 
-    public ScribanContextFactory(IFileSystemHandler fileSystemHandler, TransformerType transformerType)
+    public ScribanContextFactory(WireMockServerSettings settings, TransformerType transformerType)
     {
-        _fileSystemHandler = Guard.NotNull(fileSystemHandler);
+        _settings = Guard.NotNull(settings);
         _transformerType = Guard.Condition(transformerType, t => t is TransformerType.Scriban or TransformerType.ScribanDotLiquid);
     }
 
     public ITransformerContext Create()
     {
-        return new ScribanContext(_fileSystemHandler, _transformerType);
+        ScriptObject? customGlobals = null;
+        if (_settings.ScribanRegistrationCallback is { } registrationCallback)
+        {
+            customGlobals = new ScriptObject();
+            registrationCallback(customGlobals, _settings.FileSystemHandler);
+        }
+
+        return new ScribanContext(_settings.FileSystemHandler, _transformerType, customGlobals);
     }
 }
