@@ -19,8 +19,8 @@ internal static class TransformerFactory
                 
             case TransformerType.Scriban:
             case TransformerType.ScribanDotLiquid:
-                var factoryDotLiquid = new ScribanContextFactory(settings.FileSystemHandler, transformerType);
-                return new Transformer(settings, factoryDotLiquid);
+                var factoryScriban = new ScribanContextFactory(settings, transformerType);
+                return new Transformer(settings, factoryScriban);
 
             default:
                 throw new NotSupportedException($"{nameof(TransformerType)} '{transformerType}' is not supported.");

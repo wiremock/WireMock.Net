@@ -1,13 +1,18 @@
 // Copyright © WireMock.Net
 
+using System.Net.Http;
 using Moq;
 
+using Scriban.Runtime;
 using WireMock.Authentication;
 using WireMock.Constants;
 using WireMock.Logging;
 using WireMock.Owin;
+using WireMock.RequestBuilders;
+using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
+using WireMock.Types;
 
 namespace WireMock.Net.Tests;
 
@@ -228,5 +233,33 @@ public class WireMockServerSettingsTests
         options.ActivityTracingOptions.Should().BeNull();
     }
 #endif
+
+    [Theory]
+    [InlineData(TransformerType.Scriban)]
+    [InlineData(TransformerType.ScribanDotLiquid)]
+    public async Task WireMockServer_WireMockServerSettings_ScribanRegistrationCallback_IsUsedInResponseTemplate(TransformerType transformerType)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+        var path = $"/scriban_{Guid.NewGuid()}";
+        using var server = WireMockServer.Start(new WireMockServerSettings
+        {
+            ScribanRegistrationCallback = (scriptObject, _) =>
+                ((ScriptObject)scriptObject).Import("fake_name", new Func<string>(() => "Jane Doe"))
+        });
+
+        server
+            .Given(Request.Create().WithPath(path).UsingGet())
+            .RespondWith(Response.Create()
+                .WithBody("{{ fake_name }} {{ request.Path }}")
+                .WithTransformer(transformerType)
+            );
+
+        // Act
+        var response = await new HttpClient().GetStringAsync(server.Url + path, cancellationToken);
+
+        // Assert
+        response.Should().Be($"Jane Doe {path}");
+    }
 }
 
