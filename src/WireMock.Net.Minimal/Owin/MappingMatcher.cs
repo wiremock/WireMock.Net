@@ -83,6 +83,39 @@ internal class MappingMatcher(IWireMockMiddlewareOptions options, IRandomizerDou
         return (match, partialMatch);
     }
 
+    public IReadOnlyList<MappingMatcherResult> FindNearMisses(IRequestMessage request, int maxResults)
+    {
+        Guard.NotNull(request);
+
+        var nearMisses = new List<MappingMatcherResult>();
+
+        // Probability is not taken into account here: a mapping which was skipped based on probability can still be a near miss.
+        foreach (var mapping in _options.Mappings.Values.Where(m => !m.IsAdminInterface && !m.IsDisabled && m.TimeSettings.IsValid()))
+        {
+            try
+            {
+                var requestMatchResult = mapping.GetRequestMatchResult(request, GetNextState(mapping));
+                if (requestMatchResult.MatchDetails.All(md => md.Exception == null))
+                {
+                    nearMisses.Add(new MappingMatcherResult(mapping, requestMatchResult));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogException(mapping, ex);
+            }
+        }
+
+        // A near miss is a mapping which matches the request partially: perfect matches and complete mismatches are excluded.
+        return nearMisses
+            .Where(nm => !nm.RequestMatchResult.IsPerfectMatch && nm.RequestMatchResult.AverageTotalScore > 0.0)
+            .OrderBy(nm => nm.RequestMatchResult)
+                .ThenBy(nm => nm.Mapping.Priority)
+                .ThenByDescending(nm => nm.Mapping.UpdatedAt)
+            .Take(maxResults)
+            .ToArray();
+    }
+
     private void LogException(IMapping mapping, Exception ex)
     {
         _options.Logger.Error($"Getting a Request MatchResult for Mapping '{mapping.Guid}' failed. This mapping will not be evaluated. Exception: {ex}");

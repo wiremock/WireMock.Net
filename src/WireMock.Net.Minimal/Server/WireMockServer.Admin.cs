@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Stef.Validation;
 using WireMock.Admin.Mappings;
+using WireMock.Admin.Requests;
 using WireMock.Admin.Scenarios;
 using WireMock.Admin.Settings;
 using WireMock.Constants;
@@ -92,6 +93,18 @@ public partial class WireMockServer
         // __admin/request/{guid}
         Given(Request.Create().WithPath(_adminPaths.RequestsGuidPathMatcher).UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestGet));
         Given(Request.Create().WithPath(_adminPaths.RequestsGuidPathMatcher).UsingDelete()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestDelete));
+
+        // __admin/requests/{guid}/near-misses
+        Given(Request.Create().WithPath(_adminPaths.RequestsGuidNearMissesPathMatcher).UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestNearMissesGet));
+
+        // __admin/requests/count
+        Given(Request.Create().WithPath(_adminPaths.Requests + "/count").UsingPost()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestsCount));
+
+        // __admin/requests/unmatched
+        Given(Request.Create().WithPath(_adminPaths.Requests + "/unmatched").UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestsUnmatchedGet));
+
+        // __admin/requests/unmatched/near-misses
+        Given(Request.Create().WithPath(_adminPaths.Requests + "/unmatched/near-misses").UsingGet()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestsUnmatchedNearMissesGet));
 
         // __admin/requests/find
         Given(Request.Create().WithPath(_adminPaths.Requests + "/find").UsingPost()).AtPriority(WireMockConstants.AdminPriority).RespondWith(new DynamicResponseProvider(RequestsFind));
@@ -642,6 +655,22 @@ public partial class WireMockServer
     #region Requests/find
     private IResponseMessage RequestsFind(HttpContext _, IRequestMessage requestMessage)
     {
+        var logEntryMapper = new LogEntryMapper(_options);
+        var result = FindLogEntriesByRequestModel(requestMessage)
+            .OrderBy(x => x.Value.AverageTotalScore)
+            .Select(x => x.Key)
+            .Select(logEntryMapper.Map);
+
+        return ToJson(result);
+    }
+
+    private IResponseMessage RequestsCount(HttpContext _, IRequestMessage requestMessage)
+    {
+        return ToJson(new RequestCountModel { Count = FindLogEntriesByRequestModel(requestMessage).Count });
+    }
+
+    private Dictionary<ILogEntry, RequestMatchResult> FindLogEntriesByRequestModel(IRequestMessage requestMessage)
+    {
         var requestModel = DeserializeObject<RequestModel>(requestMessage);
 
         var request = (Request)InitRequestBuilder(requestModel);
@@ -656,10 +685,7 @@ public partial class WireMockServer
             }
         }
 
-        var logEntryMapper = new LogEntryMapper(_options);
-        var result = dict.OrderBy(x => x.Value.AverageTotalScore).Select(x => x.Key).Select(logEntryMapper.Map);
-
-        return ToJson(result);
+        return dict;
     }
 
     private IResponseMessage RequestsFindByMappingGuid(HttpContext _, IRequestMessage requestMessage)
@@ -678,6 +704,65 @@ public partial class WireMockServer
         return _responseMessageBuilder.Create(HttpStatusCode.BadRequest);
     }
     #endregion Requests/find
+
+    #region Requests/unmatched
+    private IResponseMessage RequestsUnmatchedGet(HttpContext _, IRequestMessage requestMessage)
+    {
+        var logEntryMapper = new LogEntryMapper(_options);
+        var result = FindUnmatchedLogEntries().Select(logEntryMapper.Map);
+
+        return ToJson(result);
+    }
+
+    private IResponseMessage RequestsUnmatchedNearMissesGet(HttpContext _, IRequestMessage requestMessage)
+    {
+        if (!TryGetMaxResultsFromQuery(requestMessage, out var maxResults))
+        {
+            return _responseMessageBuilder.Create(HttpStatusCode.BadRequest, "Query parameter 'maxResults' must be a positive integer");
+        }
+
+        var logEntryMapper = new LogEntryMapper(_options);
+        var result = FindNearMissesForUnmatchedRequests(maxResults).Select(logEntryMapper.Map);
+
+        return ToJson(result);
+    }
+    #endregion Requests/unmatched
+
+    #region Requests/{guid}/near-misses
+    private IResponseMessage RequestNearMissesGet(HttpContext _, IRequestMessage requestMessage)
+    {
+        if (!TryGetMaxResultsFromQuery(requestMessage, out var maxResults))
+        {
+            return _responseMessageBuilder.Create(HttpStatusCode.BadRequest, "Query parameter 'maxResults' must be a positive integer");
+        }
+
+        if (TryParseGuidFromSecondToLastSegment(requestMessage, out var guid))
+        {
+            var entry = LogEntries.SingleOrDefault(r => !_adminPaths!.Includes(r.RequestMessage?.Path) && r.Guid == guid);
+            if (entry is not null)
+            {
+                var logEntryMapper = new LogEntryMapper(_options);
+                var result = FindNearMisses(entry, maxResults).Select(logEntryMapper.Map);
+
+                return ToJson(result);
+            }
+        }
+
+        _settings.Logger.Warn("HttpStatusCode set to 404 : Request not found");
+        return _responseMessageBuilder.Create(HttpStatusCode.NotFound, "Request not found");
+    }
+
+    private static bool TryGetMaxResultsFromQuery(IRequestMessage requestMessage, out int maxResults)
+    {
+        maxResults = DefaultMaxNearMisses;
+        if (requestMessage.Query == null || !requestMessage.Query.TryGetValue("maxResults", out var value))
+        {
+            return true;
+        }
+
+        return int.TryParse(value.ToString(), out maxResults) && maxResults > 0;
+    }
+    #endregion Requests/{guid}/near-misses
 
     #region Scenarios
     private IResponseMessage ScenariosGet(HttpContext _, IRequestMessage requestMessage)

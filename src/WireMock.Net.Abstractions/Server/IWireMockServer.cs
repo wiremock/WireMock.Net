@@ -108,6 +108,39 @@ public interface IWireMockServer : IDisposable
     IReadOnlyList<ILogEntry> FindLogEntries(params IRequestMatcher[] matchers);
 
     /// <summary>
+    /// Get the log-entries for the requests which did not fully match any mapping.
+    /// This includes the requests which were served by a partial match when AllowPartialMapping is enabled.
+    /// </summary>
+    /// <returns>The <see cref="IReadOnlyList{ILogEntry}"/>.</returns>
+    IReadOnlyList<ILogEntry> FindUnmatchedLogEntries();
+
+    /// <summary>
+    /// Find the mappings which partially match the request (the near misses), ordered by best match first.
+    /// Perfect matches and mappings which do not match at all are excluded.
+    /// Use this to find out why a request did not match the expected mapping.
+    /// </summary>
+    /// <param name="requestMessage">The request to evaluate.</param>
+    /// <param name="maxResults">The maximum number of near misses to return. Default is 3.</param>
+    /// <returns>The <see cref="IReadOnlyList{NearMiss}"/>.</returns>
+    IReadOnlyList<NearMiss> FindNearMisses(IRequestMessage requestMessage, int maxResults = 3);
+
+    /// <summary>
+    /// Find the mappings which partially match the request of a log-entry (the near misses), ordered by best match first.
+    /// Perfect matches and mappings which do not match at all are excluded.
+    /// </summary>
+    /// <param name="logEntry">The log-entry for which to evaluate the request.</param>
+    /// <param name="maxResults">The maximum number of near misses to return. Default is 3.</param>
+    /// <returns>The <see cref="IReadOnlyList{NearMiss}"/>.</returns>
+    IReadOnlyList<NearMiss> FindNearMisses(ILogEntry logEntry, int maxResults = 3);
+
+    /// <summary>
+    /// Find the near misses for all requests which did not fully match any mapping.
+    /// </summary>
+    /// <param name="maxResultsPerRequest">The maximum number of near misses to return per request. Default is 3.</param>
+    /// <returns>The <see cref="IReadOnlyList{NearMiss}"/>.</returns>
+    IReadOnlyList<NearMiss> FindNearMissesForUnmatchedRequests(int maxResultsPerRequest = 3);
+
+    /// <summary>
     /// Reads a static mapping file and adds or updates a single mapping.
     /// 
     /// Calling this method manually forces WireMock.Net to read and apply the specified static mapping file.

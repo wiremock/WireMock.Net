@@ -14,60 +14,7 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
 {
     public LogEntryModel Map(ILogEntry logEntry)
     {
-        LogRequestModel? logRequestModel = null;
-        if (logEntry.RequestMessage != null)
-        {
-            logRequestModel = new LogRequestModel
-            {
-                DateTime = logEntry.RequestMessage.DateTime,
-                ClientIP = logEntry.RequestMessage.ClientIP,
-                Path = logEntry.RequestMessage.Path,
-                AbsolutePath = logEntry.RequestMessage.AbsolutePath,
-                Url = logEntry.RequestMessage.Url,
-                AbsoluteUrl = logEntry.RequestMessage.AbsoluteUrl,
-                ProxyUrl = logEntry.RequestMessage.ProxyUrl,
-                Query = logEntry.RequestMessage.Query,
-                Method = logEntry.RequestMessage.Method,
-                HttpVersion = logEntry.RequestMessage.HttpVersion,
-                Headers = logEntry.RequestMessage.Headers,
-                Cookies = logEntry.RequestMessage.Cookies
-            };
-
-            if (logEntry.RequestMessage.BodyData != null)
-            {
-                logRequestModel.DetectedBodyType = logEntry.RequestMessage.BodyData.DetectedBodyType?.ToString();
-                logRequestModel.DetectedBodyTypeFromContentType = logEntry.RequestMessage.BodyData.DetectedBodyTypeFromContentType?.ToString();
-
-                switch (logEntry.RequestMessage.BodyData.DetectedBodyType)
-                {
-                    case BodyType.String:
-                    case BodyType.FormUrlEncoded:
-                    case BodyType.WebSocketText:
-                    case BodyType.WebSocketClose:
-                        logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString;
-                        break;
-
-                    case BodyType.Json:
-                        logRequestModel.Body = logEntry.RequestMessage.BodyData.BodyAsString; // In case of Json, do also save the Body as string (backwards compatible)
-                        logRequestModel.BodyAsJson = logEntry.RequestMessage.BodyData.BodyAsJson;
-                        break;
-
-                    case BodyType.Bytes:
-                    case BodyType.WebSocketBinary:
-                        logRequestModel.BodyAsBytes = logEntry.RequestMessage.BodyData.BodyAsBytes;
-                        break;
-                }
-
-                logRequestModel.BodyEncoding = logEntry.RequestMessage.BodyData.Encoding != null
-                    ? new EncodingModel
-                    {
-                        EncodingName = logEntry.RequestMessage.BodyData.Encoding.EncodingName,
-                        CodePage = logEntry.RequestMessage.BodyData.Encoding.CodePage,
-                        WebName = logEntry.RequestMessage.BodyData.Encoding.WebName
-                    }
-                    : null;
-            }
-        }
+        var logRequestModel = logEntry.RequestMessage != null ? MapRequest(logEntry.RequestMessage) : null;
 
         LogResponseModel? logResponseModel = null;
         if (logEntry.ResponseMessage != null)
@@ -121,6 +68,74 @@ internal class LogEntryMapper(IWireMockMiddlewareOptions options)
             PartialMappingTitle = logEntry.PartialMappingTitle,
             PartialRequestMatchResult = Map(logEntry.PartialMatchResult)
         };
+    }
+
+    public NearMissModel Map(NearMiss nearMiss)
+    {
+        return new NearMissModel
+        {
+            LogEntryGuid = nearMiss.LogEntryGuid,
+            Request = MapRequest(nearMiss.RequestMessage),
+            MappingGuid = nearMiss.MappingGuid,
+            MappingTitle = nearMiss.MappingTitle,
+            RequestMatchResult = Map(nearMiss.RequestMatchResult)
+        };
+    }
+
+    private static LogRequestModel MapRequest(IRequestMessage requestMessage)
+    {
+        var logRequestModel = new LogRequestModel
+        {
+            DateTime = requestMessage.DateTime,
+            ClientIP = requestMessage.ClientIP,
+            Path = requestMessage.Path,
+            AbsolutePath = requestMessage.AbsolutePath,
+            Url = requestMessage.Url,
+            AbsoluteUrl = requestMessage.AbsoluteUrl,
+            ProxyUrl = requestMessage.ProxyUrl,
+            Query = requestMessage.Query,
+            Method = requestMessage.Method,
+            HttpVersion = requestMessage.HttpVersion,
+            Headers = requestMessage.Headers,
+            Cookies = requestMessage.Cookies
+        };
+
+        if (requestMessage.BodyData != null)
+        {
+            logRequestModel.DetectedBodyType = requestMessage.BodyData.DetectedBodyType?.ToString();
+            logRequestModel.DetectedBodyTypeFromContentType = requestMessage.BodyData.DetectedBodyTypeFromContentType?.ToString();
+
+            switch (requestMessage.BodyData.DetectedBodyType)
+            {
+                case BodyType.String:
+                case BodyType.FormUrlEncoded:
+                case BodyType.WebSocketText:
+                case BodyType.WebSocketClose:
+                    logRequestModel.Body = requestMessage.BodyData.BodyAsString;
+                    break;
+
+                case BodyType.Json:
+                    logRequestModel.Body = requestMessage.BodyData.BodyAsString; // In case of Json, do also save the Body as string (backwards compatible)
+                    logRequestModel.BodyAsJson = requestMessage.BodyData.BodyAsJson;
+                    break;
+
+                case BodyType.Bytes:
+                case BodyType.WebSocketBinary:
+                    logRequestModel.BodyAsBytes = requestMessage.BodyData.BodyAsBytes;
+                    break;
+            }
+
+            logRequestModel.BodyEncoding = requestMessage.BodyData.Encoding != null
+                ? new EncodingModel
+                {
+                    EncodingName = requestMessage.BodyData.Encoding.EncodingName,
+                    CodePage = requestMessage.BodyData.Encoding.CodePage,
+                    WebName = requestMessage.BodyData.Encoding.WebName
+                }
+                : null;
+        }
+
+        return logRequestModel;
     }
 
     private void MapBody(ILogEntry logEntry, LogResponseModel logResponseModel)
