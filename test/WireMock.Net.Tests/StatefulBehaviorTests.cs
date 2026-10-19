@@ -442,8 +442,9 @@ public class StatefulBehaviorTests
         // Act: fire request 1 but don't await it yet — it will sit in a 500 ms delay
         var request1Task = client.GetStringAsync(server.Url + path, cancellationToken);
 
-        // Give the server a moment to match & transition state before the delay completes
-        await Task.Delay(100, cancellationToken);
+        // Wait until the server has matched request 1 & transitioned the state; request 1 must still be delayed
+        await WaitForScenarioStateAsync(server, "1260", "State1", cancellationToken);
+        request1Task.IsCompleted.Should().BeFalse();
 
         // Request 2 is sent while request 1 is still being delayed.
         // After the fix the state has already transitioned, so request 2 matches Mapping 2.
@@ -481,7 +482,8 @@ public class StatefulBehaviorTests
 
         // Act
         var request1Task = client.GetStringAsync(server.Url + path, cancellationToken);
-        await Task.Delay(100, cancellationToken);
+        await WaitForScenarioStateAsync(server, "s", "State1", cancellationToken);
+        request1Task.IsCompleted.Should().BeFalse();
         var response2 = await client.GetStringAsync(server.Url + path, cancellationToken);
         var response1 = await request1Task;
 
@@ -573,6 +575,21 @@ public class StatefulBehaviorTests
         responseWithState2.Should().Be("Test state msg 2");
 
         server.Stop();
+    }
+
+    /// <summary>
+    /// Polls the scenario state instead of using a fixed delay, so tests do not depend on how fast the server handles the first request
+    /// (a cold server can take longer than a fixed delay to match the request and transition the state).
+    /// </summary>
+    private static async Task WaitForScenarioStateAsync(WireMockServer server, string scenario, string expectedState, CancellationToken cancellationToken)
+    {
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(5));
+
+        while (server.Scenarios.FirstOrDefault(s => s.Name == scenario)?.NextState != expectedState)
+        {
+            await Task.Delay(10, timeout.Token);
+        }
     }
 }
 
