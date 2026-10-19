@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>A SystemTextJsonPathMatcher which can be used to match WireMock.Net Requests using JsonPath.Net.</Description>
@@ -35,7 +35,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JsonPath.Net" Version="3.0.2" />
+        <!-- Downgraded from 3.0.2 to 2.2.0 to avoid Open Source Maintenance Fee issues -->
+        <PackageReference Include="JsonPath.Net" Version="2.2.0" />
     </ItemGroup>
 
 </Project>
