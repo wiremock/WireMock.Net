@@ -1,6 +1,8 @@
-# 2.19.0 (07 October 2026)
-- #1512 Use IDateTimeUtils in WireMockWebSocketContext [bug]
-- #1514 Fix DateTime in Response [bug]
-- #1511 Incorrect response datetime for mapped response [bug]
+# 2.20.0 (19 October 2026)
+- #1516 Add ScribanRegistrationCallback to register custom Scriban functions [feature]
+- #1519 Bump MessagePack from 2.5.302 to 2.5.303 [dependencies]
+- #1522 Downgrade JsonPath.Net from 3.0.2 to 2.2.0 to avoid Open Source Maintenance Fee issues [dependencies]
+- #1523 Fix workflow permissions
+- #1515 Allow registering custom Scriban functions (ScribanRegistrationCallback), like HandlebarsRegistrationCallback [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
