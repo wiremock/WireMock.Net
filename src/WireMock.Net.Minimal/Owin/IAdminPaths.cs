@@ -24,6 +24,8 @@ internal interface IAdminPaths
 
     RegexMatcher RequestsGuidPathMatcher { get; }
 
+    RegexMatcher RequestsGuidNearMissesPathMatcher { get; }
+
     RegexMatcher ScenariosNameMatcher { get; }
 
     RegexMatcher ScenariosNameWithStateMatcher { get; }

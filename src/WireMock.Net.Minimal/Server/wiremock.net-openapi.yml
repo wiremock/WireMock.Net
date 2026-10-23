@@ -421,6 +421,105 @@ paths:
               schema:
                 $ref: '#/components/schemas/StatusModel'
 
+  /__admin/requests/{guid}/near-misses:
+    get:
+      summary: Get the near misses (mappings which partially match) for a logged request
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: maxResults
+          in: query
+          required: false
+          description: The maximum number of near misses per request (default 3).
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NearMissModel'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
+  /__admin/requests/count:
+    post:
+      summary: Count logged requests matching a request filter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestModel'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestCountModel'
+      x-codegen-request-body-name: requestFilter
+
+  /__admin/requests/unmatched:
+    get:
+      summary: Get logged requests which did not fully match any mapping
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogEntryModel'
+
+  /__admin/requests/unmatched/near-misses:
+    get:
+      summary: Get the near misses (mappings which partially match) for each logged request which did not fully match any mapping
+      parameters:
+        - name: maxResults
+          in: query
+          required: false
+          description: The maximum number of near misses per request (default 3).
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NearMissModel'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusModel'
+
   /__admin/requests/find:
     post:
       summary: Find logged requests matching a request filter
@@ -894,6 +993,35 @@ components:
             type: object
             additionalProperties: true
       description: Log Request Match Model
+
+    NearMissModel:
+      type: object
+      properties:
+        LogEntryGuid:
+          type: string
+          description: The unique identifier of the log entry for the request.
+          format: uuid
+        Request:
+          $ref: '#/components/schemas/LogRequestModel'
+        MappingGuid:
+          type: string
+          description: The unique identifier of the mapping.
+          format: uuid
+        MappingTitle:
+          type: string
+          description: The title of the mapping.
+        RequestMatchResult:
+          $ref: '#/components/schemas/LogRequestMatchModel'
+      description: Near Miss Model, a mapping which did not (fully) match a request
+
+    RequestCountModel:
+      type: object
+      properties:
+        Count:
+          type: integer
+          description: The number of requests which match the criteria.
+          format: int32
+      description: Request Count Model
 
     LogRequestModel:
       type: object

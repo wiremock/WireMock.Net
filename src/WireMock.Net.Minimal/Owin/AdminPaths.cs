@@ -43,6 +43,8 @@ internal sealed class AdminPaths(string? adminPath) : IAdminPaths
 
     public RegexMatcher RequestsGuidPathMatcher => new($@"^{PrefixRegexEscaped}\/requests\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})$");
 
+    public RegexMatcher RequestsGuidNearMissesPathMatcher => new($@"^{PrefixRegexEscaped}\/requests\/([0-9A-Fa-f]{{8}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{4}}[-][0-9A-Fa-f]{{12}})\/near-misses$");
+
     public RegexMatcher ScenariosNameMatcher => new($@"^{PrefixRegexEscaped}\/scenarios\/.+$");
 
     public RegexMatcher ScenariosNameWithStateMatcher => new($@"^{PrefixRegexEscaped}\/scenarios\/.+\/state$");

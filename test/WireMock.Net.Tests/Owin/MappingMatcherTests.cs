@@ -259,6 +259,96 @@ public class MappingMatcherTests
         mappingMock.Verify(m => m.GetRequestMatchResult(It.IsAny<RequestMessage>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Fact]
+    public void MappingMatcher_FindNearMisses_ShouldExcludePerfectMatchesAndMismatches_AndOrderByBestMatchFirst()
+    {
+        // Assign
+        var perfect = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var mismatch = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var low = Guid.Parse("00000000-0000-0000-0000-000000000003");
+        var high = Guid.Parse("00000000-0000-0000-0000-000000000004");
+        var mappings = InitMappings
+        (
+            (perfect, [1.0], null),
+            (mismatch, [0.0], null),
+            (low, [0.4], null),
+            (high, [0.8], null)
+        );
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindNearMisses(request, 10);
+
+        // Assert
+        result.Select(r => r.Mapping.Guid).Should().Equal(high, low);
+    }
+
+    [Fact]
+    public void MappingMatcher_FindNearMisses_ShouldRespectMaxResults()
+    {
+        // Assign
+        var low = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var high = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        var mappings = InitMappings
+        (
+            (low, [0.4], null),
+            (high, [0.8], null)
+        );
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindNearMisses(request, 1);
+
+        // Assert
+        result.Should().ContainSingle().Which.Mapping.Guid.Should().Be(high);
+    }
+
+    [Fact]
+    public void MappingMatcher_FindNearMisses_ShouldIgnoreProbability()
+    {
+        // Assign
+        var withProbability = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var mappings = InitMappings
+        (
+            (withProbability, [0.5], 0.1)
+        );
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindNearMisses(request, 3);
+
+        // Assert
+        result.Should().ContainSingle().Which.Mapping.Guid.Should().Be(withProbability);
+        _randomizerDoubleBetween0And1Mock.Verify(r => r.Generate(), Times.Never);
+    }
+
+    [Fact]
+    public void MappingMatcher_FindNearMisses_WhenMappingThrowsException_ShouldSkipMapping()
+    {
+        // Assign
+        var mappingMock = new Mock<IMapping>();
+        mappingMock.SetupGet(m => m.IsDisabled).Returns(false);
+        mappingMock.Setup(m => m.GetRequestMatchResult(It.IsAny<IRequestMessage>(), It.IsAny<string>())).Throws<Exception>();
+
+        var mappings = new ConcurrentDictionary<Guid, IMapping>();
+        mappings.TryAdd(Guid.NewGuid(), mappingMock.Object);
+        _optionsMock.Setup(o => o.Mappings).Returns(mappings);
+
+        var request = new RequestMessage(new UrlDetails("http://localhost/foo"), "GET", "::1");
+
+        // Act
+        var result = _sut.FindNearMisses(request, 3);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
     private static ConcurrentDictionary<Guid, IMapping> InitMappings(params (Guid guid, double[] scores, double? probability)[] matches)
     {
         var mappings = new ConcurrentDictionary<Guid, IMapping>();

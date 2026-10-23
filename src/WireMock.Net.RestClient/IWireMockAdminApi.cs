@@ -251,6 +251,39 @@ public interface IWireMockAdminApi
     Task<IList<LogEntryModel>> FindRequestsByMappingGuidAsync([Query] Guid mappingGuid, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Count the requests which match the criteria (<see cref="RequestModel"/>).
+    /// </summary>
+    /// <param name="model">The RequestModel</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Post("requests/count")]
+    [Header("Content-Type", "application/json")]
+    Task<RequestCountModel> CountRequestsAsync([Body] RequestModel model, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get the requests which did not fully match any mapping.
+    /// </summary>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Get("requests/unmatched")]
+    Task<IList<LogEntryModel>> GetUnmatchedRequestsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get the near misses (the mappings which partially match) for all requests which did not fully match any mapping.
+    /// </summary>
+    /// <param name="maxResults">The maximum number of near misses per request. Default is 3.</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Get("requests/unmatched/near-misses")]
+    Task<IList<NearMissModel>> GetNearMissesForUnmatchedRequestsAsync([Query] int? maxResults = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get the near misses (the mappings which partially match) for a request.
+    /// </summary>
+    /// <param name="guid">The Guid of the request</param>
+    /// <param name="maxResults">The maximum number of near misses. Default is 3.</param>
+    /// <param name="cancellationToken">The optional cancellationToken.</param>
+    [Get("requests/{guid}/near-misses")]
+    Task<IList<NearMissModel>> GetNearMissesForRequestAsync([Path] Guid guid, [Query] int? maxResults = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Get all scenarios
     /// </summary>
     /// <param name="cancellationToken">The optional cancellationToken.</param>
