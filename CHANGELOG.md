@@ -1,9 +1,10 @@
-# 2.20.0 (19 October 2026)
+# 2.20.0 (23 October 2026)
 - [#1516](https://github.com/wiremock/WireMock.Net/pull/1516) - Add ScribanRegistrationCallback to register custom Scriban functions [feature] contributed by [Quattordici](https://github.com/Quattordici)
 - [#1519](https://github.com/wiremock/WireMock.Net/pull/1519) - Bump MessagePack from 2.5.302 to 2.5.303 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1521](https://github.com/wiremock/WireMock.Net/pull/1521) - Add near-miss diagnostics and request count/unmatched endpoints to the admin API [feature] contributed by [Quattordici](https://github.com/Quattordici)
 - [#1522](https://github.com/wiremock/WireMock.Net/pull/1522) - Downgrade JsonPath.Net from 3.0.2 to 2.2.0 to avoid Open Source Maintenance Fee issues [dependencies] contributed by [StefH](https://github.com/StefH)
-- [#1523](https://github.com/wiremock/WireMock.Net/pull/1523) - Fix workflow permissions contributed by [StefH](https://github.com/StefH)
 - [#1515](https://github.com/wiremock/WireMock.Net/issues/1515) - Allow registering custom Scriban functions (ScribanRegistrationCallback), like HandlebarsRegistrationCallback [feature]
+- [#1520](https://github.com/wiremock/WireMock.Net/issues/1520) - json-everything sub-dependency now has Open Source Maintenance Fee [dependencies]
 
 # 2.19.0 (07 October 2026)
 - [#1512](https://github.com/wiremock/WireMock.Net/pull/1512) - Use IDateTimeUtils in WireMockWebSocketContext [bug] contributed by [StefH](https://github.com/StefH)
