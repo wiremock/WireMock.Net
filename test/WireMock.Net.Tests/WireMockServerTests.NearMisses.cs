@@ -6,6 +6,10 @@ using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
+#if NET48
+using System.Net.Http;
+#endif
+
 namespace WireMock.Net.Tests;
 
 public partial class WireMockServerTests
