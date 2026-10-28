@@ -1,9 +1,5 @@
-# 2.20.0 (23 October 2026)
-- #1516 Add ScribanRegistrationCallback to register custom Scriban functions [feature]
-- #1519 Bump MessagePack from 2.5.302 to 2.5.303 [dependencies]
-- #1521 Add near-miss diagnostics and request count/unmatched endpoints to the admin API [feature]
-- #1522 Downgrade JsonPath.Net from 3.0.2 to 2.2.0 to avoid Open Source Maintenance Fee issues [dependencies]
-- #1515 Allow registering custom Scriban functions (ScribanRegistrationCallback), like HandlebarsRegistrationCallback [feature]
-- #1520 json-everything sub-dependency now has Open Source Maintenance Fee [dependencies]
+# 2.21.0 (28 October 2026)
+- #1526 Update Scriban to 7.5.3 [dependencies]
+- #1525 High security vulnerability in Scriban package [security]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
