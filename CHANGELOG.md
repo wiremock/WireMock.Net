@@ -1,3 +1,7 @@
+# 2.21.0 (28 October 2026)
+- [#1526](https://github.com/wiremock/WireMock.Net/pull/1526) - Update Scriban to 7.5.3 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1525](https://github.com/wiremock/WireMock.Net/issues/1525) - High security vulnerability in Scriban package [security]
+
 # 2.20.0 (23 October 2026)
 - [#1516](https://github.com/wiremock/WireMock.Net/pull/1516) - Add ScribanRegistrationCallback to register custom Scriban functions [feature] contributed by [Quattordici](https://github.com/Quattordici)
 - [#1519](https://github.com/wiremock/WireMock.Net/pull/1519) - Bump MessagePack from 2.5.302 to 2.5.303 [dependencies] contributed by [StefH](https://github.com/StefH)
