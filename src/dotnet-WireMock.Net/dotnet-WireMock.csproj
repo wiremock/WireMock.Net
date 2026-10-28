@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <PackAsTool>true</PackAsTool>
+        <PackAsTool Condition="'$(PublishSingleFile)' != 'true'">true</PackAsTool>
         <RootNamespace>WireMock.Net</RootNamespace>
         <ToolCommandName>dotnet-wiremock</ToolCommandName>
         <Description>A dotnet commandline tool for WireMock.Net (A Lightweight Http Mocking Server for .NET)</Description>
@@ -12,7 +12,7 @@
         <Authors>Stef Heyenrath</Authors>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(PublishSingleFile)' != 'true'">
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
