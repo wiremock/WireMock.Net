@@ -4,6 +4,7 @@ permissions:
   contents: write
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "*.*.*"
@@ -15,7 +16,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish Standalone Binaries
+        shell: bash
+        run: |
+          mkdir -p ./artifacts
+          RIDS=("win-x64" "win-arm64" "linux-x64" "linux-arm64" "osx-x64" "osx-arm64")
+
+          for RID in "${RIDS[@]}"; do
+            echo "Publishing for $RID..."
+            dotnet publish ./src/dotnet-WireMock.Net/dotnet-WireMock.csproj \
+              -c Release \
+              -r "$RID" \
+              --self-contained true \
+              -p:PublishSingleFile=true \
+              -p:IncludeNativeLibrariesForSelfExtract=true \
+              -p:PublishDocumentationFile=false \
+              -p:DebugType=None \
+              -p:DebugSymbols=false \
+              -o "./publish/$RID"
+
+            if [[ "$RID" == win-* ]]; then
+              (cd "./publish/$RID" && zip "../../artifacts/wiremock-net-$RID.zip" dotnet-WireMock.exe)
+            else
+              tar -czvf "./artifacts/wiremock-net-$RID.tar.gz" -C "./publish/$RID" dotnet-WireMock
+            fi
+          done
+
+      - name: Upload Standalone Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wiremock-standalone
+          path: ./artifacts/*
+
       - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
+          files: ./artifacts/*
