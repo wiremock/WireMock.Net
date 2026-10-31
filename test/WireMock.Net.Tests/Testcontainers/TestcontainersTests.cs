@@ -1,8 +1,7 @@
 // Copyright © WireMock.Net
 
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
 using System.Runtime.InteropServices;
-using AwesomeAssertions;
 using AwesomeAssertions.Execution;
 using DotNet.Testcontainers.Builders;
 using Meziantou.Extensions.Logging.Xunit.v3;
@@ -13,8 +12,10 @@ using WireMock.Net.Tests.Facts;
 
 namespace WireMock.Net.Tests.Testcontainers;
 
-public class TestcontainersTests(ITestOutputHelper testOutputHelper)
+public class TestcontainersTests(ITestOutputHelper testOutputHelper, ITestContextAccessor testContext)
 {
+    private readonly CancellationToken _ct = testContext.Current.CancellationToken;
+
     private readonly ILogger _logger = new XUnitLogger(testOutputHelper, new LoggerExternalScopeProvider(), nameof(TestcontainersTests), new XUnitLoggerOptions
     {
         IncludeCategory = true,
@@ -53,6 +54,8 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
             .WithWatchStaticMappings(true)
             .Build();
 
+        await Task.Delay(500, _ct);
+
         await StartTestAsync(wireMockContainer);
         await StopAsync(wireMockContainer);
     }
@@ -78,6 +81,8 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
         }
 
         var wireMockContainer = wireMockContainerBuilder.Build();
+
+        await Task.Delay(500, _ct);
 
         await StartTestAsync(wireMockContainer);
         await StopAsync(wireMockContainer);
@@ -105,14 +110,18 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper)
 
         var wireMockContainer = wireMockContainerBuilder.Build();
 
+        await Task.Delay(500, _ct);
+
         await StartTestAsync(wireMockContainer);
         await StopAsync(wireMockContainer);
     }
 
-    private static async Task StartTestAsync(WireMockContainer wireMockContainer)
+    private async Task StartTestAsync(WireMockContainer wireMockContainer)
     {
         // Start
-        await wireMockContainer.StartAsync();
+        await wireMockContainer.StartAsync(_ct);
+
+        await Task.Delay(500, _ct);
 
         // Assert
         using (new AssertionScope())
