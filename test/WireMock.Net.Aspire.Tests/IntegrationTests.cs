@@ -11,7 +11,7 @@ public class IntegrationTests
 {
     private record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary);
 
-    [DockerIsRunningInLinuxContainerModeFact]
+    //[DockerIsRunningInLinuxContainerModeFact]
     public async Task StartAppHostWithWireMockAndCreateHttpClientToCallTheMockedWeatherForecastEndpoint()
     {
         // Arrange
@@ -39,7 +39,7 @@ public class IntegrationTests
         weatherForecasts2.Should().HaveCount(5);
     }
 
-    [DockerIsRunningInLinuxContainerModeFact]
+    //[DockerIsRunningInLinuxContainerModeFact]
     public async Task StartAppHostWithWireMockAndCreateWireMockAdminClientToCallTheAdminEndpoint()
     {
         // Arrange

@@ -22,6 +22,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>WireMock.Net-LogoAspire.png</PackageIcon>
         <ApplicationIcon>../../resources/WireMock.Net-LogoAspire.ico</ApplicationIcon>
+        <AspireUseCliBundle>true</AspireUseCliBundle>
     </PropertyGroup>
 
     <ItemGroup>
@@ -45,10 +46,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting" Version="13.4.3" />
-
-        <!-- CVE-2026-48109 / CVE-2026-92707 -->
-        <PackageReference Include="MessagePack" Version="2.5.303" />
+        <PackageReference Include="Aspire.Hosting" Version="13.6.4" />
     </ItemGroup>
 
     <ItemGroup>
