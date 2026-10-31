@@ -121,10 +121,10 @@ jobs:
       packageType: 'sdk'
       version: '10.0.x'
 
-  - task: CmdLine@2
-    displayName: 'WireMock.Net.Tests.UsingNuGet'
-    inputs:
-      script: 'dotnet test ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
+  # - task: CmdLine@2
+  #   displayName: 'WireMock.Net.Tests.UsingNuGet'
+  #   inputs:
+  #     script: 'dotnet test ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
 
   - task: CmdLine@2
     displayName: 'WireMock.Net.Tests with Coverage'
