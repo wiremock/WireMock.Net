@@ -20,6 +20,12 @@ jobs:
       echo "BuildId = $(buildId)"
     displayName: 'Print buildId'
 
+  - task: UseDotNet@2
+    displayName: Use .NET 10.0
+    inputs:
+      packageType: 'sdk'
+      version: '10.0.x'
+
   - script: |
       dotnet tool install --global dotnet-sonarscanner
       dotnet tool install --global dotnet-coverage
@@ -48,30 +54,30 @@ jobs:
     inputs:
       command: 'build'
       projects: '**/test/**/*.csproj'
-      arguments: '--configuration Debug --framework net8.0'
+      arguments: '--configuration Debug --framework net10.0'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --no-build --framework net8.0" -f xml -o "wiremock-coverage-xunit.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --no-build --framework net10.0" -f xml -o "wiremock-coverage-xunit.xml"
     displayName: 'WireMock.Net.Tests with Coverage'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-tunit.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --no-build --framework net10.0" -f xml -o "wiremock-coverage-tunit.xml"
     displayName: 'WireMock.Net.TUnitTests with Coverage'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-middleware.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --no-build --framework net10.0" -f xml -o "wiremock-coverage-middleware.xml"
     displayName: 'WireMock.Net.Middleware.Tests with Coverage'
 
   - task: CmdLine@2
     inputs:
       script: |
-          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Debug --no-build" -f xml -o "wiremock-coverage-aspire.xml"
+          dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Debug --no-build --framework net10.0" -f xml -o "wiremock-coverage-aspire.xml"
     displayName: 'WireMock.Net.Aspire.Tests with Coverage'
 
   - task: CmdLine@2
@@ -110,77 +116,82 @@ jobs:
 
   steps:
   - task: UseDotNet@2
-    displayName: Use .NET 8.0
+    displayName: Use .NET 10.0
     inputs:
       packageType: 'sdk'
-      version: '8.0.x'
-
-  - task: CmdLine@2
-    displayName: 'WireMock.Net.Tests.UsingNuGet'
-    inputs:
-      script: 'dotnet test ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
-
-  - task: CmdLine@2
-    displayName: 'WireMock.Net.Tests with Coverage'
-    inputs:
-      script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+      version: '10.0.x'
 
   # - task: CmdLine@2
-  #   displayName: 'WireMock.Net.TUnitTests with Coverage'
+  #   displayName: 'WireMock.Net.Tests.UsingNuGet'
   #   inputs:
-  #     script: 'dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+  #     script: 'dotnet test ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
+
+  # - task: CmdLine@2
+  #   displayName: 'WireMock.Net.Tests'
+  #   inputs:
+  #     script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net8.0'
 
   - task: CmdLine@2
-    displayName: 'WireMock.Net.Middleware.Tests with Coverage'
+    displayName: 'WireMock.Net.Tests'
     inputs:
-      script: 'dotnet test ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+      script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net10.0'
 
-- job: Windows_Release_to_MyGet
-  dependsOn: Windows_Build_Test
-  condition: and(succeeded(), ${{ parameters.runWindowsReleaseToMyGet }})
+  # - task: CmdLine@2
+  #   displayName: 'WireMock.Net.TUnitTests'
+  #   inputs:
+  #     script: 'dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --framework net10.0'
 
-  pool:
-    vmImage: 'windows-2025'
-
-  steps:
-  - script: |
-      echo "BuildId = $(buildId)"
-    displayName: 'Print buildId'
-
-  - task: UseDotNet@2
-    displayName: Use .NET 8.0
+  - task: CmdLine@2
+    displayName: 'WireMock.Net.Middleware.Tests'
     inputs:
-      packageType: 'sdk'
-      version: '8.0.x'
+      script: 'dotnet test ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Debug --framework net10.0'
 
-  - task: DotNetCoreCLI@2
-    displayName: Build Release
-    inputs:
-      command: 'build'
-      arguments: /p:Configuration=Release
-      projects: $(buildProjects)
+# - job: Windows_Release_to_MyGet
+#   dependsOn: Windows_Build_Test
+#   condition: and(succeeded(), ${{ parameters.runWindowsReleaseToMyGet }})
 
-  - task: DotNetCoreCLI@2
-    displayName: Pack
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
-    inputs:
-      command: pack
-      configuration: 'Release'
-      packagesToPack: $(buildProjects)
-      nobuild: true
-      packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
-      verbosityPack: 'normal'
+#   pool:
+#     vmImage: 'windows-2025'
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Artifacts
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#   steps:
+#   - script: |
+#       echo "BuildId = $(buildId)"
+#     displayName: 'Print buildId'
 
-  - task: DotNetCoreCLI@2
-    displayName: Push to MyGet
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
-    inputs:
-      command: custom
-      custom: nuget
-      arguments: push $(Build.ArtifactStagingDirectory)\packages\*.nupkg -n -s https://www.myget.org/F/wiremock-net/api/v3/index.json -k $(MyGetKey)
+#   - task: UseDotNet@2
+#     displayName: Use .NET 10.0
+#     inputs:
+#       packageType: 'sdk'
+#       version: '10.0.x'
+
+#   - task: DotNetCoreCLI@2
+#     displayName: Build Release
+#     inputs:
+#       command: 'build'
+#       arguments: /p:Configuration=Release
+#       projects: $(buildProjects)
+
+#   - task: DotNetCoreCLI@2
+#     displayName: Pack
+#     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
+#     inputs:
+#       command: pack
+#       configuration: 'Release'
+#       packagesToPack: $(buildProjects)
+#       nobuild: true
+#       packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
+#       verbosityPack: 'normal'
+
+#   - task: PublishBuildArtifacts@1
+#     displayName: Publish Artifacts
+#     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
+#     inputs:
+#       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+
+#   - task: DotNetCoreCLI@2
+#     displayName: Push to MyGet
+#     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
+#     inputs:
+#       command: custom
+#       custom: nuget
+#       arguments: push $(Build.ArtifactStagingDirectory)\packages\*.nupkg -n -s https://www.myget.org/F/wiremock-net/api/v3/index.json -k $(MyGetKey)

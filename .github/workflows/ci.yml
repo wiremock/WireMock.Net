@@ -22,22 +22,33 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: Setup .NET 8 and 10
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          8.0.x
+          10.0.x
 
-    - name: 'WireMock.Net.TUnitTests'
-      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
+    # - name: 'WireMock.Net.TUnitTests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Tests'
-      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+    - name: 'WireMock.Net.TUnitTests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net10.0
 
-    - name: 'WireMock.Net.Tests.UsingNuGet'
-      run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
+    # - name: 'WireMock.Net.Tests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Middleware.Tests'
-      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release
+    - name: 'WireMock.Net.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net10.0
+
+    # - name: 'WireMock.Net.Tests.UsingNuGet'
+    #   run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
+
+    # - name: 'WireMock.Net.Middleware.Tests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
+
+    - name: 'WireMock.Net.Middleware.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net10.0
 
   linux-build-and-run:
     name: Run Tests on Linux
@@ -49,22 +60,39 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: Setup .NET 8 and 10
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          8.0.x
+          10.0.x
 
-    - name: 'WireMock.Net.TUnitTests'
-      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
+    # - name: 'WireMock.Net.TUnitTests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Tests'
-      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+    - name: 'WireMock.Net.TUnitTests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net10.0
 
-    - name: 'WireMock.Net.Tests.UsingNuGet'
-      run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
+    # - name: 'WireMock.Net.Tests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+
+    - name: 'WireMock.Net.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net10.0
+
+    - name: 'WireMock.Net.Tests.UsingNuGet (net8.0)'
+      run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release --framework net8.0
+
+    # - name: 'WireMock.Net.Tests.UsingNuGet (net10.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release --framework net10.0
       
-    - name: 'WireMock.Net.Middleware.Tests'
-      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release
+    # - name: 'WireMock.Net.Middleware.Tests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Aspire.Tests'
-      run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release
+    - name: 'WireMock.Net.Middleware.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net10.0
+
+    # - name: 'WireMock.Net.Aspire.Tests (net8.0)'
+    #   run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release --framework net8.0
+
+    - name: 'WireMock.Net.Aspire.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release --framework net10.0

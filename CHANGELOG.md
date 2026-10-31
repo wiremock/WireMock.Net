@@ -62,8 +62,8 @@
 - [#1472](https://github.com/wiremock/WireMock.Net/pull/1472) - Update JsonConverter to 0.13.0 [bug] contributed by [StefH](https://github.com/StefH)
 
 # 2.9.0 (02 June 2026)
-- [#1470](https://github.com/wiremock/WireMock.Net/pull/1470) - Fix WireMock.Net.Aspire project when using Aspire 13.4.0 [bug] contributed by [StefH](https://github.com/StefH)
-- [#1469](https://github.com/wiremock/WireMock.Net/issues/1469) - WireMock.Net doesn't play well with Aspire 13.4.0 [bug]
+- [#1470](https://github.com/wiremock/WireMock.Net/pull/1470) - Fix WireMock.Net.Aspire project when using Aspire 13.6.4 [bug] contributed by [StefH](https://github.com/StefH)
+- [#1469](https://github.com/wiremock/WireMock.Net/issues/1469) - WireMock.Net doesn't play well with Aspire 13.6.4 [bug]
 
 # 2.8.0 (31 May 2026)
 - [#1447](https://github.com/wiremock/WireMock.Net/pull/1447) - Add SystemTextJsonMatchers [feature] contributed by [StefH](https://github.com/StefH)

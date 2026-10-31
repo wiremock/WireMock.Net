@@ -6,7 +6,7 @@ applyTo: '**/*.csproj, **/*.cs'
 # Multi .NET Framework Targeting
 
 ## Instructions
-- The main project "WireMock.Net.Minimal" targets `netstandard2.0` and `net8.0`. Ensure that any new code or dependencies are compatible with these frameworks.
+- The main project "WireMock.Net.Minimal" targets `netstandard2.0`, `net8.0` and `net10.0`. Ensure that any new code or dependencies are compatible with these frameworks.
 
 
 # C# Guidelines

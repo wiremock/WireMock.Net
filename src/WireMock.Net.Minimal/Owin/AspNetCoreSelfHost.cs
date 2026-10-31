@@ -169,7 +169,9 @@ internal partial class AspNetCoreSelfHost
                 IsStarted = true;
             });
 
-#if NET8_0
+#if NET10_0
+            _logger.Info("Server using .NET 10.0");
+#elif NET8_0
             _logger.Info("Server using .NET 8.0");
 #else
             _logger.Info("Server using .NET Standard 2.0");

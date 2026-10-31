@@ -22,6 +22,8 @@ public class TUnitTests
             Logger = new TUnitWireMockLogger(TestContext.Current!.GetDefaultLogger())
         });
 
+        await Task.Delay(1000, TestContext.Current.Execution.CancellationToken);
+
         server
             .Given(Request.Create()
                 .WithPath(path)

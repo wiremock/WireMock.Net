@@ -71,7 +71,7 @@ This leads to more maintainable, scalable, and production-like test code.
 - Asynchronous handlers
 - Fluent, composable routing extensions
 - Easy integration with existing WireMock.Net servers
-- .NET 8+ support
+- .NET 8 and .NET 10 support
 
 ---
 

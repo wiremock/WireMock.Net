@@ -1,16 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="Aspire.AppHost.Sdk" Version="13.4.0" />
+    <Sdk Name="Aspire.AppHost.Sdk" Version="13.6.4" />
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>../../src/WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <AspireUseCliBundle>true</AspireUseCliBundle>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,10 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Hosting.AppHost" Version="13.4.3" />
-
-        <!-- CVE-2026-48109 / CVE-2026-92707 -->
-        <PackageReference Include="MessagePack" Version="2.5.303" />
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="13.6.4" />
     </ItemGroup>
 
     <ItemGroup>
