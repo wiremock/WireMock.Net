@@ -126,20 +126,20 @@ jobs:
   #   inputs:
   #     script: 'dotnet test ./test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj --configuration Release'
 
-  - task: CmdLine@2
-    displayName: 'WireMock.Net.Tests with Coverage'
-    inputs:
-      script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+  # - task: CmdLine@2
+  #   displayName: 'WireMock.Net.Tests with Coverage'
+  #   inputs:
+  #     script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
 
   - task: CmdLine@2
-    displayName: 'WireMock.Net.Tests (net10.0) with Coverage'
+    displayName: 'WireMock.Net.Tests with Coverage'
     inputs:
       script: 'dotnet test ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Debug --framework net10.0 --collect:"XPlat Code Coverage" --logger trx'
 
   # - task: CmdLine@2
   #   displayName: 'WireMock.Net.TUnitTests with Coverage'
   #   inputs:
-  #     script: 'dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --framework net8.0 --collect:"XPlat Code Coverage" --logger trx'
+  #     script: 'dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Debug --framework net10.0 --collect:"XPlat Code Coverage" --logger trx'
 
   - task: CmdLine@2
     displayName: 'WireMock.Net.Middleware.Tests with Coverage'

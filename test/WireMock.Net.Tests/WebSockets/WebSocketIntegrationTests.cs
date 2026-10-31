@@ -721,6 +721,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
                 .WithWebSocket(ws => ws.WithEcho())
             );
 
+        await Task.Delay(500, _ct);
+
         // Arrange - Start proxy server
         var sut = WireMockServer.Start(new WireMockServerSettings
         {
@@ -736,6 +738,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             .RespondWith(Response.Create()
                 .WithWebSocketProxy($"{exampleEchoServer.Url}/ws/target")
             );
+
+        await Task.Delay(500, _ct);
 
         using var client = new ClientWebSocket();
         var proxyUri = new Uri($"{sut.Url}/ws/proxy");
@@ -786,6 +790,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
                 .WithWebSocket(ws => ws.WithEcho())
             );
 
+        await Task.Delay(500, _ct);
+
         // Arrange - Start proxy server
         var sut = WireMockServer.Start(new WireMockServerSettings
         {
@@ -801,6 +807,8 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
             .RespondWith(Response.Create()
                 .WithWebSocketProxy($"{exampleEchoServer.Url}/ws/target")
             );
+
+        await Task.Delay(500, _ct);
 
         using var client = new ClientWebSocket();
         var proxyUri = new Uri($"{sut.Url}/ws/proxy");
