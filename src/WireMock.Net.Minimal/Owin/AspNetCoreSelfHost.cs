@@ -1,4 +1,4 @@
-﻿// Copyright © WireMock.Net
+// Copyright © WireMock.Net
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
