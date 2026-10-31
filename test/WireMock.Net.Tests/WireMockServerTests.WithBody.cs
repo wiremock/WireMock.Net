@@ -482,6 +482,7 @@ public partial class WireMockServerTests
         server.Stop();
     }
 
+    #if !NET48
     [Fact]
     public async Task WireMockServer_WithSseBody()
     {
@@ -527,13 +528,19 @@ public partial class WireMockServerTests
         using var reader = new StreamReader(response);
 
         var data = string.Empty;
-        while (!reader.EndOfStream)
+        while (true)
         {
-            var line = reader.ReadLine();
+            var line = await reader.ReadLineAsync(_ct);
+            if (line is null)
+            {
+                break;
+            }
+
             data += line;
         }
 
         // Assert 2
         data.Should().Be("x 1;x 2;x 3;");
     }
+    #endif
 }

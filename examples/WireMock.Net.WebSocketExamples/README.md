@@ -4,7 +4,7 @@ This project demonstrates all the WebSocket capabilities of WireMock.Net.
 
 ## Prerequisites
 
-- .NET 8.0 SDK
+- .NET 10.0 SDK
 - Optional: `wscat` for manual testing (`npm install -g wscat`)
 
 ## Running the Examples

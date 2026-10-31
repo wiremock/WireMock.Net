@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>Some extensions for TUnit (TUnitLogger)</Description>
         <AssemblyTitle>WireMock.Net.TUnit</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.TUnit</AssemblyName>
         <RootNamespace>WireMock.Net.Tunit</RootNamespace>

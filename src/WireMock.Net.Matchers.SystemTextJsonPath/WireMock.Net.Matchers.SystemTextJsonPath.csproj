@@ -4,7 +4,7 @@
         <Description>A SystemTextJsonPathMatcher which can be used to match WireMock.Net Requests using JsonPath.Net.</Description>
         <AssemblyTitle>WireMock.Net.Matchers.SystemTextJsonPath</AssemblyTitle>
         <Authors>Stef Heyenrath</Authors>
-        <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net8.0;net10.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageTags>wiremock;matchers;matcher;jsonpath;systemtextjson</PackageTags>
         <RootNamespace>WireMock</RootNamespace>
