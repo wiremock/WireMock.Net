@@ -5,7 +5,7 @@
         <Description>Middleware which can be used to host WireMock.Net as a Middleware background process in a AspNetCore WebApplication</Description>
         <AssemblyTitle>WireMock.Net.AspNetCore.Middleware</AssemblyTitle>
         <Authors>Matthew Yost;Stef Heyenrath</Authors>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AssemblyName>WireMock.Net.AspNetCore.Middleware</AssemblyName>
         <PackageId>WireMock.Net.AspNetCore.Middleware</PackageId>

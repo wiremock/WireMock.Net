@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <!--<RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>-->
         <StartupObject>WireMock.Net.WebApplication.Program</StartupObject>
         <AssemblyName>WireMock.Net.WebApplication</AssemblyName>

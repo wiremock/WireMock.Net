@@ -22,16 +22,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: Setup .NET 8 and 10
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          8.0.x
+          10.0.x
 
     - name: 'WireMock.Net.TUnitTests'
       run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
 
     - name: 'WireMock.Net.Tests'
       run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+
+    - name: 'WireMock.Net.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net10.0
 
     - name: 'WireMock.Net.Tests.UsingNuGet'
       run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
@@ -49,16 +54,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET 8
+    - name: Setup .NET 8 and 10
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          8.0.x
+          10.0.x
 
     - name: 'WireMock.Net.TUnitTests'
       run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release
 
     - name: 'WireMock.Net.Tests'
       run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
+
+    - name: 'WireMock.Net.Tests (net10.0)'
+      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net10.0
 
     - name: 'WireMock.Net.Tests.UsingNuGet'
       run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release
