@@ -35,6 +35,8 @@ public class TestcontainersTests(ITestOutputHelper testOutputHelper, ITestContex
             .WithCleanUp(true)
             .Build();
 
+        await Task.Delay(500, _ct);
+
         await StartTestAsync(wireMockContainer);
         await StopAsync(wireMockContainer);
     }
