@@ -31,7 +31,7 @@ public class Program
             return;
         }
 
-        var cancelationTokenSource = new CancellationTokenSource();
+        using var cancelationTokenSource = new CancellationTokenSource();
 
         Logger.Info("Press Ctrl+C to shut down");
 
