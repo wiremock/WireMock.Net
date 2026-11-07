@@ -96,3 +96,24 @@ jobs:
 
     - name: 'WireMock.Net.Aspire.Tests (net10.0)'
       run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release --framework net10.0
+
+    - name: 'dotnet-WireMock stops on CTRL-C'
+      run: |
+        set -m # job control, so the background process does not ignore SIGINT
+        dotnet build ./src/dotnet-WireMock.Net/dotnet-WireMock.csproj -c Release
+        dotnet ./src/dotnet-WireMock.Net/bin/Release/net10.0/dotnet-WireMock.dll --Urls http://localhost:0 > wiremock.log 2>&1 & # port 0 = OS assigns a free port
+        PID=$!
+        sleep 3
+        grep -q 'Server listening at' wiremock.log || { cat wiremock.log; kill -9 $PID; exit 1; }
+        kill -INT $PID
+        for i in $(seq 1 10); do
+          if ! kill -0 $PID 2>/dev/null; then
+            wait $PID
+            echo "dotnet-WireMock stopped (exit code $?)"
+            exit 0
+          fi
+          sleep 1
+        done
+        echo "dotnet-WireMock did not stop within 10 seconds after CTRL-C"
+        kill -9 $PID
+        exit 1
