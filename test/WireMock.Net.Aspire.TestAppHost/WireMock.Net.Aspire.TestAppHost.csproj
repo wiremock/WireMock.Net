@@ -11,7 +11,7 @@
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>../../src/WireMock.Net/WireMock.Net.snk</AssemblyOriginatorKeyFile>
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-        <AspireUseCliBundle>true</AspireUseCliBundle>
+        <_AspireUseSdkPickBestRid>false</_AspireUseSdkPickBestRid>
     </PropertyGroup>
 
     <ItemGroup>
