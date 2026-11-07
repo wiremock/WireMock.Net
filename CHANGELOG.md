@@ -1,3 +1,9 @@
+# 2.30.0 (07 November 2026)
+- [#1527](https://github.com/wiremock/WireMock.Net/pull/1527) - Publish standalone single-file binaries in GitHub Releases [feature] contributed by [tomas-pinto](https://github.com/tomas-pinto)
+- [#1528](https://github.com/wiremock/WireMock.Net/pull/1528) - Add .NET 10 target framework [feature] contributed by [StefH](https://github.com/StefH)
+- [#1530](https://github.com/wiremock/WireMock.Net/pull/1530) - Use 10.x.x NuGets for .NET 10 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1532](https://github.com/wiremock/WireMock.Net/pull/1532) - Switch to IHost for .NET 10 + update dotnet-WireMock [feature] contributed by [StefH](https://github.com/StefH)
+
 # 2.21.0 (28 October 2026)
 - [#1526](https://github.com/wiremock/WireMock.Net/pull/1526) - Update Scriban to 7.5.3 [dependencies] contributed by [StefH](https://github.com/StefH)
 - [#1525](https://github.com/wiremock/WireMock.Net/issues/1525) - High security vulnerability in Scriban package [security]
@@ -62,8 +68,8 @@
 - [#1472](https://github.com/wiremock/WireMock.Net/pull/1472) - Update JsonConverter to 0.13.0 [bug] contributed by [StefH](https://github.com/StefH)
 
 # 2.9.0 (02 June 2026)
-- [#1470](https://github.com/wiremock/WireMock.Net/pull/1470) - Fix WireMock.Net.Aspire project when using Aspire 13.6.4 [bug] contributed by [StefH](https://github.com/StefH)
-- [#1469](https://github.com/wiremock/WireMock.Net/issues/1469) - WireMock.Net doesn't play well with Aspire 13.6.4 [bug]
+- [#1470](https://github.com/wiremock/WireMock.Net/pull/1470) - Fix WireMock.Net.Aspire project when using Aspire 13.4.0 [bug] contributed by [StefH](https://github.com/StefH)
+- [#1469](https://github.com/wiremock/WireMock.Net/issues/1469) - WireMock.Net doesn't play well with Aspire 13.4.0 [bug]
 
 # 2.8.0 (31 May 2026)
 - [#1447](https://github.com/wiremock/WireMock.Net/pull/1447) - Add SystemTextJsonMatchers [feature] contributed by [StefH](https://github.com/StefH)

@@ -1,5 +1,7 @@
-# 2.21.0 (28 October 2026)
-- #1526 Update Scriban to 7.5.3 [dependencies]
-- #1525 High security vulnerability in Scriban package [security]
+# 2.30.0 (07 November 2026)
+- #1527 Publish standalone single-file binaries in GitHub Releases [feature]
+- #1528 Add .NET 10 target framework [feature]
+- #1530 Use 10.x.x NuGets for .NET 10 [dependencies]
+- #1532 Switch to IHost for .NET 10 + update dotnet-WireMock [feature]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
