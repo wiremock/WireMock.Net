@@ -108,9 +108,10 @@ jobs:
         kill -INT $PID
         for i in $(seq 1 10); do
           if ! kill -0 $PID 2>/dev/null; then
-            wait $PID
-            echo "dotnet-WireMock stopped (exit code $?)"
-            exit 0
+            EXIT_CODE=0
+            wait $PID || EXIT_CODE=$?
+            echo "dotnet-WireMock stopped (exit code $EXIT_CODE)"
+            exit $EXIT_CODE
           fi
           sleep 1
         done

@@ -23,6 +23,7 @@ public class Program
     private static readonly IWireMockLogger Logger = new WireMockLogger(XLogger);
 
     private static WireMockServer _server = null!;
+    private static int _stopped;
 
     static async Task Main(string[] args)
     {
@@ -37,7 +38,11 @@ public class Program
 
         Console.CancelKeyPress += (s, e) =>
         {
-            Stop("CancelKeyPress", cancelationTokenSource);
+            // Prevent the runtime from terminating the process (exit code 130 / -1073741510)
+            // Main stops the server and returns normally.
+            e.Cancel = true;
+            Logger.Info("Shutdown requested because 'CancelKeyPress'");
+            cancelationTokenSource.Cancel();
         };
 
         System.Runtime.Loader.AssemblyLoadContext.Default.Unloading += ctx =>
@@ -58,14 +63,28 @@ public class Program
                 // Shutdown requested
             }
         }
+
+        Stop("shutdown requested", cancelationTokenSource);
     }
 
     private static void Stop(string why, CancellationTokenSource cancellationTokenSource)
     {
+        if (Interlocked.Exchange(ref _stopped, 1) == 1)
+        {
+            return;
+        }
+
         Logger.Info("Server stopping because '{0}'", why);
         _server.Stop();
         Logger.Info("Server stopped");
 
-        cancellationTokenSource.Cancel();
+        try
+        {
+            cancellationTokenSource.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Main already finished
+        }
     }
 }
