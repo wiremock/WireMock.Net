@@ -16,6 +16,9 @@ jobs:
     vmImage: 'ubuntu-22.04'
 
   steps:
+  - checkout: self
+    fetchDepth: 0
+
   - script: |
       echo "BuildId = $(buildId)"
     displayName: 'Print buildId'
@@ -43,11 +46,46 @@ jobs:
       dotnet dev-certs https --trust || true
     displayName: 'dotnet dev-certs https'
 
-  # See: https://docs.sonarsource.com/sonarcloud/enriching/test-coverage/dotnet-test-coverage
   - script: |
-      dotnet sonarscanner begin /k:"WireMock-Net_WireMock.Net" /o:"wiremock-net" /d:sonar.branch.name=$(Build.SourceBranchName) /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$(SONAR_TOKEN)" /d:sonar.pullrequest.provider=github /d:sonar.cs.vscoveragexml.reportsPaths=**/wiremock-coverage-*.xml /d:sonar.verbose=true
-    displayName: 'Begin analysis on SonarCloud'
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
+      echo "Build Reason: $(Build.Reason)"
+      echo "Source Branch: $(Build.SourceBranch)"
+      echo "Source Branch Name: $(Build.SourceBranchName)"
+      echo "PR Number: $(System.PullRequest.PullRequestNumber)"
+      echo "PR Source: $(System.PullRequest.SourceBranch)"
+      echo "PR Target: $(System.PullRequest.TargetBranch)"
+    displayName: 'Debug PR variables'
+
+  - script: |
+      PR_SOURCE_BRANCH="$(System.PullRequest.SourceBranch)"
+      PR_TARGET_BRANCH="$(System.PullRequest.TargetBranch)"
+
+      PR_SOURCE_BRANCH="${PR_SOURCE_BRANCH#refs/heads/}"
+      PR_TARGET_BRANCH="${PR_TARGET_BRANCH#refs/heads/}"
+
+      dotnet sonarscanner begin \
+        /k:"WireMock-Net_WireMock.Net" \
+        /o:"wiremock-net" \
+        /d:sonar.host.url="https://sonarcloud.io" \
+        /d:sonar.token="$(SONAR_TOKEN)" \
+        /d:sonar.pullrequest.key="$(System.PullRequest.PullRequestNumber)" \
+        /d:sonar.pullrequest.branch="$PR_SOURCE_BRANCH" \
+        /d:sonar.pullrequest.base="$PR_TARGET_BRANCH" \
+        /d:sonar.cs.vscoveragexml.reportsPaths="**/wiremock-coverage-*.xml" \
+        /d:sonar.verbose=true
+    displayName: 'Begin SonarCloud analysis (Pull Request)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+
+  - script: |
+      dotnet sonarscanner begin \
+        /k:"WireMock-Net_WireMock.Net" \
+        /o:"wiremock-net" \
+        /d:sonar.branch.name="$(Build.SourceBranchName)" \
+        /d:sonar.host.url="https://sonarcloud.io" \
+        /d:sonar.token="$(SONAR_TOKEN)" \
+        /d:sonar.cs.vscoveragexml.reportsPaths="**/wiremock-coverage-*.xml" \
+        /d:sonar.verbose=true
+    displayName: 'Begin SonarCloud analysis (Branch)'
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   - task: DotNetCoreCLI@2
     displayName: 'Build Unit tests'
@@ -88,7 +126,7 @@ jobs:
   - script: |
       dotnet sonarscanner end /d:sonar.token="$(SONAR_TOKEN)"
     displayName: 'End analysis on SonarCloud'
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
+    condition: succeededOrFailed()
 
   - task: whitesource.ws-bolt.bolt.wss.WhiteSource Bolt@19
     displayName: 'WhiteSource Bolt'
