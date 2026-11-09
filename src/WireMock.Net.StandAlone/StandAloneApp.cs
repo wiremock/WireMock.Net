@@ -1,8 +1,6 @@
 // Copyright © WireMock.Net
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 using Stef.Validation;
