@@ -64,8 +64,8 @@ jobs:
       PR_TARGET_BRANCH="${PR_TARGET_BRANCH#refs/heads/}"
 
       dotnet sonarscanner begin \
-        /k:"WireMock-Net_WireMock.Net" \
-        /o:"wiremock-net" \
+        /k:"wiremock_WireMock.Net" \
+        /o:"wiremock" \
         /d:sonar.host.url="https://sonarcloud.io" \
         /d:sonar.token="$(SONAR_TOKEN)" \
         /d:sonar.pullrequest.key="$(System.PullRequest.PullRequestNumber)" \
@@ -78,8 +78,8 @@ jobs:
 
   - script: |
       dotnet sonarscanner begin \
-        /k:"WireMock-Net_WireMock.Net" \
-        /o:"wiremock-net" \
+        /k:"wiremock_WireMock.Net" \
+        /o:"wiremock" \
         /d:sonar.branch.name="$(Build.SourceBranchName)" \
         /d:sonar.host.url="https://sonarcloud.io" \
         /d:sonar.token="$(SONAR_TOKEN)" \
