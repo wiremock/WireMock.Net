@@ -30,6 +30,7 @@
 
     <ItemGroup>
         <!--<PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />-->
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.3.14" />
         <PackageReference Include="OpenTelemetry" Version="1.17.0" />
         <PackageReference Include="OpenTelemetry.Api" Version="1.17.0" />
         <PackageReference Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="1.17.0" />
