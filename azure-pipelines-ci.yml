@@ -1,3 +1,6 @@
+trigger: none
+pr: none
+
 parameters:
 - name: runWindowsReleaseToMyGet
   displayName: Run Windows Release to MyGet
@@ -45,7 +48,7 @@ jobs:
 
   # See: https://docs.sonarsource.com/sonarcloud/enriching/test-coverage/dotnet-test-coverage
   - script: |
-      dotnet sonarscanner begin /k:"WireMock-Net_WireMock.Net" /o:"wiremock-net" /d:sonar.branch.name=$(Build.SourceBranchName) /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$(SONAR_TOKEN)" /d:sonar.pullrequest.provider=github /d:sonar.cs.vscoveragexml.reportsPaths=**/wiremock-coverage-*.xml /d:sonar.verbose=true
+      dotnet sonarscanner begin /k:"wiremock_WireMock.Net" /o:"wiremock" /d:sonar.branch.name=$(Build.SourceBranchName) /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$(SONAR_TOKEN)" /d:sonar.pullrequest.provider=github /d:sonar.cs.vscoveragexml.reportsPaths=**/wiremock-coverage-*.xml /d:sonar.verbose=true
     displayName: 'Begin analysis on SonarCloud'
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) # Do not run for PullRequests
 
