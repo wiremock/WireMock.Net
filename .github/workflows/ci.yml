@@ -80,10 +80,31 @@ jobs:
         echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
     - name: Begin analysis on SonarCloud
-      if: github.event_name != 'pull_request'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: dotnet sonarscanner begin /k:"wiremock_WireMock.Net" /o:"wiremock" /d:sonar.branch.name="$GITHUB_REF_NAME" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$SONAR_TOKEN" /d:sonar.pullrequest.provider=github /d:sonar.cs.vscoveragexml.reportsPaths="**/wiremock-coverage-*.xml" /d:sonar.verbose=true
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_BRANCH: ${{ github.head_ref }}
+        PR_BASE: ${{ github.base_ref }}
+      run: |
+        sonar_args=(
+          /k:"wiremock_WireMock.Net"
+          /o:"wiremock"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.token="$SONAR_TOKEN"
+          /d:sonar.cs.vscoveragexml.reportsPaths="**/wiremock-coverage-*.xml"
+          /d:sonar.verbose=true
+        )
+        if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+          sonar_args+=(
+            /d:sonar.pullrequest.provider=github
+            /d:sonar.pullrequest.key="$PR_NUMBER"
+            /d:sonar.pullrequest.branch="$PR_BRANCH"
+            /d:sonar.pullrequest.base="$PR_BASE"
+          )
+        else
+          sonar_args+=(/d:sonar.branch.name="$GITHUB_REF_NAME")
+        fi
+        dotnet sonarscanner begin "${sonar_args[@]}"
 
     - name: Build test projects for coverage
       run: |
@@ -126,7 +147,6 @@ jobs:
       run: dotnet coverage merge **/wiremock-coverage-*.xml --output ./test/wiremock-coverage.xml --output-format xml
 
     - name: End analysis on SonarCloud
-      if: github.event_name != 'pull_request'
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
