@@ -1,3 +1,6 @@
+trigger: none
+pr: none
+
 parameters:
 - name: runWindowsReleaseToMyGet
   displayName: Run Windows Release to MyGet

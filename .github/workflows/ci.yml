@@ -67,17 +67,42 @@ jobs:
           8.0.x
           10.0.x
 
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+
+    - name: Install .NET coverage and SonarScanner tools
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-coverage
+        echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+    - name: Begin analysis on SonarCloud
+      if: github.event_name != 'pull_request'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner begin /k:"wiremock_WireMock.Net" /o:"wiremock" /d:sonar.branch.name="$GITHUB_REF_NAME" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$SONAR_TOKEN" /d:sonar.pullrequest.provider=github /d:sonar.cs.vscoveragexml.reportsPaths="**/wiremock-coverage-*.xml" /d:sonar.verbose=true
+
+    - name: Build test projects for coverage
+      run: |
+        dotnet build ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Release --framework net10.0
+        dotnet build ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Release --framework net10.0
+        dotnet build ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Release --framework net10.0
+        dotnet build ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Release --framework net10.0
+
     # - name: 'WireMock.Net.TUnitTests (net8.0)'
     #   run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.TUnitTests (net10.0)'
-      run: dotnet test --project './test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj' -c Release --framework net10.0
+    - name: 'WireMock.Net.TUnitTests (net10.0) with coverage'
+      run: dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.TUnitTests/WireMock.Net.TUnitTests.csproj --configuration Release --no-build --framework net10.0" -f xml -o "wiremock-coverage-tunit.xml"
 
     # - name: 'WireMock.Net.Tests (net8.0)'
     #   run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Tests (net10.0)'
-      run: dotnet test --project './test/WireMock.Net.Tests/WireMock.Net.Tests.csproj' -c Release --framework net10.0
+    - name: 'WireMock.Net.Tests (net10.0) with coverage'
+      run: dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Tests/WireMock.Net.Tests.csproj --configuration Release --no-build --framework net10.0" -f xml -o "wiremock-coverage-xunit.xml"
 
     - name: 'WireMock.Net.Tests.UsingNuGet (net8.0)'
       run: dotnet test --project './test/WireMock.Net.Tests.UsingNuGet/WireMock.Net.Tests.UsingNuGet.csproj' -c Release --framework net8.0
@@ -88,14 +113,29 @@ jobs:
     # - name: 'WireMock.Net.Middleware.Tests (net8.0)'
     #   run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Middleware.Tests (net10.0)'
-      run: dotnet test --project './test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj' -c Release --framework net10.0
+    - name: 'WireMock.Net.Middleware.Tests (net10.0) with coverage'
+      run: dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Middleware.Tests/WireMock.Net.Middleware.Tests.csproj --configuration Release --no-build --framework net10.0" -f xml -o "wiremock-coverage-middleware.xml"
 
     # - name: 'WireMock.Net.Aspire.Tests (net8.0)'
     #   run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release --framework net8.0
 
-    - name: 'WireMock.Net.Aspire.Tests (net10.0)'
-      run: dotnet test --project './test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj' -c Release --framework net10.0
+    - name: 'WireMock.Net.Aspire.Tests (net10.0) with coverage'
+      run: dotnet-coverage collect "dotnet test --project ./test/WireMock.Net.Aspire.Tests/WireMock.Net.Aspire.Tests.csproj --configuration Release --no-build --framework net10.0" -f xml -o "wiremock-coverage-aspire.xml"
+
+    - name: Merge coverage files
+      run: dotnet coverage merge **/wiremock-coverage-*.xml --output ./test/wiremock-coverage.xml --output-format xml
+
+    - name: End analysis on SonarCloud
+      if: github.event_name != 'pull_request'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
+
+    - name: Upload coverage results to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./test/wiremock-coverage.xml
 
     - name: 'dotnet-WireMock stops on CTRL-C'
       run: |
