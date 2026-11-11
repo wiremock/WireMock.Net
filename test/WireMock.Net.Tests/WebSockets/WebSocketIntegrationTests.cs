@@ -16,7 +16,7 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     private readonly CancellationToken _ct = testContext.Current.CancellationToken;
 
     [Fact]
-    public async Task WithNoSetupShouldJustWaitForClose_AndCLose_When_ClientCloses()
+    public async Task WithNoSetupShouldJustWaitForClose_AndClose_When_ClientCloses()
     {
         // Arrange
         using var server = WireMockServer.Start(new WireMockServerSettings
@@ -706,11 +706,13 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
     public async Task WithWebSocketProxy_Should_Proxy_Multiple_TextMessages()
     {
         // Arrange - Start target echo server
-        var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
+        using var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
+
+        await Task.Delay(500, _ct);
 
         exampleEchoServer
             .Given(Request.Create()
@@ -724,11 +726,13 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await Task.Delay(500, _ct);
 
         // Arrange - Start proxy server
-        var sut = WireMockServer.Start(new WireMockServerSettings
+        using var sut = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
+
+        await Task.Delay(500, _ct);
 
         sut
             .Given(Request.Create()
@@ -761,25 +765,19 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         }
 
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(250, _ct);
-
-        sut.Stop();
-        sut.Dispose();
-
-        exampleEchoServer.Stop();
-        exampleEchoServer.Dispose();
     }
 
     [Fact]
     public async Task WithWebSocketProxy_Should_Proxy_Binary_Messages()
     {
         // Arrange - Start target echo server
-        var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
+        using var exampleEchoServer = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
+
+        await Task.Delay(500, _ct);
 
         exampleEchoServer
             .Given(Request.Create()
@@ -793,11 +791,13 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         await Task.Delay(500, _ct);
 
         // Arrange - Start proxy server
-        var sut = WireMockServer.Start(new WireMockServerSettings
+        using var sut = WireMockServer.Start(new WireMockServerSettings
         {
             Logger = new TestOutputHelperWireMockLogger(output),
             Urls = ["ws://localhost:0"]
         });
+
+        await Task.Delay(500, _ct);
 
         sut
             .Given(Request.Create()
@@ -828,15 +828,9 @@ public class WebSocketIntegrationTests(ITestOutputHelper output, ITestContextAcc
         // Assert
         receivedData.Should().BeEquivalentTo(testData, "binary data should be proxied and echoed back");
 
+        await Task.Delay(500, _ct);
+
         await client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Test complete", _ct);
-
-        await Task.Delay(250, _ct);
-
-        sut.Stop();
-        sut.Dispose();
-
-        exampleEchoServer.Stop();
-        exampleEchoServer.Dispose();
     }
 
     [Fact]
