@@ -18,7 +18,7 @@ internal static class CertificateLoader
         {
             var thumbprintOrSubjectNameOrHost = options.X509ThumbprintOrSubjectName ?? host;
 
-            var certStore = new X509Store((StoreName)Enum.Parse(typeof(StoreName), options.X509StoreName!), (StoreLocation)Enum.Parse(typeof(StoreLocation), options.X509StoreLocation!));
+            var certStore = new X509Store((StoreName)Enum.Parse(typeof(StoreName), options.X509StoreName), (StoreLocation)Enum.Parse(typeof(StoreLocation), options.X509StoreLocation));
             try
             {
                 certStore.Open(OpenFlags.ReadOnly);
