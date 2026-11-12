@@ -1,3 +1,11 @@
+# 2.31.0 (12 November 2026)
+- [#1538](https://github.com/wiremock/WireMock.Net/pull/1538) - Bump Microsoft.AspNetCore.WebUtilities from 2.3.0 to 2.3.14 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
+- [#1540](https://github.com/wiremock/WireMock.Net/pull/1540) - Bump Aspire from 13.6.4 to 13.6.5 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1542](https://github.com/wiremock/WireMock.Net/pull/1542) - Upgrade dependencies [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1543](https://github.com/wiremock/WireMock.Net/pull/1543) - Use X509CertificateLoader on .NET 9+ [bug] contributed by [StefH](https://github.com/StefH)
+- [#1365](https://github.com/wiremock/WireMock.Net/issues/1365) - Client certificate authentication works with .NET 8 and fails with .NET 9 [bug]
+- [#1541](https://github.com/wiremock/WireMock.Net/issues/1541) - WireMock.Shared depends on Microsoft.AspNetCore.Http 2.3.9 which has a high-severity vulnerability [dependencies]
+
 # 2.30.0 (07 November 2026)
 - [#1527](https://github.com/wiremock/WireMock.Net/pull/1527) - Publish standalone single-file binaries in GitHub Releases [feature] contributed by [tomas-pinto](https://github.com/tomas-pinto)
 - [#1528](https://github.com/wiremock/WireMock.Net/pull/1528) - Add .NET 10 target framework [feature] contributed by [StefH](https://github.com/StefH)

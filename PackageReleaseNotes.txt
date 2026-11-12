@@ -1,7 +1,9 @@
-# 2.30.0 (07 November 2026)
-- #1527 Publish standalone single-file binaries in GitHub Releases [feature]
-- #1528 Add .NET 10 target framework [feature]
-- #1530 Use 10.x.x NuGets for .NET 10 [dependencies]
-- #1532 Switch to IHost for .NET 10 + update dotnet-WireMock [feature]
+# 2.31.0 (12 November 2026)
+- #1538 Bump Microsoft.AspNetCore.WebUtilities from 2.3.0 to 2.3.14 [dependencies]
+- #1540 Bump Aspire from 13.6.4 to 13.6.5 [dependencies]
+- #1542 Upgrade dependencies [dependencies]
+- #1543 Use X509CertificateLoader on .NET 9+ [bug]
+- #1365 Client certificate authentication works with .NET 8 and fails with .NET 9 [bug]
+- #1541 WireMock.Shared depends on Microsoft.AspNetCore.Http 2.3.9 which has a high-severity vulnerability [dependencies]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
