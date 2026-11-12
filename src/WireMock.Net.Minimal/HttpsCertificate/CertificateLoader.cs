@@ -18,32 +18,24 @@ internal static class CertificateLoader
         {
             var thumbprintOrSubjectNameOrHost = options.X509ThumbprintOrSubjectName ?? host;
 
-            var certStore = new X509Store((StoreName)Enum.Parse(typeof(StoreName), options.X509StoreName), (StoreLocation)Enum.Parse(typeof(StoreLocation), options.X509StoreLocation));
-            try
-            {
-                certStore.Open(OpenFlags.ReadOnly);
+            using var certStore = new X509Store((StoreName)Enum.Parse(typeof(StoreName), options.X509StoreName), (StoreLocation)Enum.Parse(typeof(StoreLocation), options.X509StoreLocation));
+            certStore.Open(OpenFlags.ReadOnly);
 
-                // Attempt to find by Thumbprint first
-                var matchingCertificates = certStore.Certificates.Find(X509FindType.FindByThumbprint, thumbprintOrSubjectNameOrHost, false);
+            // Attempt to find by Thumbprint first
+            var matchingCertificates = certStore.Certificates.Find(X509FindType.FindByThumbprint, thumbprintOrSubjectNameOrHost, false);
+            if (matchingCertificates.Count == 0)
+            {
+                // Fallback to SubjectName
+                matchingCertificates = certStore.Certificates.Find(X509FindType.FindBySubjectName, thumbprintOrSubjectNameOrHost, false);
                 if (matchingCertificates.Count == 0)
                 {
-                    // Fallback to SubjectName
-                    matchingCertificates = certStore.Certificates.Find(X509FindType.FindBySubjectName, thumbprintOrSubjectNameOrHost, false);
-                    if (matchingCertificates.Count == 0)
-                    {
-                        // No certificates matched the search criteria.
-                        throw new FileNotFoundException($"No Certificate found with in store '{options.X509StoreName}', location '{options.X509StoreLocation}' for Thumbprint or SubjectName '{thumbprintOrSubjectNameOrHost}'.");
-                    }
+                    // No certificates matched the search criteria.
+                    throw new FileNotFoundException($"No Certificate found with in store '{options.X509StoreName}', location '{options.X509StoreLocation}' for Thumbprint or SubjectName '{thumbprintOrSubjectNameOrHost}'.");
                 }
+            }
 
-                // Use the first matching certificate.
-                return matchingCertificates[0];
-            }
-            finally
-            {
-                certStore.Dispose();
-                certStore.Close();
-            }
+            // Use the first matching certificate.
+            return matchingCertificates[0];
         }
 
         if (!string.IsNullOrEmpty(options.X509CertificateFilePath))
