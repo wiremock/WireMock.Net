@@ -89,6 +89,10 @@ wTM1Z+CJZG9xAcf1zAVGl4ggYyYEFGBFyJ8VBwijS2zy1qwN1WYGtcWoAgIH0A==
     public static X509Certificate2 GetX509Certificate2()
     {
         byte[] data = Convert.FromBase64String(Data);
+#if NET9_0_OR_GREATER
+        return X509CertificateLoader.LoadPkcs12(data, null);
+#else
         return new X509Certificate2(data);
+#endif
     }
 }
