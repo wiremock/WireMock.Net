@@ -35,8 +35,12 @@ public partial class WireMockServerTests
                     : 403
             }));
 
+#if NET9_0_OR_GREATER
+        var certificates = X509CertificateLoader.LoadPkcs12CollectionFromFile("client_cert.pfx", "1234", X509KeyStorageFlags.Exportable);
+#else
         var certificates = new X509Certificate2Collection();
         certificates.Import("client_cert.pfx", "1234", X509KeyStorageFlags.Exportable);
+#endif
 
         var httpMessageHandler = new HttpClientHandler
         {

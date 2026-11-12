@@ -55,10 +55,14 @@ internal static class CertificateLoader
                 if (!string.IsNullOrEmpty(options.X509CertificatePassword))
                 {
                     var certPem = File.ReadAllText(options.X509CertificateFilePath);
-                    var cert = X509Certificate2.CreateFromPem(certPem, options.X509CertificatePassword);
+                    using var cert = X509Certificate2.CreateFromPem(certPem, options.X509CertificatePassword);
                     const string defaultPasswordPem = "WireMock.Net";
 
+#if NET9_0_OR_GREATER
+                    return X509CertificateLoader.LoadPkcs12(cert.Export(X509ContentType.Pfx, defaultPasswordPem), defaultPasswordPem);
+#else
                     return new X509Certificate2(cert.Export(X509ContentType.Pfx, defaultPasswordPem), defaultPasswordPem);
+#endif
                 }
                 return X509Certificate2.CreateFromPemFile(options.X509CertificateFilePath);
 #else                
@@ -66,9 +70,29 @@ internal static class CertificateLoader
 #endif
             }
 
+#if NET9_0_OR_GREATER
+            var data = File.ReadAllBytes(options.X509CertificateFilePath);
+            var contentType = X509Certificate2.GetCertContentType(data);
+            if (contentType == X509ContentType.Pfx)
+            {
+                return X509CertificateLoader.LoadPkcs12(data, string.IsNullOrEmpty(options.X509CertificatePassword) ? null : options.X509CertificatePassword);
+            }
+            if (contentType == X509ContentType.Cert)
+            {
+                return X509CertificateLoader.LoadCertificate(data);
+            }
+
+            // The loader does not support legacy formats such as PKCS#7 and serialized certificates.
+            #pragma warning disable SYSLIB0057
+            return !string.IsNullOrEmpty(options.X509CertificatePassword) ?
+                new X509Certificate2(data, options.X509CertificatePassword) :
+                new X509Certificate2(data);
+            #pragma warning restore SYSLIB0057
+#else
             return !string.IsNullOrEmpty(options.X509CertificatePassword) ?
                 new X509Certificate2(options.X509CertificateFilePath, options.X509CertificatePassword) :
                 new X509Certificate2(options.X509CertificateFilePath);
+#endif
         }
 
         if (options.X509Certificate != null)
