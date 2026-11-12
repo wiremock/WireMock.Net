@@ -30,7 +30,6 @@
 
     <ItemGroup>
         <!--<PackageReference Update="JetBrains.Annotations" Version="2025.2.4" />-->
-        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.3.14" />
         <PackageReference Include="OpenTelemetry" Version="1.17.0" />
         <PackageReference Include="OpenTelemetry.Api" Version="1.17.0" />
         <PackageReference Include="OpenTelemetry.Api.ProviderBuilderExtensions" Version="1.17.0" />
@@ -38,6 +37,12 @@
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.17.0" />
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.17.0" />
         <PackageReference Update="SonarAnalyzer.CSharp" Version="10.11.0.117924" />
+    </ItemGroup>
+
+    <!-- CVE -->
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.14" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.3.14" />
     </ItemGroup>
 
 </Project>

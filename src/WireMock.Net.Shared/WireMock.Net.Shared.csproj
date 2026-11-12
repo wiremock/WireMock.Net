@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <Description>Shared interfaces, models, enumerations and types.</Description>
         <Authors>Stef Heyenrath</Authors>
@@ -25,8 +25,13 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
+    <!-- CVE -->
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.14" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.3.14" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Stef.Validation" Version="0.3.0" />
         <PackageReference Include="AnyOf" Version="0.5.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" Condition=" '$(TargetFramework)' != 'net10.0' " />
