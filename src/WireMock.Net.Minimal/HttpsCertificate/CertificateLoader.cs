@@ -2,6 +2,9 @@
 
 using System.Security.Cryptography.X509Certificates;
 using WireMock.Owin;
+#if NETSTANDARD2_0
+using Enum = WireMock.Compatiblity.EnumCompat;
+#endif
 
 namespace WireMock.HttpsCertificate;
 
@@ -18,7 +21,7 @@ internal static class CertificateLoader
         {
             var thumbprintOrSubjectNameOrHost = options.X509ThumbprintOrSubjectName ?? host;
 
-            var certStore = new X509Store((StoreName)Enum.Parse(typeof(StoreName), options.X509StoreName), (StoreLocation)Enum.Parse(typeof(StoreLocation), options.X509StoreLocation));
+            var certStore = new X509Store(Enum.Parse<StoreName>(options.X509StoreName!), Enum.Parse<StoreLocation>(options.X509StoreLocation!));
             try
             {
                 certStore.Open(OpenFlags.ReadOnly);
