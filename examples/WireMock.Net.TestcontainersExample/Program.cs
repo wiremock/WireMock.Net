@@ -189,7 +189,7 @@ internal class Program
 
     private static async Task TestAsync(string? image = null)
     {
-        var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "WireMock.Net.Console.NET6", "__admin", "mappings");
+        var mappingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "WireMock.Net.Console.NET8", "__admin", "mappings");
 
         var dummyNetwork = new NetworkBuilder()
             .WithName($"Dummy Network for {image ?? "null"}")
