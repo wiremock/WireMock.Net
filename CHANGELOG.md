@@ -1,3 +1,10 @@
+# 2.32.0 (20 November 2026)
+- [#1544](https://github.com/wiremock/WireMock.Net/pull/1544) - Depend on Microsoft.AspNetCore.App for .NET 8 and .NET 10 [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1545](https://github.com/wiremock/WireMock.Net/pull/1545) - Upgrade ProtoBufJsonConverter to latest [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1547](https://github.com/wiremock/WireMock.Net/pull/1547) - Test Testcontainers ConsoleApp on Linux [bug] contributed by [StefH](https://github.com/StefH)
+- [#1548](https://github.com/wiremock/WireMock.Net/pull/1548) - Upgrade ProtoBufJsonConverter to latest [dependencies] contributed by [StefH](https://github.com/StefH)
+- [#1546](https://github.com/wiremock/WireMock.Net/issues/1546) - WireMock.Net.Testcontainers isn't compatible with Testcontainers 4.17.0 [bug]
+
 # 2.31.0 (12 November 2026)
 - [#1538](https://github.com/wiremock/WireMock.Net/pull/1538) - Bump Microsoft.AspNetCore.WebUtilities from 2.3.0 to 2.3.14 [dependencies] contributed by [dependabot[bot]](https://github.com/apps/dependabot)
 - [#1540](https://github.com/wiremock/WireMock.Net/pull/1540) - Bump Aspire from 13.6.4 to 13.6.5 [dependencies] contributed by [StefH](https://github.com/StefH)
