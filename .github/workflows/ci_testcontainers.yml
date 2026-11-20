@@ -1,0 +1,44 @@
+name: Run Testcontainers ConsoleApp
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  linux-testcontainers:
+    name: Test Testcontainers ConsoleApp on Linux
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+    - name: Setup .NET 10
+      uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Update Testcontainers to the latest stable version
+      run: |
+        CSPROJ='./test/WireMock.Net.Testcontainers.ConsoleApp/WireMock.Net.Testcontainers.ConsoleApp.csproj'
+        LATEST=$(curl -fsSL https://api.nuget.org/v3-flatcontainer/testcontainers/index.json \
+          | jq -r '[.versions[] | select(contains("-") | not)] | last')
+        if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+          echo "Could not determine the latest Testcontainers version"
+          exit 1
+        fi
+        echo "Latest Testcontainers version: $LATEST"
+        sed -i -E "s|(<PackageReference Include=\"Testcontainers\" Version=\")[^\"]+(\")|\1${LATEST}\2|" "$CSPROJ"
+        grep 'Include="Testcontainers"' "$CSPROJ"
+
+    - name: Build WireMock.Net.Testcontainers.ConsoleApp
+      run: dotnet build './test/WireMock.Net.Testcontainers.ConsoleApp/WireMock.Net.Testcontainers.ConsoleApp.csproj' -c Release
+
+    - name: Run WireMock.Net.Testcontainers.ConsoleApp
+      run: dotnet run --project './test/WireMock.Net.Testcontainers.ConsoleApp/WireMock.Net.Testcontainers.ConsoleApp.csproj' -c Release --no-build
