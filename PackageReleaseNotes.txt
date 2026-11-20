@@ -1,9 +1,8 @@
-# 2.31.0 (12 November 2026)
-- #1538 Bump Microsoft.AspNetCore.WebUtilities from 2.3.0 to 2.3.14 [dependencies]
-- #1540 Bump Aspire from 13.6.4 to 13.6.5 [dependencies]
-- #1542 Upgrade dependencies [dependencies]
-- #1543 Use X509CertificateLoader on .NET 9+ [bug]
-- #1365 Client certificate authentication works with .NET 8 and fails with .NET 9 [bug]
-- #1541 WireMock.Shared depends on Microsoft.AspNetCore.Http 2.3.9 which has a high-severity vulnerability [dependencies]
+# 2.32.0 (20 November 2026)
+- #1544 Depend on Microsoft.AspNetCore.App for .NET 8 and .NET 10 [dependencies]
+- #1545 Upgrade ProtoBufJsonConverter to latest [dependencies]
+- #1547 Test Testcontainers ConsoleApp on Linux [bug]
+- #1548 Upgrade ProtoBufJsonConverter to latest [dependencies]
+- #1546 WireMock.Net.Testcontainers isn't compatible with Testcontainers 4.17.0 [bug]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
