@@ -1,3 +1,7 @@
+# 2.33.0 (24 November 2026)
+- [#1550](https://github.com/wiremock/WireMock.Net/pull/1550) - Configure OpenTelemetry activity source and service names [feature] contributed by [StefH](https://github.com/StefH)
+- [#1549](https://github.com/wiremock/WireMock.Net/issues/1549) - Support for passing ENV variable for Otel Activity Name [feature]
+
 # 2.32.0 (20 November 2026)
 - [#1544](https://github.com/wiremock/WireMock.Net/pull/1544) - Depend on Microsoft.AspNetCore.App for .NET 8 and .NET 10 [dependencies] contributed by [StefH](https://github.com/StefH)
 - [#1545](https://github.com/wiremock/WireMock.Net/pull/1545) - Upgrade ProtoBufJsonConverter to latest [dependencies] contributed by [StefH](https://github.com/StefH)
