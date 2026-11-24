@@ -33,8 +33,10 @@ public static class OpenTelemetryOptionsParser
             return true;
         }
 
+        var activitySourceName = parser.GetStringValue($"{Prefix}ActivitySourceName");
         options = new OpenTelemetryOptions
         {
+            ActivitySourceName = string.IsNullOrWhiteSpace(activitySourceName) ? OpenTelemetryOptions.DefaultActivitySourceName : activitySourceName!,
             ExcludeAdminRequests = parser.GetBoolValue($"{Prefix}ExcludeAdminRequests", defaultValue: true),
             OtlpExporterEndpoint = parser.GetStringValue($"{Prefix}OtlpExporterEndpoint")
         };

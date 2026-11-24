@@ -28,6 +28,7 @@ using WireMock.Settings;
 
 var openTelemetryOptions = new OpenTelemetryOptions
 {
+    ActivitySourceName = "MyService",
     ExcludeAdminRequests = true,
     OtlpExporterEndpoint = "http://localhost:4317" // Your OTEL collector
 };
@@ -64,7 +65,7 @@ var openTelemetryOptions = new OpenTelemetryOptions();
 
 // Configure your own TracerProvider
 using var tracerProvider = Sdk.CreateTracerProviderBuilder()
-    .AddWireMockInstrumentation(openTelemetryOptions) // Adds WireMock.Net source
+    .AddWireMockInstrumentation(openTelemetryOptions) // Adds WireMock.Net and the configured source
     .AddOtlpExporter(options =>
     {
         options.Endpoint = new Uri("http://localhost:4317");
@@ -83,7 +84,8 @@ services.AddWireMockOpenTelemetry(openTelemetryOptions);
 ```
 
 This configures:
-- The WireMock.Net ActivitySource
+- The WireMock.Net ActivitySource and the configured ActivitySource
+- A resource with the configured service name
 - ASP.NET Core instrumentation
 - OTLP exporter (using the endpoint from `OpenTelemetryOptions.OtlpExporterEndpoint` or the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable)
 
@@ -101,8 +103,11 @@ tracerProvider.AddWireMockInstrumentation(openTelemetryOptions);
 
 | Property | Description | Default |
 |----------|-------------|---------|
+| `ActivitySourceName` | Additional ActivitySource to subscribe to and service name for `AddWireMockOpenTelemetry` | `WireMock.Net` |
 | `ExcludeAdminRequests` | Exclude `/__admin/*` from ASP.NET Core instrumentation | `true` |
 | `OtlpExporterEndpoint` | OTLP collector endpoint URL | Uses `OTEL_EXPORTER_OTLP_ENDPOINT` env var |
+
+WireMock's own activities always use the `WireMock.Net` source, which remains subscribed even when a different source is configured. `AddWireMockInstrumentation` only configures instrumentation; configure its resource separately if you need a custom service name.
 
 ### ActivityTracingOptions (Trace content configuration)
 
@@ -150,11 +155,14 @@ When using WireMock.Net.StandAlone or Docker images, activity tracing and OpenTe
 **OpenTelemetry Export (where traces are sent):**
 ```bash
 --OpenTelemetryEnabled true
+--OpenTelemetryActivitySourceName MyService
 --OpenTelemetryOtlpExporterEndpoint http://localhost:4317
 --OpenTelemetryExcludeAdminRequests true
 ```
 
+For Docker or standalone environment configuration, set `WireMockServerSettings__OpenTelemetryEnabled=true` and `WireMockServerSettings__OpenTelemetryActivitySourceName=MyService`. The activity source name defaults to `WireMock.Net` when omitted or empty.
+
 ## Requirements
 
-- .NET 6.0 or later
+- .NET 8.0 or later
 - WireMock.Net 1.6.0 or later

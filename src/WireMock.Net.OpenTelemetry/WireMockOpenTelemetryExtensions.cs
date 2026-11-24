@@ -12,9 +12,6 @@ namespace WireMock.OpenTelemetry;
 /// </summary>
 public static class WireMockOpenTelemetryExtensions
 {
-    private const string ServiceName = "WireMock.Net";
-    private const string WireMockActivitySourceName = "WireMock.Net";
-
     /// <summary>
     /// Adds OpenTelemetry tracing to the WireMock server with instrumentation and OTLP exporter.
     /// This configures:
@@ -38,14 +35,14 @@ public static class WireMockOpenTelemetryExtensions
             .ConfigureResource(resource =>
             {
                 resource.AddService(
-                    serviceName: ServiceName,
+                    serviceName: options.ActivitySourceName,
                     serviceVersion: typeof(WireMockOpenTelemetryExtensions).Assembly.GetName().Version?.ToString() ?? "unknown"
                 );
             })
             .WithTracing(tracing =>
             {
                 // Add WireMock-specific traces
-                tracing.AddSource(WireMockActivitySourceName);
+                tracing.AddSource(OpenTelemetryOptions.DefaultActivitySourceName, options.ActivitySourceName);
 
                 // Add ASP.NET Core instrumentation for standard HTTP server traces
                 tracing.AddAspNetCoreInstrumentation(aspNetOptions =>
@@ -93,7 +90,7 @@ public static class WireMockOpenTelemetryExtensions
         OpenTelemetryOptions? options = null)
     {
         // Add WireMock-specific traces
-        tracing.AddSource(WireMockActivitySourceName);
+        tracing.AddSource(OpenTelemetryOptions.DefaultActivitySourceName, options?.ActivitySourceName ?? OpenTelemetryOptions.DefaultActivitySourceName);
 
         // Add ASP.NET Core instrumentation for standard HTTP server traces
         tracing.AddAspNetCoreInstrumentation(aspNetOptions =>
