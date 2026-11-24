@@ -21,7 +21,7 @@ A C# .NET version based on [mock4net](https://github.com/alexvictoor/mock4net) w
 * GraphQL support
 * gRPC / ProtoBuf support
 * OpenAPI support
-* OpenTelemetry support
+* [OpenTelemetry support](src/WireMock.Net.OpenTelemetry/README.md), including configurable service names for standalone and Docker instances
 * WebSockets support
 
 ## :memo: Blogs

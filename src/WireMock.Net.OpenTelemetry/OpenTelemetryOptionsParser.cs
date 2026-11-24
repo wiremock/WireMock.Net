@@ -1,6 +1,7 @@
 // Copyright © WireMock.Net
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Stef.Validation;
 using WireMock.Settings;
 
@@ -20,7 +21,7 @@ public static class OpenTelemetryOptionsParser
     /// <param name="environment">The environment settings (optional)</param>
     /// <param name="options">The parsed options, or null if OpenTelemetry is not enabled</param>
     /// <returns>Always returns true.</returns>
-    public static bool TryParseArguments(string[] args, IDictionary? environment, out OpenTelemetryOptions? options)
+    public static bool TryParseArguments(string[] args, IDictionary? environment, [NotNullWhen(true)] out OpenTelemetryOptions? options)
     {
         Guard.HasNoNulls(args);
 
@@ -30,11 +31,13 @@ public static class OpenTelemetryOptionsParser
         if (!parser.GetBoolValue($"{Prefix}Enabled"))
         {
             options = null;
-            return true;
+            return false;
         }
 
+        var activitySourceName = parser.GetStringValue($"{Prefix}ActivitySourceName");
         options = new OpenTelemetryOptions
         {
+            ActivitySourceName = string.IsNullOrWhiteSpace(activitySourceName) ? OpenTelemetryOptions.DefaultActivitySourceName : activitySourceName!,
             ExcludeAdminRequests = parser.GetBoolValue($"{Prefix}ExcludeAdminRequests", defaultValue: true),
             OtlpExporterEndpoint = parser.GetStringValue($"{Prefix}OtlpExporterEndpoint")
         };

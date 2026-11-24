@@ -11,6 +11,15 @@ namespace WireMock.OpenTelemetry;
 /// </summary>
 public class OpenTelemetryOptions
 {
+    internal const string DefaultActivitySourceName = "WireMock.Net";
+
+    /// <summary>
+    /// Gets or sets the activity source name to subscribe to and the exported service name.
+    /// Default is <c>WireMock.Net</c>.
+    /// </summary>
+    [PublicAPI]
+    public string ActivitySourceName { get; set; } = DefaultActivitySourceName;
+
     /// <summary>
     /// Gets or sets a value indicating whether to exclude admin interface requests from ASP.NET Core instrumentation.
     /// Default is <c>true</c>.
