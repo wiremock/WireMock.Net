@@ -22,7 +22,7 @@ public class OpenTelemetryOptionsParserTests
         // Assert
         result.Should().BeTrue();
         options.Should().NotBeNull();
-        options!.ActivitySourceName.Should().Be("MyService");
+        options.ActivitySourceName.Should().Be("MyService");
         options.ExcludeAdminRequests.Should().BeFalse();
         options.OtlpExporterEndpoint.Should().Be("http://localhost:4317");
     }
@@ -43,10 +43,11 @@ public class OpenTelemetryOptionsParserTests
             environment["WireMockServerSettings__OpenTelemetryActivitySourceName"] = name;
         }
 
-        OpenTelemetryOptionsParser.TryParseArguments([], environment, out var options);
+        var result = OpenTelemetryOptionsParser.TryParseArguments([], environment, out var options);
 
+        result.Should().BeTrue();
         options.Should().NotBeNull();
-        options!.ActivitySourceName.Should().Be(string.IsNullOrWhiteSpace(name) ? "WireMock.Net" : name);
+        options.ActivitySourceName.Should().Be(string.IsNullOrWhiteSpace(name) ? "WireMock.Net" : name);
     }
 
     [Fact]
@@ -62,7 +63,7 @@ public class OpenTelemetryOptionsParserTests
         var result = OpenTelemetryOptionsParser.TryParseArguments(Array.Empty<string>(), null, out var options);
 
         // Assert
-        result.Should().BeTrue();
+        result.Should().BeFalse();
         options.Should().BeNull();
     }
 }
