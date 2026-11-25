@@ -1,5 +1,4 @@
-# 2.33.0 (24 November 2026)
-- #1550 Configure OpenTelemetry activity source and service names [feature]
-- #1549 Support for passing ENV variable for Otel Activity Name [feature]
+# 2.34.0 (25 November 2026)
+- #1551 Update Scriban.Signed to 7.6.1 [dependencies]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
