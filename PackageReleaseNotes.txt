@@ -1,4 +1,4 @@
-# 2.34.0 (25 November 2026)
-- #1551 Update Scriban.Signed to 7.6.1 [dependencies]
+# 2.35.0 (27 November 2026)
+- #1552 Upgrade NJsonSchema.Extensions &amp; NSwag.Core [dependencies]
 
 The full release notes can be found here: https://github.com/wiremock/WireMock.Net/blob/master/CHANGELOG.md
